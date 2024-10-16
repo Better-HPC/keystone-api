@@ -29,8 +29,19 @@ class AllocationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AttachmentSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Attachment` class."""
+
+    class Meta:
+        model = Attachment
+        fields = '__all__'
+
+
 class AllocationRequestSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationRequest` class."""
+
+    allocations = AllocationSerializer(source='allocation_set', many=True, required=False)
+    attachments = AttachmentSerializer(source='attachment_set', many=True, required=False)
 
     class Meta:
         """Serializer settings."""
