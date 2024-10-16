@@ -49,20 +49,39 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
         model = AllocationRequest
         fields = '__all__'
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> AllocationRequest:
+        """Update a new database record, including relationships.
+
+        Args:
+            instance: The record instance to update
+            validated_data: Validated record data.
+
+        Returns:
+            The updated record instance.
+        """
+
         allocation_request = AllocationRequest.objects.create(**validated_data)
 
-        allocations_data = validated_data.pop('allocations', [])
+        allocations_data = validated_data.pop('allocation_set', [])
         for allocation in allocations_data:
             Allocation.objects.create(request=allocation_request, **allocation)
 
-        attachments_data = validated_data.pop('attachments', [])
+        attachments_data = validated_data.pop('attachment_set', [])
         for attachment in attachments_data:
             Attachment.objects.create(request=allocation_request, **attachment)
 
         return allocation_request
 
-    def update(self, instance, validated_data):
+    def update(self, instance: AllocationRequest, validated_data: dict) -> AllocationRequest:
+        """Update a new database record, including nested relationships.
+
+        Args:
+            instance: The record instance to update
+            validated_data: Validated record data.
+
+        Returns:
+            The updated record instance.
+        """
 
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
@@ -72,19 +91,19 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
         instance.save()
 
         # Update allocations
-        old_allocations = instance.allocations.all()
-        allocations_data = validated_data.pop('allocations', [])
+        if allocations_data := validated_data.pop('allocation_set', []):
+            instance.allocation_set.delete()
+
         for allocation_data in allocations_data:
             Allocation.objects.create(request=instance, **allocation_data)
 
         # Update attachments
-        old_attatchments = instance.attachments.all()
-        attachments_data = validated_data.pop('attachments', [])
+        if attachments_data := validated_data.pop('attachment_set', []):
+            instance.attachment_set.delete()
+
         for attachment in attachments_data:
             Attachment.objects.create(request=instance, **attachment)
 
-        old_allocations.delete()
-        old_attatchments.delete()
         return instance
 
 

@@ -63,7 +63,7 @@ class TeamSerializer(serializers.ModelSerializer):
         return team
 
     def update(self, instance: Team, validated_data: dict) -> Team:
-        """Update a new database record, including relationships.
+        """Update a new database record, including nested relationships.
 
         Args:
             instance: The record instance to update
@@ -74,12 +74,13 @@ class TeamSerializer(serializers.ModelSerializer):
         """
 
         # Update the team record
-        membership_data = validated_data.pop('teammembership_set', [])
         instance.name = validated_data.get('name', instance.name)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
 
-        # Update or create team membership
+        if membership_data := validated_data.pop('teammembership_set', []):
+            instance.users.clear()
+
         for membership in membership_data:
             instance.add_or_update_member(
                 user=membership['user'],
