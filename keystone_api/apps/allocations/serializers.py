@@ -49,6 +49,44 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
         model = AllocationRequest
         fields = '__all__'
 
+    def create(self, validated_data):
+        allocation_request = AllocationRequest.objects.create(**validated_data)
+
+        allocations_data = validated_data.pop('allocations', [])
+        for allocation in allocations_data:
+            Allocation.objects.create(request=allocation_request, **allocation)
+
+        attachments_data = validated_data.pop('attachments', [])
+        for attachment in attachments_data:
+            Attachment.objects.create(request=allocation_request, **attachment)
+
+        return allocation_request
+
+    def update(self, instance, validated_data):
+
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.status = validated_data.get('status', instance.status)
+        instance.active = validated_data.get('active', instance.active)
+        instance.expire = validated_data.get('expire', instance.expire)
+        instance.save()
+
+        # Update allocations
+        old_allocations = instance.allocations.all()
+        allocations_data = validated_data.pop('allocations', [])
+        for allocation_data in allocations_data:
+            Allocation.objects.create(request=instance, **allocation_data)
+
+        # Update attachments
+        old_attatchments = instance.attachments.all()
+        attachments_data = validated_data.pop('attachments', [])
+        for attachment in attachments_data:
+            Attachment.objects.create(request=instance, **attachment)
+
+        old_allocations.delete()
+        old_attatchments.delete()
+        return instance
+
 
 class AllocationRequestReviewSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationRequestReview` class."""
