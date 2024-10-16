@@ -91,11 +91,11 @@ class AddOrUpdateMember(TestCase):
         membership1 = self.team.add_or_update_member(self.test_user1, role=TeamMembership.Role.MEMBER)
         membership2 = team2.add_or_update_member(self.test_user1, role=TeamMembership.Role.ADMIN)
 
-        # Ensure the memberships are distinct
+        # Ensure the membership entries are distinct
         self.assertNotEqual(membership1, membership2)
         self.assertEqual(membership1.role, TeamMembership.Role.MEMBER)
         self.assertEqual(membership2.role, TeamMembership.Role.ADMIN)
 
-        # Check the user has memberships in both teams
+        # Check the user has membership in both teams
         self.assertTrue(TeamMembership.objects.filter(user=self.test_user1, team=self.team).exists())
         self.assertTrue(TeamMembership.objects.filter(user=self.test_user1, team=team2).exists())

@@ -9,8 +9,8 @@ from apps.users.serializers import TeamSerializer
 class CreateRecords(TestCase):
     """Test the creation of records via the `create` method`."""
 
-    def test_create_with_memberships(self) -> None:
-        """Test creating a team record with memberships."""
+    def test_create_with_membership(self) -> None:
+        """Test creating a team record with membership data."""
 
         # User accounts to enroll in team membership
         user1 = User.objects.create(username='User 1')
@@ -20,7 +20,7 @@ class CreateRecords(TestCase):
         request_data = {
             'name': 'Team A',
             'is_active': True,
-            'memberships': [
+            'membership': [
                 {'user': 1, 'role': TeamMembership.Role.MEMBER},
                 {'user': 2, 'role': TeamMembership.Role.OWNER}
             ]
@@ -33,7 +33,7 @@ class CreateRecords(TestCase):
         team = serializer.create(serializer.validated_data)
         self.assertEqual(team.name, request_data['name'])
         self.assertEqual(team.is_active, request_data['is_active'])
-        self.assertEqual(team.teammembership_set.count(), len(request_data['memberships']))
+        self.assertEqual(team.teammembership_set.count(), len(request_data['membership']))
 
         # Verify values for the created memberships
         memberships = team.teammembership_set.all()
@@ -42,8 +42,8 @@ class CreateRecords(TestCase):
         self.assertEqual(memberships[1].user, user2)
         self.assertEqual(memberships[1].role, TeamMembership.Role.OWNER)
 
-    def test_create_without_memberships(self) -> None:
-        """Test creating a team record without memberships."""
+    def test_create_without_membership(self) -> None:
+        """Test creating a team record without membership data."""
 
         self.serializer = TeamSerializer(data={
             'name': 'Team B',
@@ -68,7 +68,7 @@ class UpdateRecords(TestCase):
         self.team = Team.objects.create(name='Old Team Name', is_active=True)
         self.membership = TeamMembership.objects.create(team=self.team, user=self.user, role=TeamMembership.Role.MEMBER)
 
-    def test_update_with_memberships(self) -> None:
+    def test_update_with_membership(self) -> None:
         """Test updating a team record while also changing user membership roles."""
 
         # Define the new user role to update to
@@ -78,7 +78,7 @@ class UpdateRecords(TestCase):
         valid_data = {
             'name': 'Updated Team Name',
             'is_active': False,
-            'memberships': [
+            'membership': [
                 {'user': 1, 'role': new_role},
             ]
         }
@@ -97,7 +97,7 @@ class UpdateRecords(TestCase):
         self.assertEqual(new_membership.user, self.user)
         self.assertEqual(new_membership.role, new_role)
 
-    def test_update_without_memberships(self) -> None:
+    def test_update_without_membership(self) -> None:
         """Test updating a team record without changing user membership."""
 
         valid_data = {
