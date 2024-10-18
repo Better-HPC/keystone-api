@@ -36,12 +36,12 @@ class CustomAsserts:
             kwargs: Additional keyword arguments for building the request.
         """
 
-        http_method = getattr(self.client, method)
+        http_callable = getattr(self.client, method)
         http_args = self._build_request_args(method, kwargs)
 
         # Preserve database state
         with transaction.atomic():
-            request = http_method(endpoint, **http_args)
+            request = http_callable(endpoint, **http_args)
             self.assertEqual(
                 request.status_code, expected_status,
                 f'{method.upper()} request received {request.status_code} instead of {expected_status} with content "{request.content}"')
@@ -62,4 +62,4 @@ class CustomAsserts:
 
         arg_names = ('data', 'headers')
         arg_values = (kwargs.get(f'{method}_body', None), kwargs.get(f'{method}_headers', None))
-        return {name: value for name, value in zip(arg_names, arg_values) if arg_values is not None}
+        return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
