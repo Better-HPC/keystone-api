@@ -93,8 +93,8 @@ The following unit files are provided as a starting point to daemonize the proce
 
 !!! warning 
 
-    Depending on the number of deployed workers, Celery can fill up it's log directory fairly quickly.
-    Rotating log files to prevent excessive storage is strongly recommended.
+    Celery can fill up it's log directory fairly quickly, especially when running multiple workers simultaneously.
+    Rotating the Celery log files to prevent excessive storage is strongly recommended.
 
 === "keystone-worker.service"
 
@@ -239,15 +239,25 @@ server {
 
 ## Upgrading Application Versions
 
-When upgrading the application, ensure the database and static files are up-to-date before relaunching the application server.
+API upgrades are handled by the Python package manager.
+System services should be taken offline before upgrading to a new version.
+
+!!! danger
+    Always ensure the production database is backed up before applying application updates.
+
+!!! note
+    The `keystone-server` systemd configuration outlined above is defined to start the API server on demand.
+    When taking the system offline, it is best to also prevent system restarts by stopping incoming traffic from the upstream proxy.
+    This is achievable by or by modifying the proxy config and restarting the proxy service
 
 === "pipx (recommended)"
 
     ```bash
+    systemctl stop nginx
     systemctl stop keystone-server
     systemctl stop keystone-beat
     systemctl stop keystone-worker
-    
+
     pipx upgrade keystone-api
     keystone-api migrate
     keystone-api collectstatic
@@ -255,11 +265,13 @@ When upgrading the application, ensure the database and static files are up-to-d
     systemctl start keystone-worker
     systemctl start keystone-beat
     systemctl start keystone-server
+    systemctl start nginx
     ```
 
 === "pip"
 
     ```bash
+    systemctl stop nginx
     systemctl stop keystone-server
     systemctl stop keystone-beat
     systemctl stop keystone-worker
@@ -271,4 +283,5 @@ When upgrading the application, ensure the database and static files are up-to-d
     systemctl start keystone-worker
     systemctl start keystone-beat
     systemctl start keystone-server
+    systemctl start nginx
     ```
