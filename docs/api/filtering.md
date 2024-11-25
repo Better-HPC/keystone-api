@@ -1,7 +1,22 @@
 # Structuring Queries
 
 Keystone API uses query parameters to sort and filter records in API responses.
-Since these operations are performed on the server, using query parameters is often more performant than filtering data client side.
+Summaries are provided below for supported features.
+
+## Pagination
+
+Keystone uses limit/offset style pagination.
+
+```
+.../endpoint/?limit=100&offset=400
+```
+
+Both pagination arguments are optional and default to the values below:
+
+| Query Argument | Default Value    |
+|----------------|------------------|
+| `limit`        | `100`            |
+| `offset`       | `0` (First page) |
 
 ## Sorting Requests
 
@@ -19,7 +34,6 @@ In the following example, `field1` is sorted in ascending order and `field2` in 
 .../endpoint/?ordering=field1,-field2
 ```
 
-
 ## Filtering Requests
 
 Query parameters provide basic support for filtering records by the value of their fields.
@@ -31,7 +45,7 @@ In the following example, returned records are limited to those where the `examp
 
 More advanced filtering is achieved by adding filters.
 Query filters are specified using a double underscore (`__`) followed by a filter expression.
-For example, the following API call will return records when the `example` field is greater than `50` but less than `150`:
+In the following example the API will return records where the `example` field is greater than `50` but less than `150`:
 
 ```
 .../endpoint?example__gt=50&example_lt=150
