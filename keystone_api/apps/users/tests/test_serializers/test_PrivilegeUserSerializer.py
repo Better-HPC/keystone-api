@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from apps.users.serializers import PrivilegedUserSerializer
 
 
-class Validate(TestCase):
+class ValidateMethod(TestCase):
     """Test data validation via the `validate` method."""
 
     def setUp(self) -> None:
@@ -20,14 +20,14 @@ class Validate(TestCase):
         }
 
     def test_validate_password_is_hashed(self) -> None:
-        """Test the password is hashed during validation."""
+        """Verify the password is hashed during validation."""
 
         serializer = PrivilegedUserSerializer(data=self.user_data)
         self.assertTrue(serializer.is_valid())
         self.assertTrue(check_password('Password123!', serializer.validated_data['password']))
 
     def test_validate_password_invalid(self) -> None:
-        """Test an invalid password raises a `ValidationError`."""
+        """Verify an invalid password raises a `ValidationError`."""
 
         self.user_data['password'] = '123'  # Too short
         serializer = PrivilegedUserSerializer(data=self.user_data)
@@ -35,8 +35,11 @@ class Validate(TestCase):
             serializer.is_valid(raise_exception=True)
 
     def test_validate_without_password(self) -> None:
-        """Test validation fails when a password is not provided."""
+        """Verify validation fails when a password is not provided."""
 
-        del self.user_data['password']
-        serializer = PrivilegedUserSerializer(data=self.user_data)
+        user_data_no_password = self.user_data.copy()
+        user_data_no_password.pop('password')
+        self.assertNotIn('password', user_data_no_password)
+
+        serializer = PrivilegedUserSerializer(data=user_data_no_password)
         self.assertFalse(serializer.is_valid())

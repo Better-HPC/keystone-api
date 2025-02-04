@@ -7,7 +7,7 @@ application setup.
 from django.apps import AppConfig
 from django.core.checks import register
 
-from .management import checks
+from . import checks
 
 __all__ = ['UsersAppConfig']
 

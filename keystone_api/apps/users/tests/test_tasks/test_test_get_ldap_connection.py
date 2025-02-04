@@ -21,7 +21,7 @@ class LdapConnection(TestCase):
     @patch('ldap.set_option')
     @patch('ldap.ldapobject.LDAPObject')
     def test_tls_configuration(self, mock_ldap: Mock, mock_set_option: Mock, mock_initialize: Mock) -> None:
-        """Test an LDAP connection is correctly configured with TLS enabled."""
+        """Verify the returned LDAP connection is configured with TLS enabled."""
 
         # Set up mock objects
         mock_conn = mock_ldap.return_value
