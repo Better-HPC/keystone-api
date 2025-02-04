@@ -17,7 +17,7 @@ class UsersAppConfig(AppConfig):
 
     name = 'apps.users'
 
-    def ready(self):
+    def ready(self) -> None:
         """Register application specific system checks."""
 
         register(checks.ldap_dependency_check)

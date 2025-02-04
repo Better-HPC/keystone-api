@@ -8,7 +8,7 @@ from apps.users.models import Team, TeamMembership, User
 class TeamsForUserMethod(TestCase):
     """Test fetching team affiliations via the `teams_for_user` method."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create temporary users and teams."""
 
         self.test_user = User.objects.create(username='test_user')
