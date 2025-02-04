@@ -7,7 +7,7 @@ from apps.users.serializers import PrivilegedUserSerializer, RestrictedUserSeria
 from apps.users.views import UserViewSet
 
 
-class GetSerializerClass(TestCase):
+class GetSerializerClassMethod(TestCase):
     """Test the `get_serializer_class` method."""
 
     def setUp(self) -> None:
@@ -18,7 +18,7 @@ class GetSerializerClass(TestCase):
         self.regular_user = User.objects.create(username='regularuser', is_staff=False)
 
     def test_get_serializer_class_for_staff_user(self) -> None:
-        """Test the `PrivilegeUserSerializer` serializer is returned for a staff user."""
+        """Verify the `PrivilegeUserSerializer` serializer is returned for a staff user."""
 
         request = self.factory.get('/users/')
         request.user = self.staff_user
@@ -28,7 +28,7 @@ class GetSerializerClass(TestCase):
         self.assertEqual(serializer_class, PrivilegedUserSerializer)
 
     def test_get_serializer_class_for_regular_user(self) -> None:
-        """Test the `RestrictedUserSerializer` serializer is returned for a generic user."""
+        """Verify the `RestrictedUserSerializer` serializer is returned for a generic user."""
 
         request = self.factory.get('/users/')
         request.user = self.regular_user

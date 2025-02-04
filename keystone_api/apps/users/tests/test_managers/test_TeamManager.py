@@ -5,10 +5,10 @@ from django.test import TestCase
 from apps.users.models import Team, TeamMembership, User
 
 
-class TeamsForUser(TestCase):
+class TeamsForUserMethod(TestCase):
     """Test fetching team affiliations via the `teams_for_user` method."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create temporary users and teams."""
 
         self.test_user = User.objects.create(username='test_user')
@@ -29,7 +29,7 @@ class TeamsForUser(TestCase):
         self.team4 = Team.objects.create(name='Team4')
 
     def test_teams_for_user(self) -> None:
-        """Test all teams are returned for a test user."""
+        """Verify all teams are returned for a test user."""
 
         result = Team.objects.teams_for_user(self.test_user).all()
         self.assertCountEqual(result, [self.team1, self.team2, self.team3])
