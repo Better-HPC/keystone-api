@@ -10,8 +10,8 @@ from apps.users.models import Team
 User = get_user_model()
 
 
-class GetQueryset(TestCase):
-    """Test the filtering of records based on user status."""
+class GetQuerysetMethod(TestCase):
+    """Test record filtering in the DB query returned by the `get_queryset` method."""
 
     def setUp(self) -> None:
         """Create user accounts and research publications."""
@@ -59,14 +59,14 @@ class GetQueryset(TestCase):
         return viewset
 
     def test_queryset_for_staff_user(self) -> None:
-        """Test staff users can view all publications."""
+        """Verify staff users are returned a query including all publications."""
 
         viewset = self.create_viewset(self.staff_user)
         queryset = viewset.get_queryset()
         self.assertEqual(len(queryset), 2)
 
     def test_queryset_for_team_member(self) -> None:
-        """Test user's can only access their team's publications."""
+        """Verify team members are returned a query including only their team's publications."""
 
         viewset = self.create_viewset(self.team1_user)
         queryset = viewset.get_queryset()
@@ -74,7 +74,7 @@ class GetQueryset(TestCase):
         self.assertEqual(queryset[0].team, self.team1)
 
     def test_queryset_for_non_team_member(self) -> None:
-        """Test user's without team membership cannot access any records."""
+        """Verify non-members are returned a query including no publications."""
 
         viewset = self.create_viewset(self.general_user)
         queryset = viewset.get_queryset()
