@@ -50,8 +50,7 @@ class GetQuerysetMethod(TestCase):
         )
 
     def create_viewset(self, user: User) -> GrantViewSet:
-        """
-        Create a viewset for testing purposes.
+        """Create a viewset for testing purposes.
 
         Args:
             user: The user submitting a request to the viewset.
