@@ -8,7 +8,7 @@ from apps.notifications.models import default_expiry_thresholds, Preference
 User = get_user_model()
 
 
-class GetUserPreference(TestCase):
+class GetUserPreferenceMethod(TestCase):
     """Tests for getting user preferences."""
 
     def setUp(self) -> None:
@@ -17,7 +17,7 @@ class GetUserPreference(TestCase):
         self.user = User.objects.create_user(username='testuser', password='foobar123!')
 
     def test_get_user_preference_creates_new_preference(self) -> None:
-        """Test a new Preference object is created if one does not exist."""
+        """Method a new Preference object is created if one does not exist."""
 
         # Test a record is created
         self.assertFalse(Preference.objects.filter(user=self.user).exists())
@@ -29,14 +29,14 @@ class GetUserPreference(TestCase):
         self.assertListEqual(default_expiry_thresholds(), preference.request_expiry_thresholds)
 
     def test_get_user_preference_returns_existing_preference(self) -> None:
-        """Test an existing Preference object is returned if it already exists."""
+        """Method an existing Preference object is returned if it already exists."""
 
         existing_preference = Preference.objects.create(user=self.user)
         preference = Preference.get_user_preference(user=self.user)
         self.assertEqual(existing_preference, preference)
 
 
-class SetUserPreference(TestCase):
+class SetUserPreferenceMethod(TestCase):
     """Tests for setting user preferences."""
 
     def setUp(self) -> None:
@@ -45,7 +45,7 @@ class SetUserPreference(TestCase):
         self.user = User.objects.create_user(username='testuser', password='foobar123!')
 
     def test_set_user_preference_creates_preference(self) -> None:
-        """Test that a new Preference object is created with specified values."""
+        """Method a new Preference object is created with specified values."""
 
         self.assertFalse(Preference.objects.filter(user=self.user).exists())
 
@@ -54,7 +54,7 @@ class SetUserPreference(TestCase):
         self.assertFalse(preference.notify_on_expiration)
 
     def test_set_user_preference_updates_existing_preference(self) -> None:
-        """Test that an existing Preference object is updated with specified values."""
+        """Method an existing Preference object is updated with specified values."""
 
         preference = Preference.objects.create(user=self.user, notify_on_expiration=True)
         self.assertTrue(Preference.objects.filter(user=self.user).exists())

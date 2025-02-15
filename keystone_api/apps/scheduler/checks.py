@@ -28,31 +28,34 @@ def check_celery_beat_configuration(*args, **kwargs) -> list[Error]:
             module = importlib.import_module(module_spec)
             obj = getattr(module, obj_spec)
 
+        # Make sure the task points to a module that exists
         except ModuleNotFoundError:
             errors.append(
                 Error(
-                    f"module '{module_spec}' does not exist.",
+                    msg=f"module '{module_spec}' does not exist.",
                     hint="Double check the task definition in the celery beat configuration.",
                     obj=celery_app,
                     id="apps.scheduler.E001",
                 )
             )
 
+        # Make sure the task points to a member of the module that exists
         except AttributeError:
             errors.append(
                 Error(
-                    f"module '{module_spec}' has no attribute '{obj_spec}'.",
+                    msg=f"module '{module_spec}' has no attribute '{obj_spec}'.",
                     hint="Double check the task definition in the celery beat configuration.",
                     obj=celery_app,
                     id="apps.scheduler.E002",
                 )
             )
 
+        # Make sure the task is importable by celery
         else:
             if not obj.__module__ == module.__name__:
                 errors.append(
                     Error(
-                        f"module '{module_spec}' is not absolute.",
+                        msg=f"module '{module_spec}' is not absolute.",
                         hint=f"Use the module definition {obj.__module__}.",
                         obj=celery_app,
                         id="apps.scheduler.E003",

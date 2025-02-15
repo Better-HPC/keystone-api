@@ -31,7 +31,7 @@ class EmitToDatabase(TestCase):
         self.assertEqual(db_record.sinfo, log_record.stack_info)
 
     def test_record_above_logging_threshold(self) -> None:
-        """Test log data is saved when the log message level is above the logging threshold."""
+        """Verify log data is saved when the log message level is above the logging threshold."""
 
         log_record = logging.LogRecord('test', logging.INFO, 'pathname', 1, 'message', (), None, 'func')
         handler = DBHandler()
@@ -42,7 +42,7 @@ class EmitToDatabase(TestCase):
         self.assert_db_record_matches_log_content(handler, log_record, db_record)
 
     def test_record_equal_logging_threshold(self) -> None:
-        """Test log data is saved when the log message level is equal to the logging threshold."""
+        """Verify log data is saved when the log message level is equal to the logging threshold."""
 
         log_record = logging.LogRecord('test', logging.INFO, 'pathname', 1, 'message', (), None, 'func')
         handler = DBHandler(logging.INFO)
@@ -53,7 +53,7 @@ class EmitToDatabase(TestCase):
         self.assert_db_record_matches_log_content(handler, log_record, db_record)
 
     def test_record_below_logging_threshold(self) -> None:
-        """Test log data is not saved when the log message level is below the logging threshold."""
+        """Verify log data is not saved when the log message level is below the logging threshold."""
 
         record = logging.LogRecord('test', logging.INFO, 'pathname', 1, 'message', (), None, 'func')
         handler = DBHandler(level=logging.ERROR)

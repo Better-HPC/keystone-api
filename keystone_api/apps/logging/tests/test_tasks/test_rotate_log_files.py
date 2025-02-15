@@ -39,7 +39,7 @@ class LogFileDeletion(TestCase):
     @override_settings(CONFIG_REQUEST_RETENTION=4)
     @patch('django.utils.timezone.now')
     def test_log_files_deleted(self, mock_now: Mock) -> None:
-        """Test expired log files are deleted."""
+        """Verify expired log files are deleted."""
 
         # Mock the current time
         initial_time = now()
@@ -69,7 +69,7 @@ class LogFileDeletion(TestCase):
     @override_settings(CONFIG_LOG_RETENTION=0)
     @override_settings(CONFIG_REQUEST_RETENTION=0)
     def test_deletion_disabled(self) -> None:
-        """Test log files are not deleted when log clearing is disabled."""
+        """Verify log files are not deleted when log clearing is disabled."""
 
         self.create_dummy_records(now())
 

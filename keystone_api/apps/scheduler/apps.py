@@ -18,7 +18,7 @@ class SchedulerAppConfig(AppConfig):
 
     name = 'apps.scheduler'
 
-    def ready(self):
+    def ready(self) -> None:
         """Setup tasks executed after loading the application configuration and models"""
 
         register(check_celery_beat_configuration)
