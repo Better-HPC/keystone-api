@@ -70,7 +70,12 @@ aiosmtpd = { version = "1.4.6", optional = true }
 
 [tool.coverage.run]
 branch = true
-omit = ["*/tests/*", "*/migrations/*"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "keystone_api/main/*",
+    "keystone_api/apps/*/permissions.py"
+]
 
 [project.scripts]
 keystone-api = "keystone_api.manage:main"

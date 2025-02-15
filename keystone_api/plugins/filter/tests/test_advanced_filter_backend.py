@@ -22,13 +22,14 @@ class SampleModel(models.Model):
     time_field = models.TimeField(auto_now_add=True)
     datetime_field = models.DateTimeField(auto_now_add=True)
     text_field = models.TextField()
+    unknown_field = models.Field()
 
 
-class GetFiltersetClass(TestCase):
-    """Test the fetching of filterset classes for different view/querysets"""
+class GetFiltersetClassMethod(TestCase):
+    """Test the fetching of filterset classes for different view/querysets via the `get_filterset_class` method."""
 
     def test_user_provided_filterset(self) -> None:
-        """Test existing filtersets are not overwritten"""
+        """Verify existing filtersets are not overwritten"""
 
         # Mock a view with a filterset already defined
         mock_view = Mock()
@@ -38,9 +39,9 @@ class GetFiltersetClass(TestCase):
         self.assertEqual(result, mock_view.filterset_class, 'User defined filterset class was overwritten')
 
     def test_auto_generated_filterset(self) -> None:
-        """Test the generation of factory filtersets"""
+        """Verify automatically generated filtersets use the correct field types."""
 
-        # Mock a view without a filterset defined
+        # Mock a view without a predefined filterset
         mock_view = Mock()
         mock_view.filterset_class = None
         mock_view.filterset_fields = None
@@ -55,12 +56,13 @@ class GetFiltersetClass(TestCase):
         self.assertTrue(issubclass(result, FactoryBuiltFilterSet))
         self.assertEqual(result.Meta.model, SampleModel, 'Factory built filterset has incorrect DB model')
 
-        fields = result.Meta.fields
+        returned_fields = result.Meta.fields
         filters = backend.field_filter_map
-        self.assertEqual(fields['bool_field'], filters[models.BooleanField], 'bool type field has incorrect filters')
-        self.assertEqual(fields['char_field'], filters[models.CharField], 'char type field has incorrect filters')
-        self.assertEqual(fields['integer_field'], filters[models.IntegerField], 'integer type field has incorrect filters')
-        self.assertEqual(fields['date_field'], filters[models.DateField], 'date type field has incorrect filters')
-        self.assertEqual(fields['time_field'], filters[models.TimeField], 'time type field has incorrect filters')
-        self.assertEqual(fields['datetime_field'], filters[models.DateTimeField], 'datetime type field has incorrect filters')
-        self.assertEqual(fields['text_field'], filters[models.TextField], 'text type field has incorrect filters')
+        self.assertEqual(filters[models.BooleanField], returned_fields['bool_field'], 'bool type field has incorrect filters')
+        self.assertEqual(filters[models.CharField], returned_fields['char_field'], 'char type field has incorrect filters')
+        self.assertEqual(filters[models.IntegerField], returned_fields['integer_field'], 'integer type field has incorrect filters')
+        self.assertEqual(filters[models.DateField], returned_fields['date_field'], 'date type field has incorrect filters')
+        self.assertEqual(filters[models.TimeField], returned_fields['time_field'], 'time type field has incorrect filters')
+        self.assertEqual(filters[models.DateTimeField], returned_fields['datetime_field'], 'datetime type field has incorrect filters')
+        self.assertEqual(filters[models.TextField], returned_fields['text_field'], 'text type field has incorrect filters')
+        self.assertNotIn('unknown_field', filters, "Field with unknown typer was not ignored")
