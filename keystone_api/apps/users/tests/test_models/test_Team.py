@@ -23,7 +23,7 @@ class GetMembers(TestCase):
         self.team.add_or_update_member(self.member2, role=TeamMembership.Role.MEMBER)
 
     def test_get_all_members(self) -> None:
-        """Verify the `get_all_members` returns all team members."""
+        """Verify the `get_all_members` method returns all team members."""
 
         expected_members = [self.owner, self.admin, self.member1, self.member2]
         self.assertQuerySetEqual(
@@ -33,7 +33,7 @@ class GetMembers(TestCase):
         )
 
     def test_get_privileged_members(self) -> None:
-        """Verify the `get_privileged_members` only returns privileged team members."""
+        """Verify the `get_privileged_members` method only returns privileged team members."""
 
         self.assertQuerySetEqual([self.owner, self.admin], self.team.get_privileged_members(), ordered=False)
 

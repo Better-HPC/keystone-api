@@ -47,6 +47,19 @@ class UpdateUsers(TestCase):
         self.assertTrue(user1.is_ldap_user)
         self.assertTrue(user2.is_ldap_user)
 
+    @override_settings(
+        AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
+        AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
+        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'}
+    )
+    @patch('apps.users.tasks.get_ldap_connection')
+    def test_no_users_account_found(self, mock_get_ldap_connection: Mock) -> None:
+        """Verify the function exits silently when no user accounts are found in LDAP."""
+
+        mock_conn = mock_get_ldap_connection.return_value
+        mock_conn.search_s.return_value = []
+        ldap_update_users(prune=False)
+
 
 class UserRemoval(TestCase):
     """Test the removal and/or deactivation of user accounts."""
