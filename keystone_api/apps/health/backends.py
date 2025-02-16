@@ -36,5 +36,5 @@ class SMTPHealthCheck(BaseHealthCheckBackend):
             self.add_error(str(e), e)
 
         finally:
-            if connection:
+            if connection:  # pragma: no branch
                 connection.close()
