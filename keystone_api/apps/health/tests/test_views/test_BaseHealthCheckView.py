@@ -16,12 +16,12 @@ class ConcreteHealthCheckView(BaseHealthCheckView):
         return HttpResponse("OK", status=200)
 
 
-class GetRequests(TestCase):
-    """Test the handling of `GET` requests."""
+class GetMethod(TestCase):
+    """Test the handling of `GET` requests via the `get` method."""
 
     @patch.object(BaseHealthCheckView, 'check')
     def test_status_checks_are_run(self, mock_check: Mock) -> None:
-        """Test status checks are updated when processing get requests"""
+        """Verify status checks are updated when processing get requests"""
 
         request = HttpRequest()
         view = ConcreteHealthCheckView()

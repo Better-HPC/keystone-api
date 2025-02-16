@@ -9,11 +9,11 @@ from apps.health.tests.test_views.utils import create_mock_plugin
 from apps.health.views import HealthCheckJsonView
 
 
-class RenderResponse(TestCase):
-    """Tests for the `render_response` function."""
+class RenderResponseMethod(TestCase):
+    """Tests the `render_response` method correctly returns the health check status."""
 
     def test_return_matches_health_checks(self) -> None:
-        """Test the rendering of application health checks as JSON data."""
+        """Verify health checks are correctly rendered in JSON format."""
 
         health_checks = {
             'plugin1': create_mock_plugin(1, 'OK', True),
