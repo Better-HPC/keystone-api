@@ -29,7 +29,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -44,7 +44,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test general authenticated users are returned a 403 status code for all request types."""
+        """Verify authenticated users are returned a 403 status code for all request types."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -60,7 +60,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read-only permissions."""
+        """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(

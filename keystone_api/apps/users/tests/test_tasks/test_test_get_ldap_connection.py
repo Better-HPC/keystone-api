@@ -8,8 +8,8 @@ from django.test import override_settings, TestCase
 from apps.users.tasks import get_ldap_connection
 
 
-class LdapConnection(TestCase):
-    """Test connecting to LDAP."""
+class GetLdapConnectionMethod(TestCase):
+    """Test connecting to LDAP via the `get_ldap_connection` method."""
 
     @override_settings(
         AUTH_LDAP_SERVER_URI='ldap://testserver',

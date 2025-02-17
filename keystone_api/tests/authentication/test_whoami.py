@@ -22,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     fixtures = ['testing_common.yaml']
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access the endpoint."""
+        """Verify unauthenticated users cannot access the endpoint."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -37,7 +37,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test authenticated users can perform read operations."""
+        """Verify authenticated users can perform read operations."""
 
         user = User.objects.get(username='generic_user')
         self.client.force_authenticate(user=user)
@@ -66,7 +66,7 @@ class UserData(APITestCase):
         self.user = User.objects.get(username='generic_user')
 
     def test_metadata_is_returned(self) -> None:
-        """Test GET responses include metadata for the currently authenticated user."""
+        """Verify GET responses include metadata for the currently authenticated user."""
 
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.endpoint)
@@ -80,7 +80,7 @@ class UserData(APITestCase):
         self.assertEqual(self.user.is_active, data['is_active'])
 
     def test_password_is_not_returned(self) -> None:
-        """Test the password field is excluded from the returned data."""
+        """Verify the password field is excluded from the returned data."""
 
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.endpoint)

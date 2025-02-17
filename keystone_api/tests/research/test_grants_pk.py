@@ -52,7 +52,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         }
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -67,7 +67,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_non_member_permissions(self) -> None:
-        """Test permissions for authenticated users accessing records owned by someone else's team."""
+        """Verify users cannot access records for a team they are not in."""
 
         self.client.force_authenticate(user=self.non_member)
         self.assert_http_responses(
@@ -83,7 +83,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_member_permissions(self) -> None:
-        """Test permissions for authenticated users accessing records owned by their own team."""
+        """Verify team members have read and write permissions against their own group records."""
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
@@ -99,7 +99,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(

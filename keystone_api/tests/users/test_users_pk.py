@@ -31,7 +31,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = User.objects.get(username='staff_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
 
@@ -48,7 +48,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_same_user(self) -> None:
-        """Test permissions for authenticated users accessing their own user record."""
+        """Verify authenticated users can access and modify their own records."""
 
         # Define a user / record endpoint from the SAME user
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
@@ -74,7 +74,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_different_user(self) -> None:
-        """Test permissions for authenticated users accessing records of another user."""
+        """Verify users cannot modify other users' records."""
 
         # Define a user / record endpoint from a DIFFERENT user
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
@@ -93,7 +93,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
         self.client.force_authenticate(user=self.staff_user)
@@ -132,7 +132,7 @@ class CredentialHandling(APITestCase):
         self.staff_user = User.objects.get(username='staff_user')
 
     def test_user_get_own_password(self) -> None:
-        """Test a user cannot get their own password."""
+        """Verify users cannot retrieve their own password."""
 
         self.client.force_authenticate(user=self.user1)
         response = self.client.get(
@@ -143,7 +143,7 @@ class CredentialHandling(APITestCase):
         self.assertNotIn('password', response.json())
 
     def test_user_set_own_password(self) -> None:
-        """Test a user can set their own password."""
+        """Verify users can change their own password."""
 
         self.client.force_authenticate(user=self.user1)
         response = self.client.patch(
@@ -156,7 +156,7 @@ class CredentialHandling(APITestCase):
         self.assertTrue(self.user1.check_password('new_password123'))
 
     def test_user_get_others_password(self) -> None:
-        """Test a user cannot get another user's password."""
+        """Verify users cannot retrieve another user's password."""
 
         authenticated_user = self.user1
         other_user = self.user2
@@ -170,7 +170,7 @@ class CredentialHandling(APITestCase):
         self.assertNotIn('password', response.data)
 
     def test_user_set_others_password(self) -> None:
-        """Test a user cannot set another user's password."""
+        """Verify users cannot change another user's password."""
 
         authenticated_user = self.user1
         other_user = self.user2
@@ -184,7 +184,7 @@ class CredentialHandling(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_staff_get_password(self) -> None:
-        """Test a staff user cannot get another user's password."""
+        """Verify staff users cannot retrieve user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get(
@@ -195,7 +195,7 @@ class CredentialHandling(APITestCase):
         self.assertNotIn('password', response.json())
 
     def test_staff_set_password(self) -> None:
-        """Test the password field is settable by staff users."""
+        """Verify staff users can change user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.patch(

@@ -38,7 +38,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.team_member = User.objects.get(username='member_1')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -53,7 +53,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_non_member_permissions(self) -> None:
-        """Test non-members have read-only permissions."""
+        """Verify non-members have read-only permissions."""
 
         self.client.force_authenticate(user=self.non_team_member)
         self.assert_http_responses(
@@ -70,7 +70,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_member_permissions(self) -> None:
-        """Test team members have read only permissions."""
+        """Verify team members have read-only permissions."""
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
@@ -87,7 +87,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_admin_permissions(self) -> None:
-        """Test team admins have read and write permissions."""
+        """Verify team admins have read and write permissions for their own team."""
 
         self.client.force_authenticate(user=self.team_admin)
         self.assert_http_responses(
@@ -104,7 +104,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_owner_permissions(self) -> None:
-        """Test team owners have read and write permissions."""
+        """Verify team owners have read and write permissions for their own team."""
 
         self.client.force_authenticate(user=self.team_owner)
         self.assert_http_responses(
@@ -121,7 +121,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
