@@ -173,7 +173,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': env.str('API_THROTTLE_ANON', '120/min'),
-        'user': env.str('API_THROTTLE_USER', '240/min')
+        'user': env.str('API_THROTTLE_USER', '300/min')
     },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
