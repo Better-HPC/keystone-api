@@ -202,7 +202,7 @@
   fields:
     title: "Publication (Team 1)"
     abstract: "Abstract Text"
-    date: "2000-01-01"
+    published: "2000-01-01"
     journal: "Journal Name"
     team: 1
 - model: research_products.publication
@@ -210,7 +210,7 @@
   fields:
     title: "Publication (Team 2)"
     abstract: "Abstract text."
-    date: "2000-01-01"
+    published: "2000-01-01"
     journal: "Journal Name"
     team: 2
 
