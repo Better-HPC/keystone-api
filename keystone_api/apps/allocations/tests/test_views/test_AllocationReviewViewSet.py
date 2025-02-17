@@ -9,13 +9,13 @@ from apps.allocations.views import AllocationReviewViewSet
 from apps.users.models import Team, User
 
 
-class GetQueryset(TestCase):
-    """Test the filtering of database records based on user permissions."""
+class GetQuerysetMethod(TestCase):
+    """Test the scope of database queries returned by the `get_queryset` method."""
 
     fixtures = ['testing_common.yaml']
 
     def test_get_queryset_for_staff_user(self) -> None:
-        """Test staff users can query all reviews."""
+        """Verify staff users are returned query including all reviews."""
 
         staff_user = User.objects.get(username='staff_user')
 
@@ -24,7 +24,7 @@ class GetQueryset(TestCase):
         self.assertQuerySetEqual(expected_queryset, viewset.get_queryset(), ordered=False)
 
     def test_get_queryset_for_non_staff_user(self) -> None:
-        """Test non-staff users can only query reviews for their own teams."""
+        """Verify non-staff users can only query allocations for their own teams."""
 
         user = User.objects.get(username='member_1')
         team = Team.objects.get(name='Team 1')
@@ -34,8 +34,8 @@ class GetQueryset(TestCase):
         self.assertQuerySetEqual(expected_queryset, viewset.get_queryset(), ordered=False)
 
 
-class Create(TestCase):
-    """Test the creation of new records."""
+class CreateMethod(TestCase):
+    """Test the creation of new records via the `create` method."""
 
     fixtures = ['testing_common.yaml']
 
@@ -46,7 +46,7 @@ class Create(TestCase):
         self.request = AllocationRequest.objects.get(pk=1)
 
     def test_create_with_automatic_reviewer(self) -> None:
-        """Test the reviewer field is automatically set to the current user."""
+        """Verify the reviewer field is automatically set to the current user."""
 
         request = RequestFactory().post('/allocation-reviews/')
         request.user = self.staff_user
@@ -71,7 +71,7 @@ class Create(TestCase):
         self.assertEqual(review.status, 'AP')
 
     def test_create_with_provided_reviewer(self) -> None:
-        """Test the reviewer field in the request data is respected if provided."""
+        """Verify the reviewer field in the request data is respected if provided."""
 
         request = RequestFactory().post('/allocation-reviews/')
         request.user = self.staff_user
