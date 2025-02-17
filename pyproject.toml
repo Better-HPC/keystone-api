@@ -74,8 +74,6 @@ omit = [
     "*/tests/*",
     "*/migrations/*",
     "keystone_api/main/*",
-    "keystone_api/apps/*/admin.py",
-    "keystone_api/apps/*/permissions.py"
 ]
 
 [project.scripts]

@@ -62,7 +62,7 @@ class Preference(models.Model):
 
         cls.objects.update_or_create(user=user, defaults=kwargs)
 
-    def get_next_expiration_threshold(self, days_until_expire: int) -> int | None:
+    def get_expiration_threshold(self, days_until_expire: int) -> int | None:
         """Return the next threshold at which an expiration notification should be sent
 
         The next notification occurs at the smallest threshold that is
@@ -80,7 +80,7 @@ class Preference(models.Model):
             default=None
         )
 
-    def get_next_usage_threshold(self, usage_percentage: int) -> int | None:
+    def get_usage_threshold(self, usage_percentage: int) -> int | None:
         """Return the next threshold at which a usage notification should be sent
 
         The next notification occurs at the largest threshold that is
