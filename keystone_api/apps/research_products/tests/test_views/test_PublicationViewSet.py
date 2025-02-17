@@ -26,7 +26,6 @@ class GetQuerysetMethod(TestCase):
         self.team1_publication = Publication.objects.create(
             title="Publication 1",
             abstract="Abstract 1",
-            date="2020-01-01",
             journal="Journal 1",
             team=self.team1
         )
@@ -38,7 +37,6 @@ class GetQuerysetMethod(TestCase):
         self.team2_publication = Publication.objects.create(
             title="Publication 2",
             abstract="Abstract 2",
-            date="2020-01-02",
             journal="Journal 2",
             team=self.team2
         )

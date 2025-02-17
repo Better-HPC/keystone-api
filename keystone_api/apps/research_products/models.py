@@ -41,9 +41,11 @@ class Publication(models.Model):
 
     title = models.CharField(max_length=250)
     abstract = models.TextField()
-    date = models.DateField('Publication Date')
-    journal = models.CharField(max_length=100)
+    published = models.DateField(null=True, blank=True)
+    submitted = models.DateField(null=True, blank=True)
+    journal = models.CharField(max_length=100, null=True, blank=True)
     doi = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    preparation = models.BooleanField(default=False)
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
