@@ -12,7 +12,7 @@ from main import settings
 
 
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
-class EmailSending(TestCase):
+class SendNotificationTemplateMethod(TestCase):
     """Test sending email templates via the `send_notification_template` function."""
 
     def setUp(self) -> None:
@@ -27,7 +27,7 @@ class EmailSending(TestCase):
         )
 
     def test_email_content(self) -> None:
-        """Test an email notification is sent with the correct content."""
+        """Verify the email notification is sent with the correct content."""
 
         subject = 'Test subject'
 
@@ -47,7 +47,7 @@ class EmailSending(TestCase):
         self.assertEqual([self.user.email], email.to)
 
     def test_database_is_updated(self) -> None:
-        """Test a record of the email is stored in the database."""
+        """Verify a record of the email is stored in the database."""
 
         notification_type = Notification.NotificationType.general_message
         notification_metadata = {'key': 'value'}
@@ -66,7 +66,7 @@ class EmailSending(TestCase):
         self.assertEqual(notification_metadata, notification.metadata)
 
     def test_missing_template(self) -> None:
-        """Test an error is raised when a template is not found."""
+        """Verify an error is raised when a template is not found."""
 
         with self.assertRaises(TemplateDoesNotExist):
             send_notification_template(
@@ -78,7 +78,7 @@ class EmailSending(TestCase):
             )
 
     def test_incomplete_rendering(self) -> None:
-        """Test an error is raise when a template isn't completely rendered."""
+        """Verify an error is raised when a template isn't completely rendered."""
 
         with self.assertRaises(jinja2.UndefinedError):
             send_notification_template(
