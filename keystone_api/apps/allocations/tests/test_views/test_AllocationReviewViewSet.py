@@ -4,6 +4,7 @@ from django.test import RequestFactory, TestCase
 from rest_framework import status
 
 from apps.allocations.models import AllocationRequest, AllocationReview
+from apps.allocations.tests.test_views.utils import create_viewset_request
 from apps.allocations.views import AllocationReviewViewSet
 from apps.users.models import Team, User
 
@@ -16,26 +17,20 @@ class GetQueryset(TestCase):
     def test_get_queryset_for_staff_user(self) -> None:
         """Test staff users can query all reviews."""
 
-        request = RequestFactory()
-        request.user = User.objects.get(username='staff_user')
+        staff_user = User.objects.get(username='staff_user')
 
-        viewset = AllocationReviewViewSet()
-        viewset.request = request
-
+        viewset = create_viewset_request(AllocationReviewViewSet, staff_user)
         expected_queryset = AllocationReview.objects.all()
         self.assertQuerySetEqual(expected_queryset, viewset.get_queryset(), ordered=False)
 
     def test_get_queryset_for_non_staff_user(self) -> None:
         """Test non-staff users can only query reviews for their own teams."""
 
-        request = RequestFactory()
-        request.user = User.objects.get(username='member_1')
+        user = User.objects.get(username='member_1')
+        team = Team.objects.get(name='Team 1')
 
-        viewset = AllocationReviewViewSet()
-        viewset.request = request
-
-        team1 = Team.objects.get(name='Team 1')
-        expected_queryset = AllocationReview.objects.filter(request__team__in=[team1.id])
+        viewset = create_viewset_request(AllocationReviewViewSet, user)
+        expected_queryset = AllocationReview.objects.filter(request__team__in=[team.id])
         self.assertQuerySetEqual(expected_queryset, viewset.get_queryset(), ordered=False)
 
 
