@@ -8,7 +8,7 @@ from apps.users.models import *
 
 
 class GetAllocationData(TestCase):
-    """Test get methods used to retrieve allocation metadata/status."""
+    """Test getter methods used to retrieve allocation metadata/status."""
 
     def setUp(self) -> None:
         """Create test data."""
@@ -78,40 +78,40 @@ class GetAllocationData(TestCase):
         )
 
     def test_approved_allocations(self) -> None:
-        """Test the `approved_allocations` method returns only approved allocations."""
+        """Verify the `approved_allocations` method returns only approved allocations."""
 
         approved_allocations = Allocation.objects.approved_allocations(self.team, self.cluster)
         expected_allocations = [self.allocation2, self.allocation3, self.allocation4]
         self.assertQuerySetEqual(expected_allocations, approved_allocations, ordered=False)
 
     def test_active_allocations(self) -> None:
-        """Test the `active_allocations` method returns only active allocations."""
+        """Verify the `active_allocations` method returns only active allocations."""
 
         active_allocations = Allocation.objects.active_allocations(self.team, self.cluster)
         expected_allocations = [self.allocation2]
         self.assertQuerySetEqual(expected_allocations, active_allocations, ordered=False)
 
     def test_expired_allocations(self) -> None:
-        """Test the `expired_allocations` method returns only expired allocations."""
+        """Verify the `expired_allocations` method returns only expired allocations."""
 
         expiring_allocations = Allocation.objects.expiring_allocations(self.team, self.cluster)
         expected_allocations = [self.allocation3]
         self.assertQuerySetEqual(expected_allocations, expiring_allocations, ordered=False)
 
     def test_active_service_units(self) -> None:
-        """Test the `active_service_units` method returns the total awarded service units for active allocations."""
+        """Verify the `active_service_units` method returns the total awarded service units for active allocations."""
 
         active_su = Allocation.objects.active_service_units(self.team, self.cluster)
         self.assertEqual(80, active_su)
 
     def test_expired_service_units(self) -> None:
-        """Test the `expired_service_units` method returns the total awarded service units for expired allocations."""
+        """Verify the `expired_service_units` method returns the total awarded service units for expired allocations."""
 
         expiring_su = Allocation.objects.expiring_service_units(self.team, self.cluster)
         self.assertEqual(70, expiring_su)
 
     def test_historical_usage(self) -> None:
-        """Test the `historical_usage` method returns the total final usage for expired allocations."""
+        """Verify the `historical_usage` method returns the total final usage for expired allocations."""
 
         historical_usage = Allocation.objects.historical_usage(self.team, self.cluster)
         self.assertEqual(60, historical_usage)
