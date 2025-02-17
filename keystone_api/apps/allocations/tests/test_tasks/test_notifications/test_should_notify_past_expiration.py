@@ -11,7 +11,7 @@ from apps.notifications.models import Preference
 from apps.users.models import Team, User
 
 
-class CheckIfShouldSend(TestCase):
+class ShouldNotifyPastExpirationMethod(TestCase):
     """Test the determination of whether an expiration notification should be issued."""
 
     def setUp(self) -> None:
@@ -23,7 +23,7 @@ class CheckIfShouldSend(TestCase):
 
     @patch('apps.notifications.models.Notification.objects.filter')
     def test_false_if_duplicate_notification(self, mock_notification_filter: Mock) -> None:
-        """Test the return value is `False` if a notification has already been issued."""
+        """Verify the return value is `False` if a notification has already been issued."""
 
         mock_notification_filter.return_value.exists.return_value = True
         with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
@@ -31,12 +31,12 @@ class CheckIfShouldSend(TestCase):
             self.assertRegex(log.output[-1], '.*Notification already sent.')
 
     def test_false_if_disabled_in_preferences(self) -> None:
-        """Test the return value is `False` if expiry notifications are disabled in preferences."""
+        """Verify the return value is `False` if expiry notifications are disabled in preferences."""
 
         Preference.objects.create(user=self.user, notify_on_expiration=False)
         self.assertFalse(should_notify_past_expiration(self.user, self.request))
 
     def test_true_if_new_notification(self) -> None:
-        """Test the return value is `True` if a notification has not been issued yet."""
+        """Verify the return value is `True` if a notification has not been issued yet."""
 
         self.assertTrue(should_notify_past_expiration(self.user, self.request))

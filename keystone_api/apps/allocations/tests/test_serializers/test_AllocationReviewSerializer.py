@@ -9,7 +9,7 @@ from apps.allocations.serializers import AllocationReviewSerializer
 from apps.users.models import Team, User
 
 
-class Validation(TestCase):
+class ValidationMethod(TestCase):
     """Test record validation."""
 
     def setUp(self) -> None:
@@ -26,7 +26,7 @@ class Validation(TestCase):
         )
 
     def test_reviewer_matches_submitter(self) -> None:
-        """Test validation passes when the reviewer is the submitting user."""
+        """Verify validation passes when the reviewer is the user submitting the HTTP request."""
 
         # Create a POST where the submitter matches the reviewer
         post_data = {'request': self.request.id, 'reviewer': self.user.id, 'status': AllocationReview.StatusChoices.APPROVED}
@@ -37,7 +37,7 @@ class Validation(TestCase):
         self.assertTrue(serializer.is_valid(raise_exception=True))
 
     def test_different_reviewer_from_submitter(self) -> None:
-        """Test validation fails when the reviewer is different from the submitting user."""
+        """Verify validation fails when the reviewer is different from the user submitting the HTTP request."""
 
         # Create a POST where the submitter is different from the reviewer
         post_data = {'request': self.request.id, 'reviewer': self.user.id, 'status': AllocationReview.StatusChoices.APPROVED}
@@ -49,7 +49,7 @@ class Validation(TestCase):
             serializer.is_valid(raise_exception=True)
 
     def test_reviewer_is_optional(self) -> None:
-        """Test the reviewer field is optional."""
+        """Verify the reviewer field is optional."""
 
         post_data = {'request': self.request.id, 'status': AllocationReview.StatusChoices.APPROVED}
         request = APIRequestFactory().post('/reviews/', post_data)
