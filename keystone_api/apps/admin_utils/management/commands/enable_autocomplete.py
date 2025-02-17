@@ -29,14 +29,13 @@ class Command(BaseCommand):
     def _handle(self) -> None:
         """Execute the application logic."""
 
-        if not self.prompt_for_confirmation():
-            return
-
-        # Find the user's .bash_prf le or .bashrc file
-        profile_path = self.get_profile_path()
-        if profile_path is None:
+        # Find the user's shell config files
+        if not (profile_paths := self.get_profile_paths()):
             self.stderr.write(f'No .bash_profile or .bashrc file found.')
             exit(1)
+
+        if not self.prompt_for_confirmation(profile_paths):
+            return
 
         # Copy the completion script into the user's home directory
         completion_script_src = Path(__file__).parent.resolve() / 'keystone_autocomplete'
@@ -44,21 +43,23 @@ class Command(BaseCommand):
         shutil.copyfile(completion_script_src, completion_script_dest)
 
         # Source the completion file in the user's shell configuration
-        with profile_path.open(mode='a') as file:
-            file.write('\nsource ~/.keystone_autocomplete\n')
+        for path in profile_paths:
+            with path.open(mode='a') as file:
+                file.write('\nsource ~/.keystone_autocomplete\n')
 
     @staticmethod
-    def prompt_for_confirmation() -> bool:
+    def prompt_for_confirmation(profile_paths: list[Path]) -> bool:
         """Prompt the user to confirm executing of the parent command.
 
-        Args:
+        Returns:
             A boolean indicating whether the user confirmed execution.
         """
 
+        path_names = ' and '.join(path.name for path in profile_paths)
         print(
-            'This command will make the following changes:\n',
+            'This command will make the following changes:\n'
             '  - A file `.keystone_autocomplete` will be add to your home directory\n'
-            '  - A line of setup code will be added to your .bash_profile or .bashrc file`\n'
+            f'  - A line of setup code will be added to your {path_names} file\n'
         )
 
         while True:
@@ -72,19 +73,14 @@ class Command(BaseCommand):
             print('Unrecognized input.')
 
     @staticmethod
-    def get_profile_path() -> Path | None:
-        """Search the user's home directory .bash_profile or .bashrc file.
-
-        The .bash_profile file is given preference over .bashrc.
+    def get_profile_paths() -> list[Path]:
+        """Search the user's home directory for shell configuration files.
 
         Returns:
-            The file path object if a file is found, otherwise `None`.
+            A list of shell configuration files found in the user's home directory.
         """
 
-        bash_profile_path = Path.home() / '.bash_profile'
         bashrc_path = Path.home() / '.bashrc'
-        for file in (bash_profile_path, bashrc_path):
-            if file.exists():
-                return file
-
-        return None
+        zshrc_path = Path.home() / '.zshrc'
+        paths = [bashrc_path, zshrc_path]
+        return [p for p in paths if p.exists()]
