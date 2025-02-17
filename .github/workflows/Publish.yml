@@ -13,7 +13,10 @@ jobs:
   publish-docker:
     runs-on: ubuntu-latest
     name: Docker Image
-    environment: publish
+
+    environment:
+      name: ghcr
+      url: https://github.com/Better-HPC/auto-rest/pkgs/container/auto-rest
 
     steps:
       - name: Checkout source
@@ -83,7 +86,10 @@ jobs:
   publish-pypi:
     name: Python Distribution
     runs-on: ubuntu-latest
-    environment: publish
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/keystone-api/
 
     steps:
       - name: Set up Python
@@ -111,7 +117,8 @@ jobs:
   trigger-docs:
     name: Trigger Docs
     runs-on: ubuntu-latest
-    environment: publish
+
+    environment: docs
 
     steps:
       - name: Update docs
