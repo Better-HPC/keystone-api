@@ -3749,65 +3749,6 @@ paths:
         schema:
           type: string
       - in: query
-        name: date
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__day
-        schema:
-          type: number
-      - in: query
-        name: date__gt
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__gte
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__in
-        schema:
-          type: array
-          items:
-            type: string
-            format: date
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: date__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: date__lt
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__lte
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__month
-        schema:
-          type: number
-      - in: query
-        name: date__week
-        schema:
-          type: number
-      - in: query
-        name: date__week_day
-        schema:
-          type: number
-      - in: query
-        name: date__year
-        schema:
-          type: number
-      - in: query
         name: doi
         schema:
           type: string
@@ -3898,6 +3839,141 @@ paths:
         name: journal__startswith
         schema:
           type: string
+      - in: query
+        name: preparation
+        schema:
+          type: boolean
+      - in: query
+        name: preparation__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: preparation__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: published
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__day
+        schema:
+          type: number
+      - in: query
+        name: published__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: published__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: published__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__month
+        schema:
+          type: number
+      - in: query
+        name: published__week
+        schema:
+          type: number
+      - in: query
+        name: published__week_day
+        schema:
+          type: number
+      - in: query
+        name: published__year
+        schema:
+          type: number
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
       - in: query
         name: team
         schema:
@@ -5684,17 +5760,24 @@ components:
           maxLength: 250
         abstract:
           type: string
-        date:
+        published:
           type: string
           format: date
-          title: Publication Date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
         journal:
           type: string
+          nullable: true
           maxLength: 100
         doi:
           type: string
           nullable: true
           maxLength: 50
+        preparation:
+          type: boolean
         team:
           type: integer
     PatchedRestrictedUser:
@@ -5817,24 +5900,29 @@ components:
           maxLength: 250
         abstract:
           type: string
-        date:
+        published:
           type: string
           format: date
-          title: Publication Date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
         journal:
           type: string
+          nullable: true
           maxLength: 100
         doi:
           type: string
           nullable: true
           maxLength: 50
+        preparation:
+          type: boolean
         team:
           type: integer
       required:
       - abstract
-      - date
       - id
-      - journal
       - team
       - title
     RequestLog:
