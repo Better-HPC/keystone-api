@@ -25,9 +25,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Load user accounts from test fixtures."""
 
         self.generic_user = User.objects.get(username='generic_user')
+        self.staff_user = User.objects.get(username='staff_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -42,9 +43,25 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test general authenticated users have read-only permissions."""
+        """Verify authenticated users have read-only permissions."""
 
         self.client.force_authenticate(user=self.generic_user)
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def test_staff_user_permissions(self) -> None:
+        """Verify staff users have read-only permissions."""
+
+        self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_200_OK,

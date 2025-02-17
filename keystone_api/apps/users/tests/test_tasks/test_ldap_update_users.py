@@ -8,8 +8,8 @@ from apps.users.models import User
 from apps.users.tasks import ldap_update_users
 
 
-class UpdateUsers(TestCase):
-    """Test the updating of user data."""
+class LdapUpdateUsersMethod(TestCase):
+    """Test the updating of user data via the `ldap_update_users` method."""
 
     @override_settings(AUTH_LDAP_SERVER_URI=None)
     def test_exit_silently_when_uri_is_none(self) -> None:
@@ -59,10 +59,6 @@ class UpdateUsers(TestCase):
         mock_conn = mock_get_ldap_connection.return_value
         mock_conn.search_s.return_value = []
         ldap_update_users(prune=False)
-
-
-class UserRemoval(TestCase):
-    """Test the removal and/or deactivation of user accounts."""
 
     @override_settings(
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',

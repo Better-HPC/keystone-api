@@ -29,7 +29,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = User.objects.get(username='staff_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -44,7 +44,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test general authenticated users have read-only permissions."""
+        """Verify authenticated users have read-only permissions."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -60,7 +60,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
@@ -90,7 +90,7 @@ class ReviewerAssignment(APITestCase):
         self.staff_user = User.objects.get(username='staff_user')
 
     def test_default_reviewer(self) -> None:
-        """Test the reviewer field defaults to the current user."""
+        """Verify the reviewer field defaults to the current user."""
 
         self.client.force_authenticate(user=self.staff_user)
 
@@ -99,7 +99,7 @@ class ReviewerAssignment(APITestCase):
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
     def test_reviewer_provided(self) -> None:
-        """Test the reviewer is set correctly when provided."""
+        """Verify the reviewer is set correctly when provided."""
 
         self.client.force_authenticate(user=self.staff_user)
 
@@ -108,7 +108,7 @@ class ReviewerAssignment(APITestCase):
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
     def test_error_when_not_matching_submitter(self) -> None:
-        """Test an error is raised when the reviewer field does not match the request submitter."""
+        """Verify an error is raised when the reviewer field does not match the request submitter."""
 
         self.client.force_authenticate(user=self.staff_user)
 

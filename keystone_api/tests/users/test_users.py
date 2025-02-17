@@ -29,7 +29,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -44,7 +44,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test general authenticated users can access all user info."""
+        """Verify authenticated can read user info."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -60,7 +60,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users can access all user info."""
+        """Verify staff users can read user info."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
@@ -94,7 +94,7 @@ class CredentialHandling(APITestCase):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_new_user_credentials_are_set(self) -> None:
-        """Test the user is created with the correct password.
+        """Verify new users are created with the correctly hashed password.
 
         Passwords are provided in plain text but stored in the DB as a hash.
         """
@@ -124,7 +124,7 @@ class CredentialHandling(APITestCase):
         self.assertEqual(new_user.last_name, 'Bar')
 
     def test_credentials_not_gettable(self) -> None:
-        """Test credentials are not included in get requests."""
+        """Verify credentials are not included in get requests."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get('/users/users/')
@@ -136,7 +136,7 @@ class CredentialHandling(APITestCase):
             self.assertNotIn('password', record.keys(), f'Password field found in record: {record}')
 
     def test_passwords_are_validated(self) -> None:
-        """Test passwords are validated against security requirements."""
+        """Verify passwords are validated against security requirements."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.post(

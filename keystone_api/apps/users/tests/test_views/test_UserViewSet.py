@@ -8,7 +8,7 @@ from apps.users.views import UserViewSet
 
 
 class GetSerializerClassMethod(TestCase):
-    """Test the `get_serializer_class` method."""
+    """Test the correct serializer is returned by the `get_serializer_class` method."""
 
     def setUp(self) -> None:
         """Create user accounts for testing"""

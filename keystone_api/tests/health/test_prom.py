@@ -33,7 +33,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_unauthenticated_user_permissions(self, _mock_run_check: Mock) -> None:
-        """Test unauthenticated users have read-only permissions."""
+        """Verify unauthenticated users have read-only permissions."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -48,7 +48,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self, _mock_run_check: Mock) -> None:
-        """Test authenticated users have read-only permissions."""
+        """Verify authenticated users have read-only permissions."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -64,7 +64,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self, _mock_run_check: Mock) -> None:
-        """Test staff users have read-only permissions."""
+        """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(

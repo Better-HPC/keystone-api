@@ -8,8 +8,8 @@ from apps.logging.handlers import DBHandler
 from apps.logging.models import AppLog
 
 
-class EmitToDatabase(TestCase):
-    """Test emitted log data is recorded into the application database."""
+class EmitMethod(TestCase):
+    """Test the `emit` method properly records log data in the application database."""
 
     def assert_db_record_matches_log_content(
         self, handler: logging.Handler, log_record: logging.LogRecord, db_record: AppLog

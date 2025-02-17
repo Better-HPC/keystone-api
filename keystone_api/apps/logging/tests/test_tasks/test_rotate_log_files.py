@@ -10,8 +10,8 @@ from apps.logging.models import AppLog, RequestLog
 from apps.logging.tasks import clear_log_files
 
 
-class LogFileDeletion(TestCase):
-    """Test the deletion of log records."""
+class ClearLogFilesMethod(TestCase):
+    """Test the deletion of log records by the  clear_log_files` method."""
 
     def create_dummy_records(self, timestamp: datetime) -> None:
         """Create a single record in each logging database table.
