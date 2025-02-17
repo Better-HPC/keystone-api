@@ -106,3 +106,47 @@ class GetExpirationThresholdMethod(TestCase):
         self.preference.request_expiry_thresholds = []
         next_threshold = self.preference.get_expiration_threshold(10)
         self.assertIsNone(next_threshold)
+
+
+class GetUsageThresholdMethod(TestCase):
+    """Test determining the next usage notification threshold via the `get_usage_threshold` method."""
+
+    def setUp(self) -> None:
+        """Set up test data."""
+
+        self.user = get_user_model().objects.create_user(username="testuser", password="foobar123")
+        self.preference = Preference.objects.create(
+            user=self.user,
+            request_expiry_thresholds=[10, 20, 30, 50, 75]
+        )
+
+    def test_value_below_all_thresholds(self) -> None:
+        """Verify the calculation when the given value is below all thresholds."""
+
+        next_threshold = self.preference.get_usage_threshold(5)
+        self.assertEqual(next_threshold, None)
+
+    def test_value_between_thresholds(self) -> None:
+        """Verify the calculation when the given value is between two valid thresholds."""
+
+        next_threshold = self.preference.get_usage_threshold(25)
+        self.assertEqual(next_threshold, 20)
+
+    def test_value_above_all_thresholds(self) -> None:
+        """Verify the calculation when the given value is above all thresholds."""
+
+        next_threshold = self.preference.get_usage_threshold(80)
+        self.assertEqual(next_threshold, 75)
+
+    def test_value_exact_match(self) -> None:
+        """Verify the calculation when the given value exactly matches a threshold."""
+
+        next_threshold = self.preference.get_usage_threshold(50)
+        self.assertEqual(next_threshold, 50)
+
+    def test_empty_threshold_list(self) -> None:
+        """Verify `None` is returned for empty list of thresholds."""
+
+        self.preference.request_expiry_thresholds = []
+        next_threshold = self.preference.get_usage_threshold(10)
+        self.assertIsNone(next_threshold)
