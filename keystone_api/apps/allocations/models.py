@@ -16,6 +16,7 @@ from django.db import models
 from django.template.defaultfilters import truncatechars
 
 from apps.allocations.managers import AllocationManager
+from apps.research_products.models import Grant, Publication
 from apps.users.models import Team, User
 
 __all__ = [
@@ -80,6 +81,8 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     team: Team = models.ForeignKey(Team, on_delete=models.CASCADE)
     assignees: User = models.ManyToManyField(User, blank=True, related_name='assigned_allocationrequest_set')
+    publications: Publication = models.ManyToManyField(Publication, blank=True)
+    grants: Grant = models.ManyToManyField(Grant, blank=True)
 
     def clean(self) -> None:
         """Validate the model instance.
