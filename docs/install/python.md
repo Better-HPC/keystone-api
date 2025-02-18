@@ -48,7 +48,7 @@ keystone-api --help
 ```
 
 The `keystone-api` utility does not support tab autocompletion by default.
-To enable autocomplete for the Bash shell, use the `enable_autocomplete` command.
+To enable autocomplete for the Bash or Zsh shell, use the `enable_autocomplete` command.
 
 ```bash
 keystone-api enable_autocomplete
