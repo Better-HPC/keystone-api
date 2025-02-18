@@ -3811,6 +3811,35 @@ paths:
         schema:
           type: integer
       - in: query
+        name: issue
+        schema:
+          type: string
+      - in: query
+        name: issue__contains
+        schema:
+          type: string
+      - in: query
+        name: issue__endswith
+        schema:
+          type: string
+      - in: query
+        name: issue__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: issue__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: issue__startswith
+        schema:
+          type: string
+      - in: query
         name: journal
         schema:
           type: string
@@ -4018,6 +4047,35 @@ paths:
           type: boolean
       - in: query
         name: title__startswith
+        schema:
+          type: string
+      - in: query
+        name: volume
+        schema:
+          type: string
+      - in: query
+        name: volume__contains
+        schema:
+          type: string
+      - in: query
+        name: volume__endswith
+        schema:
+          type: string
+      - in: query
+        name: volume__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: volume__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: volume__startswith
         schema:
           type: string
       tags:
@@ -5778,6 +5836,14 @@ components:
           maxLength: 50
         preparation:
           type: boolean
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
         team:
           type: integer
     PatchedRestrictedUser:
@@ -5918,6 +5984,14 @@ components:
           maxLength: 50
         preparation:
           type: boolean
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
         team:
           type: integer
       required:
