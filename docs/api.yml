@@ -5309,6 +5309,14 @@ components:
           type: array
           items:
             type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
+          type: array
+          items:
+            type: integer
       required:
       - description
       - id
@@ -5578,6 +5586,14 @@ components:
         team:
           type: integer
         assignees:
+          type: array
+          items:
+            type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
           type: array
           items:
             type: integer
