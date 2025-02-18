@@ -46,6 +46,8 @@ class Publication(models.Model):
     journal = models.CharField(max_length=100, null=True, blank=True)
     doi = models.CharField(max_length=50, unique=True, null=True, blank=True)
     preparation = models.BooleanField(default=False)
+    volume = models.CharField(max_length=20, null=True, blank=True)
+    issue = models.CharField(max_length=20, null=True, blank=True)
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
