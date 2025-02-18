@@ -1,12 +1,12 @@
-# Deploying with Python
+# Deploying with Systemd
 
 Keystone-API can be installed directly on a machine using system packages.
-Doing so requires administrative privileges and assumes you are managing system services via systemd.
+Doing so requires administrative privileges and assumes you are familiar with managing system services via systemd.
 
 !!! note
 
-    When deploying to production, it is strongly recommended to install the application under a dedicated, unprivileged service account.
-    In the following example, a user account called `keystone` is used. 
+    Using a dedicated, unprivileged service account is strongly recommended when deploying to production.
+    A service account with username `keystone` is used in the following example. 
 
 ## Installing the API
 
@@ -48,7 +48,7 @@ keystone-api --help
 ```
 
 The `keystone-api` utility does not support tab autocompletion by default.
-To enable autocomplete for the Bash or Zsh shell, use the `enable_autocomplete` command.
+To enable autocomplete for the Bash shell, use the `enable_autocomplete` command.
 
 ```bash
 keystone-api enable_autocomplete
