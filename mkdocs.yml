@@ -4,7 +4,7 @@ nav:
   - Installation:
       - install/slurm.md
       - install/docker.md
-      - install/python.md
+      - install/systemd.md
       - install/settings.md
   - REST API:
     - API Specification: api/index.html
