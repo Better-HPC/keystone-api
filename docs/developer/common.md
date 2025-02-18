@@ -26,7 +26,7 @@ pip install -e .
 ```
 
 If the installation was successful, the packaged CLI tool will be available in your working environment.
-Use the `enable_autocomplete` command to enable autocomplete for the Bash shell.
+Use the `enable_autocomplete` command to enable autocomplete for the Bash and Zsh shells.
 
 ```bash
 keystone-api enable_autocomplete
