@@ -16,7 +16,7 @@ jobs:
 
     environment:
       name: ghcr
-      url: https://github.com/Better-HPC/auto-rest/pkgs/container/auto-rest
+      url: https://github.com/Better-HPC/keystone-api/pkgs/container/keystone-api
 
     steps:
       - name: Checkout source
