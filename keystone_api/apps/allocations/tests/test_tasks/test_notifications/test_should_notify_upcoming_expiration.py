@@ -1,6 +1,6 @@
 """Unit tests for the `should_notify_upcoming_expiration` function."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
@@ -17,7 +17,12 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
     def setUp(self) -> None:
         """Set up test data."""
 
-        self.user = User.objects.create_user(username='testuser', password='foobar123!', date_joined=datetime(2020, 1, 1))
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='foobar123!',
+            date_joined=datetime(2020, 1, 1, tzinfo=timezone.utc)
+        )
+
         self.team = Team.objects.create()
         self.request = AllocationRequest.objects.create(team=self.team, expire=date.today() + timedelta(days=15))
 

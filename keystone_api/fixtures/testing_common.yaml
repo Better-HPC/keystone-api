@@ -164,7 +164,7 @@
     status: AP
     request: 1
     reviewer: 9
-    last_modified: "2023-01-01"
+    last_modified: "2023-01-01T00:00:00-00:00"
 
 # Allocations
 - model: allocations.allocation
@@ -188,13 +188,13 @@
   fields:
     request: 1
     path: /dummy/file1.txt
-    uploaded: "2000-01-01"
+    uploaded: "2000-01-01T00:00:00-00:00"
 - model: allocations.attachment
   pk: 2
   fields:
     request: 1
     path: /dummy/file1.txt
-    uploaded: "2000-01-01"
+    uploaded: "2000-01-01T00:00:00-00:00"
 
 # Publications
 - model: research_products.publication
