@@ -27,11 +27,13 @@ class PublicationAdmin(admin.ModelAdmin):
         # Rely on the object to determine the appropriate string title representation
         return str(obj)
 
-    list_display = ['team', 'title', 'date']
+    list_display = ['team', 'title', 'submitted', 'published', 'preparation']
     list_display_links = list_display
     search_fields = ['title', 'team__name']
     list_filter = [
-        ('date', admin.DateFieldListFilter),
+        ('submitted', admin.DateFieldListFilter),
+        ('published', admin.DateFieldListFilter),
+        ('preparation', admin.BooleanFieldListFilter),
     ]
 
 
