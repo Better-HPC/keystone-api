@@ -33,6 +33,13 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
         model = TeamMembership
         fields = '__all__'
 
+    def create(self, validated_data):
+        """Create and return a new `TeamMembership` instance."""
+
+        user = User.objects.get(username=validated_data['user'])
+        team = Team.objects.get(name=validated_data['team'])
+        return TeamMembership.objects.create(user=user, team=team)
+
 
 class UserRoleSerializer(serializers.ModelSerializer):
     """Object serializer for the `TeamMembership` model including the usernames and roles of each member."""
@@ -44,6 +51,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
         model = TeamMembership
         fields = ["user", "role"]
+        read_only_fields = ["user", "role"]
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):
@@ -56,6 +64,7 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 
         model = TeamMembership
         fields = ["team", "role"]
+        read_only_fields = ["team", "role"]
 
 
 class TeamSerializer(serializers.ModelSerializer):
