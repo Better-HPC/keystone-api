@@ -20,28 +20,11 @@ __all__ = [
 ]
 
 
-class TeamSerializer(serializers.ModelSerializer):
-    """Object serializer for the `Team` model."""
-
-    membership = serializers.SerializerMethodField()
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Team
-        fields = ['id', 'name', 'is_active', 'membership']
-
-    def get_membership(self, obj: Team) -> dict:
-        """Return a mapping of usernames to user roles."""
-
-        return {mem.user.username: mem.role for mem in obj.teammembership_set.all()}
-
-
 class TeamMembershipSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model."""
+    """Object serializer for the `TeamMembership` model including all fields."""
 
-    user = serializers.SerializerMethodField()
-    team = serializers.SerializerMethodField()
+    user = serializers.CharField(source='user.username')
+    team = serializers.CharField(source='team.name')
 
     class Meta:
         """Serializer settings."""
@@ -49,21 +32,47 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
         model = TeamMembership
         fields = '__all__'
 
-    def get_user(self, obj: TeamMembership) -> str:
-        """Return the user's username."""
 
-        return obj.user.username
+class UserRoleSerializer(serializers.ModelSerializer):
+    """Object serializer for the `TeamMembership` model including the usernames and roles of each member."""
 
-    def get_team(self, obj: TeamMembership) -> str:
-        """Return the team's name."""
+    user = serializers.CharField(source='user.username')
 
-        return obj.team.name
+    class Meta:
+        """Serializer settings."""
+
+        model = TeamMembership
+        fields = ["user", "role"]
+
+
+class TeamRoleSerializer(serializers.ModelSerializer):
+    """Object serializer for the `TeamMembership` model including the team names and roles of each member."""
+
+    team = serializers.CharField(source='team.name')
+
+    class Meta:
+        """Serializer settings."""
+
+        model = TeamMembership
+        fields = ["team", "role"]
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Team` model."""
+
+    users = UserRoleSerializer(source="teammembership_set", many=True)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Team
+        fields = "__all__"
 
 
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including administrative fields."""
 
-    membership = serializers.SerializerMethodField()
+    teams = TeamRoleSerializer(source='teammembership_set', many=True)
 
     class Meta:
         """Serializer settings."""
@@ -87,11 +96,6 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
         return super().validate(attrs)
 
-    def get_membership(self, obj: User) -> dict:
-        """Return a mapping of team names to membership roles."""
-
-        return {mem.team.name: mem.role for mem in obj.teammembership_set.all()}
-
 
 class RestrictedUserSerializer(PrivilegedUserSerializer):
     """Object serializer for the `User` class with administrative fields marked as read only."""
@@ -101,7 +105,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
 
         model = User
         fields = '__all__'
-        read_only_fields = ['is_active', 'is_staff', 'is_ldap_user', 'date_joined', 'last_login', 'profile_image', 'membership']
+        read_only_fields = ['is_active', 'is_staff', 'is_ldap_user', 'date_joined', 'last_login', 'profile_image', 'teams']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data: dict) -> None:
