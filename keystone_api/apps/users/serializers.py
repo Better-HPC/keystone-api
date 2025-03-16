@@ -8,6 +8,7 @@ creation.
 
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import make_password
+from django.db import transaction
 from rest_framework import serializers
 
 from .models import *
@@ -60,13 +61,26 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
-    users = UserRoleSerializer(source="teammembership_set", many=True)
+    members = UserRoleSerializer(source="teammembership_set", many=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Team
-        fields = "__all__"
+        fields = ["name", "members"]
+
+    @transaction.atomic
+    def create(self, validated_data: dict) -> Team:
+        """Create ad return a new Team from validated data."""
+
+        members_data = validated_data.pop("teammembership_set", [])
+        team = Team.objects.create(**validated_data)
+
+        for membership in members_data:
+            user = User.objects.get(username=membership["user"]["username"])
+            TeamMembership.objects.create(team=team, user=user, role=membership["role"])
+
+        return team
 
 
 class PrivilegedUserSerializer(serializers.ModelSerializer):
