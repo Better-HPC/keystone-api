@@ -62,7 +62,7 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
-    members = UserRoleSerializer(source="teammembership_set", many=True, read_only=False)
+    members = UserRoleSerializer(many=True, read_only=False)
 
     class Meta:
         """Serializer settings."""
@@ -74,7 +74,7 @@ class TeamSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict) -> Team:
         """Create ad return a new Team from validated data."""
 
-        members_data = validated_data.pop("teammembership_set", [])
+        members_data = validated_data.pop("members", [])
         team = Team.objects.create(**validated_data)
         for membership in members_data:
             TeamMembership.objects.create(team=team, user=membership["user"], role=membership["role"])
@@ -85,19 +85,19 @@ class TeamSerializer(serializers.ModelSerializer):
     def update(self, instance: Team, validated_data: dict) -> Team:
         """Update and return an existing Team instance."""
 
-        members_data = validated_data.pop("teammembership_set", [])
+        members_data = validated_data.pop("members", [])
 
         # Update team attributes
         instance.name = validated_data.get("name", instance.name)
         instance.save()
 
         if self.partial is False:
-            instance.teammembership_set.all().delete()
+            instance.members.all().delete()
 
         # Update membership records
         for membership in members_data:
             TeamMembership.objects.update_or_create(
-                team=instance, user=membership["user"], role=membership["role"]
+                team=instance, user=membership["user"], defaults={"role": membership["role"]}
             )
 
         return instance
@@ -106,7 +106,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including administrative fields."""
 
-    teams = TeamRoleSerializer(source='teammembership_set', many=True, read_only=False)
+    teams = TeamRoleSerializer(many=True, read_only=False)
 
     class Meta:
         """Serializer settings."""
@@ -134,7 +134,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict) -> User:
         """Create and return a new User instance."""
 
-        teams_data = validated_data.pop("teammembership_set", [])
+        teams_data = validated_data.pop("teams", [])
         user = User.objects.create(**validated_data)
         for team_data in teams_data:
             TeamMembership.objects.create(
@@ -149,7 +149,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
     def update(self, instance: User, validated_data: dict) -> User:
         """Update and return an existing User instance."""
 
-        teams_data = validated_data.pop("teammembership_set", [])
+        teams_data = validated_data.pop("teams", [])
 
         # Update password properly
         if "password" in validated_data:
@@ -167,7 +167,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         # If teams are provided, update memberships
         for team_data in teams_data:
             TeamMembership.objects.update_or_create(
-                team=team_data["team"], user=instance, role=team_data["role"]
+                team=team_data["team"], user=instance, defaults={"role": team_data["role"]}
             )
 
         return instance
@@ -176,7 +176,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 class RestrictedUserSerializer(PrivilegedUserSerializer):
     """Object serializer for the `User` class with administrative fields marked as read only."""
 
-    teams = TeamRoleSerializer(source='teammembership_set', many=True, read_only=True)
+    teams = TeamRoleSerializer(many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""

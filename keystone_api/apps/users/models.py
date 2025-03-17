@@ -44,8 +44,8 @@ class TeamMembership(models.Model):
         ADMIN = 'AD', 'Admin'
         MEMBER = 'MB', 'Member'
 
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', related_name="teams", on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', related_name="members", on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
 
 
