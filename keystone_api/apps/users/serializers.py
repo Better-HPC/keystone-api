@@ -24,8 +24,8 @@ __all__ = [
 class TeamMembershipSerializer(serializers.ModelSerializer):
     """Object serializer for the `TeamMembership` model including all fields."""
 
-    user = serializers.CharField(source='user.username')
-    team = serializers.CharField(source='team.name')
+    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
+    team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field="name")
 
     class Meta:
         """Serializer settings."""
@@ -33,31 +33,23 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
         model = TeamMembership
         fields = '__all__'
 
-    def create(self, validated_data):
-        """Create and return a new `TeamMembership` instance."""
-
-        user = User.objects.get(username=validated_data['user'])
-        team = Team.objects.get(name=validated_data['team'])
-        return TeamMembership.objects.create(user=user, team=team)
-
 
 class UserRoleSerializer(serializers.ModelSerializer):
     """Object serializer for the `TeamMembership` model including the usernames and roles of each member."""
 
-    user = serializers.CharField(source='user.username')
+    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
 
     class Meta:
         """Serializer settings."""
 
         model = TeamMembership
         fields = ["user", "role"]
-        read_only_fields = ["user", "role"]
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):
     """Object serializer for the `TeamMembership` model including the team names and roles of each member."""
 
-    team = serializers.CharField(source='team.name')
+    team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field="name")
 
     class Meta:
         """Serializer settings."""
@@ -84,10 +76,8 @@ class TeamSerializer(serializers.ModelSerializer):
 
         members_data = validated_data.pop("teammembership_set", [])
         team = Team.objects.create(**validated_data)
-
         for membership in members_data:
-            user = User.objects.get(username=membership["user"]["username"])
-            TeamMembership.objects.create(team=team, user=user, role=membership["role"])
+            TeamMembership.objects.create(team=team, user=membership["user"], role=membership["role"])
 
         return team
 
