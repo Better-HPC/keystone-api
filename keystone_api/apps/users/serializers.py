@@ -81,6 +81,27 @@ class TeamSerializer(serializers.ModelSerializer):
 
         return team
 
+    @transaction.atomic
+    def update(self, instance: Team, validated_data: dict) -> Team:
+        """Update and return an existing Team instance."""
+
+        members_data = validated_data.pop("teammembership_set", [])
+
+        # Update team attributes
+        instance.name = validated_data.get("name", instance.name)
+        instance.save()
+
+        if self.partial is False:
+            instance.teammembership_set.all().delete()
+
+        # Update membership records
+        for membership in members_data:
+            TeamMembership.objects.update_or_create(
+                team=instance, user=membership["user"], role=membership["role"]
+            )
+
+        return instance
+
 
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including administrative fields."""
