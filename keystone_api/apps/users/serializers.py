@@ -62,13 +62,13 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
-    members = UserRoleSerializer(source="teammembership_set", many=True)
+    members = UserRoleSerializer(source="teammembership_set", many=True, read_only=False)
 
     class Meta:
         """Serializer settings."""
 
         model = Team
-        fields = ["name", "members"]
+        fields = ["id", "name", "members"]
 
     @transaction.atomic
     def create(self, validated_data: dict) -> Team:
@@ -106,7 +106,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including administrative fields."""
 
-    teams = TeamRoleSerializer(source='teammembership_set', many=True)
+    teams = TeamRoleSerializer(source='teammembership_set', many=True, read_only=False)
 
     class Meta:
         """Serializer settings."""
