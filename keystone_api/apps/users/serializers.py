@@ -130,9 +130,53 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
         return super().validate(attrs)
 
+    @transaction.atomic
+    def create(self, validated_data: dict) -> User:
+        """Create and return a new User instance."""
+
+        teams_data = validated_data.pop("teammembership_set", [])
+        user = User.objects.create(**validated_data)
+        for team_data in teams_data:
+            TeamMembership.objects.create(
+                user=user,
+                team=team_data["team"],
+                role=team_data["role"]
+            )
+
+        return user
+
+    @transaction.atomic
+    def update(self, instance: User, validated_data: dict) -> User:
+        """Update and return an existing User instance."""
+
+        teams_data = validated_data.pop("teammembership_set", [])
+
+        # Update password properly
+        if "password" in validated_data:
+            instance.set_password(validated_data.pop("password"))
+
+        # Update other fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+
+        if self.partial is False:
+            instance.teammembership_set.all().delete()
+
+        # If teams are provided, update memberships
+        for team_data in teams_data:
+            TeamMembership.objects.update_or_create(
+                team=team_data["team"], user=instance, role=team_data["role"]
+            )
+
+        return instance
+
 
 class RestrictedUserSerializer(PrivilegedUserSerializer):
     """Object serializer for the `User` class with administrative fields marked as read only."""
+
+    teams = TeamRoleSerializer(source='teammembership_set', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
