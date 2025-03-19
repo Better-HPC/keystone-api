@@ -56,7 +56,6 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 
         model = TeamMembership
         fields = ["team", "role"]
-        read_only_fields = ["team", "role"]
 
 
 class TeamSerializer(serializers.ModelSerializer):

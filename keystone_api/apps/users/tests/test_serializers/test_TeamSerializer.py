@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 class CreateMethod(TestCase):
-    """Test case for the `create` method of `TeamSerializer`."""
+    """Test record creation via the `create`  method."""
 
     def setUp(self) -> None:
         """Define dummy team data."""
@@ -46,7 +46,7 @@ class CreateMethod(TestCase):
 
 
 class UpdateMethod(TestCase):
-    """Test case for the `update` method of `TeamSerializer`."""
+    """Test record updating via the `update`  method."""
 
     def setUp(self) -> None:
         """Define dummy team and membership data."""
