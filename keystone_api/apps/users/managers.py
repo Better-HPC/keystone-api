@@ -31,7 +31,7 @@ class TeamManager(models.Manager):
             A filtered queryset.
         """
 
-        return self.filter(teammembership__user=user)
+        return self.filter(members__user=user)
 
 
 class UserManager(BaseUserManager):

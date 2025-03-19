@@ -8,6 +8,7 @@ from rest_framework import status
 from apps.authentication.views import WhoAmIView
 from apps.users.serializers import RestrictedUserSerializer
 
+User = get_user_model()
 
 class GetMethod(TestCase):
     """Test HTTP request handling by the `get` method."""
@@ -17,7 +18,7 @@ class GetMethod(TestCase):
 
         self.factory = RequestFactory()
         self.view = WhoAmIView.as_view()
-        self.user = get_user_model()(username='testuser', password='password')
+        self.user = User.objects.create(username='testuser', password='password')
 
     def test_get_authenticated_user(self) -> None:
         """Verify user data is returned for an authenticated user."""

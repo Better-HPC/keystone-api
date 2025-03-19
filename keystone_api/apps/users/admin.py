@@ -68,7 +68,7 @@ class TeamAdmin(admin.ModelAdmin):
     def owners(obj: Team) -> str:
         """Return a CSV of team owners."""
 
-        owners = obj.users.filter(teammembership__role=TeamMembership.Role.OWNER)
+        owners = obj.users.filter(members__role=TeamMembership.Role.OWNER)
         return ', '.join(owners.values_list('username', flat=True))
 
     @staticmethod

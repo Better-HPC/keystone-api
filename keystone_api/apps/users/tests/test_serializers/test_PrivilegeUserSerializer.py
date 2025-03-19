@@ -23,7 +23,7 @@ class ValidateMethod(TestCase):
         """Verify the password is hashed during validation."""
 
         serializer = PrivilegedUserSerializer(data=self.user_data)
-        self.assertTrue(serializer.is_valid())
+        self.assertTrue(serializer.is_valid(), serializer.errors)
         self.assertTrue(check_password('Password123!', serializer.validated_data['password']))
 
     def test_validate_password_invalid(self) -> None:

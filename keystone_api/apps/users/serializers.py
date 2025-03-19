@@ -106,7 +106,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including administrative fields."""
 
-    teams = TeamRoleSerializer(many=True, read_only=False)
+    teams = TeamRoleSerializer(many=True, read_only=False, required=False, default=[])
 
     class Meta:
         """Serializer settings."""
@@ -162,7 +162,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         instance.save()
 
         if self.partial is False:
-            instance.teammembership_set.all().delete()
+            instance.teams.all().delete()
 
         # If teams are provided, update memberships
         for team_data in teams_data:
