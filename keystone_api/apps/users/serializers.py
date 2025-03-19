@@ -62,7 +62,7 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
-    members = UserRoleSerializer(many=True, read_only=False)
+    members = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
 
     class Meta:
         """Serializer settings."""
@@ -135,7 +135,13 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         """Create and return a new User instance."""
 
         teams_data = validated_data.pop("teams", [])
+        validated_data.pop("groups", None)
+        validated_data.pop("user_permissions", None)
+
+        # Passwords are pre-hashed in the validated data dictionary so instances
+        # are created directly instead of using the `create_user` factory method.
         user = User.objects.create(**validated_data)
+
         for team_data in teams_data:
             TeamMembership.objects.create(
                 user=user,
@@ -150,17 +156,14 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         """Update and return an existing User instance."""
 
         teams_data = validated_data.pop("teams", [])
+        validated_data.pop("groups", None)
+        validated_data.pop("user_permissions", None)
 
-        # Update password properly
-        if "password" in validated_data:
-            instance.set_password(validated_data.pop("password"))
-
-        # Update other fields
+        # Update user info. Passwords are pre-hashed in the validated data dictionary
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        instance.save()
-
+        # Overwrite existing memberships for `PUT` style operations
         if self.partial is False:
             instance.teams.all().delete()
 
@@ -170,6 +173,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
                 team=team_data["team"], user=instance, defaults={"role": team_data["role"]}
             )
 
+        instance.save()
         return instance
 
 

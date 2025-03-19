@@ -99,7 +99,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'user': self.non_team_member.pk, 'team': self.team.pk, 'role': 'MB'}
+            put_body={'user': self.non_team_member.username, 'team': self.team.name, 'role': 'MB'}
         )
 
     def test_team_owner_permissions(self) -> None:
@@ -116,7 +116,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'user': self.non_team_member.pk, 'team': self.team.pk, 'role': 'MB'}
+            put_body={'user': self.non_team_member.username, 'team': self.team.name, 'role': 'MB'}
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -133,5 +133,5 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'user': self.non_team_member.pk, 'team': self.team.pk, 'role':'MB'}
+            put_body={'user': self.non_team_member.username, 'team': self.team.name, 'role':'MB'}
         )

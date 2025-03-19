@@ -54,7 +54,7 @@ class TeamMembershipPermissions(TeamPermissions):
 
         # Write access to specific teams is based on the user's relation to the team
         try:
-            team = Team.objects.get(id=request.data.get('team'))
+            team = Team.objects.get(name=request.data.get('team'))
             return request.user in team.get_privileged_members()
 
         except Team.DoesNotExist:
