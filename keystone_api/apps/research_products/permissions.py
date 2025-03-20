@@ -27,8 +27,8 @@ class CustomPermissionsBase(permissions.BasePermission):
         """
 
         try:
-            team_id = request.data.get('team', None)
-            return Team.objects.get(pk=team_id)
+            team_name = request.data.get('team', None)
+            return Team.objects.get(name=team_name)
 
         except Team.DoesNotExist:
             return None

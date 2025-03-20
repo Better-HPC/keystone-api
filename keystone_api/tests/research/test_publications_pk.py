@@ -45,7 +45,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             'abstract': 'bar',
             'journal': 'baz',
             'date': datetime.date(1990, 1, 1),
-            'team': self.team.pk}
+            'team': self.team.name}
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
