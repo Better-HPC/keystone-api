@@ -52,7 +52,7 @@ class TeamMembership(models.Model):
 class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True, db_index=True)
     users = models.ManyToManyField('User', through=TeamMembership)
     is_active = models.BooleanField(default=True)
 
@@ -109,7 +109,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     REQUIRED_FIELDS = []
 
     # User metadata
-    username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()])
+    username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()], db_index=True)
     password = models.CharField(max_length=128)
     first_name = models.CharField(max_length=150, null=True)
     last_name = models.CharField(max_length=150, null=True)
