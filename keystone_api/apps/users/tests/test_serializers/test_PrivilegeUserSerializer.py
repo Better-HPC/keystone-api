@@ -99,3 +99,89 @@ class CreateMethod(TestCase):
 
         self.assertEqual("testuser", user.username)
         self.assertEqual(0, user.teams.count())
+
+
+class UpdateMethod(TestCase):
+    """Test record updating via the `update`  method."""
+
+    def setUp(self) -> None:
+        """Define dummy team and membership data."""
+
+        self.user = User.objects.create_user(username="old_username", email="old@example.com", password="old_password")
+        self.team1 = Team.objects.create(name="Team Alpha")
+        self.team2 = Team.objects.create(name="Team Beta")
+
+        TeamMembership.objects.create(user=self.user, team=self.team1, role=TeamMembership.Role.OWNER)
+
+    def test_update_user(self) -> None:
+        """Verify a user is updated with correct attributes and nested memberships."""
+
+        update_data = {
+            "username": "new_username",
+            "password": "new_password",
+            "email": "new@example.com",
+            "teams": [
+                {"team": self.team2, "role": TeamMembership.Role.ADMIN},
+            ],
+        }
+
+        # Update the user record
+        serializer = PrivilegedUserSerializer(instance=self.user, data=update_data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        updated_user = serializer.update(self.user, serializer.validated_data)
+
+        # User attributes are replaced with the given values
+        self.assertEqual(update_data["username"], updated_user.username)
+        self.assertEqual(update_data["email"], updated_user.email)
+        self.assertTrue(updated_user.check_password(update_data["password"]))
+
+        # All user team memberships are replaced with the provided data
+        self.assertEqual(1, updated_user.teams.count())
+        self.assertEqual(updated_user.teams.get(team=self.team2).role, TeamMembership.Role.ADMIN)
+
+    def test_partial_update_user_attributes(self) -> None:
+        """Verify users can be partially updated using a subset of user attributes."""
+
+        update_data = {
+            "username": "new_username",
+            "password": "new_password",
+        }
+
+        # Update the user record
+        serializer = PrivilegedUserSerializer(instance=self.user, data=update_data, partial=True)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        updated_user = serializer.update(self.user, serializer.validated_data)
+
+        # Specified attributes are replaced with the given values
+        self.assertEqual(update_data["username"], updated_user.username)
+        self.assertTrue(updated_user.check_password(update_data["password"]))
+
+        # Unspecified attributes are unchanged
+        self.assertEqual("old@example.com", updated_user.email)
+
+        # Team memberships were not specified in the update and so remain unchanged
+        self.assertEqual(1, updated_user.teams.count())
+        self.assertEqual(updated_user.teams.get(team=self.team1).role, TeamMembership.Role.OWNER)
+
+    def test_partial_update_membership_only(self) -> None:
+        """Verify users can be partially updated using only team membership data."""
+
+        update_data = {
+            "teams": [
+                {"team": self.team2, "role": TeamMembership.Role.MEMBER},
+            ]
+        }
+
+        # Update the user record
+        serializer = PrivilegedUserSerializer(instance=self.user, data=update_data, partial=True)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        updated_user = serializer.update(self.user, serializer.validated_data)
+
+        # Unspecified attributes are unchanged
+        self.assertEqual("old_username", updated_user.username)
+        self.assertEqual("old@example.com", updated_user.email)
+
+        # Memberships specified in the update are modified. Memberships not specified are unchanged.
+        self.assertEqual(2, updated_user.teams.count())
+        self.assertEqual(updated_user.teams.get(team=self.team1).role, TeamMembership.Role.OWNER)
+        self.assertEqual(updated_user.teams.get(team=self.team2).role, TeamMembership.Role.MEMBER)

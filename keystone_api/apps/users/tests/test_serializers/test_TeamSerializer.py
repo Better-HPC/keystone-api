@@ -17,7 +17,11 @@ class CreateMethod(TestCase):
 
         self.user1 = User.objects.create(username="user1")
         self.user2 = User.objects.create(username="user2")
-        self.team_data = {
+
+    def test_create_team_with_members(self) -> None:
+        """Verify a team is created with the correct members."""
+
+        team_data = {
             "name": "Test Team",
             "members": [
                 {"user": self.user1, "role": TeamMembership.Role.ADMIN},
@@ -25,23 +29,25 @@ class CreateMethod(TestCase):
             ],
         }
 
-        self.serializer = TeamSerializer(data=self.team_data)
-        self.assertTrue(self.serializer.is_valid(), self.serializer.errors)
+        serializer = TeamSerializer(data=team_data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        team = serializer.create(serializer.validated_data)
 
-    def test_create_team_with_members(self) -> None:
-        """Verify a team is created with the correct members."""
-
-        team = self.serializer.create(self.serializer.validated_data)
         self.assertEqual("Test Team", team.name)
         self.assertEqual(2, team.members.count())
         self.assertEqual(TeamMembership.Role.ADMIN, team.members.get(user=self.user1).role)
         self.assertEqual(TeamMembership.Role.MEMBER, team.members.get(user=self.user2).role)
 
     def test_create_team_without_members(self) -> None:
-        """Verify a team is created with the correct members."""
+        """Verify a team is created successfully when members are specified."""
 
-        team = self.serializer.create({"name": "Test Team"})
-        self.assertEqual("Test Team", team.name)
+        team_data = {"name": "Test Team"}
+
+        serializer = TeamSerializer(data=team_data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        team = serializer.create(serializer.validated_data)
+
+        self.assertEqual(team_data["name"], team.name)
         self.assertEqual(0, team.members.count())
 
 
