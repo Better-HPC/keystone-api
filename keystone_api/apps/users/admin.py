@@ -68,7 +68,7 @@ class TeamAdmin(admin.ModelAdmin):
     def owners(obj: Team) -> str:
         """Return a CSV of team owners."""
 
-        owners = obj.users.filter(members__role=TeamMembership.Role.OWNER)
+        owners = obj.users.filter(users__role=TeamMembership.Role.OWNER)
         return ', '.join(owners.values_list('username', flat=True))
 
     @staticmethod
@@ -80,7 +80,7 @@ class TeamAdmin(admin.ModelAdmin):
 
     get_member_count.short_description = 'Member Count'
 
-    list_display = ('name', 'is_active', 'get_member_count', owners)
+    list_display = ('name', 'is_active', 'get_member_count', )
     search_fields = ('name',)
     list_filter = ('is_active',)
     inlines = [TeamMembershipInline]
