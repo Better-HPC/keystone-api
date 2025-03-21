@@ -15,14 +15,44 @@ from .models import *
 
 __all__ = [
     'PrivilegedUserSerializer',
+    'RestrictedUserSerializer',
     'TeamMembershipSerializer',
     'TeamSerializer',
-    'RestrictedUserSerializer',
 ]
 
 
+class UserRoleSerializer(serializers.ModelSerializer):
+    """Object serializer for the `TeamMembership` model including usernames and roles for a given team.
+
+    This serializer is intended for use within other serializers to handle nested data representation.
+    """
+
+    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
+
+    class Meta:
+        """Serializer settings."""
+
+        model = TeamMembership
+        fields = ["id", "user", "role"]
+
+
+class TeamRoleSerializer(serializers.ModelSerializer):
+    """Object serializer for the `TeamMembership` model including the team names and roles for a given user.
+
+    This serializer is intended for use within other serializers to handle nested data representation.
+    """
+
+    team = serializers.SlugRelatedField(queryset=Team.objects.filter(is_active=True).all(), slug_field="name")
+
+    class Meta:
+        """Serializer settings."""
+
+        model = TeamMembership
+        fields = ["id", "team", "role"]
+
+
 class TeamMembershipSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model including all fields."""
+    """Object serializer for the `TeamMembership` model."""
 
     user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
     team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field="name")
@@ -32,30 +62,6 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
 
         model = TeamMembership
         fields = '__all__'
-
-
-class UserRoleSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model including the usernames and roles of each member."""
-
-    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
-
-    class Meta:
-        """Serializer settings."""
-
-        model = TeamMembership
-        fields = ["user", "role"]
-
-
-class TeamRoleSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model including the team names and roles of each member."""
-
-    team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field="name")
-
-    class Meta:
-        """Serializer settings."""
-
-        model = TeamMembership
-        fields = ["team", "role"]
 
 
 class TeamSerializer(serializers.ModelSerializer):
