@@ -22,6 +22,7 @@ __all__ = [
 
 
 class UserSummarySerializer(serializers.ModelSerializer):
+    """Serializer for summarizing user information in nested responses."""
 
     class Meta:
         """Serializer settings."""
@@ -31,10 +32,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
 
 
 class UserRoleSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model including usernames and roles for a given team.
-
-    This serializer is intended for use within other serializers to handle nested data representation.
-    """
+    """Serializer summarizing team member usernames and roles in nested responses."""
 
     _user = UserSummarySerializer(source="user", read_only=True)
 
@@ -46,6 +44,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
 
 class TeamSummarySerializer(serializers.ModelSerializer):
+    """Serializer for summarizing team information in nested responses."""
 
     class Meta:
         """Serializer settings."""
@@ -59,10 +58,7 @@ class TeamSummarySerializer(serializers.ModelSerializer):
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model including the team names and roles for a given user.
-
-    This serializer is intended for use within other serializers to handle nested data representation.
-    """
+    """Serializer summarizing team names and roles in nested responses."""
 
     _team = TeamSummarySerializer(source="team", read_only=True)
 
@@ -131,7 +127,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class PrivilegedUserSerializer(serializers.ModelSerializer):
-    """Object serializer for the `User` model including administrative fields."""
+    """Object serializer for the `User` model including sensitive fields."""
 
     teams = TeamRoleSerializer(many=True, read_only=False, required=False, default=[])
 
@@ -205,7 +201,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
 
 class RestrictedUserSerializer(PrivilegedUserSerializer):
-    """Object serializer for the `User` class with administrative fields marked as read only."""
+    """Object serializer for the `User` class with sensitive fields marked as read only."""
 
     teams = TeamRoleSerializer(many=True, read_only=True)
 
