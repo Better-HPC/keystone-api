@@ -8,7 +8,6 @@ creation.
 
 from rest_framework import serializers
 
-from apps.users.models import User
 from .models import *
 
 __all__ = ['AppLogSerializer', 'RequestLogSerializer', 'TaskResultSerializer']
@@ -26,8 +25,6 @@ class AppLogSerializer(serializers.ModelSerializer):
 
 class RequestLogSerializer(serializers.ModelSerializer):
     """Object serializer for the `RequestLog` class."""
-
-    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
 
     class Meta:
         """Serializer settings."""

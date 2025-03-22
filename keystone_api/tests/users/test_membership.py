@@ -66,7 +66,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'team': self.team.name, 'user': self.non_team_member.username, 'role': 'MB'},
+            post_body={'team': self.team.pk, 'user': self.non_team_member.pk, 'role': 'MB'},
         )
 
     def test_team_member_permissions(self) -> None:
