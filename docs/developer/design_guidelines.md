@@ -1,97 +1,89 @@
 # Design Guidelines
 
-The Keystone-API project adheres to the following design guidelines.
+Keystone API uses the following design principles to ensure project consistency and maintainability.
 
-## Choosing HTTP Error Codes
+## Request Error Handling
 
-When an HTTP request fails, the reason should be easily discernible.
-Unfortunately, an invalid or improper request will sometimes fail for more than one reason.
-To ensure response codes are generated consistently across endpoints, user requests are validated according to a standard order of operations.
-The appropriate failure response is determined by the first validation step to fail.
+When an HTTP request fails, the response should provide a clear and unambiguous indication of the failure reason.
+Since multiple validation steps may apply to a single request, the system follows a standardized order of validation
+to determine the appropriate error response.
+The first failing validation step dictates the returned status code to maintain consistency across all endpoints.
 
-### Request Validation Order
+### Request Validation Hierarchy
 
-1. **User authentication status:** 
-   Unauthenticated users attempting to access an endpoint requiring authentication are returned a `403 - Forbidden` error.
-2. **Support for the requested method:** 
-   Requests containing an unsupported HTTP method (e.g., `TRACE`) are returned a `405 - Method Not Allowed` error.
-3. **Role Based Access Controls (RBAC):** 
-   Requests that are prohibited by RBAC or other business permissions logic are returned a `403 - Forbidden` error.
+1. **User authentication status:**
+   Requests from unauthenticated users attempting to access protected resources must return a `403 Forbidden` error.
+2. **Support for the requested method:**
+   Requests using unsupported HTTP methods (e.g., `TRACE`, `CONNECT`) must return a `405 Method Not Allowed` error.
+3. **Role Based Access Controls (RBAC):**
+   Requests that fail RBAC or business logic authorization checks must return a `403 Forbidden` error.
 4. **Additional request verification:**
-   Any request verification not included in the previous checks are evaluated last.
-   Response codes in this step are generated according to common best practices.
+   Any further request-specific validation logic must be processed in this step, with response codes adhering to
+   industry-standard practices.
 
-## Serializing Relational Data
+## Record Serialization
 
-Serialized records will always reference related entities using ID values.
-When serializing a one-to-one relationship, ID values are included for both directions of the relationship.
+Consistent data serialization ensures predictable API behavior and simplifies integration with client applications.
+API responses must adhere to the following serialization rules:
 
-!!! example "Example: Serializing A One-to-One Relationship"
+- JSON fields must map directly to a database or ORM model field with the same name.
+- Primary key values must be read-only and cannot be modified by clients.
+- Fields should maintain type consistency (e.g., integers remain integers, booleans remain booleans).
+- Timestamps should follow the ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).
 
-    The following example demonstrates a one-to-one relationship between the `Library` and `Address` models.
+## Serializing Relationships
 
-    ```mermaid
-    classDiagram
-        direction LR
-        Library "1" -- "1" Address : Related (by ID)
-        class Library {
-          +id: int
-          +name: string
-          +address_id: int
-        }
-        class Address {
-          +id: int
-          +street: string
-        }
-    ```
+When serializing relational data, all relationships must be represented using primary key values.
+While an individual record’s primary key remains immutable via the API, primary key fields within nested relationships 
+are writable when modifying associations (e.g., when adding a record to a relationship).
 
-    When serializing a `Library` instance, the corresponding `Address` record is linked to by its ID.
+Nested representations of related entities should be included alongside primary keys.
+These nested representations must use the same field name as the corresponding ID field prefixed with an underscore (_).
+Nested representations must read-only and should only include fields required by downstream applications.
 
-    ```json
-    {
-      "id": 1,
-      "name": "Franklin Public Library",
-      "address": 5
-    }
-    ```
+!!! example "Example: Serializing a One-to-Many"
 
-    ID values are always included in both directions of a one-to-one relationship.
-    
-    ```json
-    {
-      "id": 1,
-      "street": "Franklin Public Library",
-      "library": 5
-    }
-    ```
-
-In all other cases ID values are only required in one direction.
-Including ID values in both directions is allowed but not required.
-
-!!! example "Example: Serializing A One-to-Many Relationship"
-
-    The following example demonstrates a one-to-many relationship between the `Library` and `Book` models.
+    The following schema demonstrates a one-to-many relationship between the `Author` and `Book` models.
 
     ```mermaid
+
     classDiagram
         direction LR
-        Library "1" *-- "0..*" Book : Contains
-        class Library {
+        Author "1" *-- "0..*" Book
+        class Author {
           +id: int
           +name: string
         }
         class Book {
           +id: int
           +title: string
+          +publisher: string
         }
     ```
 
-    When serializing instances of the `Library` model, any related `Book` instances are returned as a list of ID vlaues.
+    When serializing an `Author` record, the `books` field is required and contains a list of primary key values.
+    The `_books` field provides a nested representation with selected attributes.
+    ```
+    {
+      "id": 1,
+      "title": "Book A",
+      "author": 1,
+      "_author": {
+        "name": "John Smith"
+      }
+    }
+    ```
+
+    Serializing the relationship works similarly in the reverse direction, and while including reverse relationships is encouraged for consistency, it is not strictly required unless explicitly defined by the API contract.
 
     ```json
     {
       "id": 1,
-      "name": "Franklin Public Library",
-      "books": [1, 2]
+      "name": "John Smith",
+      "books": [1, 2],
+      "_books": [
+        {"title": "Book A"},
+        {"title": "Book B"}
+      ]
     }
     ```
