@@ -52,11 +52,6 @@ class TeamSummarySerializer(serializers.ModelSerializer):
         model = Team
         fields = ["name", "is_active"]
 
-    def validate(self, attrs):
-        val = super().validate(attrs)
-        return {"team": Team.objects.get(id=val["team_id"], name=val["name"])}
-
-
 class TeamRoleSerializer(serializers.ModelSerializer):
     """Serializer summarizing team names and roles in nested responses."""
 
