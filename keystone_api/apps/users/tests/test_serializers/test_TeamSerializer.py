@@ -24,8 +24,8 @@ class CreateMethod(TestCase):
         team_data = {
             "name": "Test Team",
             "members": [
-                {"user": self.user1, "role": TeamMembership.Role.ADMIN},
-                {"user": self.user2, "role": TeamMembership.Role.MEMBER},
+                {"user": self.user1.pk, "role": TeamMembership.Role.ADMIN},
+                {"user": self.user2.pk, "role": TeamMembership.Role.MEMBER},
             ],
         }
 

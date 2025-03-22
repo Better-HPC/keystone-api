@@ -21,19 +21,41 @@ __all__ = [
 ]
 
 
+class UserSummarySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        """Serializer settings."""
+
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
+
+
 class UserRoleSerializer(serializers.ModelSerializer):
     """Object serializer for the `TeamMembership` model including usernames and roles for a given team.
 
     This serializer is intended for use within other serializers to handle nested data representation.
     """
 
-    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
+    _user = UserSummarySerializer(source="user", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = TeamMembership
-        fields = ["id", "user", "role"]
+        fields = ["id", "user", "role", "_user"]
+
+
+class TeamSummarySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Team
+        fields = ["name", "is_active"]
+
+    def validate(self, attrs):
+        val = super().validate(attrs)
+        return {"team": Team.objects.get(id=val["team_id"], name=val["name"])}
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):
@@ -42,26 +64,26 @@ class TeamRoleSerializer(serializers.ModelSerializer):
     This serializer is intended for use within other serializers to handle nested data representation.
     """
 
-    team = serializers.SlugRelatedField(queryset=Team.objects.filter(is_active=True).all(), slug_field="name")
+    _team = TeamSummarySerializer(source="team", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = TeamMembership
-        fields = ["id", "team", "role"]
+        fields = ["id", "team", "role", "_team"]
 
 
 class TeamMembershipSerializer(serializers.ModelSerializer):
     """Object serializer for the `TeamMembership` model."""
 
-    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="username")
-    team = serializers.SlugRelatedField(queryset=Team.objects.all(), slug_field="name")
+    _user = UserSummarySerializer(source="user", read_only=True)
+    _team = TeamSummarySerializer(source="team", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = TeamMembership
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -73,11 +95,11 @@ class TeamSerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Team
-        fields = ["id", "name", "members"]
+        fields = "__all__"
 
     @transaction.atomic
     def create(self, validated_data: dict) -> Team:
-        """Create ad return a new Team from validated data."""
+        """Create and return a new Team from validated data."""
 
         members_data = validated_data.pop("members", [])
         team = Team.objects.create(**validated_data)

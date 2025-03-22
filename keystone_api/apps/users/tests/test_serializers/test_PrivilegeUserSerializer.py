@@ -65,8 +65,8 @@ class CreateMethod(TestCase):
             "first_name": "Test",
             "last_name": "User",
             "teams": [
-                {"team": self.team1, "role": TeamMembership.Role.ADMIN},
-                {"team": self.team2, "role": TeamMembership.Role.MEMBER},
+                {"team": self.team1.pk, "role": TeamMembership.Role.ADMIN},
+                {"team": self.team2.pk, "role": TeamMembership.Role.MEMBER},
             ],
         }
 
@@ -121,7 +121,7 @@ class UpdateMethod(TestCase):
             "password": "new_password",
             "email": "new@example.com",
             "teams": [
-                {"team": self.team2, "role": TeamMembership.Role.ADMIN},
+                {"team": self.team2.pk, "role": TeamMembership.Role.ADMIN},
             ],
         }
 
@@ -168,7 +168,7 @@ class UpdateMethod(TestCase):
 
         update_data = {
             "teams": [
-                {"team": self.team2, "role": TeamMembership.Role.MEMBER},
+                {"team": self.team2.pk, "role": TeamMembership.Role.MEMBER},
             ]
         }
 
