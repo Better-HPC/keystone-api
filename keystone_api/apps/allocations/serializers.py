@@ -79,3 +79,13 @@ class ClusterSerializer(serializers.ModelSerializer):
 
         model = Cluster
         fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Comment` class."""
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Comment
+        fields = '__all__'

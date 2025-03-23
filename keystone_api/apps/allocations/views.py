@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from .models import *
 from .permissions import *
 from .serializers import *
+from .serializers import CommentSerializer
 from ..users.models import Team
 
 __all__ = [
@@ -141,3 +142,22 @@ class ClusterViewSet(viewsets.ModelViewSet):
     serializer_class = ClusterSerializer
     search_fields = ['name', 'description']
     permission_classes = [permissions.IsAuthenticated, StaffWriteAuthenticatedRead]
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """Comments on allocation requests."""
+
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    search_fields = ['content', 'request__title', 'user__username']
+
+    # Todo: Set permission classes
+
+    def get_queryset(self) -> list[Allocation]:
+        """Return a list of attachments for the currently authenticated user."""
+
+        if self.request.user.is_staff:
+            return self.queryset
+
+        teams = Team.objects.teams_for_user(self.request.user)
+        return self.queryset.filter(request__team__in=teams)

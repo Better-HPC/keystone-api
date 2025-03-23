@@ -175,6 +175,11 @@ class Comment(models.Model):
 
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='comments')
 
+    def get_team(self) -> Team:
+        """Return the user team tied to the current record."""
+
+        return self.request.team
+
     def __str__(self) -> str:
         """Return a string representation of the comment."""
 
