@@ -64,7 +64,7 @@ class CreateMethod(TestCase):
             "email": "testuser@example.com",
             "first_name": "Test",
             "last_name": "User",
-            "teams": [
+            "membership": [
                 {"team": self.team1.pk, "role": TeamMembership.Role.ADMIN},
                 {"team": self.team2.pk, "role": TeamMembership.Role.MEMBER},
             ],
@@ -84,21 +84,21 @@ class CreateMethod(TestCase):
         self.assertEqual("testuser@example.com", user.email)
 
         # Verify user roles
-        self.assertEqual(user.teams.count(), 2)
-        self.assertEqual(user.teams.get(team=self.team1).role, TeamMembership.Role.ADMIN)
-        self.assertEqual(user.teams.get(team=self.team2).role, TeamMembership.Role.MEMBER)
+        self.assertEqual(user.membership.count(), 2)
+        self.assertEqual(user.membership.get(team=self.team1).role, TeamMembership.Role.ADMIN)
+        self.assertEqual(user.membership.get(team=self.team2).role, TeamMembership.Role.MEMBER)
 
     def test_create_user_without_teams(self) -> None:
         """Verify a user can be created without team memberships."""
 
-        self.user_data.pop("teams")
+        self.user_data.pop("membership")
         serializer = PrivilegedUserSerializer(data=self.user_data)
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
         user = serializer.create(serializer.validated_data)
 
         self.assertEqual("testuser", user.username)
-        self.assertEqual(0, user.teams.count())
+        self.assertEqual(0, user.membership.count())
 
 
 class UpdateMethod(TestCase):
@@ -120,7 +120,7 @@ class UpdateMethod(TestCase):
             "username": "new_username",
             "password": "new_password",
             "email": "new@example.com",
-            "teams": [
+            "membership": [
                 {"team": self.team2.pk, "role": TeamMembership.Role.ADMIN},
             ],
         }
@@ -136,8 +136,8 @@ class UpdateMethod(TestCase):
         self.assertTrue(updated_user.check_password(update_data["password"]))
 
         # All user team memberships are replaced with the provided data
-        self.assertEqual(1, updated_user.teams.count())
-        self.assertEqual(updated_user.teams.get(team=self.team2).role, TeamMembership.Role.ADMIN)
+        self.assertEqual(1, updated_user.membership.count())
+        self.assertEqual(updated_user.membership.get(team=self.team2).role, TeamMembership.Role.ADMIN)
 
     def test_partial_update_user_attributes(self) -> None:
         """Verify users can be partially updated using a subset of user attributes."""
@@ -160,14 +160,14 @@ class UpdateMethod(TestCase):
         self.assertEqual("old@example.com", updated_user.email)
 
         # Team memberships were not specified in the update and so remain unchanged
-        self.assertEqual(1, updated_user.teams.count())
-        self.assertEqual(updated_user.teams.get(team=self.team1).role, TeamMembership.Role.OWNER)
+        self.assertEqual(1, updated_user.membership.count())
+        self.assertEqual(updated_user.membership.get(team=self.team1).role, TeamMembership.Role.OWNER)
 
     def test_partial_update_membership_only(self) -> None:
         """Verify users can be partially updated using only team membership data."""
 
         update_data = {
-            "teams": [
+            "membership": [
                 {"team": self.team2.pk, "role": TeamMembership.Role.MEMBER},
             ]
         }
@@ -182,6 +182,6 @@ class UpdateMethod(TestCase):
         self.assertEqual("old@example.com", updated_user.email)
 
         # Memberships specified in the update are modified. Memberships not specified are unchanged.
-        self.assertEqual(2, updated_user.teams.count())
-        self.assertEqual(updated_user.teams.get(team=self.team1).role, TeamMembership.Role.OWNER)
-        self.assertEqual(updated_user.teams.get(team=self.team2).role, TeamMembership.Role.MEMBER)
+        self.assertEqual(2, updated_user.membership.count())
+        self.assertEqual(updated_user.membership.get(team=self.team1).role, TeamMembership.Role.OWNER)
+        self.assertEqual(updated_user.membership.get(team=self.team2).role, TeamMembership.Role.MEMBER)

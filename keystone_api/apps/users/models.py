@@ -44,8 +44,8 @@ class TeamMembership(models.Model):
         ADMIN = 'AD', 'Admin'
         MEMBER = 'MB', 'Member'
 
-    user = models.ForeignKey('User', related_name="teams", on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', related_name="members", on_delete=models.CASCADE)
+    user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
 
 
@@ -66,7 +66,7 @@ class Team(models.Model):
     def get_privileged_members(self) -> models.QuerySet:
         """Return a queryset of all team with admin privileges."""
 
-        return self.users.filter(teams__role__in=[
+        return self.users.filter(membership__role__in=[
             TeamMembership.Role.ADMIN,
             TeamMembership.Role.OWNER
         ])

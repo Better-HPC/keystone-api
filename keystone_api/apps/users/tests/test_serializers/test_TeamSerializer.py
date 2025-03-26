@@ -23,7 +23,7 @@ class CreateMethod(TestCase):
 
         team_data = {
             "name": "Test Team",
-            "members": [
+            "membership": [
                 {"user": self.user1.pk, "role": TeamMembership.Role.ADMIN},
                 {"user": self.user2.pk, "role": TeamMembership.Role.MEMBER},
             ],
@@ -34,9 +34,9 @@ class CreateMethod(TestCase):
         team = serializer.create(serializer.validated_data)
 
         self.assertEqual("Test Team", team.name)
-        self.assertEqual(2, team.members.count())
-        self.assertEqual(TeamMembership.Role.ADMIN, team.members.get(user=self.user1).role)
-        self.assertEqual(TeamMembership.Role.MEMBER, team.members.get(user=self.user2).role)
+        self.assertEqual(2, team.membership.count())
+        self.assertEqual(TeamMembership.Role.ADMIN, team.membership.get(user=self.user1).role)
+        self.assertEqual(TeamMembership.Role.MEMBER, team.membership.get(user=self.user2).role)
 
     def test_create_team_without_members(self) -> None:
         """Verify a team is created successfully when members are specified."""
@@ -48,7 +48,7 @@ class CreateMethod(TestCase):
         team = serializer.create(serializer.validated_data)
 
         self.assertEqual(team_data["name"], team.name)
-        self.assertEqual(0, team.members.count())
+        self.assertEqual(0, team.membership.count())
 
 
 class UpdateMethod(TestCase):
@@ -70,7 +70,7 @@ class UpdateMethod(TestCase):
 
         update_data = {
             "name": "New Team Name",
-            "members": [
+            "membership": [
                 {"user": self.user1, "role": TeamMembership.Role.ADMIN},
                 {"user": self.user3, "role": TeamMembership.Role.MEMBER},
             ],
@@ -81,12 +81,12 @@ class UpdateMethod(TestCase):
 
         # Make sure the team name and membership is updated
         self.assertEqual(updated_team.name, "New Team Name")
-        self.assertEqual(TeamMembership.Role.ADMIN, updated_team.members.get(user=self.user1).role)
-        self.assertEqual(TeamMembership.Role.MEMBER, updated_team.members.get(user=self.user3).role)
+        self.assertEqual(TeamMembership.Role.ADMIN, updated_team.membership.get(user=self.user1).role)
+        self.assertEqual(TeamMembership.Role.MEMBER, updated_team.membership.get(user=self.user3).role)
 
         # Old memberships are removed
-        self.assertEqual(updated_team.members.count(), 2)
-        self.assertFalse(updated_team.members.filter(user=self.user2).exists())
+        self.assertEqual(updated_team.membership.count(), 2)
+        self.assertFalse(updated_team.membership.filter(user=self.user2).exists())
 
     def test_partial_update_team_name_only(self) -> None:
         """Verify a team can be partially updated by changing only the name."""
@@ -96,13 +96,13 @@ class UpdateMethod(TestCase):
         updated_team = serializer.update(self.team, update_data)
 
         self.assertEqual(updated_team.name, "Partially Updated Team")
-        self.assertEqual(2, updated_team.members.count())
+        self.assertEqual(2, updated_team.membership.count())
 
     def test_partial_update_team_members_only(self) -> None:
         """Verify a team can be partially updated by changing only the members."""
 
         update_data = {
-            "members": [
+            "membership": [
                 {"user": self.user2, "role": TeamMembership.Role.ADMIN},
                 {"user": self.user3, "role": TeamMembership.Role.MEMBER},
             ]
@@ -112,9 +112,9 @@ class UpdateMethod(TestCase):
 
         # Name should remain unchanged
         self.assertEqual("Old Team Name", updated_team.name)
-        self.assertEqual(3, updated_team.members.count())
+        self.assertEqual(3, updated_team.membership.count())
 
         # Unspecified membership roles remain unchanged and specified roles are created/updated
-        self.assertEqual(TeamMembership.Role.OWNER, updated_team.members.get(user=self.user1).role)
-        self.assertEqual(TeamMembership.Role.ADMIN, updated_team.members.get(user=self.user2).role)
-        self.assertEqual(TeamMembership.Role.MEMBER, updated_team.members.get(user=self.user3).role)
+        self.assertEqual(TeamMembership.Role.OWNER, updated_team.membership.get(user=self.user1).role)
+        self.assertEqual(TeamMembership.Role.ADMIN, updated_team.membership.get(user=self.user2).role)
+        self.assertEqual(TeamMembership.Role.MEMBER, updated_team.membership.get(user=self.user3).role)

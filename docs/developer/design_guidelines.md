@@ -35,7 +35,7 @@ API responses must adhere to the following serialization rules:
 
 When serializing relational data, all relationships must be represented using primary key values.
 While an individual record’s primary key remains immutable via the API, primary key fields within nested relationships 
-are writable when modifying associations (e.g., when adding a record to a relationship).
+are writable when modifying associations (e.g., when adding an id/record to a relationship).
 
 Nested representations of related entities should be included alongside primary keys.
 These nested representations must use the same field name as the corresponding ID field prefixed with an underscore (_).

@@ -49,7 +49,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             'start_date': date(2000, 1, 1),
             'end_date': date(2000, 1, 31),
             'grant_number': 'abc-123',
-            'team': self.team.name
+            'team': self.team.pk
         }
 
     def test_unauthenticated_user_permissions(self) -> None:
