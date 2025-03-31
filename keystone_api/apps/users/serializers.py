@@ -14,7 +14,7 @@ from .models import *
 
 __all__ = [
     'PrivilegedUserSerializer',
-    'TeamMembershipSerializer',
+    'MembershipSerializer',
     'TeamSerializer',
     'RestrictedUserSerializer',
 ]
@@ -30,13 +30,13 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TeamMembershipSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model."""
+class MembershipSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Membership` model."""
 
     class Meta:
         """Serializer settings."""
 
-        model = TeamMembership
+        model = Membership
         fields = '__all__'
 
 

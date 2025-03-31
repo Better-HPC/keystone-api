@@ -17,8 +17,8 @@ from .serializers import *
 
 __all__ = [
     'TeamViewSet',
-    'TeamMembershipRoleChoicesView',
-    'TeamMembershipViewSet',
+    'MembershipRoleChoicesView',
+    'MembershipViewSet',
     'UserViewSet',
 ]
 
@@ -32,10 +32,10 @@ class TeamViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
 
 
-class TeamMembershipRoleChoicesView(APIView):
+class MembershipRoleChoicesView(APIView):
     """Exposes valid values for the team membership `role` field."""
 
-    _resp_body = dict(TeamMembership.Role.choices)
+    _resp_body = dict(Membership.Role.choices)
 
     @extend_schema(responses={'200': _resp_body})
     def get(self, request: Request) -> Response:
@@ -44,12 +44,12 @@ class TeamMembershipRoleChoicesView(APIView):
         return Response(self._resp_body, status=status.HTTP_200_OK)
 
 
-class TeamMembershipViewSet(viewsets.ModelViewSet):
+class MembershipViewSet(viewsets.ModelViewSet):
     """Manage team membership."""
 
-    queryset = TeamMembership.objects.all()
-    permission_classes = [TeamMembershipPermissions]
-    serializer_class = TeamMembershipSerializer
+    queryset = Membership.objects.all()
+    permission_classes = [MembershipPermissions]
+    serializer_class = MembershipSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
