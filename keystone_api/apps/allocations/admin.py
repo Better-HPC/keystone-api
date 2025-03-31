@@ -48,6 +48,16 @@ class AttachmentInline(admin.TabularInline):
     extra = 1
 
 
+class CommentInline(admin.StackedInline):
+    """Inline admin interface for the `Comment` model."""
+
+    model = Comment
+    verbose_name = 'Comment'
+    show_change_link = True
+    readonly_fields = ('created',)
+    extra = 1
+
+
 @admin.register(Allocation)
 class AllocationAdmin(admin.ModelAdmin):
     """Admin interface for the `Allocation` model."""
@@ -124,7 +134,7 @@ class AllocationRequestAdmin(admin.ModelAdmin):
         ('expire', admin.DateFieldListFilter),
         ('status', admin.ChoicesFieldListFilter),
     ]
-    inlines = [AllocationInline, AllocationReviewInline, AttachmentInline]
+    inlines = [AllocationInline, AllocationReviewInline, AttachmentInline, CommentInline]
 
 
 @admin.register(Cluster)

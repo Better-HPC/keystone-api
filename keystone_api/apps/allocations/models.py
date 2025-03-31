@@ -183,4 +183,4 @@ class Comment(models.Model):
     def __str__(self) -> str:
         """Return a string representation of the comment."""
 
-        return f'Comment by {self.user} made on {self.created}'
+        return f'Comment by {self.user} made on request "{self.request.title[:50]}"'
