@@ -4,7 +4,8 @@ View objects handle the processing of incoming HTTP requests and return the
 appropriately rendered HTML template or other HTTP response.
 """
 
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from .models import *
 from .permissions import *
@@ -19,10 +20,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
     search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
-    permission_classes = [
-        permissions.IsAuthenticated,
-        permissions.IsAdminUser | TeamMemberAll
-    ]
+    permission_classes = [IsAuthenticated, PublicationPermissions]
 
     def get_queryset(self) -> list[Publication]:
         """Return a list of allocation requests for the currently authenticated user."""
@@ -39,10 +37,7 @@ class GrantViewSet(viewsets.ModelViewSet):
     queryset = Grant.objects.all()
     serializer_class = GrantSerializer
     search_fields = ['title', 'agency', 'team__name']
-    permission_classes = [
-        permissions.IsAuthenticated,
-        permissions.IsAdminUser | TeamMemberReadTeamAdminWrite
-    ]
+    permission_classes = [IsAuthenticated, GrantPermissions]
 
     def get_queryset(self) -> list[Grant]:
         """Return a list of allocation requests for the currently authenticated user."""

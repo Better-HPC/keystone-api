@@ -16,7 +16,7 @@ __all__ = ['TeamPermissions', 'MembershipPermissions', 'UserPermissions']
 
 
 class TeamPermissions(permissions.BasePermission):
-    """Permissions model for `Team` objects.
+    """RBAC permissions model for `Team` objects.
 
     Permissions:
         - Grants read access to all users.
@@ -34,7 +34,7 @@ class TeamPermissions(permissions.BasePermission):
 
 
 class MembershipPermissions(TeamPermissions):
-    """Permissions model for `Membership` objects.
+    """RBAC permissions model for `Membership` objects.
 
     Permissions:
         - Grants read access to all users.
@@ -72,7 +72,7 @@ class MembershipPermissions(TeamPermissions):
 
 
 class UserPermissions(permissions.BasePermission):
-    """Permissions model for `User` objects.
+    """RBAC permissions model for `User` objects.
 
     Permissions:
         - Grants read access to all users.
