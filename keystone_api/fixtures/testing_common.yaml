@@ -101,19 +101,19 @@
   pk: 1
   fields:
     name: Team 1
-- model: users.teammembership
+- model: users.membership
   pk: 1
   fields:
     team: 1
     user: 1
     role: 'OW'
-- model: users.teammembership
+- model: users.membership
   pk: 2
   fields:
     team: 1
     user: 2
     role: 'AD'
-- model: users.teammembership
+- model: users.membership
   pk: 3
   fields:
     team: 1
@@ -124,19 +124,19 @@
   pk: 2
   fields:
     name: Team 2
-- model: users.teammembership
+- model: users.membership
   pk: 4
   fields:
     team: 2
     user: 4
     role: 'OW'
-- model: users.teammembership
+- model: users.membership
   pk: 5
   fields:
     team: 2
     user: 5
     role: 'AD'
-- model: users.teammembership
+- model: users.membership
   pk: 6
   fields:
     team: 2

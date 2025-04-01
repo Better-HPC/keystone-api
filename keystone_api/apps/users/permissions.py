@@ -12,7 +12,7 @@ from rest_framework.views import View
 
 from .models import *
 
-__all__ = ['TeamPermissions', 'TeamMembershipPermissions', 'UserPermissions']
+__all__ = ['TeamPermissions', 'MembershipPermissions', 'UserPermissions']
 
 
 class TeamPermissions(permissions.BasePermission):
@@ -38,8 +38,8 @@ class TeamPermissions(permissions.BasePermission):
         return request.user.is_staff or request.user in obj.get_privileged_members()
 
 
-class TeamMembershipPermissions(TeamPermissions):
-    """Permissions model for `TeamMembership` objects.
+class MembershipPermissions(TeamPermissions):
+    """Permissions model for `Membership` objects.
 
     Grants read-only access to all authenticated users.
     Write access is granted to staff and team administrators.
@@ -60,7 +60,7 @@ class TeamMembershipPermissions(TeamPermissions):
         except Team.DoesNotExist:
             return request.user.is_authenticated
 
-    def has_object_permission(self, request: Request, view: View, obj: TeamMembership):
+    def has_object_permission(self, request: Request, view: View, obj: Membership):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
         if request.user.is_staff or request.method in permissions.SAFE_METHODS:
