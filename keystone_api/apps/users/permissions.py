@@ -10,35 +10,29 @@ from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.views import View
 
+from .mixins import ObjectRbacMixin
 from .models import *
 
-__all__ = ['TeamPermissions', 'MembershipPermissions', 'UserPermissions']
+__all__ = ['TeamRBAC', 'MembershipPermissions', 'UserPermissions']
 
 
-class TeamPermissions(permissions.BasePermission):
+
+class TeamRBAC(ObjectRbacMixin, permissions.BasePermission):
     """Permissions model for `Team` objects.
 
     Grants read-only access to all authenticated users.
     Write access is granted to staff and team administrators.
     """
 
-    def has_permission(self, request: Request, view: View) -> bool:
-        """Return whether the request has permissions to access the requested resource."""
-
-        return request.user.is_authenticated
-
-    def has_object_permission(self, request: Request, view: View, obj: Team):
-        """Return whether the incoming HTTP request has permission to access a database record."""
-
-        # Read permissions are allowed to any request
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.is_authenticated
-
-        # Update permissions are only allowed for staff and team admins
-        return request.user.is_staff or request.user in obj.get_privileged_members()
+    RBAC = {
+        Membership.Role.OWNER: ObjectRbacMixin.ALL_METHODS,
+        Membership.Role.ADMIN: ObjectRbacMixin.ALL_METHODS,
+        Membership.Role.MEMBER: ObjectRbacMixin.READ_METHODS,
+        None: ObjectRbacMixin.READ_METHODS,
+    }
 
 
-class MembershipPermissions(TeamPermissions):
+class MembershipPermissions(permissions.BasePermission):
     """Permissions model for `Membership` objects.
 
     Grants read-only access to all authenticated users.

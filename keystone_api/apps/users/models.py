@@ -6,6 +6,8 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
+from __future__ import annotations
+
 import hashlib
 import itertools
 import random
@@ -70,6 +72,24 @@ class Team(models.Model):
             Membership.Role.ADMIN,
             Membership.Role.OWNER
         ])
+
+    def get_user_role(self, user: User) -> str | None:
+        """Return a user's role in the team.
+
+        See the `Membership.Role` class for valid team membership roles.
+
+        Args:
+            user: The user to get the role for.
+
+        Returns:
+            The user's role or `None` for user's not in the team.
+        """
+
+        try:
+            return Membership.objects.get(user=user, team=self).role
+
+        except Membership.DoesNotExist:
+            return None
 
     def add_or_update_member(self, user: 'User', role: str = Membership.Role.MEMBER) -> Membership:
         """Add a user to the team with the specified role.
