@@ -5864,11 +5864,16 @@ components:
           type: integer
     PatchedRestrictedUser:
       type: object
-      description: Object serializer for the `User` class with administrative fields
-        marked as read only.
+      description: Object serializer for the `User` class with sensitive fields marked
+        as read only.
       properties:
         id:
           type: integer
+          readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamRole'
           readOnly: true
         is_superuser:
           type: boolean
@@ -5947,6 +5952,11 @@ components:
         id:
           type: integer
           readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRole'
+          default: []
         name:
           type: string
           maxLength: 255
@@ -5964,6 +5974,16 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
         role:
           $ref: '#/components/schemas/RoleEnum'
         user:
@@ -6060,11 +6080,16 @@ components:
       - detail
     RestrictedUser:
       type: object
-      description: Object serializer for the `User` class with administrative fields
-        marked as read only.
+      description: Object serializer for the `User` class with sensitive fields marked
+        as read only.
       properties:
         id:
           type: integer
+          readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamRole'
           readOnly: true
         is_superuser:
           type: boolean
@@ -6143,6 +6168,7 @@ components:
       - is_ldap_user
       - is_staff
       - last_login
+      - membership
       - password
       - profile_image
       - username
@@ -6281,6 +6307,11 @@ components:
         id:
           type: integer
           readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRole'
+          default: []
         name:
           type: string
           maxLength: 255
@@ -6302,6 +6333,16 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
         role:
           $ref: '#/components/schemas/RoleEnum'
         user:
@@ -6309,10 +6350,44 @@ components:
         team:
           type: integer
       required:
+      - _team
+      - _user
       - id
       - role
       - team
       - user
+    TeamRole:
+      type: object
+      description: Serializer summarizing team names and roles in nested responses.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+      required:
+      - _team
+      - id
+      - role
+      - team
+    TeamSummary:
+      type: object
+      description: Serializer for summarizing team information in nested responses.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        is_active:
+          type: boolean
+      required:
+      - name
     Token:
       type: object
       description: Serializer for Token model.
@@ -6322,6 +6397,51 @@ components:
           maxLength: 40
       required:
       - key
+    UserRole:
+      type: object
+      description: Serializer summarizing team member usernames and roles in nested
+        responses.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+      required:
+      - _user
+      - id
+      - role
+      - user
+    UserSummary:
+      type: object
+      description: Serializer for summarizing user information in nested responses.
+      properties:
+        username:
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+      required:
+      - username
     health_json_ok:
       type: object
       properties:

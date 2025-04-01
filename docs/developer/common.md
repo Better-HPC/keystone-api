@@ -113,7 +113,7 @@ keystone-api health_check #(3)!
 ## OpenAPI Generation
 
 The `spectacular` command will dynamically generate an OpenAPI schema in YAML format.
-Rendering the specification into HTML is left to the developer and the documentation tool of their choice.
+Rendering the specification into HTML is left to the developer using the documentation tool of their choice.
 
 ```bash
 keystone-api spectacular --file api.yml

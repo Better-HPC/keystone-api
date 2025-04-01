@@ -101,7 +101,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'Team 3'},
+            put_body={'name': 'Team 3', 'members': []},
             patch_body={'name': 'New Name'},
         )
 
@@ -119,7 +119,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'Team 3'},
+            put_body={'name': 'Team 3', 'members': []},
             patch_body={'name': 'New Name'},
         )
 
@@ -137,6 +137,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'Team 3'},
+            put_body={'name': 'Team 3', 'members': []},
             patch_body={'name': 'New Name'},
         )
