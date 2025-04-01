@@ -51,10 +51,10 @@ class UserAdmin(auth.admin.UserAdmin):
     )
 
 
-class TeamMembershipInline(admin.TabularInline):
+class MembershipInline(admin.TabularInline):
     """Inline interface for managing team membership."""
 
-    model = TeamMembership
+    model = Membership
     raw_id_fields = ('user',)
     extra = 1
 
@@ -68,7 +68,7 @@ class TeamAdmin(admin.ModelAdmin):
     def owners(obj: Team) -> str:
         """Return a CSV of team owners."""
 
-        owners = obj.users.filter(teammembership__role=TeamMembership.Role.OWNER)
+        owners = obj.users.filter(membership__role=Membership.Role.OWNER)
         return ', '.join(owners.values_list('username', flat=True))
 
     @staticmethod
@@ -83,4 +83,4 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active', 'get_member_count', owners)
     search_fields = ('name',)
     list_filter = ('is_active',)
-    inlines = [TeamMembershipInline]
+    inlines = [MembershipInline]
