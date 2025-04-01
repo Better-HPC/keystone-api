@@ -72,7 +72,7 @@ Nested representations do not need to be complete, and should only include data 
     ```mermaid
     classDiagram
         direction LR
-        User "1" -- "1" Profile
+        User "1" -- "1" Post
         class User {
             +id: int
             +username: string
