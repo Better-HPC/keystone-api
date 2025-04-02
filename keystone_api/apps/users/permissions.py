@@ -16,33 +16,30 @@ __all__ = ['TeamPermissions', 'MembershipPermissions', 'UserPermissions']
 
 
 class TeamPermissions(permissions.BasePermission):
-    """Permissions model for `Team` objects.
+    """RBAC permissions model for `Team` objects.
 
-    Grants read-only access to all authenticated users.
-    Write access is granted to staff and team administrators.
+    Permissions:
+        - Grants read access to all users.
+        - Grants write access to staff and team administrators.
     """
-
-    def has_permission(self, request: Request, view: View) -> bool:
-        """Return whether the request has permissions to access the requested resource."""
-
-        return request.user.is_authenticated
 
     def has_object_permission(self, request: Request, view: View, obj: Team):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        # Read permissions are allowed to any request
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.is_authenticated
+        is_staff = request.user.is_staff
+        is_readonly = request.method in permissions.SAFE_METHODS
+        is_team_admin = request.user in obj.get_privileged_members()
 
-        # Update permissions are only allowed for staff and team admins
-        return request.user.is_staff or request.user in obj.get_privileged_members()
+        return is_readonly or is_team_admin or is_staff
 
 
 class MembershipPermissions(TeamPermissions):
-    """Permissions model for `Membership` objects.
+    """RBAC permissions model for `Membership` objects.
 
-    Grants read-only access to all authenticated users.
-    Write access is granted to staff and team administrators.
+    Permissions:
+        - Grants read access to all users.
+        - Grants write access to staff and team administrators.
+        - Grants write access to users deleting their own membership records.
     """
 
     def has_permission(self, request: Request, view: View) -> bool:
@@ -58,40 +55,46 @@ class MembershipPermissions(TeamPermissions):
             return request.user in team.get_privileged_members()
 
         except Team.DoesNotExist:
-            return request.user.is_authenticated
+            return True
 
     def has_object_permission(self, request: Request, view: View, obj: Membership):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        if request.user.is_staff or request.method in permissions.SAFE_METHODS:
-            return True
-
-        # Users can delete their own group membership
+        # Allow users to remove their own membership
         if request.method == "DELETE" and obj.user == request.user:
             return True
 
-        return request.user in obj.team.get_privileged_members()
+        is_staff = request.user.is_staff
+        is_readonly = request.method in permissions.SAFE_METHODS
+        is_team_admin = request.user in obj.team.get_privileged_members()
+
+        return is_readonly or is_team_admin or is_staff
 
 
 class UserPermissions(permissions.BasePermission):
-    """Permissions model for `User` objects.
+    """RBAC permissions model for `User` objects.
 
-    Grants read-only permissions to everyone and limits write access to staff and
-    to user's accessing their own user record.
+    Permissions:
+        - Grants read access to all users.
+        - Grants write to all staff.
+        - Grants write access to users modifying their own user record.
     """
 
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
+        # Only staff can create users
         if request.method == 'POST':
             return request.user.is_staff
 
-        return request.user.is_authenticated
+        # Defer to object based permissions
+        return True
 
     def has_object_permission(self, request: Request, view: View, obj: User) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        # Write operations are restricted to staff and user's modifying their own data
-        is_record_owner = obj == request.user
+        is_staff = request.user.is_staff
+        is_record_owner = (obj == request.user)
         is_readonly = request.method in permissions.SAFE_METHODS
-        return is_readonly or is_record_owner or request.user.is_staff
+
+        return is_readonly or is_record_owner or is_staff

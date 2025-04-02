@@ -17,6 +17,7 @@ __all__ = [
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
     'ClusterSerializer',
+    'CommentSerializer'
 ]
 
 

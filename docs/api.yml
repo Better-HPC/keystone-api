@@ -4497,24 +4497,6 @@ paths:
       responses:
         '204':
           description: No response body
-  /users/roles:
-    get:
-      operationId: users_roles_retrieve
-      description: Return valid values for the team membership `role` field.
-      tags:
-      - users
-      security:
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                OW: Owner
-                AD: Admin
-                MB: Member
-          description: ''
   /users/team-membership/role-choices/:
     get:
       operationId: users_team_membership_role_choices_retrieve
