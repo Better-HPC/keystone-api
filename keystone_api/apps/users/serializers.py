@@ -17,7 +17,11 @@ __all__ = [
     'PrivilegedUserSerializer',
     'RestrictedUserSerializer',
     'TeamMembershipSerializer',
+    'TeamRoleSerializer',
     'TeamSerializer',
+    'TeamSummarySerializer',
+    'UserRoleSerializer',
+    'UserSummarySerializer',
 ]
 
 
