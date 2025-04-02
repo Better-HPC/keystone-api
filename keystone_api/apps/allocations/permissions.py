@@ -14,9 +14,10 @@ from apps.users.models import Team
 from .models import TeamModelInterface
 
 __all__ = [
+    'AdminCreateMemberRead',
     'StaffWriteAllRead',
     'StaffWriteMemberRead',
-    'AdminCreateMemberRead',
+    'TeamWrite',
 ]
 
 
@@ -98,3 +99,31 @@ class StaffWriteMemberRead(permissions.BasePermission):
         user_is_in_team = request.user in obj.get_team().get_all_members()
 
         return is_staff or (is_read_only and user_is_in_team)
+
+
+class TeamWrite(permissions.BasePermission):
+    """Grant write permissions to users in the same team as the requested object.
+
+    Permissions:
+        - Grants write access to team members and staff users.
+    """
+
+    def has_permission(self, request: Request, view: View) -> bool:
+
+        # To check write permissions we need to know what team the record belongs to.
+        # Deny permissions if the team is not provided or does not exist.
+        try:
+            team_id = request.data.get('team', None)
+            team = Team.objects.get(pk=team_id)
+
+        except (Team.DoesNotExist, Exception):
+            return False
+
+        return request.user in team.get_all_members()
+
+    def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
+        is_staff = request.user.is_staff
+        user_in_team = request.user in obj.get_team().get_all_members()
+        return user_in_team or is_staff
