@@ -23,7 +23,8 @@ __all__ = [
     'AllocationReviewViewSet',
     'AllocationViewSet',
     'AttachmentViewSet',
-    'ClusterViewSet'
+    'ClusterViewSet',
+    'CommentViewSet',
 ]
 
 

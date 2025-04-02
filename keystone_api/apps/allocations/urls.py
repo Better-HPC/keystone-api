@@ -4,7 +4,6 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import *
-from .views import CommentViewSet
 
 app_name = 'allocations'
 
@@ -12,6 +11,7 @@ router = DefaultRouter()
 router.register('allocations', AllocationViewSet)
 router.register('attachments', AttachmentViewSet)
 router.register('clusters', ClusterViewSet)
+router.register('comments', CommentViewSet)
 router.register('requests', AllocationRequestViewSet)
 router.register('reviews', AllocationReviewViewSet)
 
