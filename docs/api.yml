@@ -5599,6 +5599,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
         title:
           type: string
           maxLength: 250
@@ -5626,6 +5631,7 @@ components:
         team:
           type: integer
       required:
+      - _team
       - agency
       - amount
       - end_date
@@ -5796,6 +5802,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
         title:
           type: string
           maxLength: 250
@@ -5829,6 +5840,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
         title:
           type: string
           maxLength: 250
@@ -5997,6 +6013,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
         title:
           type: string
           maxLength: 250
@@ -6031,6 +6052,7 @@ components:
         team:
           type: integer
       required:
+      - _team
       - abstract
       - id
       - team
@@ -6042,6 +6064,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
         method:
           type: string
           maxLength: 10
@@ -6065,6 +6092,7 @@ components:
           type: integer
           nullable: true
       required:
+      - _user
       - endpoint
       - id
       - method
