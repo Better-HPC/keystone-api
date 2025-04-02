@@ -10,7 +10,7 @@ from rest_framework import permissions
 
 from apps.users.models import Team
 
-__all__ = ['TeamMemberAll', 'TeamMemberReadTeamAdminWrite']
+__all__ = ['PublicationPermissions', 'GrantPermissions']
 
 
 class CustomPermissionsBase(permissions.BasePermission):
@@ -34,13 +34,20 @@ class CustomPermissionsBase(permissions.BasePermission):
             return None
 
 
-class TeamMemberAll(CustomPermissionsBase):
-    """Permissions class providing read and write access to all users within the team."""
+class PublicationPermissions(CustomPermissionsBase):
+    """RBAC permissions model for `Publication` objects.
+
+    Permissions:
+        - Grants read and write access to team members and staff.
+    """
 
     def has_permission(self, request, view) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.method == 'TRACE' and not request.user.is_staff:
+        if request.user.is_staff:
+            return True
+
+        elif request.method == 'TRACE':
             return False
 
         team = self.get_team(request)
@@ -49,16 +56,27 @@ class TeamMemberAll(CustomPermissionsBase):
     def has_object_permission(self, request, view, obj):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        return request.user in obj.team.get_all_members()
+        is_staff = request.user.is_staff
+        is_team_member = request.user in obj.team.get_all_members()
+
+        return is_team_member or is_staff
 
 
-class TeamMemberReadTeamAdminWrite(CustomPermissionsBase):
-    """Permissions class providing read access to regular users and read/write access to team admins."""
+class GrantPermissions(CustomPermissionsBase):
+    """RBAC permissions model for `Grant` objects.
+
+    Permissions:
+        - Grants read access to team members and staff.
+        - Grants write access to team admins and staff.
+    """
 
     def has_permission(self, request, view) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.method == 'TRACE' and not request.user.is_staff:
+        if request.user.is_staff:
+            return True
+
+        elif request.method == 'TRACE':
             return False
 
         team = self.get_team(request)
@@ -67,7 +85,9 @@ class TeamMemberReadTeamAdminWrite(CustomPermissionsBase):
     def has_object_permission(self, request, view, obj):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        read_only = request.method in permissions.SAFE_METHODS
+        is_read_only = request.method in permissions.SAFE_METHODS
         is_team_member = request.user in obj.team.get_all_members()
         is_team_admin = request.user in obj.team.get_privileged_members()
-        return is_team_admin or (read_only and is_team_member)
+        is_staff = request.user.is_staff
+
+        return (is_read_only and is_team_member) or is_team_admin or is_staff
