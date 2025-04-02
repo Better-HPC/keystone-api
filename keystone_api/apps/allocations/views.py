@@ -44,7 +44,7 @@ class AllocationRequestViewSet(viewsets.ModelViewSet):
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestSerializer
     search_fields = ['title', 'description', 'team__name']
-    permission_classes = [IsAuthenticated, TeamAdminCreateMemberRead]
+    permission_classes = [IsAuthenticated, AdminCreateMemberRead]
 
     def get_queryset(self) -> QuerySet:
         """Return a list of allocation requests for the currently authenticated user."""
@@ -141,4 +141,4 @@ class ClusterViewSet(viewsets.ModelViewSet):
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
     search_fields = ['name', 'description']
-    permission_classes = [IsAuthenticated, StaffWriteAuthenticatedRead]
+    permission_classes = [IsAuthenticated, StaffWriteAllRead]
