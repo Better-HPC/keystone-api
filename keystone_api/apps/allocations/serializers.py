@@ -85,6 +85,11 @@ class ClusterSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Comment` class."""
 
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault()
+    )
+
     class Meta:
         """Serializer settings."""
 

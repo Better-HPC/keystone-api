@@ -154,7 +154,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     search_fields = ['content', 'request__title', 'user__username']
-    permission_classes = [IsAuthenticated, TeamWrite]
+    permission_classes = [IsAuthenticated, TeamWriteAllRead]
 
     def get_queryset(self) -> QuerySet:
         """Return a list of attachments for the currently authenticated user."""

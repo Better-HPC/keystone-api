@@ -17,7 +17,7 @@ __all__ = [
     'AdminCreateMemberRead',
     'StaffWriteAllRead',
     'StaffWriteMemberRead',
-    'TeamWrite',
+    'TeamWriteAllRead',
 ]
 
 
@@ -101,7 +101,7 @@ class StaffWriteMemberRead(permissions.BasePermission):
         return is_staff or (is_read_only and user_is_in_team)
 
 
-class TeamWrite(permissions.BasePermission):
+class TeamWriteAllRead(permissions.BasePermission):
     """Grant write permissions to users in the same team as the requested object.
 
     Permissions:
@@ -110,10 +110,13 @@ class TeamWrite(permissions.BasePermission):
 
     def has_permission(self, request: Request, view: View) -> bool:
 
+        if request.user.is_staff or request.method in permissions.SAFE_METHODS:
+            return True
+
         # To check write permissions we need to know what team the record belongs to.
         # Deny permissions if the team is not provided or does not exist.
         try:
-            team_id = request.data.get('team', None)
+            team_id = request.data.get('request', None)
             team = Team.objects.get(pk=team_id)
 
         except (Team.DoesNotExist, Exception):
