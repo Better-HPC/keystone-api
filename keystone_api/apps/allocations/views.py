@@ -30,6 +30,7 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
     """Exposes valid values for the allocation request `status` field."""
 
     _resp_body = dict(AllocationRequest.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(responses={'200': _resp_body})
     def get(self, request, *args, **kwargs) -> Response:
@@ -60,6 +61,7 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
     """Exposes valid values for the allocation review `status` field."""
 
     _resp_body = dict(AllocationReview.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(responses={'200': _resp_body})
     def get(self, request, *args, **kwargs) -> Response:

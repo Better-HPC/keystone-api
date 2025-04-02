@@ -12,8 +12,6 @@ router.register('membership', MembershipViewSet)
 router.register('teams', TeamViewSet)
 router.register('users', UserViewSet)
 
-urlpatterns = router.urls
-urlpatterns += [
+urlpatterns = router.urls + [
     path('team-membership/role-choices/', MembershipRoleChoicesView.as_view(), name='team_membership_roles'),
-    path('roles', MembershipRoleChoicesView.as_view(), name='roles'),
 ]
