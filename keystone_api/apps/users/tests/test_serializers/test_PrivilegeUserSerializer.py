@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
-from apps.users.models import Team, TeamMembership
+from apps.users.models import Membership, Team
 from apps.users.serializers import PrivilegedUserSerializer
 
 User = get_user_model()
@@ -65,8 +65,8 @@ class CreateMethod(TestCase):
             "first_name": "Test",
             "last_name": "User",
             "membership": [
-                {"team": self.team1.pk, "role": TeamMembership.Role.ADMIN},
-                {"team": self.team2.pk, "role": TeamMembership.Role.MEMBER},
+                {"team": self.team1.pk, "role": Membership.Role.ADMIN},
+                {"team": self.team2.pk, "role": Membership.Role.MEMBER},
             ],
         }
 
@@ -85,8 +85,8 @@ class CreateMethod(TestCase):
 
         # Verify user roles
         self.assertEqual(user.membership.count(), 2)
-        self.assertEqual(user.membership.get(team=self.team1).role, TeamMembership.Role.ADMIN)
-        self.assertEqual(user.membership.get(team=self.team2).role, TeamMembership.Role.MEMBER)
+        self.assertEqual(user.membership.get(team=self.team1).role, Membership.Role.ADMIN)
+        self.assertEqual(user.membership.get(team=self.team2).role, Membership.Role.MEMBER)
 
     def test_create_user_without_teams(self) -> None:
         """Verify a user can be created without team memberships."""
@@ -111,7 +111,7 @@ class UpdateMethod(TestCase):
         self.team1 = Team.objects.create(name="Team Alpha")
         self.team2 = Team.objects.create(name="Team Beta")
 
-        TeamMembership.objects.create(user=self.user, team=self.team1, role=TeamMembership.Role.OWNER)
+        Membership.objects.create(user=self.user, team=self.team1, role=Membership.Role.OWNER)
 
     def test_update_user(self) -> None:
         """Verify a user is updated with correct attributes and nested memberships."""
@@ -121,7 +121,7 @@ class UpdateMethod(TestCase):
             "password": "new_password",
             "email": "new@example.com",
             "membership": [
-                {"team": self.team2.pk, "role": TeamMembership.Role.ADMIN},
+                {"team": self.team2.pk, "role": Membership.Role.ADMIN},
             ],
         }
 
@@ -137,7 +137,7 @@ class UpdateMethod(TestCase):
 
         # All user team memberships are replaced with the provided data
         self.assertEqual(1, updated_user.membership.count())
-        self.assertEqual(updated_user.membership.get(team=self.team2).role, TeamMembership.Role.ADMIN)
+        self.assertEqual(updated_user.membership.get(team=self.team2).role, Membership.Role.ADMIN)
 
     def test_partial_update_user_attributes(self) -> None:
         """Verify users can be partially updated using a subset of user attributes."""
@@ -161,14 +161,14 @@ class UpdateMethod(TestCase):
 
         # Team memberships were not specified in the update and so remain unchanged
         self.assertEqual(1, updated_user.membership.count())
-        self.assertEqual(updated_user.membership.get(team=self.team1).role, TeamMembership.Role.OWNER)
+        self.assertEqual(updated_user.membership.get(team=self.team1).role, Membership.Role.OWNER)
 
     def test_partial_update_membership_only(self) -> None:
         """Verify users can be partially updated using only team membership data."""
 
         update_data = {
             "membership": [
-                {"team": self.team2.pk, "role": TeamMembership.Role.MEMBER},
+                {"team": self.team2.pk, "role": Membership.Role.MEMBER},
             ]
         }
 
@@ -183,5 +183,5 @@ class UpdateMethod(TestCase):
 
         # Memberships specified in the update are modified. Memberships not specified are unchanged.
         self.assertEqual(2, updated_user.membership.count())
-        self.assertEqual(updated_user.membership.get(team=self.team1).role, TeamMembership.Role.OWNER)
-        self.assertEqual(updated_user.membership.get(team=self.team2).role, TeamMembership.Role.MEMBER)
+        self.assertEqual(updated_user.membership.get(team=self.team1).role, Membership.Role.OWNER)
+        self.assertEqual(updated_user.membership.get(team=self.team2).role, Membership.Role.MEMBER)
