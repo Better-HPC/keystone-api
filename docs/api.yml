@@ -5460,7 +5460,7 @@ components:
           format: date
           readOnly: true
         status:
-          $ref: '#/components/schemas/StatusA49Enum'
+          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -5504,7 +5504,7 @@ components:
           type: string
           maxLength: 250
         status:
-          $ref: '#/components/schemas/StatusA49Enum'
+          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -5533,7 +5533,7 @@ components:
           readOnly: true
           title: ' reviewer'
         status:
-          $ref: '#/components/schemas/AllocationReviewStatusEnum'
+          $ref: '#/components/schemas/ReviewStatusChoices'
         public_comments:
           type: string
           nullable: true
@@ -5558,16 +5558,6 @@ components:
       - last_modified
       - request
       - status
-    AllocationReviewStatusEnum:
-      enum:
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
     AppLog:
       type: object
       description: Object serializer for the `AppLog` class.
@@ -5819,7 +5809,7 @@ components:
           format: date
           readOnly: true
         status:
-          $ref: '#/components/schemas/StatusA49Enum'
+          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -5863,7 +5853,7 @@ components:
           readOnly: true
           title: ' reviewer'
         status:
-          $ref: '#/components/schemas/AllocationReviewStatusEnum'
+          $ref: '#/components/schemas/ReviewStatusChoices'
         public_comments:
           type: string
           nullable: true
@@ -6221,6 +6211,18 @@ components:
       - method
       - response_code
       - time
+    RequestStatusChoices:
+      enum:
+      - PD
+      - AP
+      - DC
+      - CR
+      type: string
+      description: |-
+        * `PD` - Pending
+        * `AP` - Approved
+        * `DC` - Declined
+        * `CR` - Changes Requested
     RestAuthDetail:
       type: object
       properties:
@@ -6323,6 +6325,16 @@ components:
       - password
       - profile_image
       - username
+    ReviewStatusChoices:
+      enum:
+      - AP
+      - DC
+      - CR
+      type: string
+      description: |-
+        * `AP` - Approved
+        * `DC` - Declined
+        * `CR` - Changes Requested
     RoleEnum:
       enum:
       - OW
@@ -6333,18 +6345,6 @@ components:
         * `OW` - Owner
         * `AD` - Admin
         * `MB` - Member
-    StatusA49Enum:
-      enum:
-      - PD
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `PD` - Pending
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
     TaskResult:
       type: object
       description: Object serializer for the `TaskResult` class.

@@ -194,6 +194,10 @@ SPECTACULAR_SETTINGS = {
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
     'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAuthenticated'],
+    'ENUM_NAME_OVERRIDES': {
+        'RequestStatusChoices': 'apps.allocations.models.AllocationRequest.StatusChoices',
+        'ReviewStatusChoices': 'apps.allocations.models.AllocationReview.StatusChoices',
+    }
 }
 
 # Redis backend and Celery scheduler
