@@ -5381,6 +5381,16 @@ components:
         id:
           type: integer
           readOnly: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
         requested:
           type: integer
           maximum: 9223372036854775807
@@ -5403,6 +5413,8 @@ components:
         request:
           type: integer
       required:
+      - _cluster
+      - _request
       - cluster
       - id
       - request
@@ -5414,6 +5426,29 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' assignees'
+        _publications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publication'
+          readOnly: true
+          title: ' publications'
+        _grants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Grant'
+          readOnly: true
+          title: ' grants'
         title:
           type: string
           maxLength: 250
@@ -5425,7 +5460,7 @@ components:
           format: date
           readOnly: true
         status:
-          $ref: '#/components/schemas/AllocationRequestStatusEnum'
+          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -5452,23 +5487,34 @@ components:
           items:
             type: integer
       required:
+      - _assignees
+      - _grants
+      - _publications
+      - _team
       - description
       - id
       - submitted
       - team
       - title
-    AllocationRequestStatusEnum:
-      enum:
-      - PD
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `PD` - Pending
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
+    AllocationRequestSummary:
+      type: object
+      description: Serializer for summarizing allocation requests in nested responses.
+      properties:
+        title:
+          type: string
+          maxLength: 250
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
+        active:
+          type: string
+          format: date
+          nullable: true
+        expire:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - title
     AllocationReview:
       type: object
       description: Object serializer for the `AllocationReview` class.
@@ -5476,8 +5522,18 @@ components:
         id:
           type: integer
           readOnly: true
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _reviewer:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' reviewer'
         status:
-          $ref: '#/components/schemas/AllocationReviewStatusEnum'
+          $ref: '#/components/schemas/ReviewStatusChoices'
         public_comments:
           type: string
           nullable: true
@@ -5496,20 +5552,12 @@ components:
           type: integer
           nullable: true
       required:
+      - _request
+      - _reviewer
       - id
       - last_modified
       - request
       - status
-    AllocationReviewStatusEnum:
-      enum:
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
     AppLog:
       type: object
       description: Object serializer for the `AppLog` class.
@@ -5559,6 +5607,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
         path:
           type: string
           readOnly: true
@@ -5569,6 +5622,7 @@ components:
         request:
           type: integer
       required:
+      - _request
       - id
       - path
       - request
@@ -5591,6 +5645,17 @@ components:
           type: boolean
       required:
       - id
+      - name
+    ClusterSummary:
+      type: object
+      description: Serializer for summarizing cluster names in nested responses.
+      properties:
+        name:
+          type: string
+          maxLength: 50
+        enabled:
+          type: boolean
+      required:
       - name
     Grant:
       type: object
@@ -5672,6 +5737,16 @@ components:
         id:
           type: integer
           readOnly: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
         requested:
           type: integer
           maximum: 9223372036854775807
@@ -5700,6 +5775,29 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' assignees'
+        _publications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publication'
+          readOnly: true
+          title: ' publications'
+        _grants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Grant'
+          readOnly: true
+          title: ' grants'
         title:
           type: string
           maxLength: 250
@@ -5711,7 +5809,7 @@ components:
           format: date
           readOnly: true
         status:
-          $ref: '#/components/schemas/AllocationRequestStatusEnum'
+          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -5744,8 +5842,18 @@ components:
         id:
           type: integer
           readOnly: true
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _reviewer:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' reviewer'
         status:
-          $ref: '#/components/schemas/AllocationReviewStatusEnum'
+          $ref: '#/components/schemas/ReviewStatusChoices'
         public_comments:
           type: string
           nullable: true
@@ -5770,6 +5878,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
         path:
           type: string
           readOnly: true
@@ -6098,6 +6211,18 @@ components:
       - method
       - response_code
       - time
+    RequestStatusChoices:
+      enum:
+      - PD
+      - AP
+      - DC
+      - CR
+      type: string
+      description: |-
+        * `PD` - Pending
+        * `AP` - Approved
+        * `DC` - Declined
+        * `CR` - Changes Requested
     RestAuthDetail:
       type: object
       properties:
@@ -6200,6 +6325,16 @@ components:
       - password
       - profile_image
       - username
+    ReviewStatusChoices:
+      enum:
+      - AP
+      - DC
+      - CR
+      type: string
+      description: |-
+        * `AP` - Approved
+        * `DC` - Declined
+        * `CR` - Changes Requested
     RoleEnum:
       enum:
       - OW
@@ -6386,7 +6521,7 @@ components:
       - user
     TeamRole:
       type: object
-      description: Serializer summarizing team names and roles in nested responses.
+      description: Serializer for summarizing team names and roles in nested responses.
       properties:
         id:
           type: integer
@@ -6427,7 +6562,7 @@ components:
       - key
     UserRole:
       type: object
-      description: Serializer summarizing team member usernames and roles in nested
+      description: Serializer for summarizing team member usernames and roles in nested
         responses.
       properties:
         id:
