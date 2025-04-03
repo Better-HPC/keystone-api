@@ -8,14 +8,13 @@ from .views import *
 app_name = 'allocations'
 
 router = DefaultRouter()
-router.register(r'allocations', AllocationViewSet)
-router.register(r'attachments', AttachmentViewSet)
-router.register(r'clusters', ClusterViewSet)
-router.register(r'requests', AllocationRequestViewSet)
-router.register(r'reviews', AllocationReviewViewSet)
+router.register('allocations', AllocationViewSet)
+router.register('attachments', AttachmentViewSet)
+router.register('clusters', ClusterViewSet)
+router.register('requests', AllocationRequestViewSet)
+router.register('reviews', AllocationReviewViewSet)
 
-urlpatterns = router.urls
-urlpatterns += [
+urlpatterns = router.urls + [
     path('allocation-request/status-choices/', AllocationRequestStatusChoicesView.as_view()),
     path('allocation-review/status-choices/', AllocationReviewStatusChoicesView.as_view()),
 ]

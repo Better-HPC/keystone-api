@@ -3,10 +3,11 @@
 View objects handle the processing of incoming HTTP requests and return the
 appropriately rendered HTML template or other HTTP response.
 """
-
+from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import *
@@ -29,6 +30,7 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
     """Exposes valid values for the allocation request `status` field."""
 
     _resp_body = dict(AllocationRequest.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(responses={'200': _resp_body})
     def get(self, request, *args, **kwargs) -> Response:
@@ -43,9 +45,9 @@ class AllocationRequestViewSet(viewsets.ModelViewSet):
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestSerializer
     search_fields = ['title', 'description', 'team__name']
-    permission_classes = [permissions.IsAuthenticated, TeamAdminCreateMemberRead]
+    permission_classes = [IsAuthenticated, AdminCreateMemberRead]
 
-    def get_queryset(self) -> list[AllocationRequest]:
+    def get_queryset(self) -> QuerySet:
         """Return a list of allocation requests for the currently authenticated user."""
 
         if self.request.user.is_staff:
@@ -59,6 +61,7 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
     """Exposes valid values for the allocation review `status` field."""
 
     _resp_body = dict(AllocationReview.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(responses={'200': _resp_body})
     def get(self, request, *args, **kwargs) -> Response:
@@ -73,9 +76,9 @@ class AllocationReviewViewSet(viewsets.ModelViewSet):
     queryset = AllocationReview.objects.all()
     serializer_class = AllocationReviewSerializer
     search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
-    permission_classes = [permissions.IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
 
-    def get_queryset(self) -> list[Allocation]:
+    def get_queryset(self) -> QuerySet:
         """Return a list of allocation reviews for the currently authenticated user."""
 
         if self.request.user.is_staff:
@@ -104,9 +107,9 @@ class AllocationViewSet(viewsets.ModelViewSet):
     queryset = Allocation.objects.all()
     serializer_class = AllocationSerializer
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
-    permission_classes = [permissions.IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
 
-    def get_queryset(self) -> list[Allocation]:
+    def get_queryset(self) -> QuerySet:
         """Return a list of allocations for the currently authenticated user."""
 
         if self.request.user.is_staff:
@@ -122,9 +125,9 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
     search_fields = ['path', 'request__title', 'request__submitter']
-    permission_classes = [permissions.IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
 
-    def get_queryset(self) -> list[Allocation]:
+    def get_queryset(self) -> QuerySet:
         """Return a list of attachments for the currently authenticated user."""
 
         if self.request.user.is_staff:
@@ -140,4 +143,4 @@ class ClusterViewSet(viewsets.ModelViewSet):
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
     search_fields = ['name', 'description']
-    permission_classes = [permissions.IsAuthenticated, StaffWriteAuthenticatedRead]
+    permission_classes = [IsAuthenticated, StaffWriteAllRead]

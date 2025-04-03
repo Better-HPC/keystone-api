@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from apps.users.models import Team, TeamMembership, User
+from apps.users.models import Team, Membership, User
 
 
 class TeamsForUserMethod(TestCase):
@@ -15,15 +15,15 @@ class TeamsForUserMethod(TestCase):
 
         # Team where the test user is an owner
         self.team1 = Team.objects.create(name='Team1')
-        self.team1.add_or_update_member(self.test_user, role=TeamMembership.Role.OWNER)
+        self.team1.add_or_update_member(self.test_user, role=Membership.Role.OWNER)
 
         # Team where the test user is an admin
         self.team2 = Team.objects.create(name='Team2')
-        self.team2.add_or_update_member(self.test_user, role=TeamMembership.Role.ADMIN)
+        self.team2.add_or_update_member(self.test_user, role=Membership.Role.ADMIN)
 
         # Team where the test user is an unprivileged member
         self.team3 = Team.objects.create(name='Team3')
-        self.team3.add_or_update_member(self.test_user, role=TeamMembership.Role.MEMBER)
+        self.team3.add_or_update_member(self.test_user, role=Membership.Role.MEMBER)
 
         # Team where the test user has no role
         self.team4 = Team.objects.create(name='Team4')

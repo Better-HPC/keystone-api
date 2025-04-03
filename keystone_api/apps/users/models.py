@@ -21,10 +21,10 @@ from PIL import Image
 
 from .managers import *
 
-__all__ = ['Team', 'TeamMembership', 'User']
+__all__ = ['Membership', 'Team', 'User']
 
 
-class TeamMembership(models.Model):
+class Membership(models.Model):
     """Relationship table between the `User` and `Team` models."""
 
     class Meta:
@@ -52,8 +52,8 @@ class TeamMembership(models.Model):
 class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
-    name = models.CharField(max_length=255, unique=True, db_index=True)
-    users = models.ManyToManyField('User', through=TeamMembership)
+    name = models.CharField(max_length=255, unique=True)
+    users = models.ManyToManyField('User', through=Membership)
     is_active = models.BooleanField(default=True)
 
     objects = TeamManager()
@@ -67,11 +67,11 @@ class Team(models.Model):
         """Return a queryset of all team with admin privileges."""
 
         return self.users.filter(membership__role__in=[
-            TeamMembership.Role.ADMIN,
-            TeamMembership.Role.OWNER
+            Membership.Role.ADMIN,
+            Membership.Role.OWNER
         ])
 
-    def add_or_update_member(self, user: 'User', role: str = TeamMembership.Role.MEMBER) -> TeamMembership:
+    def add_or_update_member(self, user: 'User', role: str = Membership.Role.MEMBER) -> Membership:
         """Add a user to the team with the specified role.
 
         If the user is already a member, their role will be updated.
@@ -84,7 +84,7 @@ class Team(models.Model):
             The team membership record
         """
 
-        membership_query = TeamMembership.objects.filter(user=user, team=self)
+        membership_query = Membership.objects.filter(user=user, team=self)
         if membership_query.exists():
             record = membership_query.first()
             record.role = role
@@ -92,7 +92,7 @@ class Team(models.Model):
             return record
 
         else:
-            return TeamMembership.objects.create(user=user, team=self, role=role)
+            return Membership.objects.create(user=user, team=self, role=role)
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the team's account name."""

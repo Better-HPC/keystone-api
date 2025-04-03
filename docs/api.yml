@@ -4360,7 +4360,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TeamMembership'
+                  $ref: '#/components/schemas/Membership'
           description: ''
     post:
       operationId: users_membership_create
@@ -4371,13 +4371,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
         required: true
       security:
       - cookieAuth: []
@@ -4387,7 +4387,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
   /users/membership/{id}/:
     get:
@@ -4398,7 +4398,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
@@ -4410,7 +4410,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
     put:
       operationId: users_membership_update
@@ -4420,7 +4420,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
@@ -4428,13 +4428,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
         required: true
       security:
       - cookieAuth: []
@@ -4444,7 +4444,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
     patch:
       operationId: users_membership_partial_update
@@ -4454,7 +4454,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
@@ -4462,13 +4462,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedTeamMembership'
+              $ref: '#/components/schemas/PatchedMembership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedTeamMembership'
+              $ref: '#/components/schemas/PatchedMembership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedTeamMembership'
+              $ref: '#/components/schemas/PatchedMembership'
       security:
       - cookieAuth: []
       - basicAuth: []
@@ -4477,7 +4477,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
     delete:
       operationId: users_membership_destroy
@@ -4487,7 +4487,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
@@ -5718,6 +5718,36 @@ components:
           type: string
       required:
       - password
+    Membership:
+      type: object
+      description: Object serializer for the `Membership` model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        user:
+          type: integer
+        team:
+          type: integer
+      required:
+      - _team
+      - _user
+      - id
+      - role
+      - team
+      - user
     NestedInlineOneOff:
       type: object
       properties:
@@ -5946,6 +5976,29 @@ components:
           format: date
         team:
           type: integer
+    PatchedMembership:
+      type: object
+      description: Object serializer for the `Membership` model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        user:
+          type: integer
+        team:
+          type: integer
     PatchedPublication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -6096,29 +6149,6 @@ components:
           items:
             type: integer
           readOnly: true
-    PatchedTeamMembership:
-      type: object
-      description: Object serializer for the `TeamMembership` model.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        role:
-          $ref: '#/components/schemas/RoleEnum'
-        user:
-          type: integer
-        team:
-          type: integer
     Publication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -6489,36 +6519,6 @@ components:
       - id
       - name
       - users
-    TeamMembership:
-      type: object
-      description: Object serializer for the `TeamMembership` model.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        role:
-          $ref: '#/components/schemas/RoleEnum'
-        user:
-          type: integer
-        team:
-          type: integer
-      required:
-      - _team
-      - _user
-      - id
-      - role
-      - team
-      - user
     TeamRole:
       type: object
       description: Serializer for summarizing team names and roles in nested responses.

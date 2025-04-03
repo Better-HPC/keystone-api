@@ -14,9 +14,9 @@ from rest_framework import serializers
 from .models import *
 
 __all__ = [
+    'MembershipSerializer',
     'PrivilegedUserSerializer',
     'RestrictedUserSerializer',
-    'TeamMembershipSerializer',
     'TeamRoleSerializer',
     'TeamSerializer',
     'TeamSummarySerializer',
@@ -43,7 +43,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
     class Meta:
         """Serializer settings."""
 
-        model = TeamMembership
+        model = Membership
         fields = ["id", "user", "role", "_user"]
 
 
@@ -56,6 +56,7 @@ class TeamSummarySerializer(serializers.ModelSerializer):
         model = Team
         fields = ["name", "is_active"]
 
+
 class TeamRoleSerializer(serializers.ModelSerializer):
     """Serializer for summarizing team names and roles in nested responses."""
 
@@ -64,12 +65,12 @@ class TeamRoleSerializer(serializers.ModelSerializer):
     class Meta:
         """Serializer settings."""
 
-        model = TeamMembership
+        model = Membership
         fields = ["id", "team", "role", "_team"]
 
 
-class TeamMembershipSerializer(serializers.ModelSerializer):
-    """Object serializer for the `TeamMembership` model."""
+class MembershipSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Membership` model."""
 
     _user = UserSummarySerializer(source="user", read_only=True)
     _team = TeamSummarySerializer(source="team", read_only=True)
@@ -77,7 +78,7 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
     class Meta:
         """Serializer settings."""
 
-        model = TeamMembership
+        model = Membership
         fields = "__all__"
 
 
@@ -99,7 +100,7 @@ class TeamSerializer(serializers.ModelSerializer):
         members_data = validated_data.pop("membership", [])
         team = Team.objects.create(**validated_data)
         for membership in members_data:
-            TeamMembership.objects.create(team=team, user=membership["user"], role=membership["role"])
+            Membership.objects.create(team=team, user=membership["user"], role=membership["role"])
 
         return team
 
@@ -118,7 +119,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
         # Update membership records
         for membership in members_data:
-            TeamMembership.objects.update_or_create(
+            Membership.objects.update_or_create(
                 team=instance, user=membership["user"], defaults={"role": membership["role"]}
             )
 
@@ -165,7 +166,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
 
         for team_data in teams_data:
-            TeamMembership.objects.create(
+            Membership.objects.create(
                 user=user,
                 team=team_data["team"],
                 role=team_data["role"]
@@ -191,7 +192,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
         # If teams are provided, update memberships
         for team_data in teams_data:
-            TeamMembership.objects.update_or_create(
+            Membership.objects.update_or_create(
                 team=team_data["team"], user=instance, defaults={"role": team_data["role"]}
             )
 
