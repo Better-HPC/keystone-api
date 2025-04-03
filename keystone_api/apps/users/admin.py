@@ -73,14 +73,12 @@ class TeamAdmin(admin.ModelAdmin):
 
     @staticmethod
     @admin.display
-    def get_member_count(obj: Team) -> int:
+    def total_members(obj: Team) -> int:
         """Return the total number of team members."""
 
         return obj.users.count()
 
-    get_member_count.short_description = 'Member Count'
-
-    list_display = ('name', 'is_active', 'get_member_count', owners)
+    list_display = ('name', 'is_active', total_members, owners)
     search_fields = ('name',)
     list_filter = ('is_active',)
     inlines = [MembershipInline]

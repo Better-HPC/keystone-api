@@ -44,8 +44,8 @@ class Membership(models.Model):
         ADMIN = 'AD', 'Admin'
         MEMBER = 'MB', 'Member'
 
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
 
 
@@ -109,7 +109,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     REQUIRED_FIELDS = []
 
     # User metadata
-    username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()])
+    username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()], db_index=True)
     password = models.CharField(max_length=128)
     first_name = models.CharField(max_length=150, null=True)
     last_name = models.CharField(max_length=150, null=True)
