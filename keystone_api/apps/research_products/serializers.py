@@ -8,8 +8,8 @@ creation.
 
 from rest_framework import serializers
 
+from apps.users.serializers import TeamSummarySerializer
 from .models import *
-from ..users.serializers import TeamSummarySerializer
 
 __all__ = ['GrantSerializer', 'PublicationSerializer']
 

@@ -8,11 +8,10 @@ creation.
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from apps.users.serializers import UserSummarySerializer
 from .models import *
 
 __all__ = ['AppLogSerializer', 'RequestLogSerializer', 'TaskResultSerializer']
-
-from ..users.serializers import UserSummarySerializer
 
 User = get_user_model()
 
