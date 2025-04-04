@@ -934,6 +934,356 @@ paths:
       responses:
         '204':
           description: No response body
+  /allocations/comments/:
+    get:
+      operationId: allocations_comments_list
+      description: Comments on allocation requests.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: content
+        schema:
+          type: string
+      - in: query
+        name: content__contains
+        schema:
+          type: string
+      - in: query
+        name: content__endswith
+        schema:
+          type: string
+      - in: query
+        name: content__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: content__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: content__startswith
+        schema:
+          type: string
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__day
+        schema:
+          type: number
+      - in: query
+        name: created__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__hour
+        schema:
+          type: number
+      - in: query
+        name: created__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: created__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: created__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__minute
+        schema:
+          type: number
+      - in: query
+        name: created__month
+        schema:
+          type: number
+      - in: query
+        name: created__second
+        schema:
+          type: number
+      - in: query
+        name: created__week
+        schema:
+          type: number
+      - in: query
+        name: created__week_day
+        schema:
+          type: number
+      - in: query
+        name: created__year
+        schema:
+          type: number
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: private
+        schema:
+          type: boolean
+      - in: query
+        name: private__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: private__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: request
+        schema:
+          type: integer
+      - in: query
+        name: request__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: request__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
+      tags:
+      - allocations
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+          description: ''
+    post:
+      operationId: allocations_comments_create
+      description: Comments on allocation requests.
+      tags:
+      - allocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+  /allocations/comments/{id}/:
+    get:
+      operationId: allocations_comments_retrieve
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    put:
+      operationId: allocations_comments_update
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    patch:
+      operationId: allocations_comments_partial_update
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    delete:
+      operationId: allocations_comments_destroy
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
@@ -1562,64 +1912,6 @@ paths:
         name: last_modified__year
         schema:
           type: number
-      - in: query
-        name: private_comments
-        schema:
-          type: string
-      - in: query
-        name: private_comments__contains
-        schema:
-          type: string
-      - in: query
-        name: private_comments__endswith
-        schema:
-          type: string
-      - in: query
-        name: private_comments__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: private_comments__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: private_comments__startswith
-        schema:
-          type: string
-      - in: query
-        name: public_comments
-        schema:
-          type: string
-      - in: query
-        name: public_comments__contains
-        schema:
-          type: string
-      - in: query
-        name: public_comments__endswith
-        schema:
-          type: string
-      - in: query
-        name: public_comments__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: public_comments__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: public_comments__startswith
-        schema:
-          type: string
       - in: query
         name: request
         schema:
@@ -5534,14 +5826,6 @@ components:
           title: ' reviewer'
         status:
           $ref: '#/components/schemas/ReviewStatusChoices'
-        public_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
-        private_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
         last_modified:
           type: string
           format: date-time
@@ -5657,6 +5941,31 @@ components:
           type: boolean
       required:
       - name
+    Comment:
+      type: object
+      description: Object serializer for the `Comment` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        request:
+          type: integer
+      required:
+      - content
+      - created
+      - id
+      - request
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -5884,14 +6193,6 @@ components:
           title: ' reviewer'
         status:
           $ref: '#/components/schemas/ReviewStatusChoices'
-        public_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
-        private_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
         last_modified:
           type: string
           format: date-time
@@ -5938,6 +6239,26 @@ components:
           maxLength: 150
         enabled:
           type: boolean
+    PatchedComment:
+      type: object
+      description: Object serializer for the `Comment` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        request:
+          type: integer
     PatchedGrant:
       type: object
       description: Object serializer for the `Grant` class.

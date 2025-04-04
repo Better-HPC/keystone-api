@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import AllocationRequest
+from apps.allocations.models import AllocationRequest, Comment
 from apps.users.models import Team, User
 from tests.utils import CustomAsserts
 
@@ -24,7 +24,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/allocations/requests/{pk}/'
+    endpoint_pattern = '/allocations/comments/{pk}/'
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -33,7 +33,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         # Load a team of users and define a request endpoint belonging to that team
         self.team = Team.objects.get(name='Team 1')
         self.request = AllocationRequest.objects.filter(team=self.team).first()
-        self.endpoint = self.endpoint_pattern.format(pk=self.request.pk)
+        self.comment = Comment.objects.filter(request=self.request).first()
+        self.endpoint = self.endpoint_pattern.format(pk=self.comment.pk)
 
         # Load (non)member accounts for the team
         self.staff_user = User.objects.get(username='staff_user')
@@ -125,7 +126,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
-        record_data = {'title': 'foo', 'description': 'bar', 'team': self.team.pk}
+        record_data = {'content': 'foobar', 'request': self.request.pk}
 
         self.assert_http_responses(
             self.endpoint,

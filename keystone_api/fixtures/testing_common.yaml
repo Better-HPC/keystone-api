@@ -166,6 +166,15 @@
     reviewer: 9
     last_modified: "2023-01-01T00:00:00-00:00"
 
+# Allocation Request Comments
+- model: allocations.comment
+  pk: 1
+  fields:
+    user: 1
+    request: 1
+    content: "This is a comment"
+    created: "2023-01-01T00:00:00-00:00"
+
 # Allocations
 - model: allocations.allocation
   pk: 1

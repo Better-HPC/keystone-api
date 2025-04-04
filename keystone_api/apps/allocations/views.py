@@ -3,6 +3,7 @@
 View objects handle the processing of incoming HTTP requests and return the
 appropriately rendered HTML template or other HTTP response.
 """
+
 from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
@@ -22,7 +23,8 @@ __all__ = [
     'AllocationReviewViewSet',
     'AllocationViewSet',
     'AttachmentViewSet',
-    'ClusterViewSet'
+    'ClusterViewSet',
+    'CommentViewSet',
 ]
 
 
@@ -45,7 +47,7 @@ class AllocationRequestViewSet(viewsets.ModelViewSet):
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestSerializer
     search_fields = ['title', 'description', 'team__name']
-    permission_classes = [IsAuthenticated, AdminCreateMemberRead]
+    permission_classes = [IsAuthenticated, AllocationRequestPermissions]
 
     def get_queryset(self) -> QuerySet:
         """Return a list of allocation requests for the currently authenticated user."""
@@ -143,4 +145,22 @@ class ClusterViewSet(viewsets.ModelViewSet):
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
     search_fields = ['name', 'description']
-    permission_classes = [IsAuthenticated, StaffWriteAllRead]
+    permission_classes = [IsAuthenticated, ClusterPermissions]
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """Comments on allocation requests."""
+
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    search_fields = ['content', 'request__title', 'user__username']
+    permission_classes = [IsAuthenticated, CommentPermissions]
+
+    def get_queryset(self) -> QuerySet:
+        """Return a list of attachments for the currently authenticated user."""
+
+        if self.request.user.is_staff:
+            return self.queryset
+
+        teams = Team.objects.teams_for_user(self.request.user)
+        return self.queryset.filter(request__team__in=teams)
