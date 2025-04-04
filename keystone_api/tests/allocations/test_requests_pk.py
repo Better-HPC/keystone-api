@@ -24,7 +24,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint = '/allocations/requests/1/'
     endpoint_pattern = '/allocations/requests/{pk}/'
     fixtures = ['testing_common.yaml']
 
