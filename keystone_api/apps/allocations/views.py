@@ -11,10 +11,10 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.users.models import Team
 from .models import *
 from .permissions import *
 from .serializers import *
-from ..users.models import Team
 
 __all__ = [
     'AllocationRequestStatusChoicesView',

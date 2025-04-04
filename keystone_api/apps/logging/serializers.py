@@ -5,12 +5,15 @@ representations in a manner that is suitable for use by RESTful endpoints.
 They encapsulate object serialization, data validation, and database object
 creation.
 """
-
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from apps.users.serializers import UserSummarySerializer
 from .models import *
 
 __all__ = ['AppLogSerializer', 'RequestLogSerializer', 'TaskResultSerializer']
+
+User = get_user_model()
 
 
 class AppLogSerializer(serializers.ModelSerializer):
@@ -25,6 +28,8 @@ class AppLogSerializer(serializers.ModelSerializer):
 
 class RequestLogSerializer(serializers.ModelSerializer):
     """Object serializer for the `RequestLog` class."""
+
+    _user = UserSummarySerializer(source='user', read_only=True)
 
     class Meta:
         """Serializer settings."""

@@ -8,6 +8,7 @@ creation.
 
 from rest_framework import serializers
 
+from apps.users.serializers import TeamSummarySerializer
 from .models import *
 
 __all__ = ['GrantSerializer', 'PublicationSerializer']
@@ -15,6 +16,8 @@ __all__ = ['GrantSerializer', 'PublicationSerializer']
 
 class PublicationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Publication` class."""
+
+    _team = TeamSummarySerializer(source='team', read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -26,6 +29,8 @@ class PublicationSerializer(serializers.ModelSerializer):
 
 class GrantSerializer(serializers.ModelSerializer):
     """Object serializer for the `Grant` class."""
+
+    _team = TeamSummarySerializer(source='team', read_only=True)
 
     class Meta:
         """Serializer settings."""
