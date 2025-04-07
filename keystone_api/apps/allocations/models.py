@@ -25,6 +25,7 @@ __all__ = [
     'AllocationReview',
     'Attachment',
     'Cluster',
+    'Comment',
     'TeamModelInterface',
 ]
 
@@ -121,8 +122,6 @@ class AllocationReview(TeamModelInterface, models.Model):
         CHANGES = 'CR', 'Changes Requested'
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
-    public_comments = models.TextField(max_length=1600, null=True, blank=True)
-    private_comments = models.TextField(max_length=1600, null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
 
     request: AllocationRequest = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
@@ -164,3 +163,24 @@ class Cluster(models.Model):
         """Return the cluster name as a string."""
 
         return str(self.name)
+
+
+class Comment(models.Model):
+    """Comments associated with allocation reviews."""
+
+    content = models.TextField(max_length=2_000)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    private = models.BooleanField(default=False)
+
+    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='comments')
+
+    def get_team(self) -> Team:
+        """Return the user team tied to the current record."""
+
+        return self.request.team
+
+    def __str__(self) -> str:
+        """Return a string representation of the comment."""
+
+        return f'Comment by {self.user} made on request "{self.request.title[:50]}"'

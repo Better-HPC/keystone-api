@@ -11,6 +11,7 @@ router = DefaultRouter()
 router.register('allocations', AllocationViewSet)
 router.register('attachments', AttachmentViewSet)
 router.register('clusters', ClusterViewSet)
+router.register('comments', CommentViewSet)
 router.register('requests', AllocationRequestViewSet)
 router.register('reviews', AllocationReviewViewSet)
 

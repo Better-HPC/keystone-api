@@ -19,6 +19,7 @@ __all__ = [
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
     'ClusterSerializer',
+    'CommentSerializer'
 ]
 
 
@@ -112,4 +113,19 @@ class ClusterSerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Cluster
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Comment` class."""
+
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Comment
         fields = '__all__'
