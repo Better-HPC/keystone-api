@@ -6460,11 +6460,11 @@ components:
           items:
             $ref: '#/components/schemas/UserRole'
           default: []
+        is_active:
+          type: boolean
         name:
           type: string
           maxLength: 255
-        is_active:
-          type: boolean
         users:
           type: array
           items:
@@ -6826,11 +6826,11 @@ components:
           items:
             $ref: '#/components/schemas/UserRole'
           default: []
+        is_active:
+          type: boolean
         name:
           type: string
           maxLength: 255
-        is_active:
-          type: boolean
         users:
           type: array
           items:
@@ -6838,6 +6838,7 @@ components:
           readOnly: true
       required:
       - id
+      - is_active
       - name
       - users
     TeamRole:

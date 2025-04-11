@@ -86,6 +86,7 @@ class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
+    is_active = serializers.BooleanField(required=True)
 
     class Meta:
         """Serializer settings."""
