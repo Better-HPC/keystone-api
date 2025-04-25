@@ -149,20 +149,6 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         return Attachment.objects.filter(request__team__in=teams)
 
 
-class FileUploadViewSet(ViewSet): 
-    serializer_class = FileUploadSerializer
-
-    def create(self, request):
-        file_uploaded = request.FILES.get('file_uploaded')
-        content_type = file_uploaded.content_type
-        path = ''
-        if file_uploaded:
-            filename = file_uploaded.name
-            path = default_storage.save(os.path.join('allocations', file_uploaded.name), file_uploaded)
-            
-        return Response(path)
-
-
 class ClusterViewSet(viewsets.ModelViewSet):
     """Configuration settings for managed Slurm clusters."""
 
@@ -188,3 +174,17 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         teams = Team.objects.teams_for_user(self.request.user)
         return self.queryset.filter(request__team__in=teams)
+
+
+class FileUploadViewSet(ViewSet): 
+    serializer_class = FileUploadSerializer
+
+    def create(self, request):
+        file_uploaded = request.FILES.get('file_uploaded')
+        content_type = file_uploaded.content_type
+        path = ''
+        if file_uploaded:
+            filename = file_uploaded.name
+            path = default_storage.save(os.path.join('allocations', file_uploaded.name), file_uploaded)
+            
+        return Response(path)
