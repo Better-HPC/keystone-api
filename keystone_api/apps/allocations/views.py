@@ -182,6 +182,7 @@ class FileUploadViewSet(ViewSet):
     def create(self, request):
         file_uploaded = request.FILES.get('file_uploaded')
         content_type = file_uploaded.content_type
+        # do something with validating content type
         path = ''
         if file_uploaded:
             filename = file_uploaded.name
