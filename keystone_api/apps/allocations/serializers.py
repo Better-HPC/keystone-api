@@ -98,7 +98,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     path = serializers.FileField(use_url=False, read_only=True)
-
+   
     class Meta:
         """Serializer settings."""
 
@@ -129,3 +129,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
         model = Comment
         fields = '__all__'
+
+class FileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    class Meta:
+        fields = ['file_uploaded']
+        

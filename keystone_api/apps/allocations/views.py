@@ -6,15 +6,24 @@ appropriately rendered HTML template or other HTTP response.
 
 from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
-from rest_framework import status, viewsets
+from rest_framework import parsers, status, viewsets 
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.utils.decorators import method_decorator 
+from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
+import os
 
 from apps.users.models import Team
 from .models import *
 from .permissions import *
 from .serializers import *
+from .serializers import FileUploadSerializer
 
 __all__ = [
     'AllocationRequestStatusChoicesView',
@@ -25,6 +34,7 @@ __all__ = [
     'AttachmentViewSet',
     'ClusterViewSet',
     'CommentViewSet',
+    'FileUploadViewSet'
 ]
 
 
@@ -137,6 +147,20 @@ class AttachmentViewSet(viewsets.ModelViewSet):
 
         teams = Team.objects.teams_for_user(self.request.user)
         return Attachment.objects.filter(request__team__in=teams)
+
+
+class FileUploadViewSet(ViewSet): 
+    serializer_class = FileUploadSerializer
+
+    def create(self, request):
+        file_uploaded = request.FILES.get('file_uploaded')
+        content_type = file_uploaded.content_type
+        path = ''
+        if file_uploaded:
+            filename = file_uploaded.name
+            path = default_storage.save(os.path.join('allocations', file_uploaded.name), file_uploaded)
+            
+        return Response(path)
 
 
 class ClusterViewSet(viewsets.ModelViewSet):

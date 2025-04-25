@@ -14,8 +14,10 @@ router.register('clusters', ClusterViewSet)
 router.register('comments', CommentViewSet)
 router.register('requests', AllocationRequestViewSet)
 router.register('reviews', AllocationReviewViewSet)
+router.register('upload', FileUploadViewSet, basename="requests")
 
 urlpatterns = router.urls + [
     path('allocation-request/status-choices/', AllocationRequestStatusChoicesView.as_view()),
     path('allocation-review/status-choices/', AllocationReviewStatusChoicesView.as_view()),
+    #path('fileupload/upload/', FileUploadView.as_view())  
 ]
