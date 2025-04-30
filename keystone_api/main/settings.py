@@ -290,6 +290,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Static file handling (CSS, JavaScript, Images)
 
+MAX_FILE_SIZE = env.int('CONFIG_UPLOAD_SIZE', 2.5 * 1024 * 1024)  # 2.5 MB
+
 STATIC_URL = 'static/'
 STATIC_ROOT = Path(env.path('CONFIG_STATIC_DIR', BASE_DIR / 'static_files'))
 STATIC_ROOT.mkdir(parents=True, exist_ok=True)
