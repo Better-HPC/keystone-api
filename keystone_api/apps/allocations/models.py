@@ -141,7 +141,8 @@ class AllocationReview(TeamModelInterface, models.Model):
 class Attachment(TeamModelInterface, models.Model):
     """File data uploaded by users."""
 
-    path = models.FileField(upload_to='allocations')
+    file = models.FileField(upload_to='allocations')
+    name = models.CharField(max_length=250)
     uploaded = models.DateTimeField(auto_now=True)
 
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
