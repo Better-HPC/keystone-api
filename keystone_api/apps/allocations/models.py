@@ -9,6 +9,7 @@ the associated table/fields/records are presented by parent interfaces.
 from __future__ import annotations
 
 import abc
+import os
 from datetime import date
 
 from django.core.exceptions import ValidationError
@@ -146,6 +147,15 @@ class Attachment(TeamModelInterface, models.Model):
     uploaded = models.DateTimeField(auto_now=True)
 
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs) -> None:
+        """Persist the ORM instance to the database"""
+
+        # Set the default name to match the file path
+        if not self.name:
+            self.name = os.path.basename(self.file.path)
+
+        super().save(*args, **kwargs)
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""

@@ -5929,7 +5929,6 @@ components:
           type: string
         name:
           type: string
-          maxLength: 250
         uploaded:
           type: string
           format: date-time
@@ -5940,7 +5939,6 @@ components:
       - _request
       - file
       - id
-      - name
       - request
       - uploaded
     Cluster:
@@ -6250,7 +6248,6 @@ components:
           type: string
         name:
           type: string
-          maxLength: 250
         uploaded:
           type: string
           format: date-time

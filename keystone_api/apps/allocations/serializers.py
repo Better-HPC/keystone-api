@@ -98,6 +98,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     file = serializers.FileField(use_url=False)
+    name = serializers.CharField(required=False)
 
     class Meta:
         """Serializer settings."""
