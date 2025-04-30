@@ -1,5 +1,6 @@
 """Function tests for the `/allocations/attachments/` endpoint."""
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -63,6 +64,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
+        test_file = SimpleUploadedFile("file.txt", b"dummy content")
+
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_200_OK,
@@ -73,5 +76,5 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'path': 'path/to/file.txt', 'request': 1}
+            post_body={'file': test_file, 'request': 1}
         )
