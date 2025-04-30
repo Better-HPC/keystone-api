@@ -97,7 +97,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Attachment` class."""
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    file = serializers.FileField(use_url=False, read_only=True)
+    file = serializers.FileField(use_url=False)
 
     class Meta:
         """Serializer settings."""
