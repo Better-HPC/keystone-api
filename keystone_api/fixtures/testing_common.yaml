@@ -196,13 +196,15 @@
   pk: 1
   fields:
     request: 1
-    path: /dummy/file1.txt
+    file: /dummy/file1.txt
+    name: file1.txt
     uploaded: "2000-01-01T00:00:00-00:00"
 - model: allocations.attachment
   pk: 2
   fields:
     request: 1
-    path: /dummy/file1.txt
+    file: /dummy/file2.txt
+    name: file2.txt
     uploaded: "2000-01-01T00:00:00-00:00"
 
 # Publications
