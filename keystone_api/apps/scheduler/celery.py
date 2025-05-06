@@ -16,7 +16,7 @@ celery_app.autodiscover_tasks()
 celery_app.conf.beat_schedule = {
     'apps.users.tasks.ldap_update_users': {
         'task': 'apps.users.tasks.ldap_update_users',
-        'schedule': crontab(minute='0'),
+        'schedule': crontab(minute='*/15'),
         'description': 'This task synchronizes user data against LDAP. This task does nothing if LDAP is disabled.'
     },
     'apps.logging.tasks.clear_log_files': {
