@@ -45,6 +45,7 @@ class AttachmentInline(admin.TabularInline):
 
     model = Attachment
     show_change_link = True
+    readonly_fields = ('name',)
     extra = 1
 
 
