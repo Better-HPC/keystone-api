@@ -424,6 +424,35 @@ paths:
         schema:
           type: integer
       - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: name__contains
+        schema:
+          type: string
+      - in: query
+        name: name__endswith
+        schema:
+          type: string
+      - in: query
+        name: name__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: name__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: name__startswith
+        schema:
+          type: string
+      - in: query
         name: request
         schema:
           type: integer
@@ -5896,9 +5925,10 @@ components:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
-        path:
+        file:
           type: string
-          readOnly: true
+        name:
+          type: string
         uploaded:
           type: string
           format: date-time
@@ -5907,8 +5937,8 @@ components:
           type: integer
       required:
       - _request
+      - file
       - id
-      - path
       - request
       - uploaded
     Cluster:
@@ -6214,9 +6244,10 @@ components:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
-        path:
+        file:
           type: string
-          readOnly: true
+        name:
+          type: string
         uploaded:
           type: string
           format: date-time

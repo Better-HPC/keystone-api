@@ -6,6 +6,8 @@ They encapsulate object serialization, data validation, and database object
 creation.
 """
 
+from django.conf import settings
+from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 
 from apps.research_products.serializers import *
@@ -97,13 +99,25 @@ class AttachmentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Attachment` class."""
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    path = serializers.FileField(use_url=False, read_only=True)
+    file = serializers.FileField(use_url=False)
+    name = serializers.CharField(required=False)
 
     class Meta:
         """Serializer settings."""
 
         model = Attachment
         fields = '__all__'
+
+    @staticmethod
+    def validate_file(value: UploadedFile) -> UploadedFile:
+        """Limit file uploads to the given size."""
+
+        max_size = settings.MAX_FILE_SIZE
+        if value.size > max_size:
+            limit_in_mb = max_size / (1024 * 1024)
+            raise serializers.ValidationError(f"File size should not exceed {limit_in_mb:.2f} MB.")
+
+        return value
 
 
 class ClusterSerializer(serializers.ModelSerializer):
