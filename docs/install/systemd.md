@@ -233,13 +233,14 @@ server {
         proxy_pass http://unix:/run/gunicorn.sock;
     }
 
-    location /uploads { # (1)!
-        alias /var/keystone-api/upload_files;
+    location /media/ { # (1)!
+        alias /var/keystone-api/upload_files/;
     }
 }
 ```
 
-1. The `/uploads` directory is used to host user files and should match the `CONFIG_UPLOAD_DIR` in application settings.
+1. The aliased directory is used to host user provided files and should match the `CONFIG_UPLOAD_DIR` in application settings.
+   Don't forget the trailing slash when specifying file paths via the `alias` directive.
 
 ## Upgrading Application Versions
 
