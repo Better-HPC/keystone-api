@@ -193,7 +193,7 @@ REST_FRAMEWORK = {
 AUDITLOG_INCLUDE_ALL_MODELS = True
 AUDITLOG_EXCLUDE_TRACKING_FIELDS = (
     'created',
-    'modified',
+    'last_modified',
 )
 
 AUDITLOG_MASK_TRACKING_FIELDS = (
