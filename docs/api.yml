@@ -2645,6 +2645,469 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppLog'
           description: ''
+  /logs/audit/:
+    get:
+      operationId: logs_audit_list
+      description: Returns results from the application audit log.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: action
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+        description: |-
+          * `0` - create
+          * `1` - update
+          * `2` - delete
+          * `3` - access
+      - in: query
+        name: action__gt
+        schema:
+          type: integer
+      - in: query
+        name: action__gte
+        schema:
+          type: integer
+      - in: query
+        name: action__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: action__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: action__lt
+        schema:
+          type: integer
+      - in: query
+        name: action__lte
+        schema:
+          type: integer
+      - in: query
+        name: actor
+        schema:
+          type: integer
+      - in: query
+        name: actor__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: actor__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: actor_email
+        schema:
+          type: string
+      - in: query
+        name: actor_email__contains
+        schema:
+          type: string
+      - in: query
+        name: actor_email__endswith
+        schema:
+          type: string
+      - in: query
+        name: actor_email__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: actor_email__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: actor_email__startswith
+        schema:
+          type: string
+      - in: query
+        name: changes_text
+        schema:
+          type: string
+      - in: query
+        name: changes_text__contains
+        schema:
+          type: string
+      - in: query
+        name: changes_text__endswith
+        schema:
+          type: string
+      - in: query
+        name: changes_text__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: changes_text__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: changes_text__startswith
+        schema:
+          type: string
+      - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
+        name: cid__contains
+        schema:
+          type: string
+      - in: query
+        name: cid__endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__startswith
+        schema:
+          type: string
+      - in: query
+        name: content_type
+        schema:
+          type: integer
+      - in: query
+        name: content_type__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: content_type__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: object_id
+        schema:
+          type: integer
+      - in: query
+        name: object_id__gt
+        schema:
+          type: integer
+      - in: query
+        name: object_id__gte
+        schema:
+          type: integer
+      - in: query
+        name: object_id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: object_id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: object_id__lt
+        schema:
+          type: integer
+      - in: query
+        name: object_id__lte
+        schema:
+          type: integer
+      - in: query
+        name: object_pk
+        schema:
+          type: string
+      - in: query
+        name: object_pk__contains
+        schema:
+          type: string
+      - in: query
+        name: object_pk__endswith
+        schema:
+          type: string
+      - in: query
+        name: object_pk__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: object_pk__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: object_pk__startswith
+        schema:
+          type: string
+      - in: query
+        name: object_repr
+        schema:
+          type: string
+      - in: query
+        name: object_repr__contains
+        schema:
+          type: string
+      - in: query
+        name: object_repr__endswith
+        schema:
+          type: string
+      - in: query
+        name: object_repr__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: object_repr__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: object_repr__startswith
+        schema:
+          type: string
+      - in: query
+        name: remote_addr
+        schema:
+          type: string
+      - in: query
+        name: remote_addr__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: remote_addr__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: remote_port
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__gt
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__gte
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: remote_port__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: remote_port__lt
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__lte
+        schema:
+          type: integer
+      - in: query
+        name: timestamp
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__day
+        schema:
+          type: number
+      - in: query
+        name: timestamp__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__hour
+        schema:
+          type: number
+      - in: query
+        name: timestamp__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: timestamp__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: timestamp__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__minute
+        schema:
+          type: number
+      - in: query
+        name: timestamp__month
+        schema:
+          type: number
+      - in: query
+        name: timestamp__second
+        schema:
+          type: number
+      - in: query
+        name: timestamp__week
+        schema:
+          type: number
+      - in: query
+        name: timestamp__week_day
+        schema:
+          type: number
+      - in: query
+        name: timestamp__year
+        schema:
+          type: number
+      tags:
+      - logs
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+          description: ''
+  /logs/audit/{id}/:
+    get:
+      operationId: logs_audit_retrieve
+      description: Returns results from the application audit log.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this audit log.
+        required: true
+      tags:
+      - logs
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+          description: ''
   /logs/requests/:
     get:
       operationId: logs_requests_list
@@ -5695,6 +6158,18 @@ paths:
           description: No response body
 components:
   schemas:
+    ActionEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      type: integer
+      description: |-
+        * `0` - create
+        * `1` - update
+        * `2` - delete
+        * `3` - access
     Allocation:
       type: object
       description: Object serializer for the `Allocation` class.
@@ -5941,6 +6416,73 @@ components:
       - id
       - request
       - uploaded
+    AuditLog:
+      type: object
+      description: Object serializer for the `AuditLog` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        object_pk:
+          type: string
+          maxLength: 255
+        object_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        object_repr:
+          type: string
+          title: Object representation
+        serialized_data:
+          nullable: true
+        action:
+          allOf:
+          - $ref: '#/components/schemas/ActionEnum'
+          minimum: 0
+          maximum: 9223372036854775807
+        changes_text:
+          type: string
+          title: Change message
+        changes:
+          nullable: true
+          title: Change message
+        cid:
+          type: string
+          nullable: true
+          title: Correlation ID
+          maxLength: 255
+        remote_addr:
+          type: string
+          nullable: true
+          title: Remote address
+        remote_port:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        timestamp:
+          type: string
+          format: date-time
+        additional_data:
+          nullable: true
+        actor_email:
+          type: string
+          nullable: true
+          maxLength: 254
+        content_type:
+          type: integer
+        actor:
+          type: integer
+          nullable: true
+      required:
+      - action
+      - content_type
+      - id
+      - object_pk
+      - object_repr
     Cluster:
       type: object
       description: Object serializer for the `Cluster` class.

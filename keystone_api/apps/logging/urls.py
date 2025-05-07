@@ -10,5 +10,6 @@ router = DefaultRouter()
 router.register('apps', AppLogViewSet)
 router.register('requests', RequestLogViewSet)
 router.register('tasks', TaskResultViewSet)
+router.register('audit', AuditLogViewSet)
 
 urlpatterns = router.urls

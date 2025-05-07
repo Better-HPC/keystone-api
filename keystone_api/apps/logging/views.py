@@ -9,7 +9,12 @@ from rest_framework import permissions, viewsets
 from .models import *
 from .serializers import *
 
-__all__ = ['AppLogViewSet', 'RequestLogViewSet', 'TaskResultViewSet']
+__all__ = [
+    'AppLogViewSet',
+    'AuditLogViewSet',
+    'RequestLogViewSet',
+    'TaskResultViewSet',
+]
 
 
 class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -36,4 +41,13 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TaskResult.objects.all()
     serializer_class = TaskResultSerializer
     search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """Returns results from the application audit log."""
+
+    queryset = AuditLog.objects.all()
+    serializer_class = AuditLogSerializer
+    search_fields = ['resource', 'action', 'user_username']
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]

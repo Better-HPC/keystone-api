@@ -4,6 +4,8 @@ Extends and customizes the site-wide administration utility with
 interfaces for managing application database constructs.
 """
 
+import auditlog.admin
+import auditlog.models
 import django_celery_results.admin
 import django_celery_results.models
 from django.conf import settings
@@ -12,6 +14,7 @@ from django.contrib import admin
 from .models import *
 
 settings.JAZZMIN_SETTINGS['icons'].update({
+    'logging.AuditLog': 'fa fa-lock',
     'logging.AppLog': 'fa fa-clipboard-list',
     'logging.RequestLog': 'fa fa-exchange-alt',
     'logging.TaskResult': 'fa fa-tasks',
@@ -25,6 +28,7 @@ settings.JAZZMIN_SETTINGS['order_with_respect_to'].extend([
 
 admin.site.unregister(django_celery_results.models.TaskResult)
 admin.site.unregister(django_celery_results.models.GroupResult)
+admin.site.unregister(auditlog.models.LogEntry)
 
 
 class ReadOnlyModelAdminMixin:
@@ -81,3 +85,8 @@ class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
 @admin.register(TaskResult)
 class TaskResultAdmin(ReadOnlyModelAdminMixin, django_celery_results.admin.TaskResultAdmin):
     """Admin interface for viewing Celery task results."""
+
+
+@admin.register(AuditLog)
+class TaskResultAdmin(ReadOnlyModelAdminMixin, auditlog.admin.LogEntryAdmin):
+    """Admin interface for viewing Audit log entries."""
