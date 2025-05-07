@@ -6,12 +6,13 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
+import auditlog.models
 import django_celery_results.models
 from django.db import models
 
 from apps.users.models import User
 
-__all__ = ['AppLog', 'RequestLog', 'TaskResult']
+__all__ = ['AppLog', 'AuditLog', 'RequestLog', 'TaskResult']
 
 
 class AppLog(models.Model):
@@ -41,6 +42,15 @@ class RequestLog(models.Model):
 
 class TaskResult(django_celery_results.models.TaskResult):
     """Proxy model for the Celery task result backend."""
+
+    class Meta:
+        """Database model settings."""
+
+        proxy = True
+
+
+class AuditLog(auditlog.models.LogEntry):
+    """Proxy model for the auditlog backend."""
 
     class Meta:
         """Database model settings."""
