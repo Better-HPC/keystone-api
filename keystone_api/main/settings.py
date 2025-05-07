@@ -68,6 +68,7 @@ SITE_ID = 1
 
 INSTALLED_APPS = [
     'jazzmin',
+    'auditlog',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -117,6 +118,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'apps.logging.middleware.LogRequestMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 TEMPLATES = [
@@ -185,6 +187,22 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# Audit logging
+
+AUDITLOG_INCLUDE_ALL_MODELS = True
+AUDITLOG_EXCLUDE_TRACKING_FIELDS = (
+    'created',
+    'modified',
+)
+
+AUDITLOG_MASK_TRACKING_FIELDS = (
+    'password',
+)
+
+AUDITLOG_EXCLUDE_TRACKING_MODELS = (
+    'apps.logging',
+)
 
 # Customize the generation of OpenAPI specifications
 

@@ -371,6 +371,22 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-auditlog"
+version = "3.1.2"
+description = "Audit log app for Django"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "django_auditlog-3.1.2-py3-none-any.whl", hash = "sha256:6432a83fdf4397a726488d101fedcb62daafd6d4b825a0fc4c50e3657f5883cd"},
+    {file = "django_auditlog-3.1.2.tar.gz", hash = "sha256:435345b4055d16abfb4ada4bf11320f9e2f6d343874464471fa0041f13f3a474"},
+]
+
+[package.dependencies]
+Django = ">=4.2"
+python-dateutil = ">=2.7.0"
+
+[[package]]
 name = "django-auth-ldap"
 version = "5.1.0"
 description = "Django LDAP authentication backend"
@@ -1494,4 +1510,4 @@ tests = ["coverage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "6115f142267e533c7cc5cab435248a3842ebcc132c6aa08e3a8844432fa63d9e"
+content-hash = "6599b9c75aa20f4d4cd399b6ca2d87e8e0fa36e2e98d7592f2fc86c9345fa3fc"
