@@ -201,7 +201,7 @@ AUDITLOG_MASK_TRACKING_FIELDS = (
 )
 
 AUDITLOG_EXCLUDE_TRACKING_MODELS = (
-    'apps.logging',
+    'logging',
 )
 
 # Customize the generation of OpenAPI specifications
