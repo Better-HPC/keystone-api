@@ -11,6 +11,7 @@ import itertools
 import random
 from io import BytesIO
 
+from auditlog.registry import auditlog
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.files.base import ContentFile
@@ -24,6 +25,7 @@ from .managers import *
 __all__ = ['Membership', 'Team', 'User']
 
 
+@auditlog.register()
 class Membership(models.Model):
     """Relationship table between the `User` and `Team` models."""
 
@@ -48,7 +50,7 @@ class Membership(models.Model):
     team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
 
-
+@auditlog.register()
 class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
@@ -100,6 +102,7 @@ class Team(models.Model):
         return str(self.name)
 
 
+@auditlog.register(exclude_fields=["last_login"], mask_fields=["password"])
 class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     """Proxy model for the built-in django `User` model."""
 

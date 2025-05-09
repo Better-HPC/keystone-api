@@ -6,6 +6,7 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
+from auditlog.registry import auditlog
 from django.db import models
 from django.template.defaultfilters import truncatechars
 
@@ -15,6 +16,7 @@ from .managers import *
 __all__ = ['Grant', 'Publication']
 
 
+@auditlog.register()
 class Grant(models.Model):
     """Metadata for a funding grant."""
 
@@ -36,6 +38,7 @@ class Grant(models.Model):
         return truncatechars(self.title, 100)
 
 
+@auditlog.register()
 class Publication(models.Model):
     """Metadata for an academic publication."""
 

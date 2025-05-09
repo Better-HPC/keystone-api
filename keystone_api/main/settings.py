@@ -190,20 +190,6 @@ REST_FRAMEWORK = {
 
 # Audit logging
 
-AUDITLOG_INCLUDE_ALL_MODELS = True
-AUDITLOG_EXCLUDE_TRACKING_FIELDS = (
-    'created',
-    'last_modified',
-)
-
-AUDITLOG_MASK_TRACKING_FIELDS = (
-    'password',
-)
-
-AUDITLOG_EXCLUDE_TRACKING_MODELS = (
-    'logging',
-)
-
 # Customize the generation of OpenAPI specifications
 
 SPECTACULAR_SETTINGS = {
