@@ -106,6 +106,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'apps.logging.middleware.LogRequestMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -116,9 +117,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'apps.logging.middleware.LogRequestMiddleware',
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
     'auditlog.middleware.AuditlogMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 TEMPLATES = [
