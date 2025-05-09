@@ -71,7 +71,7 @@ class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
     """Admin interface for viewing request logs."""
 
     readonly_fields = [field.name for field in RequestLog._meta.fields]
-    list_display = ['time', 'method', 'endpoint', 'response_code', 'remote_address']
+    list_display = ['time', 'method', 'endpoint', 'response_code', 'remote_address', 'cid']
     search_fields = ['endpoint', 'method', 'response_code', 'remote_address']
     ordering = ['-time']
     actions = []

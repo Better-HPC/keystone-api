@@ -3126,6 +3126,35 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
+        name: cid__contains
+        schema:
+          type: string
+      - in: query
+        name: cid__endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__startswith
+        schema:
+          type: string
+      - in: query
         name: endpoint
         schema:
           type: string
@@ -7125,6 +7154,10 @@ components:
           type: string
           format: date-time
           readOnly: true
+        cid:
+          type: string
+          nullable: true
+          maxLength: 36
         user:
           type: integer
           nullable: true

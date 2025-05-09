@@ -36,6 +36,7 @@ class RequestLog(models.Model):
     response_code = models.PositiveSmallIntegerField()
     remote_address = models.CharField(max_length=40, null=True)
     time = models.DateTimeField(auto_now_add=True)
+    cid = models.CharField(max_length=36, null=True, blank=True)  # Standard UUID length
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 

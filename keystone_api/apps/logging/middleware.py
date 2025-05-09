@@ -5,6 +5,7 @@ cycle of incoming requests before they reach the application views or become
 an outgoing client response.
 """
 
+from django.conf import settings
 from django.http import HttpRequest
 
 from .models import RequestLog
@@ -35,6 +36,7 @@ class LogRequestMiddleware:
             endpoint=request.get_full_path(),
             response_code=response.status_code,
             remote_address=self.get_client_ip(request),
+            cid=request.META.get(settings.AUDITLOG_CID_HEADER)
         )
 
         if not request.user.is_anonymous:

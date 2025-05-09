@@ -106,6 +106,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'apps.logging.middleware.LogRequestMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -116,9 +117,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'apps.logging.middleware.LogRequestMiddleware',
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
     'auditlog.middleware.AuditlogMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 TEMPLATES = [
@@ -190,19 +190,7 @@ REST_FRAMEWORK = {
 
 # Audit logging
 
-AUDITLOG_INCLUDE_ALL_MODELS = True
-AUDITLOG_EXCLUDE_TRACKING_FIELDS = (
-    'created',
-    'last_modified',
-)
-
-AUDITLOG_MASK_TRACKING_FIELDS = (
-    'password',
-)
-
-AUDITLOG_EXCLUDE_TRACKING_MODELS = (
-    'logging',
-)
+AUDITLOG_CID_HEADER = "X_KEYSTONE_CID"  # Use underscores, not dasshes
 
 # Customize the generation of OpenAPI specifications
 

@@ -12,6 +12,7 @@ import abc
 import os
 from datetime import date
 
+from auditlog.registry import auditlog
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.defaultfilters import truncatechars
@@ -39,6 +40,7 @@ class TeamModelInterface:
         """Return the user team tied to the current record."""
 
 
+@auditlog.register()
 class Allocation(TeamModelInterface, models.Model):
     """User service unit allocation."""
 
@@ -62,6 +64,7 @@ class Allocation(TeamModelInterface, models.Model):
         return f'{self.cluster} allocation for {self.request.team}'
 
 
+@auditlog.register()
 class AllocationRequest(TeamModelInterface, models.Model):
     """User request for additional service units on one or more clusters."""
 
@@ -112,6 +115,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
         return truncatechars(self.title, 100)
 
 
+@auditlog.register(exclude_fields=["last_modified"])
 class AllocationReview(TeamModelInterface, models.Model):
     """Reviewer feedback for an allocation request."""
 
@@ -139,6 +143,7 @@ class AllocationReview(TeamModelInterface, models.Model):
         return f'{self.reviewer} review for \"{self.request.title}\"'
 
 
+@auditlog.register()
 class Attachment(TeamModelInterface, models.Model):
     """File data uploaded by users."""
 
@@ -163,6 +168,7 @@ class Attachment(TeamModelInterface, models.Model):
         return self.request.team
 
 
+@auditlog.register()
 class Cluster(models.Model):
     """A slurm cluster and it's associated management settings."""
 
@@ -176,6 +182,7 @@ class Cluster(models.Model):
         return str(self.name)
 
 
+@auditlog.register()
 class Comment(models.Model):
     """Comments associated with allocation reviews."""
 
