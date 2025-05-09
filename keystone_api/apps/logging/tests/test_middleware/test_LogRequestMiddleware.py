@@ -3,7 +3,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest, HttpResponse
-from django.test import TestCase
+from django.test import override_settings, TestCase
 from django.test.client import RequestFactory
 
 from apps.logging.middleware import LogRequestMiddleware
@@ -40,7 +40,7 @@ class LoggingToDatabase(TestCase):
         self.assertIsNone(RequestLog.objects.first().user)
 
 
-class GetClientIPMethod(TestCase):
+class ClientIPMethod(TestCase):
     """Test fetching the client IP via the `get_client_ip` method."""
 
     def test_ip_with_x_forwarded_for(self) -> None:
@@ -70,3 +70,37 @@ class GetClientIPMethod(TestCase):
         request = HttpRequest()
         client_ip = LogRequestMiddleware.get_client_ip(request)
         self.assertIsNone(client_ip)
+
+
+class CidLogging(TestCase):
+    """Test extraction and logging of CID from request headers."""
+
+    def setUp(self) -> None:
+        """Create a dummy request and define header values."""
+
+        self.rf = RequestFactory()
+        self.middleware = LogRequestMiddleware(lambda x: HttpResponse())
+        self.cid_header = 'HTTP_X_CUSTOM_CID'
+        self.cid_value = 'cid-12345'
+
+    @override_settings(AUDITLOG_CID_HEADER='HTTP_X_CUSTOM_CID')
+    def test_cid_header_logged(self) -> None:
+        """Verify the CID value is correctly extracted and saved."""
+
+        request = self.rf.get('/example/', **{self.cid_header: self.cid_value})
+        request.user = AnonymousUser()
+        self.middleware(request)
+
+        log = RequestLog.objects.first()
+        self.assertEqual(log.cid, self.cid_value)
+
+    @override_settings(AUDITLOG_CID_HEADER='HTTP_X_CUSTOM_CID')
+    def test_missing_cid_header(self) -> None:
+        """Verify CID is None when the header is not present."""
+
+        request = self.rf.get('/example/')
+        request.user = AnonymousUser()
+        self.middleware(request)
+
+        log = RequestLog.objects.first()
+        self.assertIsNone(log.cid)
