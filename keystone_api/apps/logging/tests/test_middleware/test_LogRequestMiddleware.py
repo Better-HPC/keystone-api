@@ -24,7 +24,7 @@ class LoggingToDatabase(TestCase):
         middleware = LogRequestMiddleware(lambda x: HttpResponse())
         middleware(request)
 
-        self.assertEqual(RequestLog.objects.count(), 1)
+        self.assertEqual(1, RequestLog.objects.count())
         self.assertEqual(RequestLog.objects.first().user, request.user)
 
     def test_anonymous_user(self) -> None:
@@ -37,7 +37,7 @@ class LoggingToDatabase(TestCase):
         middleware = LogRequestMiddleware(lambda x: HttpResponse())
         middleware(request)
 
-        self.assertEqual(RequestLog.objects.count(), 1)
+        self.assertEqual(1, RequestLog.objects.count())
         self.assertIsNone(RequestLog.objects.first().user)
 
 
@@ -60,7 +60,7 @@ class ClientIPLogging(TestCase):
 
         self.middleware(request)
         log = RequestLog.objects.first()
-        self.assertEqual(log.remote_address, '192.168.1.1')
+        self.assertEqual('192.168.1.1', log.remote_address)
 
     def test_logs_ip_from_remote_addr(self) -> None:
         """Verify the client IP is logged from `REMOTE_ADDR` when `X-Forwarded-For` is missing."""
@@ -71,7 +71,7 @@ class ClientIPLogging(TestCase):
 
         self.middleware(request)
         log = RequestLog.objects.first()
-        self.assertEqual(log.remote_address, '192.168.1.1')
+        self.assertEqual('192.168.1.1', log.remote_address)
 
     def test_logs_none_if_no_ip_headers(self) -> None:
         """Verify `None` is logged when no IP headers are present."""
@@ -106,7 +106,7 @@ class CidLogging(TestCase):
 
         self.middleware(request)
         log = RequestLog.objects.first()
-        self.assertEqual(log.cid, cid_value)
+        self.assertEqual(cid_value, log.cid)
 
     def test_missing_cid_header(self) -> None:
         """Verify CID is logged as `None` when the CID header is not present."""

@@ -5,12 +5,38 @@ cycle of incoming requests before they reach the application views or become
 an outgoing client response.
 """
 
+import uuid
+
 from django.conf import settings
 from django.http import HttpRequest
 
 from .models import RequestLog
 
 __all__ = ['LogRequestMiddleware']
+
+
+class DefaultCidMiddleware:
+    """Assign a default CID value when not provided by the client in the request header.
+
+    See the `AUDITLOG_CID_HEADER` setting for the header name used to store CID values.
+    """
+
+    # __init__ signature required by Django for dependency injection
+    def __init__(self, get_response: callable) -> None:
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpRequest:
+        """Execute the middleware on an incoming HTTP request.
+
+        Args:
+            request: The incoming HTTP request.
+
+        Returns:
+            The processed request object.
+        """
+
+        request.META.setdefault(settings.AUDITLOG_CID_HEADER, uuid.uuid4().hex)
+        return self.get_response(request)
 
 
 class LogRequestMiddleware:
