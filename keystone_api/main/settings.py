@@ -190,6 +190,8 @@ REST_FRAMEWORK = {
 
 # Audit logging
 
+AUDITLOG_CID_HEADER = "X-KS-CID"
+
 # Customize the generation of OpenAPI specifications
 
 SPECTACULAR_SETTINGS = {
