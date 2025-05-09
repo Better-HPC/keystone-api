@@ -16,7 +16,10 @@ __all__ = ['LogRequestMiddleware']
 
 
 class DefaultCidMiddleware:
-    """Assign a default CID value when not provided by the client."""
+    """Assign a default CID value when not provided by the client in the request header.
+
+    See the `AUDITLOG_CID_HEADER` setting for the header name used to store CID values.
+    """
 
     # __init__ signature required by Django for dependency injection
     def __init__(self, get_response: callable) -> None:
