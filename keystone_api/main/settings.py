@@ -106,6 +106,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'apps.logging.middleware.DefaultCidMiddleware',
     'apps.logging.middleware.LogRequestMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
