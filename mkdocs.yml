@@ -10,6 +10,7 @@ nav:
     - API Specification: api/index.html
     - api/authentication.md
     - api/filtering.md
+    - api/logging.md
   - Developer Notes:
       - Common Tasks: developer/common.md
       - developer/design_guidelines.md

@@ -72,7 +72,7 @@ class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
 
     readonly_fields = [field.name for field in RequestLog._meta.fields]
     list_display = ['time', 'method', 'endpoint', 'response_code', 'remote_address', 'cid']
-    search_fields = ['endpoint', 'method', 'response_code', 'remote_address']
+    search_fields = ['endpoint', 'method', 'response_code', 'remote_address', 'cid']
     ordering = ['-time']
     actions = []
     list_filter = [
@@ -88,5 +88,5 @@ class TaskResultAdmin(ReadOnlyModelAdminMixin, django_celery_results.admin.TaskR
 
 
 @admin.register(AuditLog)
-class TaskResultAdmin(ReadOnlyModelAdminMixin, auditlog.admin.LogEntryAdmin):
+class AuditLogAdmin(ReadOnlyModelAdminMixin, auditlog.admin.LogEntryAdmin):
     """Admin interface for viewing Audit log entries."""
