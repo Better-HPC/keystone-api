@@ -13,41 +13,15 @@ API's standard [query parameters](./filtering.md).
 
 ## Enabling Logging IDs
 
-This header enables consistent log correlation by assigning a unique identifier to each incoming request, making it
-easier to trace activity across distributed systems and services.
+To support traceability, Keystone attaches a correlation ID (`cid`) to each incoming request.
+This ID is propagated through internal logs, enabling log correlation across distributed systems.
 
-Clients may explicitly provide a correlation ID using the X-KEYSTONE-CID header.
+Clients may provide a correlation ID explicitly using the `X-KEYSTONE-CID` header.
 The value must be a valid UUIDv4 hex string (without dashes).
-If the header is not included in the request, Keystone will automatically generate a random UUIDv4 hex value for
-internal use.
+If the header is omitted, the API will generate a random UUIDv4 hex value automatically.
 
-The correlation ID is attached to internal logs and any outgoing service calls, allowing developers and operators to
-trace a single request across the full execution path.
+!!! important
 
-=== "python"
-
-    ```python
-    import uuid
-    import requests
-    
-    headers = {
-        "X-KEYSTONE-CID": uuid.uuid4().hex  # Optional: explicitly set the correlation ID
-    }
-    
-    response = requests.get(
-        url="https://keystone.domain.com/users/users/",
-        headers=headers,
-    )
-    
-    response.raise_for_status()
-    print(response.json())
-    ```
-
-=== "bash"
-
-    ```bash
-    CID=$(uuidgen | tr -d '-')
-    
-    curl -s -H "X-KEYSTONE-CID: $CID" \
-      "https://keystone.domain.com/users/users/"
-    ```
+    The `X-KEYSTONE-CID` must be preserved by upstream proxies for clients to specify custom CID values.
+    If the header is not forwarded, the API will assign unique ID values to each incoming request.
+    This may result in logs not being appropriatly correlated across requests originating from persistant user sessions.
