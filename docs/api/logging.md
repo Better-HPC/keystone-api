@@ -11,7 +11,7 @@ API's standard [query parameters](./filtering.md).
 | `/logging/apps/`	     | Application-level logs (e.g., debug, info, warning).              |
 | `/logging/tasks/`     | Results and statuses of scheduled background tasks.               |
 
-## Enabling Logging IDs
+## Enabling Log IDs
 
 To support traceability, Keystone attaches a correlation ID (`cid`) to each incoming request.
 This ID is propagated through internal logs, enabling log correlation across distributed systems.
