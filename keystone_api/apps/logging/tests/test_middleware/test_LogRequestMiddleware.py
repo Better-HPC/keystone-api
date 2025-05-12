@@ -1,5 +1,7 @@
 """Unit tests for the `LogRequestMiddleware` class."""
 
+import uuid
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
@@ -98,7 +100,7 @@ class CidLogging(TestCase):
     def test_cid_header_logged(self) -> None:
         """Verify the CID value is correctly extracted and saved."""
 
-        cid_value = 'cid-12345'
+        cid_value = uuid.uuid4().hex
         request = self.rf.get('/example/')
         request.META[settings.AUDITLOG_CID_HEADER] = cid_value
 
@@ -109,11 +111,11 @@ class CidLogging(TestCase):
         self.assertEqual(cid_value, log.cid)
 
     def test_missing_cid_header(self) -> None:
-        """Verify CID is logged as `None` when the CID header is not present."""
+        """Verify a valid CID value is automatically generated when the CID header is not present."""
 
         request = self.rf.get('/example/')
         request.user = AnonymousUser()
         self.middleware(request)
 
         log = RequestLog.objects.first()
-        self.assertIsNone(log.cid)
+        self.assertTrue(uuid.UUID(log.cid))
