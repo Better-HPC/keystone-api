@@ -100,7 +100,7 @@ class CidLogging(TestCase):
     def test_cid_header_logged(self) -> None:
         """Verify the CID value is correctly extracted and saved."""
 
-        cid_value = uuid.uuid4().hex
+        cid_value = str(uuid.uuid4())
         request = self.rf.get('/example/')
         request.META['HTTP_X_CUSTOM_CID'] = cid_value
 
