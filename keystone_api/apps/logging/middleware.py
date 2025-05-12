@@ -71,7 +71,7 @@ class LogRequestMiddleware:
             uuid.UUID(hex=cid)
 
         except (ValueError, TypeError, Exception) as e:
-            cid = uuid.uuid1().hex
+            cid = uuid.uuid4().hex
             request.META[header_name] = cid
 
         return cid
