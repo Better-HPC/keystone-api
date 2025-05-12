@@ -190,7 +190,7 @@ REST_FRAMEWORK = {
 
 # Audit logging
 
-AUDITLOG_CID_HEADER = "X-KEYSTONE-CID"
+AUDITLOG_CID_HEADER = "X-KEYSTONE-CID"  # Use uppercase and dashes
 
 # Customize the generation of OpenAPI specifications
 

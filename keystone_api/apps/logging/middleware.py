@@ -63,13 +63,14 @@ class LogRequestMiddleware:
             A tuple of (client_cid, final_cid).
         """
 
-        header_name = settings.AUDITLOG_CID_HEADER
+        # Convert a custom header name (e.g., "X-CID") into the format used by Django's request.META
+        header_name = 'HTTP_' + settings.AUDITLOG_CID_HEADER.upper().replace('-', '_')
         cid = request.META.get(header_name)
 
         try:
-            uuid.UUID(cid)
+            uuid.UUID(hex=cid)
 
-        except (ValueError, TypeError, Exception):
+        except (ValueError, TypeError, Exception) as e:
             cid = uuid.uuid1().hex
             request.META[header_name] = cid
 

@@ -96,13 +96,13 @@ class CidLogging(TestCase):
         self.rf = RequestFactory()
         self.middleware = LogRequestMiddleware(lambda x: HttpResponse())
 
-    @override_settings(AUDITLOG_CID_HEADER='X_CUSTOM_CID')
+    @override_settings(AUDITLOG_CID_HEADER='X-CUSTOM-CID')
     def test_cid_header_logged(self) -> None:
         """Verify the CID value is correctly extracted and saved."""
 
         cid_value = uuid.uuid4().hex
         request = self.rf.get('/example/')
-        request.META[settings.AUDITLOG_CID_HEADER] = cid_value
+        request.META['HTTP_X_CUSTOM_CID'] = cid_value
 
         request.user = AnonymousUser()
 
