@@ -68,10 +68,10 @@ class LogRequestMiddleware:
         cid = request.META.get(header_name)
 
         try:
-            uuid.UUID(hex=cid)
+            uuid.UUID(cid)
 
         except (ValueError, TypeError, Exception) as e:
-            cid = uuid.uuid4().hex
+            cid = str(uuid.uuid4())
             request.META[header_name] = cid
 
         return cid
