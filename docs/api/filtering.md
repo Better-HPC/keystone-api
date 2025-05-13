@@ -5,18 +5,18 @@ Since these operations are performed on the server, using query parameters is of
 
 ## Sorting Requests
 
-The `ordering` parameter is used to sort records by one or more fields.
+The `_order` parameter is used to sort records by one or more fields.
 
 ```
-.../endpoint/?ordering=field1
-.../endpoint/?ordering=field1,field2
+.../endpoint/?_order=field1
+.../endpoint/?_order=field1,field2
 ```
 
 To sort in descending order, a hyphen is prefixed to the field name.
 In the following example, `field1` is sorted in ascending order and `field2` in descending order.
 
 ```bash
-.../endpoint/?ordering=field1,-field2
+.../endpoint/?_order=field1,-field2
 ```
 
 
