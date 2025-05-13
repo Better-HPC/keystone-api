@@ -126,6 +126,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
             models.Index(fields=['is_staff']),
             models.Index(fields=['is_ldap_user']),
             models.Index(fields=['date_joined']),
+            models.Index(fields=['last_login']),
             models.Index(fields=['is_active', 'is_staff']),
         ]
 
@@ -141,7 +142,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     last_name = models.CharField(max_length=150, null=True)
     email = models.EmailField(null=True)
     department = models.CharField(max_length=1000, null=True, blank=True)
-    role = models.CharField(max_length=1000, null=True, blank=True)
+    role = models.CharField(max_length=1000, null=True, blank=True)  # User's role in their department
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
     # Administrative values for user management/permissions

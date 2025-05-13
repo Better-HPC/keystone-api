@@ -87,9 +87,11 @@ class AllocationRequest(TeamModelInterface, models.Model):
             models.Index(fields=['active']),
             models.Index(fields=['expire']),
             models.Index(fields=['submitter']),
+            models.Index(fields=['team', 'submitted']),
             models.Index(fields=['team', 'status']),
             models.Index(fields=['submitter', 'status']),
             models.Index(fields=['team', 'submitter', 'status']),
+            models.Index(fields=['team', 'active', 'expire']),
         ]
 
     class StatusChoices(models.TextChoices):
