@@ -102,7 +102,7 @@ class AllocationAdmin(admin.ModelAdmin):
 
         return obj.request.StatusChoices(obj.request.status).label
 
-    list_display = [team, request, cluster, 'requested', 'awarded', 'final', status]
+    list_display = ['team', 'request', 'cluster', 'requested', 'awarded', 'final', 'status']
     list_display_links = list_display
     ordering = ['request__team__name', 'cluster']
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
@@ -125,20 +125,20 @@ class AllocationRequestAdmin(admin.ModelAdmin):
         return qs.select_related('team').annotate(review_count=Count('allocationreview'))
 
     @staticmethod
-    @admin.display
+    @admin.display(ordering='team__name')
     def team(obj: Allocation) -> str:
         """Return the name of the user team the allocation is assigned to."""
 
         return obj.team.name
 
     @staticmethod
-    @admin.display
+    @admin.display(ordering='review_count')
     def reviews(obj: AllocationRequest) -> int:
         """Return the total number of submitted reviews."""
 
         return obj.review_count
 
-    list_display = [team, 'title', 'submitted', 'active', 'expire', reviews, 'status']
+    list_display = ['team', 'title', 'submitted', 'active', 'expire', 'reviews', 'status']
     list_display_links = list_display
     search_fields = ['title', 'description', 'team__name']
     ordering = ['submitted']
