@@ -18,6 +18,18 @@ __all__ = ['AppLog', 'AuditLog', 'RequestLog', 'TaskResult']
 class AppLog(models.Model):
     """An application log entry."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['level']),
+            models.Index(fields=['time']),
+            models.Index(fields=['level', 'time']),
+            models.Index(fields=['name', 'level', 'time']),
+            models.Index(fields=['pathname', 'lineno']),
+        ]
+
     name = models.CharField(max_length=100)
     level = models.CharField(max_length=10)
     pathname = models.CharField(max_length=260)
@@ -30,6 +42,23 @@ class AppLog(models.Model):
 
 class RequestLog(models.Model):
     """Log entry for an incoming HTTP request."""
+
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['method']),
+            models.Index(fields=['endpoint']),
+            models.Index(fields=['response_code']),
+            models.Index(fields=['remote_address']),
+            models.Index(fields=['time']),
+            models.Index(fields=['cid']),
+            models.Index(fields=['user']),
+            models.Index(fields=['user', 'time']),
+            models.Index(fields=['endpoint', 'method', 'time']),
+            models.Index(fields=['response_code', 'time']),
+            models.Index(fields=['cid', 'time']),
+        ]
 
     method = models.CharField(max_length=10)
     endpoint = models.CharField(max_length=2048)  # Maximum URL length for most browsers

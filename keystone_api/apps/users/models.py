@@ -36,6 +36,15 @@ class Membership(models.Model):
             UniqueConstraint(fields=['user', 'team'], name='unique_user_team')
         ]
 
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['team']),
+            models.Index(fields=['role']),
+            models.Index(fields=['team', 'role']),
+            models.Index(fields=['user', 'role']),
+            models.Index(fields=['team', 'user', 'role']),
+        ]
+
     class Role(models.TextChoices):
         """Define choices for the `role` field.
 
@@ -49,6 +58,7 @@ class Membership(models.Model):
     user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
     team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
+
 
 @auditlog.register()
 class Team(models.Model):
@@ -105,6 +115,19 @@ class Team(models.Model):
 @auditlog.register(exclude_fields=["last_login"], mask_fields=["password"])
 class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     """Proxy model for the built-in django `User` model."""
+
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['username']),
+            models.Index(fields=['email']),
+            models.Index(fields=['is_active']),
+            models.Index(fields=['is_staff']),
+            models.Index(fields=['is_ldap_user']),
+            models.Index(fields=['date_joined']),
+            models.Index(fields=['is_active', 'is_staff']),
+        ]
 
     # These values should always be defined when extending AbstractBaseUser
     USERNAME_FIELD = 'username'
