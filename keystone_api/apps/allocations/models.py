@@ -243,7 +243,9 @@ class Comment(models.Model):
 
         indexes = [
             models.Index(fields=['created']),
+            models.Index(fields=['user']),
             models.Index(fields=['request']),
+            models.Index(fields=['user', 'request']),
         ]
 
     content = models.TextField(max_length=2_000)

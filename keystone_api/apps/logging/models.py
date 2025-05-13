@@ -51,6 +51,7 @@ class RequestLog(models.Model):
             models.Index(fields=['endpoint']),
             models.Index(fields=['response_code']),
             models.Index(fields=['remote_address']),
+            models.Index(fields=['remote_address', 'response_code']),
             models.Index(fields=['time']),
             models.Index(fields=['cid']),
             models.Index(fields=['user']),
