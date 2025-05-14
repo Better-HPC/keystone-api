@@ -68,9 +68,9 @@ class Publication(models.Model):
             models.Index(fields=['journal']),
             models.Index(fields=['doi']),
             models.Index(fields=['team']),
+            models.Index(fields=['team', 'journal']),
             models.Index(fields=['team', 'published']),
-            models.Index(fields=['team', 'submitted', 'published']),
-            models.Index(fields=['submitted', 'published']),
+            models.Index(fields=['team', 'submitted']),
         ]
 
     title = models.CharField(max_length=250)

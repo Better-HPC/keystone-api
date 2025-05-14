@@ -22,8 +22,6 @@ class AppLog(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['name']),
-            models.Index(fields=['level']),
             models.Index(fields=['time']),
             models.Index(fields=['level', 'time']),
             models.Index(fields=['name', 'level', 'time']),
@@ -47,18 +45,21 @@ class RequestLog(models.Model):
         """Database model settings."""
 
         indexes = [
+            models.Index(fields=['time']),
             models.Index(fields=['method']),
             models.Index(fields=['endpoint']),
-            models.Index(fields=['response_code']),
-            models.Index(fields=['remote_address']),
-            models.Index(fields=['remote_address', 'response_code']),
-            models.Index(fields=['time']),
-            models.Index(fields=['cid']),
-            models.Index(fields=['user']),
-            models.Index(fields=['user', 'time']),
-            models.Index(fields=['endpoint', 'method', 'time']),
-            models.Index(fields=['response_code', 'time']),
+
             models.Index(fields=['cid', 'time']),
+            models.Index(fields=['user', 'time']),
+            models.Index(fields=['endpoint', 'time']),
+            models.Index(fields=['remote_address', 'time']),
+            models.Index(fields=['response_code', 'time']),
+
+            models.Index(fields=['cid', 'method', 'time']),
+            models.Index(fields=['user', 'method', 'time']),
+            models.Index(fields=['endpoint', 'method', 'time']),
+            models.Index(fields=['remote_address', 'method', 'time']),
+            models.Index(fields=['response_code', 'method', 'time']),
         ]
 
     method = models.CharField(max_length=10)

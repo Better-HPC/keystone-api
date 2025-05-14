@@ -48,7 +48,6 @@ class Allocation(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['cluster']),
             models.Index(fields=['request']),
             models.Index(fields=['cluster', 'request']),
         ]
@@ -81,17 +80,15 @@ class AllocationRequest(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['team']),
             models.Index(fields=['status']),
             models.Index(fields=['submitted']),
             models.Index(fields=['active']),
             models.Index(fields=['expire']),
             models.Index(fields=['submitter']),
-            models.Index(fields=['team', 'submitted']),
             models.Index(fields=['team', 'status']),
-            models.Index(fields=['submitter', 'status']),
             models.Index(fields=['team', 'submitter', 'status']),
             models.Index(fields=['team', 'active', 'expire']),
+            models.Index(fields=['submitter', 'status']),
         ]
 
     class StatusChoices(models.TextChoices):
@@ -243,9 +240,8 @@ class Comment(models.Model):
 
         indexes = [
             models.Index(fields=['created']),
-            models.Index(fields=['user']),
             models.Index(fields=['request']),
-            models.Index(fields=['user', 'request']),
+            models.Index(fields=['user', 'request', 'created']),
         ]
 
     content = models.TextField(max_length=2_000)

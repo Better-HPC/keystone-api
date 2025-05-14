@@ -37,11 +37,9 @@ class Membership(models.Model):
         ]
 
         indexes = [
-            models.Index(fields=['user']),
-            models.Index(fields=['team']),
             models.Index(fields=['role']),
-            models.Index(fields=['team', 'role']),
             models.Index(fields=['user', 'role']),
+            models.Index(fields=['team', 'role']),
             models.Index(fields=['team', 'user', 'role']),
         ]
 
@@ -122,15 +120,13 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         indexes = [
             models.Index(fields=['username']),
             models.Index(fields=['first_name']),
-            models.Index(fields=['last_name']),
+            models.Index(fields=['last_name', 'first_name']),
             models.Index(fields=['email']),
-            models.Index(fields=['is_active']),
             models.Index(fields=['is_staff']),
             models.Index(fields=['is_ldap_user']),
             models.Index(fields=['date_joined']),
             models.Index(fields=['last_login']),
             models.Index(fields=['is_active', 'is_staff']),
-            models.Index(fields=['last_name', 'first_name']),
         ]
 
     # These values should always be defined when extending AbstractBaseUser
