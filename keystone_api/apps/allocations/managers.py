@@ -30,8 +30,8 @@ class AllocationManager(Manager):
         """Retrieve all approved allocations for a specific account and cluster.
 
         Args:
-            account: The account to retrieve data for.
-            cluster: The cluster to retrieve data for.
+            account: The account to retrieve allocations for.
+            cluster: The cluster to retrieve allocations for.
 
         Returns:
             A queryset of approved Allocation objects.
@@ -45,8 +45,8 @@ class AllocationManager(Manager):
         Active allocations have been approved and are currently within their start/end date.
 
         Args:
-            account: The account to retrieve data for.
-            cluster: The cluster to retrieve data for.
+            account: The account to retrieve allocations for.
+            cluster: The cluster to retrieve allocations for.
 
         Returns:
             A queryset of active Allocation objects.
@@ -63,8 +63,8 @@ class AllocationManager(Manager):
         but do not yet have a final usage value set.
 
         Args:
-            account: The account to retrieve data for.
-            cluster: The cluster to retrieve data for.
+            account: The account to retrieve allocations for.
+            cluster: The cluster to retrieve allocations for.
 
         Returns:
             A queryset of expired Allocation objects ordered by expiration date.
@@ -98,8 +98,8 @@ class AllocationManager(Manager):
         but do not yet have a final usage value set.
 
         Args:
-            account: The account to retrieve service units for.
-            cluster: The cluster to retrieve service units for.
+            account: The account to calculate service units for.
+            cluster: The cluster to calculate service units for.
 
         Returns:
             Total service units from expired allocations.
@@ -113,8 +113,8 @@ class AllocationManager(Manager):
         """Calculate the total final usage for expired allocations of a specific account and cluster.
 
         Args:
-            account: The account to retrieve usage totals for.
-            cluster: The cluster to retrieve usage totals for.
+            account: The account to calculate usage totals for.
+            cluster: The cluster to calculate usage totals for.
 
         Returns:
             Total historical usage calculated from expired allocations.
