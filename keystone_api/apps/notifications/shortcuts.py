@@ -26,7 +26,7 @@ def send_notification(
     Args:
         user: The user object to whom the email will be sent.
         subject: The subject line of the email.
-        plain_text: The plain text version of the email content
+        plain_text: The plain text version of the email content.
         html_text: The HTML version of the email content.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
@@ -89,7 +89,7 @@ def send_general_notification(user: User, subject: str, message: str) -> None:
     Args:
         user: The user object to whom the email will be sent.
         subject: The subject line of the email.
-        message: The message content to included.
+        message: The message content to include.
     """
 
     send_notification_template(

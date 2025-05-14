@@ -1,5 +1,4 @@
-"""
-A Django management command for quickly migrating/deploying a development server.
+"""A Django management command for quickly migrating/deploying a development server.
 
 This management command streamlines development by providing a single command
 to handle database migrations, static file collection, and web server deployment.

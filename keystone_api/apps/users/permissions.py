@@ -23,7 +23,7 @@ class TeamPermissions(permissions.BasePermission):
         - Grants write access to staff and team administrators.
     """
 
-    def has_object_permission(self, request: Request, view: View, obj: Team):
+    def has_object_permission(self, request: Request, view: View, obj: Team) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
         is_staff = request.user.is_staff
@@ -57,7 +57,7 @@ class MembershipPermissions(TeamPermissions):
         except Team.DoesNotExist:
             return True
 
-    def has_object_permission(self, request: Request, view: View, obj: Membership):
+    def has_object_permission(self, request: Request, view: View, obj: Membership) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
         # Allow users to remove their own membership

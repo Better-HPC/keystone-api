@@ -101,8 +101,8 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
     an existing notification has not already been issued.
 
     Args:
-        user: The user to notify
-        request: The allocation request to notify the user about
+        user: The user to notify.
+        request: The allocation request to notify the user about.
 
     Returns:
         A boolean reflecting whether to send a notification.
@@ -123,7 +123,7 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
 
 @shared_task()
 def notify_past_expirations() -> None:
-    """Send a notification to all users with expired allocations"""
+    """Send a notification to all users with expired allocations."""
 
     active_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,

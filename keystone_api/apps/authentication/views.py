@@ -1,7 +1,9 @@
 """Application logic for rendering HTML templates and handling HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
 from rest_framework import status
@@ -23,11 +25,11 @@ class WhoAmIView(GenericAPIView):
         """Return user metadata for the currently authenticated user.
 
         Returns:
-            A 200 response with user data if authenticated, and a 404 response otherwise
+            A 200 response with user data if authenticated, and a 401 response otherwise
         """
 
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = self.serializer_class(request.user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -97,7 +97,7 @@ class Team(models.Model):
             return Membership.objects.create(user=user, team=self, role=role)
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the team's account name."""
+        """Return the team name."""
 
         return str(self.name)
 

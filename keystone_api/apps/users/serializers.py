@@ -214,7 +214,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data: dict) -> None:
-        """Raises an error when attempting to create a new record.
+        """Prevents creation of new user records by raising an exception.
 
         Raises:
             RuntimeError: Every time the function is called.

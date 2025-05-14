@@ -110,7 +110,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def validate_file(value: UploadedFile) -> UploadedFile:
-        """Limit file uploads to the given size."""
+        """Validate uploaded files do not exceed the maximum allowed size."""
 
         max_size = settings.MAX_FILE_SIZE
         if value.size > max_size:

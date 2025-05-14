@@ -58,7 +58,7 @@ class Command(BaseCommand):
         path_names = ' and '.join(path.name for path in profile_paths)
         print(
             'This command will make the following changes:\n'
-            '  - A file `.keystone_autocomplete` will be add to your home directory\n'
+            '  - A file `.keystone_autocomplete` will be added to your home directory\n'
             f'  - A line of setup code will be added to your {path_names} file\n'
         )
 
