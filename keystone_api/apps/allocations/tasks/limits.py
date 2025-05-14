@@ -1,4 +1,4 @@
-"""Background tasks for updating/enforcing slurm usage limits."""
+"""Background tasks for updating/enforcing Slurm usage limits."""
 
 import logging
 

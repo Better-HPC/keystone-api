@@ -170,7 +170,7 @@ class Attachment(TeamModelInterface, models.Model):
 
 @auditlog.register()
 class Cluster(models.Model):
-    """A SLURM cluster and its associated management settings."""
+    """A Slurm cluster and its associated management settings."""
 
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=150, null=True, blank=True)
