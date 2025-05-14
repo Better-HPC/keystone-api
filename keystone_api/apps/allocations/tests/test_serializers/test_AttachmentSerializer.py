@@ -38,7 +38,19 @@ class ValidateFileMethod(TestCase):
         max_size = settings.MAX_FILE_SIZE
         file = SimpleUploadedFile("large.txt", b"x" * (max_size + 1))
 
-        with self.assertRaises(ValidationError) as ctx:
+        with self.assertRaisesRegex(ValidationError, "File size should not exceed"):
             AttachmentSerializer.validate_file(file)
 
-        self.assertIn("File size should not exceed", str(ctx.exception))
+    def test_allowed_mime_type(self) -> None:
+        """Verify a file with an allowed MIME type passes validation."""
+
+        file = SimpleUploadedFile("test.txt", b"sample content")
+        result = AttachmentSerializer.validate_file(file)
+        self.assertEqual(result, file)
+
+    def test_disallowed_mime_type(self) -> None:
+        """Verify a file with a disallowed MIME type fails validation."""
+
+        file = SimpleUploadedFile("text.exe", b"GIF87a...")
+        with self.assertRaisesRegex(ValidationError, "File type .* is not allowed"):
+            AttachmentSerializer.validate_file(file)
