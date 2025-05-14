@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 
-class TeamModelInterface(abc.ABC):
+class TeamModelInterface:
     """Interface class for database models affiliated with a team."""
 
     @abc.abstractmethod
