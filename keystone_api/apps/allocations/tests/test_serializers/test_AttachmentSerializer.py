@@ -20,7 +20,7 @@ class ValidateFileMethod(TestCase):
         max_size = settings.MAX_FILE_SIZE
         file = SimpleUploadedFile("file.txt", b"x" * (max_size - 1))  # 1 KB
 
-        result = AttachmentSerializer.validate_file()
+        result = AttachmentSerializer.validate_file(file)
         self.assertEqual(result, file)
 
     def test_equals_size_limit(self) -> None:
@@ -29,7 +29,7 @@ class ValidateFileMethod(TestCase):
         max_size = settings.MAX_FILE_SIZE
         file = SimpleUploadedFile("large.txt", b"x" * max_size)
 
-        result = AttachmentSerializer.validate_file()
+        result = AttachmentSerializer.validate_file(file)
         self.assertEqual(result, file)
 
     def test_exceeds_size_limit(self) -> None:
@@ -39,6 +39,6 @@ class ValidateFileMethod(TestCase):
         file = SimpleUploadedFile("large.txt", b"x" * (max_size + 1))
 
         with self.assertRaises(ValidationError) as ctx:
-            AttachmentSerializer.validate_file()
+            AttachmentSerializer.validate_file(file)
 
         self.assertIn("File size should not exceed", str(ctx.exception))

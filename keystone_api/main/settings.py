@@ -63,7 +63,8 @@ CORS_ALLOWED_ORIGINS = env.list("SECURE_ALLOWED_ORIGINS", default=_trusted_local
 ALLOWED_FILE_TYPES = [
     'application/pdf',
     'image/jpeg',
-    'image/png'
+    'image/png',
+    'text/plain',
 ]
 
 # App Configuration
