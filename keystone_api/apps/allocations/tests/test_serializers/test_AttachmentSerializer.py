@@ -51,6 +51,6 @@ class ValidateFileMethod(TestCase):
     def test_disallowed_mime_type(self) -> None:
         """Verify a file with a disallowed MIME type fails validation."""
 
-        file = SimpleUploadedFile("image.gif", b"GIF87a...")
+        file = SimpleUploadedFile("text.exe", b"GIF87a...")
         with self.assertRaisesRegex(ValidationError, "File type .* is not allowed"):
             AttachmentSerializer.validate_file(file)
