@@ -7,7 +7,7 @@ paths:
   /allocations/allocation-request/status-choices/:
     get:
       operationId: allocations_allocation_request_status_choices_retrieve
-      description: Return valid values for the allocation review `status` field.
+      description: Return valid values for the allocation request `status` field.
       tags:
       - allocations
       security:
@@ -2225,7 +2225,7 @@ paths:
         Return user metadata for the currently authenticated user.
 
         Returns:
-            A 200 response with user data if authenticated, and a 404 response otherwise
+            A 200 response with user data if authenticated, and a 401 response otherwise
       tags:
       - authentication
       security:
