@@ -6,6 +6,8 @@ They encapsulate object serialization, data validation, and database object
 creation.
 """
 
+from mimetypes import guess_type
+
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
@@ -110,12 +112,24 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def validate_file(value: UploadedFile) -> UploadedFile:
-        """Validate uploaded files do not exceed the maximum allowed size."""
+        """Validate the uploaded file against size and type constraints.
+
+        Returns:
+            UploadedFile: The validated file.
+
+        Raises:
+            serializers.ValidationError: If the file exceeds the size limit or has a disallowed MIME type.
+        """
 
         max_size = settings.MAX_FILE_SIZE
         if value.size > max_size:
             limit_in_mb = max_size / (1024 * 1024)
             raise serializers.ValidationError(f"File size should not exceed {limit_in_mb:.2f} MB.")
+
+        allowed_types = settings.ALLOWED_FILE_TYPES
+        mime_type, _ = guess_type(value.name)
+        if mime_type not in allowed_types:
+            raise serializers.ValidationError(f"File type '{mime_type}' is not allowed.")
 
         return value
 
