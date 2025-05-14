@@ -115,7 +115,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         """Validate the uploaded file against size and type constraints.
 
         Returns:
-            UploadedFile: The validated file.
+            The validated file.
 
         Raises:
             serializers.ValidationError: If the file exceeds the size limit or has a disallowed MIME type.
