@@ -14,7 +14,7 @@ __all__ = ['PublicationPermissions', 'GrantPermissions']
 
 
 class CustomPermissionsBase(permissions.BasePermission):
-    """Base manager class for common request processing logic."""
+    """Base class encapsulating common request processing logic."""
 
     def get_team(self, request) -> Team | None:
         """Return the team indicated in the `team` field of an incoming request.

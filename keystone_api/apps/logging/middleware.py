@@ -46,11 +46,16 @@ class LogRequestMiddleware:
         if not request.user.is_anonymous:
             request_log.user = request.user
 
-        request_log.save()
+        try:
+            request_log.save()
+
+        except Exception:
+            pass
+
         return response
 
     @staticmethod
-    def _normalize_cid(request: HttpRequest) -> tuple[str | None, str]:
+    def _normalize_cid(request: HttpRequest) -> str:
         """Extract the client CID and ensure it is a valid UUID.
 
         If a valid UUID is not set, a new is generated and set in

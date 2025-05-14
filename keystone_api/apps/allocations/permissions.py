@@ -59,7 +59,7 @@ class AllocationRequestPermissions(permissions.BasePermission):
 
 
 class ClusterPermissions(permissions.BasePermission):
-    """Grant read-only access is granted to all authenticated users.
+    """Grant read-only access to all authenticated users.
 
     Permissions:
         - Grants read access to all users.

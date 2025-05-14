@@ -1,7 +1,8 @@
 """Application level configuration and setup.
 
 Application configuration objects are used to override Django's default
-application setup.
+application setup. They define application metadata and ensure proper
+integration with the parent project.
 """
 
 from django.apps import AppConfig

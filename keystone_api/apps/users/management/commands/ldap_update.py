@@ -20,7 +20,7 @@ class Command(BaseCommand):
         """Add command-line arguments to the parser.
 
         Args:
-          parser: The argument parser instance
+            parser: The argument parser instance
         """
 
         parser.add_argument('--prune', action='store_true', help='Delete accounts with usernames not found in LDAP.')

@@ -33,7 +33,7 @@ class Grant(models.Model):
     objects = GrantManager()
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the grant title truncated to 50 characters."""
+        """Return the grant title truncated to 100 characters."""
 
         return truncatechars(self.title, 100)
 
@@ -57,6 +57,6 @@ class Publication(models.Model):
     objects = PublicationManager()
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the publication title truncated to 50 characters."""
+        """Return the publication title truncated to 100 characters."""
 
         return truncatechars(self.title, 100)

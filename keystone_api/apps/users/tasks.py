@@ -36,8 +36,8 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
 def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
     """Update the user database with the latest data from LDAP.
 
-    This function performs no action if the `AUTH_LDAP_SERVER_URI` setting
-    is not configured in the application settings.
+    This function does nothing if the `AUTH_LDAP_SERVER_URI` value is not
+    configured in application settings.
 
     Args:
         prune: Optionally delete accounts with usernames no longer found in LDAP.
@@ -46,7 +46,7 @@ def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
     if not settings.AUTH_LDAP_SERVER_URI:
         return
 
-    # Search LDAP for all users
+    # Search LDAP for all user entries
     conn = get_ldap_connection()
     search = conn.search_s(settings.AUTH_LDAP_USER_SEARCH.base_dn, ldap.SCOPE_SUBTREE, '(objectClass=account)')
 
