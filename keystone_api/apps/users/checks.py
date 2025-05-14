@@ -13,7 +13,7 @@ def ldap_dependency_check(*args, **kwargs) -> list[Error]:
     """Check if LDAP dependencies are required and installed.
 
     Returns:
-        A list identified errors.
+        A list of identified errors.
     """
 
     errors = []

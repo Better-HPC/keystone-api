@@ -27,7 +27,7 @@ class Command(BaseCommand):
         """Define command-line arguments.
 
         Args:
-          parser: The parser instance to add arguments under.
+            parser: The parser instance to add arguments under.
         """
 
         group = parser.add_argument_group('clean options')
@@ -40,12 +40,12 @@ class Command(BaseCommand):
         """Handle the command execution.
 
         Args:
-          *args: Additional positional arguments.
-          **options: Additional keyword arguments.
+            *args: Additional positional arguments.
+            **options: Additional keyword arguments.
         """
 
         if not any([options['static'], options['uploads'], options['sqlite'], options['all']]):
-            self.stderr.write('At least one deletion target is required. `See clean --help` for details.')
+            self.stderr.write('At least one deletion target is required. See `clean --help` for details.')
 
         if options['static'] or options['all']:
             self.stdout.write(self.style.SUCCESS('Removing static files...'))

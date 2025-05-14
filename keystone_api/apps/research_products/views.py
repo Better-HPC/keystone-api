@@ -1,7 +1,9 @@
 """Application logic for rendering HTML templates and handling HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
 from rest_framework import viewsets
@@ -23,12 +25,12 @@ class PublicationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, PublicationPermissions]
 
     def get_queryset(self) -> list[Publication]:
-        """Return a list of allocation requests for the currently authenticated user."""
+        """Return a list of publications affiliated with the currently authenticated user."""
 
         if self.request.user.is_staff:
             return self.queryset
 
-        return Publication.objects.affiliated_with_user(self.request.user).all()
+        return Publication.objects.affiliated_with_user(self.request.user)
 
 
 class GrantViewSet(viewsets.ModelViewSet):
@@ -40,9 +42,9 @@ class GrantViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, GrantPermissions]
 
     def get_queryset(self) -> list[Grant]:
-        """Return a list of allocation requests for the currently authenticated user."""
+        """Return a list of grants affiliated with the currently authenticated user."""
 
         if self.request.user.is_staff:
             return self.queryset
 
-        return Grant.objects.affiliated_with_user(self.request.user).all()
+        return Grant.objects.affiliated_with_user(self.request.user)

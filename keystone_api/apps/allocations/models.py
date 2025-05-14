@@ -37,7 +37,7 @@ class TeamModelInterface:
 
     @abc.abstractmethod
     def get_team(self) -> Team:
-        """Return the user team tied to the current record."""
+        """Return the team associated with the current record."""
 
 
 @auditlog.register()
@@ -57,8 +57,8 @@ class Allocation(TeamModelInterface, models.Model):
     awarded = models.PositiveIntegerField(null=True, blank=True)
     final = models.PositiveIntegerField(null=True, blank=True)
 
-    cluster: Cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE)
-    request: AllocationRequest = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
+    cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE)
+    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
 
     objects = AllocationManager()
 
@@ -112,9 +112,9 @@ class AllocationRequest(TeamModelInterface, models.Model):
     submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name='submitted_allocationrequest_set')
     team: Team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
-    assignees: User = models.ManyToManyField(User, blank=True, related_name='assigned_allocationrequest_set')
-    publications: Publication = models.ManyToManyField(Publication, blank=True)
-    grants: Grant = models.ManyToManyField(Grant, blank=True)
+    assignees = models.ManyToManyField(User, blank=True, related_name='assigned_allocationrequest_set')
+    publications = models.ManyToManyField(Publication, blank=True)
+    grants = models.ManyToManyField(Grant, blank=True)
 
     def clean(self) -> None:
         """Validate the model instance.
@@ -131,7 +131,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
         return self.team
 
-    def get_days_until_expire(self) -> int:
+    def get_days_until_expire(self) -> int | None:
         """Calculate the number of days until this request expires."""
 
         return (self.expire - date.today()).days if self.expire else None
@@ -166,8 +166,8 @@ class AllocationReview(TeamModelInterface, models.Model):
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
     last_modified = models.DateTimeField(auto_now=True)
 
-    request: AllocationRequest = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
-    reviewer: User = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
+    request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -175,7 +175,7 @@ class AllocationReview(TeamModelInterface, models.Model):
         return self.request.team
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return a human-readable identifier for the allocation request."""
+        """Return a human-readable identifier for the allocation review."""
 
         return f'{self.reviewer} review for \"{self.request.title}\"'
 
@@ -215,7 +215,7 @@ class Attachment(TeamModelInterface, models.Model):
 
 @auditlog.register()
 class Cluster(models.Model):
-    """A slurm cluster and its associated management settings."""
+    """A Slurm cluster and its associated management settings."""
 
     class Meta:
         """Database model settings."""
@@ -236,7 +236,7 @@ class Cluster(models.Model):
 
 @auditlog.register()
 class Comment(models.Model):
-    """Comments associated with allocation reviews."""
+    """Comment associated with an allocation review."""
 
     class Meta:
         """Database model settings."""

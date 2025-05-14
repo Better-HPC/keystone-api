@@ -16,16 +16,16 @@ __all__ = ['GrantManager', 'PublicationManager']
 
 
 class BaseManager(Manager):
-    """Base manager class for abstracting common database filters."""
+    """Base manager class for encapsulating common database operations."""
 
     def affiliated_with_user(self, user: User) -> models.QuerySet:
-        """Get all allocation requests affiliated with the given user
+        """Get all allocation requests affiliated with the given user.
 
         Args:
             user: The user to return affiliated records for.
 
         Returns:
-            A filtered queryset.
+            A filtered queryset of records affiliated with the given user.
         """
 
         teams = Team.objects.teams_for_user(user)

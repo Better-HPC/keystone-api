@@ -1,7 +1,9 @@
 """Application logic for rendering HTML templates and handling HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
 from django.db.models import QuerySet
@@ -36,7 +38,7 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
 
     @extend_schema(responses={'200': _resp_body})
     def get(self, request, *args, **kwargs) -> Response:
-        """Return valid values for the allocation review `status` field."""
+        """Return valid values for the allocation request `status` field."""
 
         return Response(self._resp_body, status=status.HTTP_200_OK)
 
@@ -157,7 +159,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, CommentPermissions]
 
     def get_queryset(self) -> QuerySet:
-        """Return a list of attachments for the currently authenticated user."""
+        """Return a list of comments for the currently authenticated user."""
 
         if self.request.user.is_staff:
             return self.queryset
