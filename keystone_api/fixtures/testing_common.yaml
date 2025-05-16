@@ -248,3 +248,22 @@
     end_date: "2000-01-31"
     grant_number: "abc-123"
     team: 2
+
+# Notifications
+- model: notifications.notification
+  pk: 1
+  fields:
+    user: 1  # owner_1
+    notification_type: "GM"
+    subject: "Your allocation request has been approved."
+    time: "2023-01-02T00:00:00-00:00"
+    read: false
+
+- model: notifications.notification
+  pk: 2
+  fields:
+    user: 2  # admin_1
+    notification_type: "GM"
+    subject: "A new allocation review has been posted."
+    time: "2023-01-02T00:00:00-00:00"
+    read: false

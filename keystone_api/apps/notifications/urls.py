@@ -9,3 +9,5 @@ app_name = 'users'
 router = DefaultRouter()
 router.register('notifications', NotificationViewSet)
 router.register('preferences', PreferenceViewSet)
+
+urlpatterns = router.urls

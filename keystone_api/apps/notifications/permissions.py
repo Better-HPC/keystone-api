@@ -17,7 +17,7 @@ class NotificationOwnerReadOnly(BasePermission):
     """Grant read-only access to users accessing their own notifications.
 
     Permissions:
-        - Allows read access to notification recipients.
+        - Grants read access to users accessing their own notifications.
     """
 
     def has_permission(self, request, view):
@@ -40,6 +40,11 @@ class PreferenceOwnerWrite(BasePermission):
     Permissions:
         - Grants full permissions to users accessing their own preferences.
     """
+
+    def has_permission(self, request, view):
+        """Allow access only for safe HTTP methods (GET, HEAD, OPTIONS)."""
+
+        return request.method in SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
         """Allow access only if the preference belongs to the requesting user."""
