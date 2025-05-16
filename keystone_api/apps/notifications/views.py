@@ -8,8 +8,10 @@ URLs to business logic.
 
 from django.db.models import QuerySet
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from .models import *
+from .permissions import *
 from .serializers import *
 
 __all__ = [
@@ -24,6 +26,7 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
     search_fields = ['message']
+    permission_classes = [IsAuthenticated, NotificationOwnerReadOnly]
 
     def get_queryset(self) -> QuerySet:
         """Return a queryset of notifications for the requesting user."""
@@ -36,6 +39,7 @@ class PreferenceViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
+    permission_classes = [IsAuthenticated, PreferenceOwnerWrite]
 
     def get_queryset(self) -> QuerySet:
         """Return a queryset of notifications for the requesting user."""
