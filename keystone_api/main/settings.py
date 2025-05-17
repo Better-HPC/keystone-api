@@ -166,6 +166,10 @@ JAZZMIN_SETTINGS = {
 REST_FRAMEWORK = {
     'SEARCH_PARAM': '_search',
     'ORDERING_PARAM': '_order',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
