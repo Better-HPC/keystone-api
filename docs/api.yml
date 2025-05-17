@@ -11,8 +11,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -30,8 +30,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -227,8 +227,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -256,8 +256,8 @@ paths:
               $ref: '#/components/schemas/Allocation'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -279,8 +279,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -313,8 +313,8 @@ paths:
               $ref: '#/components/schemas/Allocation'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -346,8 +346,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAllocation'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -368,8 +368,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -543,8 +543,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -572,8 +572,8 @@ paths:
               $ref: '#/components/schemas/Attachment'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -595,8 +595,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -629,8 +629,8 @@ paths:
               $ref: '#/components/schemas/Attachment'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -662,8 +662,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAttachment'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -684,8 +684,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -817,8 +817,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -846,8 +846,8 @@ paths:
               $ref: '#/components/schemas/Cluster'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -869,8 +869,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -903,8 +903,8 @@ paths:
               $ref: '#/components/schemas/Cluster'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -936,8 +936,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedCluster'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -958,8 +958,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -1167,8 +1167,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1196,8 +1196,8 @@ paths:
               $ref: '#/components/schemas/Comment'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -1219,8 +1219,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1253,8 +1253,8 @@ paths:
               $ref: '#/components/schemas/Comment'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1286,8 +1286,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedComment'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1308,8 +1308,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -1674,8 +1674,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1703,8 +1703,8 @@ paths:
               $ref: '#/components/schemas/AllocationRequest'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -1726,8 +1726,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1760,8 +1760,8 @@ paths:
               $ref: '#/components/schemas/AllocationRequest'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1793,8 +1793,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAllocationRequest'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1815,8 +1815,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -2015,8 +2015,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2044,8 +2044,8 @@ paths:
               $ref: '#/components/schemas/AllocationReview'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -2067,8 +2067,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2101,8 +2101,8 @@ paths:
               $ref: '#/components/schemas/AllocationReview'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2134,8 +2134,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAllocationReview'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2156,8 +2156,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -2187,8 +2187,8 @@ paths:
               $ref: '#/components/schemas/Login'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
@@ -2208,8 +2208,8 @@ paths:
       tags:
       - authentication
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
@@ -2229,8 +2229,8 @@ paths:
       tags:
       - authentication
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2245,8 +2245,8 @@ paths:
       tags:
       - health
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           description: No response body
@@ -2259,8 +2259,8 @@ paths:
       tags:
       - health
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2275,8 +2275,8 @@ paths:
       tags:
       - health
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           description: No response body
@@ -2611,8 +2611,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2636,8 +2636,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3074,8 +3074,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3099,8 +3099,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3398,8 +3398,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3423,8 +3423,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3994,8 +3994,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4019,8 +4019,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4369,8 +4369,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4398,8 +4398,8 @@ paths:
               $ref: '#/components/schemas/Grant'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -4421,8 +4421,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4455,8 +4455,8 @@ paths:
               $ref: '#/components/schemas/Grant'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4488,8 +4488,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedGrant'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4510,8 +4510,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -4894,8 +4894,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4923,8 +4923,8 @@ paths:
               $ref: '#/components/schemas/Publication'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -4946,8 +4946,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4980,8 +4980,8 @@ paths:
               $ref: '#/components/schemas/Publication'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5013,8 +5013,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedPublication'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5035,8 +5035,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -5164,8 +5164,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5193,8 +5193,8 @@ paths:
               $ref: '#/components/schemas/Membership'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -5216,8 +5216,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5250,8 +5250,8 @@ paths:
               $ref: '#/components/schemas/Membership'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5283,8 +5283,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedMembership'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5305,8 +5305,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -5317,8 +5317,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5427,8 +5427,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5456,8 +5456,8 @@ paths:
               $ref: '#/components/schemas/Team'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -5479,8 +5479,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5513,8 +5513,8 @@ paths:
               $ref: '#/components/schemas/Team'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5546,8 +5546,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedTeam'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5568,8 +5568,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -6039,8 +6039,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -6068,8 +6068,8 @@ paths:
               $ref: '#/components/schemas/RestrictedUser'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -6091,8 +6091,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -6125,8 +6125,8 @@ paths:
               $ref: '#/components/schemas/RestrictedUser'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -6158,8 +6158,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedRestrictedUser'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -6180,8 +6180,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -7540,10 +7540,12 @@ components:
       required:
       - healthCheckName
   securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
     cookieAuth:
       type: apiKey
       in: cookie
       name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
