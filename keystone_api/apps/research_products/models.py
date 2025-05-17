@@ -20,6 +20,22 @@ __all__ = ['Grant', 'Publication']
 class Grant(models.Model):
     """Metadata for a funding grant."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['agency']),
+            models.Index(fields=['grant_number']),
+            models.Index(fields=['fiscal_year']),
+            models.Index(fields=['start_date']),
+            models.Index(fields=['end_date']),
+            models.Index(fields=['team']),
+            models.Index(fields=['team', 'start_date', 'end_date']),
+            models.Index(fields=['agency', 'start_date', 'end_date']),
+            models.Index(fields=['team', 'agency', 'start_date', 'end_date']),
+        ]
+
     title = models.CharField(max_length=250)
     agency = models.CharField(max_length=100)
     amount = models.DecimalField(decimal_places=2, max_digits=14)
@@ -41,6 +57,21 @@ class Grant(models.Model):
 @auditlog.register()
 class Publication(models.Model):
     """Metadata for an academic publication."""
+
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['published']),
+            models.Index(fields=['submitted']),
+            models.Index(fields=['journal']),
+            models.Index(fields=['doi']),
+            models.Index(fields=['team']),
+            models.Index(fields=['team', 'journal']),
+            models.Index(fields=['team', 'published']),
+            models.Index(fields=['team', 'submitted']),
+        ]
 
     title = models.CharField(max_length=250)
     abstract = models.TextField()
