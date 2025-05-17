@@ -6,6 +6,8 @@ interfaces for managing application database constructs.
 
 from django.conf import settings
 from django.contrib import admin
+from django.db.models import Count, QuerySet
+from django.http import HttpRequest
 
 from .models import *
 
@@ -63,40 +65,44 @@ class CommentInline(admin.StackedInline):
 class AllocationAdmin(admin.ModelAdmin):
     """Admin interface for the `Allocation` model."""
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records.
+
+        Optimizes database interactions by prefetching related data.
+        """
+
+        qs = super().get_queryset(request)
+        return qs.select_related('request__team', 'cluster', 'request')
+
     @staticmethod
-    @admin.display
+    @admin.display(ordering='request__team__name')
     def team(obj: Allocation) -> str:
         """Return the name of the user team the allocation is assigned to."""
 
         return obj.request.team.name
 
     @staticmethod
-    @admin.display
+    @admin.display(ordering='request__title')
     def request(obj: Allocation) -> str:
         """Return the title of the allocation's corresponding request."""
 
         return obj.request.title
 
     @staticmethod
-    @admin.display
+    @admin.display(ordering='cluster__name')
     def cluster(obj: Allocation) -> str:
         """Return the name of the cluster the allocation is assigned to."""
 
         return obj.cluster.name
 
     @staticmethod
-    @admin.display
+    @admin.display(ordering='request__status')
     def status(obj: Allocation) -> str:
         """Return the status of the corresponding allocation request."""
 
         return obj.request.StatusChoices(obj.request.status).label
 
-    team.admin_order_field = 'request__team__name'
-    request.admin_order_field = 'request__title'
-    cluster.admin_order_field = 'cluster__name'
-    status.admin_order_field = 'request__status'
-
-    list_display = [team, request, cluster, 'requested', 'awarded', 'final', status]
+    list_display = ['team', 'request', 'cluster', 'requested', 'awarded', 'final', 'status']
     list_display_links = list_display
     ordering = ['request__team__name', 'cluster']
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
@@ -109,23 +115,30 @@ class AllocationAdmin(admin.ModelAdmin):
 class AllocationRequestAdmin(admin.ModelAdmin):
     """Admin interface for the `AllocationRequest` model."""
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records.
+
+        Optimizes database interactions by prefetching related data.
+        """
+
+        qs = super().get_queryset(request)
+        return qs.select_related('team').annotate(review_count=Count('allocationreview'))
+
     @staticmethod
-    @admin.display
+    @admin.display(ordering='team__name')
     def team(obj: Allocation) -> str:
         """Return the name of the user team the allocation is assigned to."""
 
         return obj.team.name
 
     @staticmethod
-    @admin.display
+    @admin.display(ordering='review_count')
     def reviews(obj: AllocationRequest) -> int:
         """Return the total number of submitted reviews."""
 
-        return sum(1 for _ in obj.allocationreview_set.all())
+        return obj.review_count
 
-    team.admin_order_field = 'team__name'
-
-    list_display = [team, 'title', 'submitted', 'active', 'expire', 'reviews', 'status']
+    list_display = ['team', 'title', 'submitted', 'active', 'expire', 'reviews', 'status']
     list_display_links = list_display
     search_fields = ['title', 'description', 'team__name']
     ordering = ['submitted']
