@@ -44,6 +44,14 @@ class TeamModelInterface:
 class Allocation(TeamModelInterface, models.Model):
     """User service unit allocation."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['request']),
+            models.Index(fields=['cluster', 'request']),
+        ]
+
     requested = models.PositiveIntegerField()
     awarded = models.PositiveIntegerField(null=True, blank=True)
     final = models.PositiveIntegerField(null=True, blank=True)
@@ -68,6 +76,21 @@ class Allocation(TeamModelInterface, models.Model):
 class AllocationRequest(TeamModelInterface, models.Model):
     """User request for additional service units on one or more clusters."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['submitted']),
+            models.Index(fields=['active']),
+            models.Index(fields=['expire']),
+            models.Index(fields=['submitter']),
+            models.Index(fields=['team', 'status']),
+            models.Index(fields=['team', 'submitter', 'status']),
+            models.Index(fields=['team', 'active', 'expire']),
+            models.Index(fields=['submitter', 'status']),
+        ]
+
     class StatusChoices(models.TextChoices):
         """Enumerated choices for the `status` field."""
 
@@ -78,13 +101,14 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
-    submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name='submitted_allocationrequest_set')
     submitted = models.DateField(auto_now=True)
-    status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
     active = models.DateField(null=True, blank=True)
     expire = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
 
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name='submitted_allocationrequest_set')
+    team: Team = models.ForeignKey(Team, on_delete=models.CASCADE)
+
     assignees = models.ManyToManyField(User, blank=True, related_name='assigned_allocationrequest_set')
     publications = models.ManyToManyField(Publication, blank=True)
     grants = models.ManyToManyField(Grant, blank=True)
@@ -119,6 +143,16 @@ class AllocationRequest(TeamModelInterface, models.Model):
 class AllocationReview(TeamModelInterface, models.Model):
     """Reviewer feedback for an allocation request."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['last_modified']),
+            models.Index(fields=['request']),
+            models.Index(fields=['reviewer']),
+        ]
+
     class StatusChoices(models.TextChoices):
         """Enumerated choices for the `status` field."""
 
@@ -147,6 +181,14 @@ class AllocationReview(TeamModelInterface, models.Model):
 class Attachment(TeamModelInterface, models.Model):
     """File data uploaded by users."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['uploaded']),
+            models.Index(fields=['request']),
+        ]
+
     file = models.FileField(upload_to='allocations')
     name = models.CharField(max_length=250, blank=True)
     uploaded = models.DateTimeField(auto_now=True)
@@ -172,7 +214,14 @@ class Attachment(TeamModelInterface, models.Model):
 class Cluster(models.Model):
     """A Slurm cluster and its associated management settings."""
 
-    name = models.CharField(max_length=50)
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
+    name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)
     enabled = models.BooleanField(default=True)
 
@@ -186,11 +235,20 @@ class Cluster(models.Model):
 class Comment(models.Model):
     """Comment associated with an allocation review."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['created']),
+            models.Index(fields=['request']),
+            models.Index(fields=['user', 'request', 'created']),
+        ]
+
     content = models.TextField(max_length=2_000)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     private = models.BooleanField(default=False)
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='comments')
 
     def get_team(self) -> Team:

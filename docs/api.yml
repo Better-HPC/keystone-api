@@ -6284,8 +6284,6 @@ components:
           type: string
           format: date
           readOnly: true
-        status:
-          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -6294,6 +6292,8 @@ components:
           type: string
           format: date
           nullable: true
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
         submitter:
           type: integer
           nullable: true
@@ -6748,8 +6748,6 @@ components:
           type: string
           format: date
           readOnly: true
-        status:
-          $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
           format: date
@@ -6758,6 +6756,8 @@ components:
           type: string
           format: date
           nullable: true
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
         submitter:
           type: integer
           nullable: true

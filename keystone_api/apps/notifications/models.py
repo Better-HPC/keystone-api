@@ -24,6 +24,17 @@ def default_expiry_thresholds() -> list[int]:  # pragma: nocover
 class Notification(models.Model):
     """User notification."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['time']),
+            models.Index(fields=['notification_type']),
+            models.Index(fields=['user']),
+            models.Index(fields=['user', 'read', 'notification_type']),
+            models.Index(fields=['user', 'notification_type', 'time']),
+        ]
+
     class NotificationType(models.TextChoices):
         """Enumerated choices for the `notification_type` field."""
 
@@ -43,6 +54,13 @@ class Notification(models.Model):
 
 class Preference(models.Model):
     """User notification preferences."""
+
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['user']),
+        ]
 
     request_expiry_thresholds = models.JSONField(default=default_expiry_thresholds)
     notify_on_expiration = models.BooleanField(default=True)
