@@ -31,7 +31,7 @@ class GetTeamMethod(TestCase):
             reviewer=self.reviewer
         )
 
-    def test_get_team(self):
+    def test_get_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""
 
         team = self.allocation_request_review.get_team()

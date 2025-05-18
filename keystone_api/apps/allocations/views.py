@@ -11,6 +11,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.users.models import Team
@@ -37,7 +38,7 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(responses={'200': _resp_body})
-    def get(self, request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> Response:
         """Return valid values for the allocation request `status` field."""
 
         return Response(self._resp_body, status=status.HTTP_200_OK)
@@ -68,7 +69,7 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(responses={'200': _resp_body})
-    def get(self, request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> Response:
         """Return valid values for the allocation review `status` field."""
 
         return Response(self._resp_body, status=status.HTTP_200_OK)
@@ -91,7 +92,7 @@ class AllocationReviewViewSet(viewsets.ModelViewSet):
         teams = Team.objects.teams_for_user(self.request.user)
         return AllocationReview.objects.filter(request__team__in=teams)
 
-    def create(self, request, *args, **kwargs) -> Response:
+    def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `AllocationReview` object."""
 
         data = request.data.copy()
