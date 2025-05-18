@@ -12,12 +12,7 @@ class Command(BaseCommand):
     help = __doc__
 
     def handle(self, *args, **options) -> None:
-        """Handle the command execution.
-
-        Args:
-            *args: Additional positional arguments.
-            **options: Additional keyword arguments.
-        """
+        """Handle the command execution."""
 
         try:
             self._handle()

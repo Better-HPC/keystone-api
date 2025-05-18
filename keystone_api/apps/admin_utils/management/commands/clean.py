@@ -37,12 +37,7 @@ class Command(BaseCommand):
         group.add_argument('--all', action='store_true', help='Shorthand for deleting all targets')
 
     def handle(self, *args, **options) -> None:
-        """Handle the command execution.
-
-        Args:
-            *args: Additional positional arguments.
-            **options: Command-line options.
-        """
+        """Handle the command execution."""
 
         if not any([options['static'], options['uploads'], options['sqlite'], options['all']]):
             self.stderr.write('At least one deletion target is required. See `clean --help` for details.')

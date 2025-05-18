@@ -48,12 +48,7 @@ class Command(BaseCommand):
         group.add_argument('--static', action='store_true', help='Collect static files.')
 
     def handle(self, *args, **options) -> None:
-        """Handle the command execution.
-
-        Args:
-            *args: Additional positional arguments.
-            **options: Additional keyword arguments.
-        """
+        """Handle the command execution."""
 
         # Note: `no_input=False` indicates the user should not be prompted for input
 
