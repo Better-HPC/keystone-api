@@ -122,7 +122,7 @@ class Command(BaseCommand):
         """
 
         class CustomMessageHandler(Message):
-            def handle_message(self, message):
+            def handle_message(self, message: str) -> None:
                 print(f"Received message from: {message['from']}")
                 print(f"To: {message['to']}")
                 print(f"Subject: {message['subject']}")

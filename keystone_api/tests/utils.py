@@ -26,7 +26,7 @@ class CustomAsserts:
             if expected_status is not None:
                 self._assert_http_response(method, endpoint, expected_status, kwargs)
 
-    def _assert_http_response(self, method, endpoint, expected_status, kwargs):
+    def _assert_http_response(self, method: str, endpoint: str, expected_status: int, kwargs: dict):
         """Assert the HTTP response for a specific method matches the expected status.
 
         Args:
