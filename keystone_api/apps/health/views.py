@@ -6,14 +6,13 @@ appropriately rendered HTML template or other HTTP response.
 
 from abc import ABC, abstractmethod
 
-from django.http import  JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from drf_spectacular.utils import extend_schema, inline_serializer
 from health_check.mixins import CheckMixin
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
 from rest_framework.request import Request
 
 __all__ = ['HealthCheckView', 'HealthCheckJsonView', 'HealthCheckPrometheusView']
@@ -24,11 +23,11 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
 
     @staticmethod
     @abstractmethod
-    def render_response(plugins: dict) -> Response:
+    def render_response(plugins: dict) -> HttpResponse:
         """Render the response based on the view's specific format."""
 
     @method_decorator(cache_page(60))
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Check system health and return the appropriate response."""
 
         self.check()
@@ -41,27 +40,27 @@ class HealthCheckView(BaseHealthCheckView):
     permission_classes = []
 
     @staticmethod
-    def render_response(plugins: dict) -> Response:
+    def render_response(plugins: dict) -> HttpResponse:
         """Return an HTTP response with a status code matching system health checks.
 
         Args:
             plugins: A mapping of healthcheck names to health check objects.
 
         Returns:
-            An HTTPResponse with status 200 if all checks are passing or 500 otherwise.
+            An HttpResponse with status 200 if all checks are passing or 500 otherwise.
         """
 
         for plugin in plugins.values():
             if plugin.status != 1:
-                return Response(status=500)
+                return HttpResponse(status=500)
 
-        return Response()
+        return HttpResponse()
 
     @extend_schema(responses={
         '200': inline_serializer('health_ok', fields=dict()),
         '500': inline_serializer('health_error', fields=dict()),
     })
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in Prometheus format."""
 
         return super().get(request, *args, **kwargs)  # pragma: nocover
@@ -104,7 +103,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
                 })
         })
     })
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in JSON format."""
 
         return super().get(request, *args, **kwargs)  # pragma: nocover
@@ -116,7 +115,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
     permission_classes = []
 
     @staticmethod
-    def render_response(plugins: dict) -> Response:
+    def render_response(plugins: dict) -> HttpResponse:
         """Return an HTTP response summarizing a collection of health checks.
 
         Args:
@@ -142,12 +141,12 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
             ) for plugin_name, plugin in plugins.items()
         ]
 
-        return Response('\n\n'.join(status_data), status=200, content_type="text/plain")
+        return HttpResponse('\n\n'.join(status_data), status=200, content_type="text/plain")
 
     @extend_schema(responses={
         '200': inline_serializer('health_prom_ok', fields=dict()),
     })
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in Prometheus format."""
 
         return super().get(request, *args, **kwargs)  # pragma: nocover
