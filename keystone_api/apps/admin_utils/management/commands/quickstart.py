@@ -35,7 +35,7 @@ class Command(BaseCommand):
         """Add command-line arguments to the parser.
 
         Args:
-          parser: The argument parser instance.
+            parser: The argument parser instance.
         """
 
         group = parser.add_argument_group('quickstart options')
@@ -44,15 +44,15 @@ class Command(BaseCommand):
         group.add_argument('--demo-user', action='store_true', help='Create an admin user account if no other accounts exist.')
         group.add_argument('--gunicorn', action='store_true', help='Run a web server using Gunicorn.')
         group.add_argument('--migrate', action='store_true', help='Run database migrations.')
-        group.add_argument('--smtp', action='store_true', help='Run a SMTP server.')
+        group.add_argument('--smtp', action='store_true', help='Run an SMTP server.')
         group.add_argument('--static', action='store_true', help='Collect static files.')
 
     def handle(self, *args, **options) -> None:
         """Handle the command execution.
 
         Args:
-          *args: Additional positional arguments.
-          **options: Additional keyword arguments.
+            *args: Additional positional arguments.
+            **options: Additional keyword arguments.
         """
 
         # Note: `no_input=False` indicates the user should not be prompted for input
@@ -105,8 +105,8 @@ class Command(BaseCommand):
         """Start a Gunicorn server.
 
         Args:
-          host: The host to bind to.
-          port: The port to bind to.
+            host: The host to bind to.
+            port: The port to bind to.
         """
 
         command = ['gunicorn', '--bind', f'{host}:{port}', 'keystone_api.main.wsgi:application']
@@ -117,8 +117,8 @@ class Command(BaseCommand):
         """Start an SMTP server.
 
         Args:
-          host: The host to bind to.
-          port: The port to bind to.
+            host: The host to bind to.
+            port: The port to bind to.
         """
 
         class CustomMessageHandler(Message):
