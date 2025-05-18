@@ -13,6 +13,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from health_check.mixins import CheckMixin
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
+from rest_framework.request import Request
 
 __all__ = ['HealthCheckView', 'HealthCheckJsonView', 'HealthCheckPrometheusView']
 
@@ -26,7 +27,7 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
         """Render the response based on the view's specific format."""
 
     @method_decorator(cache_page(60))
-    def get(self, request, *args, **kwargs) -> HttpResponse:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Check system health and return the appropriate response."""
 
         self.check()
@@ -46,7 +47,7 @@ class HealthCheckView(BaseHealthCheckView):
             plugins: A mapping of healthcheck names to health check objects.
 
         Returns:
-            An HTTPResponse with status 200 if all checks are passing or 500 otherwise.
+            An HttpResponse with status 200 if all checks are passing or 500 otherwise.
         """
 
         for plugin in plugins.values():
@@ -59,7 +60,7 @@ class HealthCheckView(BaseHealthCheckView):
         '200': inline_serializer('health_ok', fields=dict()),
         '500': inline_serializer('health_error', fields=dict()),
     })
-    def get(self, request, *args, **kwargs) -> HttpResponse:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in Prometheus format."""
 
         return super().get(request, *args, **kwargs)  # pragma: nocover
@@ -102,7 +103,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
                 })
         })
     })
-    def get(self, request, *args, **kwargs) -> HttpResponse:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in JSON format."""
 
         return super().get(request, *args, **kwargs)  # pragma: nocover
@@ -145,7 +146,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
     @extend_schema(responses={
         '200': inline_serializer('health_prom_ok', fields=dict()),
     })
-    def get(self, request, *args, **kwargs) -> HttpResponse:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in Prometheus format."""
 
         return super().get(request, *args, **kwargs)  # pragma: nocover

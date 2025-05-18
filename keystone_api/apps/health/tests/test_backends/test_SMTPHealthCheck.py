@@ -1,6 +1,6 @@
 """Unit tests for the `SMTPHealthCheck` class."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from django.test import TestCase
 
@@ -11,7 +11,7 @@ class CheckStatusMethod(TestCase):
     """Unit tests for the validation of SMTP settings via the `check_status` method."""
 
     @patch("apps.health.backends.get_connection")
-    def test_check_status_success(self, mock_get_connection):
+    def test_check_status_success(self, mock_get_connection: Mock) -> None:
         """Verify no errors are raised on a successful status check."""
 
         mock_connection = MagicMock()
@@ -27,7 +27,7 @@ class CheckStatusMethod(TestCase):
         self.assertEqual(len(health_check.errors), 0)
 
     @patch("apps.health.backends.get_connection")
-    def test_check_status_improperly_configured(self, mock_get_connection):
+    def test_check_status_improperly_configured(self, mock_get_connection: Mock) -> None:
         """Verify the health check fails when an SMTP backend is not configured."""
 
         mock_connection = MagicMock()
@@ -41,7 +41,7 @@ class CheckStatusMethod(TestCase):
         self.assertEqual("Email backend is not configured properly.", health_check.errors[0].message)
 
     @patch("apps.health.backends.get_connection")
-    def test_check_status_connection_error(self, mock_get_connection):
+    def test_check_status_connection_error(self, mock_get_connection: Mock) -> None:
         """Verify the health check fails when the SMTP server cannot be reached."""
 
         mock_connection = MagicMock()
