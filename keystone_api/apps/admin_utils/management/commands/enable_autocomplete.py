@@ -7,17 +7,12 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """Enable Bash autocompletion for the keystone-api commandline tool."""
+    """Enable autocompletion for the keystone-api command-line tool."""
 
     help = __doc__
 
     def handle(self, *args, **options) -> None:
-        """Handle the command execution.
-
-        Args:
-          *args: Additional positional arguments.
-          **options: Additional keyword arguments.
-        """
+        """Handle the command execution."""
 
         try:
             self._handle()
@@ -31,7 +26,7 @@ class Command(BaseCommand):
 
         # Find the user's shell config files
         if not (profile_paths := self.get_profile_paths()):
-            self.stderr.write(f'No .bash_profile or .bashrc file found.')
+            self.stderr.write('No .bash_profile or .bashrc file found.')
             exit(1)
 
         if not self.prompt_for_confirmation(profile_paths):
@@ -49,7 +44,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def prompt_for_confirmation(profile_paths: list[Path]) -> bool:
-        """Prompt the user to confirm executing of the parent command.
+        """Prompt the user to confirm command execution.
 
         Returns:
             A boolean indicating whether the user confirmed execution.
