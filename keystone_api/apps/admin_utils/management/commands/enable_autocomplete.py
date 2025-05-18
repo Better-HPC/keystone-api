@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """Enable Bash autocompletion for the keystone-api command-line tool."""
+    """Enable autocompletion for the keystone-api command-line tool."""
 
     help = __doc__
 
