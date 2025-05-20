@@ -60,6 +60,40 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_SUBDOMAINS", False)
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = env.list("SECURE_ALLOWED_ORIGINS", default=_trusted_local)
 
+ALLOWED_FILE_TYPES = [
+    # Documents
+    "application/pdf",
+    "application/rtf",
+    "application/msword",  # .doc
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # .docx
+    "application/vnd.oasis.opendocument.text",  # .odt
+    "application/x-latex",  # .latex
+    "application/x-tex",  # .tex
+
+    # Spreadsheets
+    "application/vnd.ms-excel",  # .xls
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",  # .xlsx
+    "application/vnd.oasis.opendocument.spreadsheet",  # .ods
+
+    # Presentations
+    "application/vnd.ms-powerpoint",  # .ppt
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",  # .pptx
+
+    # Plain and structured text
+    "text/plain",  # .txt
+    "text/markdown",  # .md
+    "text/richtext",  # .rtx
+    "text/csv",  # .csv
+
+    # Images
+    "image/png",
+    "image/jpeg",
+    "image/gif",
+    "image/svg+xml",
+    "image/tiff",
+    "image/bmp"
+]
+
 # App Configuration
 
 ROOT_URLCONF = 'main.urls'
