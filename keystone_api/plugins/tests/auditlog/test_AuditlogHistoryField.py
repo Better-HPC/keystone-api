@@ -1,0 +1,18 @@
+"""Unit tests for the `AuditlogHistoryField` class."""
+
+from unittest import TestCase
+
+from plugins.auditlog import AuditlogHistoryField
+
+
+class ToInternalValueMethod(TestCase):
+    """Test deserialization is disabled."""
+
+    def test_raises_error(self) -> None:
+        """Verify the method raises a `NotImplementedError` error."""
+
+        field = AuditlogHistoryField()
+        with self.assertRaises(NotImplementedError) as cm:
+            field.to_internal_value({"field": "value"})
+
+        self.assertEqual(str(cm.exception), "Audit history is read-only.")
