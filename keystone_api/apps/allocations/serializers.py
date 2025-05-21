@@ -15,6 +15,7 @@ from rest_framework import serializers
 from apps.research_products.serializers import *
 from apps.users.models import User
 from apps.users.serializers import *
+from plugins.auditlog import AuditlogFieldSerializer
 from .models import *
 
 __all__ = [
@@ -52,6 +53,7 @@ class AllocationSerializer(serializers.ModelSerializer):
 
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditlogFieldSerializer(source='history', read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -67,6 +69,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _assignees = UserSummarySerializer(source='assignees', many=True, read_only=True)
     _publications = PublicationSerializer(source='publications', many=True, read_only=True)
     _grants = GrantSerializer(source='grants', many=True, read_only=True)
+    _history = AuditlogFieldSerializer(source='history', read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -80,6 +83,7 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     _reviewer = UserSummarySerializer(source='reviewer', read_only=True)
+    _history = AuditlogFieldSerializer(source='history', read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -102,6 +106,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     file = serializers.FileField(use_url=False)
+    _history = AuditlogFieldSerializer(source='history', read_only=True)
     name = serializers.CharField(required=False)
 
     class Meta:
@@ -137,6 +142,8 @@ class AttachmentSerializer(serializers.ModelSerializer):
 class ClusterSerializer(serializers.ModelSerializer):
     """Object serializer for the `Cluster` class."""
 
+    _history = AuditlogFieldSerializer(source='history', read_only=True)
+
     class Meta:
         """Serializer settings."""
 
@@ -149,6 +156,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     _user = UserSummarySerializer(source='user', read_only=True)
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditlogFieldSerializer(source='history', read_only=True)
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()

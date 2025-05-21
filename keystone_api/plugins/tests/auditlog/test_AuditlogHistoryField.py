@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from plugins.auditlog import AuditlogHistoryField
+from plugins.auditlog import AuditlogFieldSerializer
 
 
 class ToInternalValueMethod(TestCase):
@@ -11,7 +11,7 @@ class ToInternalValueMethod(TestCase):
     def test_raises_error(self) -> None:
         """Verify the method raises a `NotImplementedError` error."""
 
-        field = AuditlogHistoryField()
+        field = AuditlogFieldSerializer()
         with self.assertRaises(NotImplementedError) as cm:
             field.to_internal_value({"field": "value"})
 

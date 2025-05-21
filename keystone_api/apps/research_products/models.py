@@ -6,6 +6,7 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
+from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 from django.db import models
 from django.template.defaultfilters import truncatechars
@@ -43,6 +44,7 @@ class Grant(models.Model):
     fiscal_year = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
+    history = AuditlogHistoryField()
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
@@ -82,6 +84,7 @@ class Publication(models.Model):
     preparation = models.BooleanField(default=False)
     volume = models.CharField(max_length=20, null=True, blank=True)
     issue = models.CharField(max_length=20, null=True, blank=True)
+    history = AuditlogHistoryField()
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 

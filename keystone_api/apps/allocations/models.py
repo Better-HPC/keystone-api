@@ -12,6 +12,7 @@ import abc
 import os
 from datetime import date
 
+from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -55,6 +56,7 @@ class Allocation(TeamModelInterface, models.Model):
     requested = models.PositiveIntegerField()
     awarded = models.PositiveIntegerField(null=True, blank=True)
     final = models.PositiveIntegerField(null=True, blank=True)
+    history = AuditlogHistoryField()
 
     cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE)
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
@@ -105,6 +107,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
     active = models.DateField(null=True, blank=True)
     expire = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
+    history = AuditlogHistoryField()
 
     submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name='submitted_allocationrequest_set')
     team: Team = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -162,6 +165,7 @@ class AllocationReview(TeamModelInterface, models.Model):
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
     last_modified = models.DateTimeField(auto_now=True)
+    history = AuditlogHistoryField()
 
     request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
     reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
@@ -192,6 +196,7 @@ class Attachment(TeamModelInterface, models.Model):
     file = models.FileField(upload_to='allocations')
     name = models.CharField(max_length=250, blank=True)
     uploaded = models.DateTimeField(auto_now=True)
+    history = AuditlogHistoryField()
 
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
 
@@ -224,6 +229,7 @@ class Cluster(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)
     enabled = models.BooleanField(default=True)
+    history = AuditlogHistoryField()
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the cluster name as a string."""
@@ -247,6 +253,7 @@ class Comment(models.Model):
     content = models.TextField(max_length=2_000)
     created = models.DateTimeField(auto_now_add=True)
     private = models.BooleanField(default=False)
+    history = AuditlogHistoryField()
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='comments')

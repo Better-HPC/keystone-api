@@ -9,7 +9,7 @@ from django.db.models import Manager
 from rest_framework import serializers
 
 
-class AuditlogHistoryField(serializers.Field):
+class AuditlogFieldSerializer(serializers.Field):
     """Read-only serializer field for exposing audit log history.
 
     Returns a dict of audit entries keyed by ID, with optional support
