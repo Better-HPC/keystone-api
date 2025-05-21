@@ -147,6 +147,8 @@ class ClusterSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Comment` class."""
 
+    _user = UserSummarySerializer(source='user', read_only=True)
+    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()
