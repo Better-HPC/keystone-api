@@ -1,4 +1,4 @@
-"""Unit tests for the `AuditlogHistoryField` class."""
+"""Unit tests for the `AuditlogFieldSerializer` class."""
 
 from unittest import TestCase
 
