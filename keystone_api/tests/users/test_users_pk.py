@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
+ENDPOINT_PATTERN = '/users/users/{pk}/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -20,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/users/users/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -121,7 +123,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class CredentialHandling(APITestCase):
     """Test the getting/setting of user credentials."""
 
-    endpoint_pattern = '/users/users/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -206,3 +208,31 @@ class CredentialHandling(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
         self.assertTrue(self.user1.check_password('new_password123'))
+
+
+class RecordHistory(APITestCase):
+    """Test the serialization of record history."""
+
+    endpoint_pattern = ENDPOINT_PATTERN
+    fixtures = ['testing_common.yaml']
+
+    def setUp(self) -> None:
+        """Load and modify a user record so it has an audit history."""
+
+        user = User.objects.get(username='generic_user')
+        endpoint = self.endpoint_pattern.format(pk=user.id)
+
+        self.client.force_authenticate(user=user)
+        self.client.patch(endpoint, data={'email': 'new@email.com', 'password': 'NewSecureValue'})
+        self.get_response = self.client.get(endpoint)
+
+    def test_password_masked(self) -> None:
+        """Verify password values are masked in returned responses."""
+
+        history = self.get_response.json().get('_history')
+        last_change = history[max(history.keys(), key=int)]
+
+        # Masked values have their first half replaced with asterisks
+        password_old, password_new = last_change['password']
+        self.assertTrue(password_new.startswith('*****'))
+        self.assertTrue(password_old.startswith('*****'))
