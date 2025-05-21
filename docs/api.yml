@@ -6549,6 +6549,16 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
         user:
           type: integer
         content:
@@ -6563,6 +6573,8 @@ components:
         request:
           type: integer
       required:
+      - _request
+      - _user
       - content
       - created
       - id
@@ -6848,6 +6860,16 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
         user:
           type: integer
         content:
