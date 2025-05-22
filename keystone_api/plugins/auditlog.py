@@ -6,9 +6,31 @@ for a records audit history.
 """
 
 from django.db.models import Manager
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 
+@extend_schema_field({
+    'type': 'object',
+    'additionalProperties': {
+        'type': 'object',
+        'additionalProperties': {
+            'type': 'array',
+            'items': {'type': 'string'},
+            'minItems': 2,
+            'maxItems': 2,
+        }
+    },
+    'example': {
+        "101": {
+            "field1": ["old_value_1", "new_value_1"],
+            "field2": ["old_value_2", "new_value_2"]
+        },
+        "102": {
+            "field3": ["old_value_3", "new_value_3"]
+        }
+    }
+})
 class AuditlogFieldSerializer(serializers.Field):
     """Read-only serializer field for exposing audit log history.
 
