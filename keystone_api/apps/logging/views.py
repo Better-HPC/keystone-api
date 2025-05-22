@@ -6,18 +6,13 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status, viewsets
-from rest_framework.generics import GenericAPIView
-from rest_framework.request import Request
-from rest_framework.response import Response
+from rest_framework import permissions, viewsets
 
 from .models import *
 from .serializers import *
 
 __all__ = [
     'AppLogViewSet',
-    'AuditLogActionChoicesView',
     'AuditLogViewSet',
     'RequestLogViewSet',
     'TaskResultViewSet',
@@ -49,19 +44,6 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TaskResultSerializer
     search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-
-
-class AuditLogActionChoicesView(GenericAPIView):
-    """Exposes valid values for the audit log `action` field."""
-
-    _resp_body = dict(AuditLog.Action.choices)
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
-
-    @extend_schema(responses={'200': _resp_body})
-    def get(self, request: Request, *args, **kwargs) -> Response:
-        """Return valid values for the audit log `action` field."""
-
-        return Response(self._resp_body, status=status.HTTP_200_OK)
 
 
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
