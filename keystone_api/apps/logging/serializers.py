@@ -6,7 +6,6 @@ They encapsulate object serialization, data validation, and database object
 creation.
 """
 
-from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
@@ -19,8 +18,6 @@ __all__ = [
     'RequestLogSerializer',
     'TaskResultSerializer',
 ]
-
-User = get_user_model()
 
 
 class AppLogSerializer(serializers.ModelSerializer):
