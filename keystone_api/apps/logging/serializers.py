@@ -57,8 +57,10 @@ class TaskResultSerializer(serializers.ModelSerializer):
 class AuditLogSerializer(serializers.ModelSerializer):
     """Object serializer for the `AuditLog` class."""
 
+    _actor = UserSummarySerializer(source='user', read_only=True)
+
     class Meta:
         """Serializer settings."""
 
         model = AuditLog
-        fields = '__all__'
+        fields = ['id', 'object_pk', 'object_id', 'action', 'changes', 'cid', 'remote_addr', 'remote_port', 'timestamp', 'actor', '_actor']

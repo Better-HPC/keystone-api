@@ -6461,19 +6461,11 @@ components:
           minimum: -9223372036854775808
           format: int64
           nullable: true
-        object_repr:
-          type: string
-          title: Object representation
-        serialized_data:
-          nullable: true
         action:
           allOf:
           - $ref: '#/components/schemas/ActionEnum'
           minimum: 0
           maximum: 9223372036854775807
-        changes_text:
-          type: string
-          title: Change message
         changes:
           nullable: true
           title: Change message
@@ -6495,23 +6487,19 @@ components:
         timestamp:
           type: string
           format: date-time
-        additional_data:
-          nullable: true
-        actor_email:
-          type: string
-          nullable: true
-          maxLength: 254
-        content_type:
-          type: integer
         actor:
           type: integer
           nullable: true
+        _actor:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' actor'
       required:
+      - _actor
       - action
-      - content_type
       - id
       - object_pk
-      - object_repr
     Cluster:
       type: object
       description: Object serializer for the `Cluster` class.
