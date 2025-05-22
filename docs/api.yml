@@ -6187,18 +6187,6 @@ paths:
           description: No response body
 components:
   schemas:
-    ActionEnum:
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      type: integer
-      description: |-
-        * `0` - create
-        * `1` - update
-        * `2` - delete
-        * `3` - access
     Allocation:
       type: object
       description: Object serializer for the `Allocation` class.
@@ -6462,10 +6450,9 @@ components:
           format: int64
           nullable: true
         action:
-          allOf:
-          - $ref: '#/components/schemas/ActionEnum'
-          minimum: 0
-          maximum: 9223372036854775807
+          type: string
+          description: Return the logged user action as a human-readable string.
+          readOnly: true
         changes:
           nullable: true
           title: Change message
