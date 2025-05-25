@@ -13,9 +13,11 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 
+from apps.logging.nested import AuditLogSummarySerializer
 from apps.research_products.serializers import GrantSerializer, PublicationSerializer
-from apps.users.serializers.nested import TeamSummarySerializer, UserSummarySerializer
-from ..models import *
+from apps.users.nested import TeamSummarySerializer, UserSummarySerializer
+from .models import *
+from .nested import *
 
 __all__ = [
     'AttachmentSerializer',
@@ -29,32 +31,12 @@ __all__ = [
 User = get_user_model()
 
 
-class ClusterSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing cluster names in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Cluster
-        fields = ['name', 'enabled']
-
-
-class AllocationRequestSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing allocation requests in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = AllocationRequest
-        fields = ['title', 'status', 'active', 'expire']
-
-
 class AllocationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Allocation` class."""
 
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -70,7 +52,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _assignees = UserSummarySerializer(source='assignees', many=True, read_only=True)
     _publications = PublicationSerializer(source='publications', many=True, read_only=True)
     _grants = GrantSerializer(source='grants', many=True, read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -84,7 +66,7 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     _reviewer = UserSummarySerializer(source='reviewer', read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -107,7 +89,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     file = serializers.FileField(use_url=False)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     name = serializers.CharField(required=False)
 
     class Meta:
@@ -143,7 +125,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 class ClusterSerializer(serializers.ModelSerializer):
     """Object serializer for the `Cluster` class."""
 
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -157,7 +139,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     _user = UserSummarySerializer(source='user', read_only=True)
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()

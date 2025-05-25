@@ -8,7 +8,8 @@ creation.
 
 from rest_framework import serializers
 
-from apps.users.serializers.nested import TeamSummarySerializer
+from apps.logging.nested import AuditLogSummarySerializer
+from apps.users.nested import TeamSummarySerializer
 from .models import *
 
 __all__ = ['GrantSerializer', 'PublicationSerializer']
@@ -18,7 +19,7 @@ class PublicationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Publication` class."""
 
     _team = TeamSummarySerializer(source='team', read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -32,7 +33,7 @@ class GrantSerializer(serializers.ModelSerializer):
     """Object serializer for the `Grant` class."""
 
     _team = TeamSummarySerializer(source='team', read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""

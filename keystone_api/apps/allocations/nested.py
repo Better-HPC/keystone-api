@@ -1,8 +1,6 @@
-
-
 from rest_framework import serializers
 
-from ..models import *
+from apps.allocations.models import *
 
 __all__ = [
     'AllocationRequestSummarySerializer',

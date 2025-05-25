@@ -3,7 +3,8 @@ from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from rest_framework import serializers
 
-from ..models import *
+from apps.logging.nested import AuditLogSummarySerializer
+from .models import *
 from .nested import *
 
 __all__ = [
@@ -19,7 +20,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     _user = UserSummarySerializer(source="user", read_only=True)
     _team = TeamSummarySerializer(source="team", read_only=True)
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -32,7 +33,7 @@ class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -77,7 +78,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including sensitive fields."""
 
     membership = TeamRoleSerializer(many=True, read_only=False, required=False, default=[])
-    _history = AuditlogFieldSerializer(source='history', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
 
     class Meta:
         """Serializer settings."""
