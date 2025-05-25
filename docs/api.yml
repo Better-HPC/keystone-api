@@ -6205,27 +6205,9 @@ components:
           readOnly: true
           title: ' request'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         requested:
@@ -6288,27 +6270,9 @@ components:
           readOnly: true
           title: ' grants'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         title:
@@ -6396,27 +6360,9 @@ components:
           readOnly: true
           title: ' reviewer'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         status:
@@ -6495,27 +6441,9 @@ components:
         file:
           type: string
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         name:
@@ -6540,15 +6468,11 @@ components:
         id:
           type: integer
           readOnly: true
-        object_pk:
+        record_name:
           type: string
-          maxLength: 255
-        object_id:
+          readOnly: true
+        record_id:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-          nullable: true
         action:
           type: string
           description: Return the logged user action as a human-readable string.
@@ -6586,7 +6510,37 @@ components:
       - _actor
       - action
       - id
-      - object_pk
+      - record_id
+      - record_name
+    AuditLogSummary:
+      type: object
+      description: Object serializer for the `AuditLog` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+        action:
+          type: string
+          description: Return the logged user action as a human-readable string.
+          readOnly: true
+        actor:
+          type: integer
+          nullable: true
+        _actor:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' actor'
+        changes:
+          nullable: true
+          title: Change message
+      required:
+      - _actor
+      - action
+      - id
     Cluster:
       type: object
       description: Object serializer for the `Cluster` class.
@@ -6595,27 +6549,9 @@ components:
           type: integer
           readOnly: true
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         name:
@@ -6660,27 +6596,9 @@ components:
           readOnly: true
           title: ' request'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         user:
@@ -6717,27 +6635,9 @@ components:
           readOnly: true
           title: ' team'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         title:
@@ -6808,27 +6708,9 @@ components:
           readOnly: true
           title: ' team'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         role:
@@ -6875,27 +6757,9 @@ components:
           readOnly: true
           title: ' request'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         requested:
@@ -6950,27 +6814,9 @@ components:
           readOnly: true
           title: ' grants'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         title:
@@ -7028,27 +6874,9 @@ components:
           readOnly: true
           title: ' reviewer'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         status:
@@ -7077,27 +6905,9 @@ components:
         file:
           type: string
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         name:
@@ -7116,27 +6926,9 @@ components:
           type: integer
           readOnly: true
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         name:
@@ -7166,27 +6958,9 @@ components:
           readOnly: true
           title: ' request'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         user:
@@ -7215,27 +6989,9 @@ components:
           readOnly: true
           title: ' team'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         title:
@@ -7282,27 +7038,9 @@ components:
           readOnly: true
           title: ' team'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         role:
@@ -7324,27 +7062,9 @@ components:
           readOnly: true
           title: ' team'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         title:
@@ -7394,27 +7114,9 @@ components:
             $ref: '#/components/schemas/TeamRole'
           readOnly: true
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         is_superuser:
@@ -7500,27 +7202,9 @@ components:
             $ref: '#/components/schemas/UserRole'
           default: []
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         name:
@@ -7546,27 +7230,9 @@ components:
           readOnly: true
           title: ' team'
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         title:
@@ -7688,27 +7354,9 @@ components:
             $ref: '#/components/schemas/TeamRole'
           readOnly: true
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         is_superuser:
@@ -7944,27 +7592,9 @@ components:
             $ref: '#/components/schemas/UserRole'
           default: []
         _history:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: array
-              items:
-                type: string
-              minItems: 2
-              maxItems: 2
-          example:
-            '101':
-              field1:
-              - old_value_1
-              - new_value_1
-              field2:
-              - old_value_2
-              - new_value_2
-            '102':
-              field3:
-              - old_value_3
-              - new_value_3
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
         name:
