@@ -1,4 +1,5 @@
 """Function tests for the `/users/users/<pk>/` endpoint."""
+from sqlite3.dbapi2 import apilevel
 
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -220,19 +221,24 @@ class RecordHistory(APITestCase):
         """Load and modify a user record so it has an audit history."""
 
         user = User.objects.get(username='generic_user')
-        endpoint = self.endpoint_pattern.format(pk=user.id)
-
+        self.endpoint = self.endpoint_pattern.format(pk=user.id)
         self.client.force_authenticate(user=user)
-        self.client.patch(endpoint, data={'email': 'new@email.com', 'password': 'NewSecureValue'})
-        self.get_response = self.client.get(endpoint)
 
     def test_password_masked(self) -> None:
         """Verify password values are masked in returned responses."""
 
-        history = self.get_response.json().get('_history')
-        last_change = history[max(history.keys(), key=int)]
+        # Update the user's password
+        self.client.patch(self.endpoint, data={'email': 'new@email.com', 'password': 'NewSecureValue'})
 
-        # Masked values have their first half replaced with asterisks
-        password_old, password_new = last_change['password']
+        # Fetch the User's audit history
+        api_response = self.client.get(self.endpoint)
+        history = api_response.json().get('_history')
+
+        # Select the most recent change
+        date_from_record = lambda record: record['timestamp']
+        last_change = max(history, key=date_from_record)
+
+        # Masked values should have their first half replaced with asterisks
+        password_old, password_new = last_change['changes']['password']
         self.assertTrue(password_new.startswith('*****'))
         self.assertTrue(password_old.startswith('*****'))
