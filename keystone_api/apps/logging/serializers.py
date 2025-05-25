@@ -9,7 +9,7 @@ creation.
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from apps.users.serializers import UserSummarySerializer
+from apps.users.serializers.nested import UserSummarySerializer
 from .models import *
 
 __all__ = [

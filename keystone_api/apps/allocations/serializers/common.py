@@ -9,14 +9,13 @@ creation.
 from mimetypes import guess_type
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 
-from apps.research_products.serializers import *
-from apps.users.models import User
-from apps.users.serializers import *
-from plugins.auditlog import AuditlogFieldSerializer
-from .models import *
+from apps.research_products.serializers import GrantSerializer, PublicationSerializer
+from apps.users.serializers.nested import TeamSummarySerializer, UserSummarySerializer
+from ..models import *
 
 __all__ = [
     'AttachmentSerializer',
@@ -26,6 +25,8 @@ __all__ = [
     'ClusterSerializer',
     'CommentSerializer'
 ]
+
+User = get_user_model()
 
 
 class ClusterSummarySerializer(serializers.ModelSerializer):

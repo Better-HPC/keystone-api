@@ -8,8 +8,7 @@ creation.
 
 from rest_framework import serializers
 
-from apps.users.serializers import TeamSummarySerializer
-from plugins.auditlog import AuditlogFieldSerializer
+from apps.users.serializers.nested import TeamSummarySerializer
 from .models import *
 
 __all__ = ['GrantSerializer', 'PublicationSerializer']
