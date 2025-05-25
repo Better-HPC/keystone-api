@@ -70,7 +70,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
             trace=status.HTTP_403_FORBIDDEN,
-            post_body={'title': 'foo', 'description': 'bar', 'team' : self.team.pk}
+            post_body={'title': 'foo', 'description': 'bar', 'team': self.team.pk}
         )
 
     def test_team_member_permissions(self) -> None:
@@ -87,7 +87,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
             trace=status.HTTP_403_FORBIDDEN,
-            post_body={'title': 'foo', 'description': 'bar', 'team' : self.team.pk}
+            post_body={'title': 'foo', 'description': 'bar', 'team': self.team.pk}
         )
 
     def test_team_admin_permissions(self) -> None:
@@ -104,7 +104,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
             trace=status.HTTP_403_FORBIDDEN,
-            post_body={'title': 'foo', 'description': 'bar', 'team' : self.team.pk}
+            post_body={'title': 'foo', 'description': 'bar', 'team': self.team.pk}
         )
 
     def test_team_owner_permissions(self) -> None:

@@ -1,5 +1,4 @@
 """Function tests for the `/users/users/<pk>/` endpoint."""
-from sqlite3.dbapi2 import apilevel
 
 from rest_framework import status
 from rest_framework.test import APITestCase
