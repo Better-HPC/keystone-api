@@ -6470,12 +6470,13 @@ components:
           readOnly: true
         record_name:
           type: string
+          description: Return the changed record type as a human-readable string.
           readOnly: true
         record_id:
           type: integer
         action:
           type: string
-          description: Return the logged user action as a human-readable string.
+          description: Return the action type as a human-readable string.
           readOnly: true
         changes:
           nullable: true
@@ -6524,7 +6525,7 @@ components:
           format: date-time
         action:
           type: string
-          description: Return the logged user action as a human-readable string.
+          description: Return the action type as a human-readable string.
           readOnly: true
         actor:
           type: integer
