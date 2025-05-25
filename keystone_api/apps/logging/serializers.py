@@ -5,11 +5,13 @@ representations in a manner that is suitable for use by RESTful endpoints.
 They encapsulate object serialization, data validation, and database object
 creation.
 """
+
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.users.nested import UserSummarySerializer
 from .models import *
+from .nested import AuditLogSummarySerializer
 
 __all__ = [
     'AppLogSerializer',
@@ -17,8 +19,6 @@ __all__ = [
     'RequestLogSerializer',
     'TaskResultSerializer',
 ]
-
-from .nested import AuditLogSummarySerializer
 
 
 class AppLogSerializer(serializers.ModelSerializer):
@@ -67,4 +67,6 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 
     @extend_schema_field(str)
     def get_record_name(self, obj: AuditLog) -> str:
+        """Return the changed record type as a human-readable string."""
+
         return f"{obj.content_type.app_label} | {obj.content_type.model_class().__name__}"

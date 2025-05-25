@@ -31,7 +31,7 @@ class AuditLogSummarySerializer(serializers.ModelSerializer):
 
     @extend_schema_field(str)
     def get_action(self, obj: AuditLog) -> str:
-        """Return the logged user action as a human-readable string."""
+        """Return the action type as a human-readable string."""
 
         _, as_string = AuditLog.Action.choices[obj.action]
         return as_string

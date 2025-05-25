@@ -218,7 +218,7 @@ class RecordHistory(APITestCase):
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load and modify a user record so it has an audit history."""
+        """Authenticate as a generic application user."""
 
         user = User.objects.get(username='generic_user')
         self.endpoint = self.endpoint_pattern.format(pk=user.id)

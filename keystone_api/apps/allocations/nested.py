@@ -8,7 +8,7 @@ is important but full model operations are not required.
 
 from rest_framework import serializers
 
-from apps.allocations.models import *
+from .models import *
 
 __all__ = [
     'AllocationRequestSummarySerializer',

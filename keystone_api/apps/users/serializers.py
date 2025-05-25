@@ -1,9 +1,9 @@
-"""Serializers for rendering model data in nested representations.
+"""Serializers for casting database models to/from JSON representations.
 
-Nested serializers are used to represent related models within parent
-objects, enabling nested structures in JSON responses. These serializers
-are typically used in read-only operations, where relational context
-is important but full model operations are not required.
+Serializers handle the casting of database models to/from HTTP compatible
+representations in a manner that is suitable for use by RESTful endpoints.
+They encapsulate object serialization, data validation, and database object
+creation.
 """
 
 from django.contrib.auth import password_validation
