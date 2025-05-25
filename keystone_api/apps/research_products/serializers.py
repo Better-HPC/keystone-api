@@ -1,4 +1,4 @@
-"""Serializers for casting database models to/from JSON and XML representations.
+"""Serializers for casting database models to/from JSON representations.
 
 Serializers handle the casting of database models to/from HTTP compatible
 representations in a manner that is suitable for use by RESTful endpoints.

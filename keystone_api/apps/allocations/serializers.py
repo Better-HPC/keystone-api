@@ -1,4 +1,4 @@
-"""Serializers for casting database models to/from JSON and XML representations.
+"""Serializers for casting database models to/from JSON representations.
 
 Serializers handle the casting of database models to/from HTTP compatible
 representations in a manner that is suitable for use by RESTful endpoints.
@@ -9,26 +9,24 @@ creation.
 from mimetypes import guess_type
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
 from apps.research_products.serializers import GrantSerializer, PublicationSerializer
+from apps.users.models import (User)
 from apps.users.nested import TeamSummarySerializer, UserSummarySerializer
 from .models import *
 from .nested import *
 
 __all__ = [
-    'AttachmentSerializer',
-    'AllocationSerializer',
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
+    'AllocationSerializer',
+    'AttachmentSerializer',
     'ClusterSerializer',
     'CommentSerializer'
 ]
-
-User = get_user_model()
 
 
 class AllocationSerializer(serializers.ModelSerializer):
