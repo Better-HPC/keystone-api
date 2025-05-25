@@ -27,7 +27,7 @@ class AuditLogSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = AuditLog
-        fields = ['id', 'object_pk', 'object_id', 'action', 'changes', 'timestamp', 'actor', '_actor']
+        fields = ['id', 'timestamp', 'action', 'actor', '_actor', 'changes']
 
     @extend_schema_field(str)
     def get_action(self, obj: AuditLog) -> str:
