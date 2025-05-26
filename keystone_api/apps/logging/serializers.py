@@ -1,4 +1,4 @@
-"""Serializers for casting database models to/from JSON and XML representations.
+"""Serializers for casting database models to/from JSON representations.
 
 Serializers handle the casting of database models to/from HTTP compatible
 representations in a manner that is suitable for use by RESTful endpoints.
@@ -9,8 +9,9 @@ creation.
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from apps.users.serializers import UserSummarySerializer
+from apps.users.nested import UserSummarySerializer
 from .models import *
+from .nested import AuditLogSummarySerializer
 
 __all__ = [
     'AppLogSerializer',
@@ -52,21 +53,20 @@ class TaskResultSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AuditLogSerializer(serializers.ModelSerializer):
+class AuditLogSerializer(AuditLogSummarySerializer):
     """Object serializer for the `AuditLog` class."""
 
-    _actor = UserSummarySerializer(source='user', read_only=True)
-    action = serializers.SerializerMethodField()
+    record_name = serializers.SerializerMethodField()
+    record_id = serializers.IntegerField(source='object_pk')
 
     class Meta:
         """Serializer settings."""
 
         model = AuditLog
-        fields = ['id', 'object_pk', 'object_id', 'action', 'changes', 'cid', 'remote_addr', 'remote_port', 'timestamp', 'actor', '_actor']
+        fields = ['id', 'record_name', 'record_id', 'action', 'changes', 'cid', 'remote_addr', 'remote_port', 'timestamp', 'actor', '_actor']
 
     @extend_schema_field(str)
-    def get_action(self, obj: AuditLog) -> str:
-        """Return the logged user action as a human-readable string."""
+    def get_record_name(self, obj: AuditLog) -> str:
+        """Return the changed record type as a human-readable string."""
 
-        _, as_string = AuditLog.Action.choices[obj.action]
-        return as_string
+        return f"{obj.content_type.app_label} | {obj.content_type.model_class().__name__}"

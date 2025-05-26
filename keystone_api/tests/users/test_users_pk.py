@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
+ENDPOINT_PATTERN = '/users/users/{pk}/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -20,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/users/users/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -121,7 +123,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class CredentialHandling(APITestCase):
     """Test the getting/setting of user credentials."""
 
-    endpoint_pattern = '/users/users/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -206,3 +208,36 @@ class CredentialHandling(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
         self.assertTrue(self.user1.check_password('new_password123'))
+
+
+class RecordHistory(APITestCase):
+    """Test the serialization of record history."""
+
+    endpoint_pattern = ENDPOINT_PATTERN
+    fixtures = ['testing_common.yaml']
+
+    def setUp(self) -> None:
+        """Authenticate as a generic application user."""
+
+        user = User.objects.get(username='generic_user')
+        self.endpoint = self.endpoint_pattern.format(pk=user.id)
+        self.client.force_authenticate(user=user)
+
+    def test_password_masked(self) -> None:
+        """Verify password values are masked in returned responses."""
+
+        # Update the user's password
+        self.client.patch(self.endpoint, data={'email': 'new@email.com', 'password': 'NewSecureValue'})
+
+        # Fetch the User's audit history
+        api_response = self.client.get(self.endpoint)
+        history = api_response.json().get('_history')
+
+        # Select the most recent change
+        date_from_record = lambda record: record['timestamp']
+        last_change = max(history, key=date_from_record)
+
+        # Masked values should have their first half replaced with asterisks
+        password_old, password_new = last_change['changes']['password']
+        self.assertTrue(password_new.startswith('*****'))
+        self.assertTrue(password_old.startswith('*****'))

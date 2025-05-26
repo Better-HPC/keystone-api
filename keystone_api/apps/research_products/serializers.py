@@ -1,4 +1,4 @@
-"""Serializers for casting database models to/from JSON and XML representations.
+"""Serializers for casting database models to/from JSON representations.
 
 Serializers handle the casting of database models to/from HTTP compatible
 representations in a manner that is suitable for use by RESTful endpoints.
@@ -8,7 +8,8 @@ creation.
 
 from rest_framework import serializers
 
-from apps.users.serializers import TeamSummarySerializer
+from apps.logging.nested import AuditLogSummarySerializer
+from apps.users.nested import TeamSummarySerializer
 from .models import *
 
 __all__ = ['GrantSerializer', 'PublicationSerializer']
@@ -18,6 +19,7 @@ class PublicationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Publication` class."""
 
     _team = TeamSummarySerializer(source='team', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -31,6 +33,7 @@ class GrantSerializer(serializers.ModelSerializer):
     """Object serializer for the `Grant` class."""
 
     _team = TeamSummarySerializer(source='team', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""

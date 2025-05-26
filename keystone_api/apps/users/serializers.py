@@ -1,4 +1,4 @@
-"""Serializers for casting database models to/from JSON and XML representations.
+"""Serializers for casting database models to/from JSON representations.
 
 Serializers handle the casting of database models to/from HTTP compatible
 representations in a manner that is suitable for use by RESTful endpoints.
@@ -11,62 +11,16 @@ from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from rest_framework import serializers
 
+from apps.logging.nested import AuditLogSummarySerializer
 from .models import *
+from .nested import *
 
 __all__ = [
     'MembershipSerializer',
     'PrivilegedUserSerializer',
     'RestrictedUserSerializer',
-    'TeamRoleSerializer',
     'TeamSerializer',
-    'TeamSummarySerializer',
-    'UserRoleSerializer',
-    'UserSummarySerializer',
 ]
-
-
-class UserSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing user information in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = User
-        fields = ["username", "first_name", "last_name", "email"]
-
-
-class UserRoleSerializer(serializers.ModelSerializer):
-    """Serializer for summarizing team member usernames and roles in nested responses."""
-
-    _user = UserSummarySerializer(source="user", read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Membership
-        fields = ["id", "user", "role", "_user"]
-
-
-class TeamSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing team information in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Team
-        fields = ["name", "is_active"]
-
-
-class TeamRoleSerializer(serializers.ModelSerializer):
-    """Serializer for summarizing team names and roles in nested responses."""
-
-    _team = TeamSummarySerializer(source="team", read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Membership
-        fields = ["id", "team", "role", "_team"]
 
 
 class MembershipSerializer(serializers.ModelSerializer):
@@ -74,6 +28,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     _user = UserSummarySerializer(source="user", read_only=True)
     _team = TeamSummarySerializer(source="team", read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -86,6 +41,7 @@ class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -130,6 +86,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including sensitive fields."""
 
     membership = TeamRoleSerializer(many=True, read_only=False, required=False, default=[])
+    _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
 
     class Meta:
         """Serializer settings."""

@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from apps.users.models import Team, Membership, User
+from apps.users.models import Membership, Team, User
 
 
 class GetMembers(TestCase):

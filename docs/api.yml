@@ -6204,6 +6204,12 @@ components:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         requested:
           type: integer
           maximum: 9223372036854775807
@@ -6227,6 +6233,7 @@ components:
           type: integer
       required:
       - _cluster
+      - _history
       - _request
       - cluster
       - id
@@ -6262,6 +6269,12 @@ components:
             $ref: '#/components/schemas/Grant'
           readOnly: true
           title: ' grants'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -6302,6 +6315,7 @@ components:
       required:
       - _assignees
       - _grants
+      - _history
       - _publications
       - _team
       - description
@@ -6345,6 +6359,12 @@ components:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
           title: ' reviewer'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         status:
           $ref: '#/components/schemas/ReviewStatusChoices'
         last_modified:
@@ -6357,6 +6377,7 @@ components:
           type: integer
           nullable: true
       required:
+      - _history
       - _request
       - _reviewer
       - id
@@ -6419,6 +6440,12 @@ components:
           title: ' request'
         file:
           type: string
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
         uploaded:
@@ -6428,6 +6455,7 @@ components:
         request:
           type: integer
       required:
+      - _history
       - _request
       - file
       - id
@@ -6440,18 +6468,15 @@ components:
         id:
           type: integer
           readOnly: true
-        object_pk:
+        record_name:
           type: string
-          maxLength: 255
-        object_id:
+          description: Return the changed record type as a human-readable string.
+          readOnly: true
+        record_id:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-          nullable: true
         action:
           type: string
-          description: Return the logged user action as a human-readable string.
+          description: Return the action type as a human-readable string.
           readOnly: true
         changes:
           nullable: true
@@ -6486,7 +6511,37 @@ components:
       - _actor
       - action
       - id
-      - object_pk
+      - record_id
+      - record_name
+    AuditLogSummary:
+      type: object
+      description: Object serializer for the `AuditLog` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+        action:
+          type: string
+          description: Return the action type as a human-readable string.
+          readOnly: true
+        actor:
+          type: integer
+          nullable: true
+        _actor:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' actor'
+        changes:
+          nullable: true
+          title: Change message
+      required:
+      - _actor
+      - action
+      - id
     Cluster:
       type: object
       description: Object serializer for the `Cluster` class.
@@ -6494,6 +6549,12 @@ components:
         id:
           type: integer
           readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 50
@@ -6504,6 +6565,7 @@ components:
         enabled:
           type: boolean
       required:
+      - _history
       - id
       - name
     ClusterSummary:
@@ -6534,6 +6596,12 @@ components:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         user:
           type: integer
         content:
@@ -6548,6 +6616,7 @@ components:
         request:
           type: integer
       required:
+      - _history
       - _request
       - _user
       - content
@@ -6566,6 +6635,12 @@ components:
           - $ref: '#/components/schemas/TeamSummary'
           readOnly: true
           title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -6593,6 +6668,7 @@ components:
         team:
           type: integer
       required:
+      - _history
       - _team
       - agency
       - amount
@@ -6632,6 +6708,12 @@ components:
           - $ref: '#/components/schemas/TeamSummary'
           readOnly: true
           title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         role:
           $ref: '#/components/schemas/RoleEnum'
         user:
@@ -6639,6 +6721,7 @@ components:
         team:
           type: integer
       required:
+      - _history
       - _team
       - _user
       - id
@@ -6674,6 +6757,12 @@ components:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         requested:
           type: integer
           maximum: 9223372036854775807
@@ -6725,6 +6814,12 @@ components:
             $ref: '#/components/schemas/Grant'
           readOnly: true
           title: ' grants'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -6779,6 +6874,12 @@ components:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
           title: ' reviewer'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         status:
           $ref: '#/components/schemas/ReviewStatusChoices'
         last_modified:
@@ -6804,6 +6905,12 @@ components:
           title: ' request'
         file:
           type: string
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
         uploaded:
@@ -6819,6 +6926,12 @@ components:
         id:
           type: integer
           readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 50
@@ -6845,6 +6958,12 @@ components:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         user:
           type: integer
         content:
@@ -6870,6 +6989,12 @@ components:
           - $ref: '#/components/schemas/TeamSummary'
           readOnly: true
           title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -6913,6 +7038,12 @@ components:
           - $ref: '#/components/schemas/TeamSummary'
           readOnly: true
           title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         role:
           $ref: '#/components/schemas/RoleEnum'
         user:
@@ -6931,6 +7062,12 @@ components:
           - $ref: '#/components/schemas/TeamSummary'
           readOnly: true
           title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -6977,6 +7114,12 @@ components:
           items:
             $ref: '#/components/schemas/TeamRole'
           readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         is_superuser:
           type: boolean
           title: Superuser status
@@ -7059,6 +7202,12 @@ components:
           items:
             $ref: '#/components/schemas/UserRole'
           default: []
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 255
@@ -7081,6 +7230,12 @@ components:
           - $ref: '#/components/schemas/TeamSummary'
           readOnly: true
           title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -7115,6 +7270,7 @@ components:
         team:
           type: integer
       required:
+      - _history
       - _team
       - abstract
       - id
@@ -7198,6 +7354,12 @@ components:
           items:
             $ref: '#/components/schemas/TeamRole'
           readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         is_superuser:
           type: boolean
           title: Superuser status
@@ -7269,6 +7431,7 @@ components:
             type: integer
           description: Specific permissions for this user.
       required:
+      - _history
       - date_joined
       - id
       - is_active
@@ -7429,6 +7592,12 @@ components:
           items:
             $ref: '#/components/schemas/UserRole'
           default: []
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 255
@@ -7440,6 +7609,7 @@ components:
             type: integer
           readOnly: true
       required:
+      - _history
       - id
       - name
       - users
