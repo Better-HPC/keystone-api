@@ -14,7 +14,7 @@ class LoggingPermissionTests(CustomAsserts):
     | Authentication             | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
+    | Authenticated User         | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
@@ -32,11 +32,11 @@ class LoggingPermissionTests(CustomAsserts):
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
-            post=status.HTTP_401_UNAUTHORIZED,
-            put=status.HTTP_401_UNAUTHORIZED,
-            patch=status.HTTP_401_UNAUTHORIZED,
-            delete=status.HTTP_401_UNAUTHORIZED,
-            trace=status.HTTP_401_UNAUTHORIZED
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_authenticated_user_permissions(self) -> None:
@@ -48,11 +48,11 @@ class LoggingPermissionTests(CustomAsserts):
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:

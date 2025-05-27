@@ -18,10 +18,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 403   |
-    | Team Member                | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 403   |
-    | Team Admin                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 403   |
-    | Team Owner                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 403   |
+    | Authenticated non-member   | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
+    | Team Member                | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Team Admin                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Team Owner                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
@@ -80,7 +80,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body=self.valid_record_data
         )
 
@@ -97,7 +97,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body=self.valid_record_data
         )
 
@@ -114,7 +114,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body=self.valid_record_data
         )
 
@@ -131,7 +131,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body=self.valid_record_data
         )
 
