@@ -6,7 +6,7 @@ from apps.users.models import User
 from tests.utils import CustomAsserts
 
 
-class LoggingPermissionTests(CustomAsserts):
+class BaseEndpointPermissionTests(CustomAsserts):
     """Test endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
