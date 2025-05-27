@@ -7,7 +7,7 @@ URLs to business logic.
 """
 
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from .models import *
 from .permissions import *
@@ -22,7 +22,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
     search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
-    permission_classes = [IsAuthenticated, PublicationPermissions]
+    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
 
     def get_queryset(self) -> list[Publication]:
         """Return a list of publications affiliated with the currently authenticated user."""
@@ -32,6 +32,14 @@ class PublicationViewSet(viewsets.ModelViewSet):
 
         return Publication.objects.affiliated_with_user(self.request.user)
 
+    def get_object(self) -> Grant:
+        """Return the object, applying object-level permissions with explicit 403 on denial."""
+
+        # Todo: should this wrap in a tryexept that replaces errors with a `raise NotFound("Grant not found.")`?
+        obj = Publication.objects.get(pk=self.kwargs["pk"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
 
 class GrantViewSet(viewsets.ModelViewSet):
     """Track funding awards and grant information."""
@@ -39,7 +47,7 @@ class GrantViewSet(viewsets.ModelViewSet):
     queryset = Grant.objects.all()
     serializer_class = GrantSerializer
     search_fields = ['title', 'agency', 'team__name']
-    permission_classes = [IsAuthenticated, GrantPermissions]
+    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
 
     def get_queryset(self) -> list[Grant]:
         """Return a list of grants affiliated with the currently authenticated user."""
@@ -48,3 +56,11 @@ class GrantViewSet(viewsets.ModelViewSet):
             return self.queryset
 
         return Grant.objects.affiliated_with_user(self.request.user)
+
+    def get_object(self) -> Grant:
+        """Return the object, applying object-level permissions with explicit 403 on denial."""
+
+        # Todo: should this wrap in a tryexept that replaces errors with a `raise NotFound("Grant not found.")`?
+        obj = Grant.objects.get(pk=self.kwargs["pk"])
+        self.check_object_permissions(self.request, obj)
+        return obj

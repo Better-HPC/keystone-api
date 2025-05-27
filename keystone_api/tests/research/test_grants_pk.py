@@ -19,7 +19,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 403 | 403  | 403     | 405  | 403 | 403   | 403    | 405   |
+    | Authenticated non-member   | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Team Member                | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
@@ -74,7 +74,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             self.endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
@@ -95,7 +95,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_200_OK,
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put_body=self.valid_record_data,
+            patch_body=self.valid_record_data
         )
 
     def test_staff_user_permissions(self) -> None:
