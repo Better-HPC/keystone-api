@@ -50,9 +50,6 @@ class PublicationPermissions(CustomPermissionsBase):
         if request.user.is_staff:
             return True
 
-        elif request.method == 'TRACE':
-            return False
-
         team = self.get_team(request)
         return team is None or request.user in team.get_all_members()
 
@@ -78,9 +75,6 @@ class GrantPermissions(CustomPermissionsBase):
 
         if request.user.is_staff:
             return True
-
-        elif request.method == 'TRACE':
-            return False
 
         team = self.get_team(request)
         return team is None or request.user in team.get_privileged_members()
