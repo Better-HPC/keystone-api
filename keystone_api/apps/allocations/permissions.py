@@ -5,7 +5,6 @@ privileges for different HTTP operations. They are applied at the view level,
 enabling authentication and authorization to secure endpoints based on
 predefined access rules.
 """
-
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.views import View
@@ -69,9 +68,16 @@ class ClusterPermissions(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
+        # Only staff can create new records.
+        # Defer to object permissions for all other actions.
+        is_create = getattr(view, 'action', None) == 'create'
+        return request.user.is_staff or not is_create
+
+    def has_object_permission(self, request: Request, view: View, obj: Cluster) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
         is_staff = request.user.is_staff
         is_read_only = request.method in permissions.SAFE_METHODS
-
         return is_staff or is_read_only
 
 
