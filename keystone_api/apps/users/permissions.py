@@ -83,8 +83,8 @@ class UserPermissions(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        # Only staff can create users
-        if request.method == 'POST':
+        # Only staff can create new records
+        if getattr(view, 'action', None) == 'create':
             return request.user.is_staff
 
         # Defer to object based permissions
