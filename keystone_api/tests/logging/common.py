@@ -32,11 +32,11 @@ class BaseEndpointPermissionTests(CustomAsserts):
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
-            post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
-            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_authenticated_user_permissions(self) -> None:
