@@ -39,7 +39,7 @@ class BaseAffiliatedViewSet(viewsets.ModelViewSet):
             obj = self.model.objects.get(pk=self.kwargs["pk"])
 
         except self.model.DoesNotExist:
-            raise NotFound(f"{self.model.__name__} not found.")
+            raise NotFound(f"No {self.model.__name__} matches the given query.")
 
         self.check_object_permissions(self.request, obj)
         return obj

@@ -87,7 +87,7 @@ class UserPermissions(permissions.BasePermission):
         if getattr(view, 'action', None) == 'create':
             return request.user.is_staff
 
-        # Defer to object based permissions
+        # Defer to object based permissions for all other actions
         return True
 
     def has_object_permission(self, request: Request, view: View, obj: User) -> bool:
