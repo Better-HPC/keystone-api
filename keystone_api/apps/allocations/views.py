@@ -6,7 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import QuerySet
+from django.db.models import Model, QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.exceptions import NotFound
@@ -32,77 +32,81 @@ __all__ = [
 ]
 
 
-class AllocationRequestStatusChoicesView(GenericAPIView):
-    """Exposes valid values for the allocation request `status` field."""
+# --- Base Classes ---
 
-    _resp_body = dict(AllocationRequest.StatusChoices.choices)
-    permission_classes = [IsAuthenticated]
+class ChoicesAPIView(GenericAPIView):
+    """Base view to expose model field choices."""
 
-    @extend_schema(responses={'200': _resp_body})
+    _choices = {}  # Must be set in subclass
+
+    @extend_schema(responses={'200': _choices})
     def get(self, request: Request, *args, **kwargs) -> Response:
-        """Return valid values for the allocation request `status` field."""
+        """Return valid choice values."""
 
-        return Response(self._resp_body, status=status.HTTP_200_OK)
+        return Response(dict(self._choices), status=status.HTTP_200_OK)
 
 
-class AllocationRequestViewSet(viewsets.ModelViewSet):
-    """Manage allocation requests."""
+class ScopedModelViewSet(viewsets.ModelViewSet):
 
-    queryset = AllocationRequest.objects.all()
-    serializer_class = AllocationRequestSerializer
-    search_fields = ['title', 'description', 'team__name']
-    permission_classes = [IsAuthenticated, AllocationRequestPermissions]
+    model = None  # Must be set in subclass
 
     def get_queryset(self) -> QuerySet:
-        """Return a list of allocation requests for the currently authenticated user."""
 
         if self.request.user.is_staff:
             return self.queryset
 
         teams = Team.objects.teams_for_user(self.request.user)
-        return AllocationRequest.objects.filter(team__in=teams)
+        return self.queryset.filter(**{f"{self.team_field}__in": teams})
 
-    def get_object(self) -> AllocationRequest:
+    def get_object(self) -> Model:
         """Return the object and apply object-level permission checks."""
 
         try:
-            obj = AllocationRequest.objects.get(pk=self.kwargs["pk"])
+            obj = self.model.objects.get(pk=self.kwargs["pk"])
 
-        except AllocationRequest.DoesNotExist:
-            raise NotFound(f"No AllocationRequest matches the given query.")
+        except self.model.DoesNotExist:
+            raise NotFound(f"No {self.model.__name__} matches the given query.")
 
         self.check_object_permissions(self.request, obj)
         return obj
 
-class AllocationReviewStatusChoicesView(GenericAPIView):
-    """Exposes valid values for the allocation review `status` field."""
 
-    _resp_body = dict(AllocationReview.StatusChoices.choices)
+# --- Concrete Views ---
+
+class AllocationRequestStatusChoicesView(ChoicesAPIView):
+    """Exposes valid values for the allocation request `status` field."""
+
+    _choices = AllocationRequest.StatusChoices.choices
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(responses={'200': _resp_body})
-    def get(self, request: Request, *args, **kwargs) -> Response:
-        """Return valid values for the allocation review `status` field."""
 
-        return Response(self._resp_body, status=status.HTTP_200_OK)
+class AllocationReviewStatusChoicesView(ChoicesAPIView):
+    """Exposes valid values for the allocation review `status` field."""
+
+    _choices = AllocationReview.StatusChoices.choices
+    permission_classes = [IsAuthenticated]
 
 
-class AllocationReviewViewSet(viewsets.ModelViewSet):
+class AllocationRequestViewSet(ScopedModelViewSet):
+    """Manage allocation requests."""
+
+    model = AllocationRequest
+    team_field = 'team'
+    queryset = AllocationRequest.objects.all()
+    serializer_class = AllocationRequestSerializer
+    permission_classes = [IsAuthenticated, AllocationRequestPermissions]
+    search_fields = ['title', 'description', 'team__name']
+
+
+class AllocationReviewViewSet(ScopedModelViewSet):
     """Manage administrator reviews of allocation requests."""
 
+    model = AllocationReview
+    team_field = 'request__team'
     queryset = AllocationReview.objects.all()
     serializer_class = AllocationReviewSerializer
-    search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
-
-    def get_queryset(self) -> QuerySet:
-        """Return a list of allocation reviews for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return AllocationReview.objects.filter(request__team__in=teams)
+    search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `AllocationReview` object."""
@@ -117,110 +121,44 @@ class AllocationReviewViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def get_object(self) -> AllocationReview:
-        """Return the object and apply object-level permission checks."""
 
-        try:
-            obj = AllocationReview.objects.get(pk=self.kwargs["pk"])
-
-        except AllocationReview.DoesNotExist:
-            raise NotFound(f"No Allocation matches the given query.")
-
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-class AllocationViewSet(viewsets.ModelViewSet):
+class AllocationViewSet(ScopedModelViewSet):
     """Manage HPC resource allocations."""
 
+    model = Allocation
+    team_field = 'request__team'
     queryset = Allocation.objects.all()
     serializer_class = AllocationSerializer
-    search_fields = ['request__team__name', 'request__title', 'cluster__name']
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    search_fields = ['request__team__name', 'request__title', 'cluster__name']
 
-    def get_queryset(self) -> QuerySet:
-        """Return a list of allocations for the currently authenticated user."""
 
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return Allocation.objects.filter(request__team__in=teams)
-
-    def get_object(self) -> Allocation:
-        """Return the object and apply object-level permission checks."""
-
-        try:
-            obj = Allocation.objects.get(pk=self.kwargs["pk"])
-
-        except Allocation.DoesNotExist:
-            raise NotFound(f"No Allocation matches the given query.")
-
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-class AttachmentViewSet(viewsets.ModelViewSet):
+class AttachmentViewSet(ScopedModelViewSet):
     """Files submitted as attachments to allocation requests"""
 
+    model = Attachment
+    team_field = 'request__team'
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
-    search_fields = ['path', 'request__title', 'request__submitter']
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    search_fields = ['path', 'request__title', 'request__submitter']
 
-    def get_queryset(self) -> QuerySet:
-        """Return a list of attachments for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return Attachment.objects.filter(request__team__in=teams)
-
-    def get_object(self) -> Attachment:
-        """Return the object and apply object-level permission checks."""
-
-        try:
-            obj = Attachment.objects.get(pk=self.kwargs["pk"])
-
-        except Attachment.DoesNotExist:
-            raise NotFound(f"No Attachment matches the given query.")
-
-        self.check_object_permissions(self.request, obj)
-        return obj
 
 class ClusterViewSet(viewsets.ModelViewSet):
     """Configuration settings for managed Slurm clusters."""
 
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
-    search_fields = ['name', 'description']
     permission_classes = [IsAuthenticated, ClusterPermissions]
+    search_fields = ['name', 'description']
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(ScopedModelViewSet):
     """Comments on allocation requests."""
 
+    model = Comment
+    team_field = 'request__team'
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    search_fields = ['content', 'request__title', 'user__username']
     permission_classes = [IsAuthenticated, CommentPermissions]
-
-    def get_queryset(self) -> QuerySet:
-        """Return a list of comments for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return self.queryset.filter(request__team__in=teams)
-
-    def get_object(self) -> Comment:
-        """Return the object and apply object-level permission checks."""
-
-        try:
-            obj = Comment.objects.get(pk=self.kwargs["pk"])
-
-        except Comment.DoesNotExist:
-            raise NotFound(f"No Comment matches the given query.")
-
-        self.check_object_permissions(self.request, obj)
-        return obj
+    search_fields = ['content', 'request__title', 'user__username']
