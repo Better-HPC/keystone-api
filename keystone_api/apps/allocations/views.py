@@ -9,6 +9,7 @@ URLs to business logic.
 from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -105,6 +106,17 @@ class AllocationReviewViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def get_object(self) -> AllocationReview:
+        """Return the object and apply object-level permission checks."""
+
+        try:
+            obj = AllocationReview.objects.get(pk=self.kwargs["pk"])
+
+        except AllocationReview.DoesNotExist:
+            raise NotFound(f"No Allocation matches the given query.")
+
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class AllocationViewSet(viewsets.ModelViewSet):
     """Manage HPC resource allocations."""
@@ -123,6 +135,17 @@ class AllocationViewSet(viewsets.ModelViewSet):
         teams = Team.objects.teams_for_user(self.request.user)
         return Allocation.objects.filter(request__team__in=teams)
 
+    def get_object(self) -> Allocation:
+        """Return the object and apply object-level permission checks."""
+
+        try:
+            obj = Allocation.objects.get(pk=self.kwargs["pk"])
+
+        except Allocation.DoesNotExist:
+            raise NotFound(f"No Allocation matches the given query.")
+
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class AttachmentViewSet(viewsets.ModelViewSet):
     """Files submitted as attachments to allocation requests"""

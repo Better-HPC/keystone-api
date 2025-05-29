@@ -124,10 +124,10 @@ class StaffWriteMemberRead(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.is_authenticated
-
-        return request.user.is_staff
+        # Only staff can create new records.
+        # Defer to object permissions for all other actions.
+        is_create = getattr(view, 'action', None) == 'create'
+        return request.user.is_staff or not is_create
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
