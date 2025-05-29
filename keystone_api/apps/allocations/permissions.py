@@ -105,7 +105,7 @@ class CommentPermissions(permissions.BasePermission):
         except (Team.DoesNotExist, Exception):
             return not is_create
 
-        return request.user.is_staff or not is_create
+        return not is_create or request.user in team.get_all_members()
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""

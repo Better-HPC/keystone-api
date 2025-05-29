@@ -201,3 +201,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         teams = Team.objects.teams_for_user(self.request.user)
         return self.queryset.filter(request__team__in=teams)
+
+    def get_object(self) -> Comment:
+        """Return the object and apply object-level permission checks."""
+
+        try:
+            obj = Comment.objects.get(pk=self.kwargs["pk"])
+
+        except Comment.DoesNotExist:
+            raise NotFound(f"No Comment matches the given query.")
+
+        self.check_object_permissions(self.request, obj)
+        return obj
