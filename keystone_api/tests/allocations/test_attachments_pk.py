@@ -18,7 +18,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authentication              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |-----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User        | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member    | 403 | 403  | 403     | 405  | 403 | 403   | 403    | 405   |
+    | Authenticated non-member    | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Team member                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Staff User                  | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
@@ -62,7 +62,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             self.endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,

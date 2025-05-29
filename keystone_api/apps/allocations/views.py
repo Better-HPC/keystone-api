@@ -164,6 +164,17 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         teams = Team.objects.teams_for_user(self.request.user)
         return Attachment.objects.filter(request__team__in=teams)
 
+    def get_object(self) -> Attachment:
+        """Return the object and apply object-level permission checks."""
+
+        try:
+            obj = Attachment.objects.get(pk=self.kwargs["pk"])
+
+        except Attachment.DoesNotExist:
+            raise NotFound(f"No Attachment matches the given query.")
+
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class ClusterViewSet(viewsets.ModelViewSet):
     """Configuration settings for managed Slurm clusters."""

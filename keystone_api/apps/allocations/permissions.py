@@ -94,6 +94,8 @@ class CommentPermissions(permissions.BasePermission):
         if request.user.is_staff or request.method in permissions.SAFE_METHODS:
             return True
 
+        is_create = getattr(view, 'action', None) == 'create'
+
         # To check write permissions we need to know what team the record belongs to.
         # Deny permissions if the team is not provided or does not exist.
         try:
@@ -101,9 +103,9 @@ class CommentPermissions(permissions.BasePermission):
             team = AllocationRequest.objects.get(pk=alloc_request_id).team
 
         except (Team.DoesNotExist, Exception):
-            return False
+            return not is_create
 
-        return request.user in team.get_all_members()
+        return request.user.is_staff or not is_create
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
