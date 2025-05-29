@@ -36,6 +36,8 @@ class AllocationRequestPermissions(permissions.BasePermission):
         if request.user.is_staff or request.method in permissions.SAFE_METHODS:
             return True
 
+        is_create = getattr(view, 'action', None) == 'create'
+
         # To check write permissions we need to know what team the record belongs to.
         # Deny permissions if the team is not provided or does not exist.
         try:
@@ -43,9 +45,9 @@ class AllocationRequestPermissions(permissions.BasePermission):
             team = Team.objects.get(pk=team_id)
 
         except (Team.DoesNotExist, Exception):
-            return False
+            return not is_create
 
-        return request.user in team.get_privileged_members()
+        return not is_create or request.user in team.get_privileged_members()
 
     def has_object_permission(self, request: Request, view: View, obj: AllocationRequest) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""

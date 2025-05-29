@@ -62,6 +62,17 @@ class AllocationRequestViewSet(viewsets.ModelViewSet):
         teams = Team.objects.teams_for_user(self.request.user)
         return AllocationRequest.objects.filter(team__in=teams)
 
+    def get_object(self) -> AllocationRequest:
+        """Return the object and apply object-level permission checks."""
+
+        try:
+            obj = AllocationRequest.objects.get(pk=self.kwargs["pk"])
+
+        except AllocationRequest.DoesNotExist:
+            raise NotFound(f"No AllocationRequest matches the given query.")
+
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class AllocationReviewStatusChoicesView(GenericAPIView):
     """Exposes valid values for the allocation review `status` field."""

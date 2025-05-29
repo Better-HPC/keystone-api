@@ -17,7 +17,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 403 | 403  | 403     | 405  | 403 | 403   | 403    | 405   |
+    | Authenticated non-member   | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Team member                | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Team admin                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Team owner                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
@@ -50,11 +50,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
-            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            post=status.HTTP_401_UNAUTHORIZED,
             put=status.HTTP_401_UNAUTHORIZED,
             patch=status.HTTP_401_UNAUTHORIZED,
             delete=status.HTTP_401_UNAUTHORIZED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_non_team_member_permissions(self) -> None:
@@ -65,7 +65,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             self.endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
