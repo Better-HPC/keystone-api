@@ -5,6 +5,7 @@ privileges for different HTTP operations. They are applied at the view level,
 enabling authentication and authorization to secure endpoints based on
 predefined access rules.
 """
+
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.views import View

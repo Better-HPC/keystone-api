@@ -18,9 +18,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated non-member   | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team member                | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team admin                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team owner                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member                | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Team admin                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Team owner                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
@@ -35,6 +35,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.request = AllocationRequest.objects.filter(team=self.team).first()
         self.comment = Comment.objects.filter(request=self.request).first()
         self.endpoint = self.endpoint_pattern.format(pk=self.comment.pk)
+        self.record_data = {'content': 'foobar', 'request': self.request.pk}
+
 
         # Load (non)member accounts for the team
         self.staff_user = User.objects.get(username='staff_user')
@@ -84,10 +86,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put_body=self.record_data,
+            patch_data=self.record_data
         )
 
     def test_team_admin_permissions(self) -> None:
@@ -100,10 +104,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put_body=self.record_data,
+            patch_data=self.record_data
         )
 
     def test_team_owner_permissions(self) -> None:
@@ -116,17 +122,18 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put_body=self.record_data,
+            patch_data=self.record_data
         )
 
     def test_staff_user_permissions(self) -> None:
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
-        record_data = {'content': 'foobar', 'request': self.request.pk}
 
         self.assert_http_responses(
             self.endpoint,
@@ -138,6 +145,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body=record_data,
-            patch_data=record_data
+            put_body=self.record_data,
+            patch_data=self.record_data
         )
