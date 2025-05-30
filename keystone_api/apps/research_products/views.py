@@ -19,10 +19,9 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 
 class BaseAffiliatedViewSet(viewsets.ModelViewSet):
-    """Base viewset for resources filtered by user affiliation."""
+    """Base viewset for filtering resources by user affiliation."""
 
-    model = None  # Subclasses must define this
-    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
+    model: Grant | Publication = None  # Defined by subclass
 
     def get_queryset(self) -> models.QuerySet:
         """Return a queryset filtered by the user's team affiliation and permissions."""
@@ -33,7 +32,13 @@ class BaseAffiliatedViewSet(viewsets.ModelViewSet):
         return self.model.objects.affiliated_with_user(self.request.user)
 
     def get_object(self) -> models.Model:
-        """Return the object and apply object-level permission checks."""
+        """Return the requested object and apply object-level permission checks.
+
+        Fetches database records regardless of user affiliation and
+        relies on object permissions to regulate per-record user access.
+        This ensures users without appropriate permissions are returned a
+        `403` error instead of a `404`.
+        """
 
         try:
             obj = self.model.objects.get(pk=self.kwargs["pk"])
@@ -52,6 +57,7 @@ class GrantViewSet(BaseAffiliatedViewSet):
     queryset = Grant.objects.all()
     serializer_class = GrantSerializer
     search_fields = ['title', 'agency', 'team__name']
+    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
 
 
 class PublicationViewSet(BaseAffiliatedViewSet):
@@ -61,3 +67,4 @@ class PublicationViewSet(BaseAffiliatedViewSet):
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
     search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
+    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
