@@ -12,10 +12,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | Authentication      | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |---------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User      | 401 | 401  | 200     | 405  | 405 | 405   | 405    | 405   |
-    | Authenticated User  | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authentication       | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User   | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = '/authentication/whoami/'
@@ -28,12 +28,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             self.endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
-            options=status.HTTP_200_OK,
-            post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
-            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_authenticated_user_permissions(self) -> None:

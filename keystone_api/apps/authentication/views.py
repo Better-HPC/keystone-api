@@ -8,6 +8,7 @@ URLs to business logic.
 
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.users.serializers import RestrictedUserSerializer
@@ -19,7 +20,7 @@ class WhoAmIView(GenericAPIView):
     """Return user metadata for the currently authenticated user."""
 
     serializer_class = RestrictedUserSerializer
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs) -> Response:
         """Return user metadata for the currently authenticated user.

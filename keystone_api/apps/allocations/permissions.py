@@ -37,6 +37,8 @@ class AllocationRequestPermissions(permissions.BasePermission):
         if request.user.is_staff or request.method in permissions.SAFE_METHODS:
             return True
 
+        is_create = getattr(view, 'action', None) == 'create'
+
         # To check write permissions we need to know what team the record belongs to.
         # Deny permissions if the team is not provided or does not exist.
         try:
@@ -44,9 +46,9 @@ class AllocationRequestPermissions(permissions.BasePermission):
             team = Team.objects.get(pk=team_id)
 
         except (Team.DoesNotExist, Exception):
-            return False
+            return not is_create
 
-        return request.user in team.get_privileged_members()
+        return not is_create or request.user in team.get_privileged_members()
 
     def has_object_permission(self, request: Request, view: View, obj: AllocationRequest) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
@@ -69,9 +71,16 @@ class ClusterPermissions(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
+        # Only staff can create new records.
+        # Defer to object permissions for all other actions.
+        is_create = getattr(view, 'action', None) == 'create'
+        return request.user.is_staff or not is_create
+
+    def has_object_permission(self, request: Request, view: View, obj: Cluster) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
         is_staff = request.user.is_staff
         is_read_only = request.method in permissions.SAFE_METHODS
-
         return is_staff or is_read_only
 
 
@@ -88,6 +97,8 @@ class CommentPermissions(permissions.BasePermission):
         if request.user.is_staff or request.method in permissions.SAFE_METHODS:
             return True
 
+        is_create = getattr(view, 'action', None) == 'create'
+
         # To check write permissions we need to know what team the record belongs to.
         # Deny permissions if the team is not provided or does not exist.
         try:
@@ -95,9 +106,9 @@ class CommentPermissions(permissions.BasePermission):
             team = AllocationRequest.objects.get(pk=alloc_request_id).team
 
         except (Team.DoesNotExist, Exception):
-            return False
+            return not is_create
 
-        return request.user in team.get_all_members()
+        return not is_create or request.user in team.get_all_members()
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
@@ -118,10 +129,10 @@ class StaffWriteMemberRead(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.is_authenticated
-
-        return request.user.is_staff
+        # Only staff can create new records.
+        # Defer to object permissions for all other actions.
+        is_create = getattr(view, 'action', None) == 'create'
+        return request.user.is_staff or not is_create
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""

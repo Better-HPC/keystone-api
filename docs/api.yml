@@ -7,7 +7,7 @@ paths:
   /allocations/allocation-request/status-choices/:
     get:
       operationId: allocations_allocation_request_status_choices_retrieve
-      description: Return valid values for the allocation request `status` field.
+      description: Return valid choice values.
       tags:
       - allocations
       security:
@@ -15,18 +15,11 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                PD: Pending
-                AP: Approved
-                DC: Declined
-                CR: Changes Requested
-          description: ''
+          description: No response body
   /allocations/allocation-review/status-choices/:
     get:
       operationId: allocations_allocation_review_status_choices_retrieve
-      description: Return valid values for the allocation review `status` field.
+      description: Return valid choice values.
       tags:
       - allocations
       security:
@@ -34,13 +27,7 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                AP: Approved
-                DC: Declined
-                CR: Changes Requested
-          description: ''
+          description: No response body
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list

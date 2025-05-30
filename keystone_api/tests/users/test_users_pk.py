@@ -17,8 +17,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | User accessing own account | 200 | 200  | 200     | 403  | 200 | 200   | 204    | 405   |
-    | User accessing other user  | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 405   |
+    | User accessing other user  | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | User accessing own account | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
@@ -49,32 +49,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_authenticated_user_same_user(self) -> None:
-        """Verify authenticated users can access and modify their own records."""
-
-        # Define a user / record endpoint from the SAME user
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
-        self.client.force_authenticate(user=self.user1)
-
-        self.assert_http_responses(
-            endpoint,
-            get=status.HTTP_200_OK,
-            head=status.HTTP_200_OK,
-            options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_200_OK,
-            patch=status.HTTP_200_OK,
-            delete=status.HTTP_204_NO_CONTENT,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={
-                'username': 'foobar',
-                'password': 'foobar123',
-                'first_name': 'Foo',
-                'last_name': 'Bar',
-                'email': 'foo@bar.com'},
-            patch_body={'email': 'member_3@newdomain.com'},
-        )
-
     def test_authenticated_user_different_user(self) -> None:
         """Verify users cannot modify other users' records."""
 
@@ -87,11 +61,37 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def test_authenticated_user_same_user(self) -> None:
+        """Verify authenticated users can access and modify their own records."""
+
+        # Define a user / record endpoint from the SAME user
+        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+        self.client.force_authenticate(user=self.user1)
+
+        self.assert_http_responses(
+            endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put_body={
+                'username': 'foobar',
+                'password': 'foobar123',
+                'first_name': 'Foo',
+                'last_name': 'Bar',
+                'email': 'foo@bar.com'},
+            patch_body={'email': 'member_3@newdomain.com'},
         )
 
     def test_staff_user_permissions(self) -> None:

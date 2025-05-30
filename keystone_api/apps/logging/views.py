@@ -9,6 +9,7 @@ URLs to business logic.
 from rest_framework import permissions, viewsets
 
 from .models import *
+from .permissions import *
 from .serializers import *
 
 __all__ = [
@@ -25,7 +26,7 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AppLog.objects.all()
     serializer_class = AppLogSerializer
     search_fields = ['name', 'level', 'pathname', 'message', 'func', 'sinfo']
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, ReadIsAdmin]
 
 
 class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,7 +35,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = RequestLog.objects.all()
     serializer_class = RequestLogSerializer
     search_fields = ['endpoint', 'method', 'response_code', 'body_request', 'body_response', 'remote_address']
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, ReadIsAdmin]
 
 
 class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
@@ -43,7 +44,7 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TaskResult.objects.all()
     serializer_class = TaskResultSerializer
     search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, ReadIsAdmin]
 
 
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -52,4 +53,4 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AuditLog.objects.all()
     serializer_class = AuditLogSerializer
     search_fields = ['resource', 'action', 'user_username']
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, ReadIsAdmin]
