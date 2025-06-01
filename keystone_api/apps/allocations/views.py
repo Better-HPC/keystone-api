@@ -35,13 +35,13 @@ __all__ = [
 # --- Base Classes ---
 
 class ChoicesAPIView(GenericAPIView):
-    """Base view to expose model field choices."""
+    """Base class for views that return a dictionary of model field choices."""
 
     _choices = {}  # Must be set in subclass
 
     @extend_schema(responses={'200': _choices})
     def get(self, request: Request, *args, **kwargs) -> Response:
-        """Return valid choice values."""
+        """Return a dictionary mapping choice values to human-readable names."""
 
         return Response(dict(self._choices), status=status.HTTP_200_OK)
 
@@ -51,6 +51,7 @@ class ScopedModelViewSet(viewsets.ModelViewSet):
     model = None  # Must be set in subclass
 
     def get_queryset(self) -> QuerySet:
+        """Return a queryset filtered by the user's team affiliation and permissions."""
 
         if self.request.user.is_staff:
             return self.queryset
@@ -59,7 +60,13 @@ class ScopedModelViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(**{f"{self.team_field}__in": teams})
 
     def get_object(self) -> Model:
-        """Return the object and apply object-level permission checks."""
+        """Return the object and apply object-level permission checks.
+
+        Fetches database records regardless of user affiliation and relies on
+        object permissions to regulate per-record user access. This bypasses
+        any filters applied to the queryset, ensuring users without appropriate
+        permissions are returned a `403` error instead of a `404`.
+        """
 
         try:
             obj = self.model.objects.get(pk=self.kwargs["pk"])
@@ -76,14 +83,14 @@ class ScopedModelViewSet(viewsets.ModelViewSet):
 class AllocationRequestStatusChoicesView(ChoicesAPIView):
     """Exposes valid values for the allocation request `status` field."""
 
-    _choices = AllocationRequest.StatusChoices.choices
+    _choices = dict(AllocationRequest.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
 
 
 class AllocationReviewStatusChoicesView(ChoicesAPIView):
     """Exposes valid values for the allocation review `status` field."""
 
-    _choices = AllocationReview.StatusChoices.choices
+    _choices = dict(AllocationReview.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
 
 
