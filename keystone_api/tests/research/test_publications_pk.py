@@ -13,9 +13,8 @@ class EndpointPermissions(RecordEndpointPermissionsTests, APITestCase):
 
     model = Publication
     endpoint_pattern = '/research/publications/{pk}/'
-    fixtures = ['testing_common.yaml']
 
-    def build_record_data(self) -> dict:
+    def build_valid_record_data(self) -> dict:
         """Return a dictionary with valid Publication data."""
 
         return {

@@ -21,7 +21,7 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 class BaseAffiliatedViewSet(viewsets.ModelViewSet):
     """Base viewset for filtering resources by user affiliation."""
 
-    model: Grant | Publication = None  # Defined by subclass
+    model: Grant | Publication = None  # Defined by subclasses
 
     def get_queryset(self) -> models.QuerySet:
         """Return a queryset filtered by the user's team affiliation and permissions."""
@@ -34,10 +34,10 @@ class BaseAffiliatedViewSet(viewsets.ModelViewSet):
     def get_object(self) -> models.Model:
         """Return the requested object and apply object-level permission checks.
 
-        Fetches database records regardless of user affiliation and
-        relies on object permissions to regulate per-record user access.
-        This ensures users without appropriate permissions are returned a
-        `403` error instead of a `404`.
+        Fetches database records regardless of user affiliation and relies on
+        object permissions to regulate per-record user access. This bypasses
+        any filters applied to the queryset, ensuring users without appropriate
+        permissions are returned a `403` error instead of a `404`.
         """
 
         try:

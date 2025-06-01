@@ -12,7 +12,7 @@ class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
 
     endpoint = '/research/publications/'
 
-    def build_record_data(self) -> dict:
+    def build_valid_record_data(self) -> dict:
         """Return a dictionary with valid Publication data."""
 
         return {

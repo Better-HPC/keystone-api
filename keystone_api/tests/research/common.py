@@ -1,5 +1,6 @@
 """Common tests for research endpoints."""
 
+from abc import ABC, abstractmethod
 from typing import Type
 
 from rest_framework import status
@@ -8,7 +9,7 @@ from apps.users.models import Team, User
 from tests.utils import CustomAsserts
 
 
-class ListEndpointPermissionsTests(CustomAsserts):
+class ListEndpointPermissionsTests(ABC, CustomAsserts):
     """Test user permissions for list endpoints.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
@@ -24,24 +25,34 @@ class ListEndpointPermissionsTests(CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint: str = None
-    valid_record_data = {}
+    endpoint: str = None  # To be defined by subclass
+
+    # Test Fixtures
+    team: Team
+    team_member: User
+    team_admin: User
+    team_owner: User
+    staff_user: User
+    generic_user: User
+    valid_record_data: dict
+
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Load user accounts and test fixtures."""
-
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
 
         self.team = Team.objects.get(name='Team 1')
         self.team_member = User.objects.get(username='member_1')
         self.team_admin = User.objects.get(username='admin_1')
         self.team_owner = User.objects.get(username='owner_1')
 
-        self.valid_record_data = self.build_record_data()
+        self.generic_user = User.objects.get(username='generic_user')
+        self.staff_user = User.objects.get(username='staff_user')
 
-    def build_record_data(self) -> dict:
+        self.valid_record_data = self.build_valid_record_data()
+
+    @abstractmethod
+    def build_valid_record_data(self) -> dict:
         """Override to return valid record data for the tested resource.
 
         Returns:
@@ -165,25 +176,34 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
+    # To be defined by subclass
     model: Type
     endpoint_pattern: str
 
+    # Test Fixtures
+    team: Team
+    team_member: User
+    non_member: User
+    staff_user: User
+    valid_record_data: dict
+
+    endpoint: str
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Load user accounts and data from test fixtures."""
 
         self.team = Team.objects.get(name='Team 1')
-        self.record = self.model.objects.filter(team=self.team).first()
-        self.endpoint = self.endpoint_pattern.format(pk=self.record.pk)
+        record = self.model.objects.filter(team=self.team).first()
+        self.endpoint = self.endpoint_pattern.format(pk=record.pk)
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.non_member = User.objects.get(username='generic_user')
         self.team_member = User.objects.get(username='member_1')
+        self.non_member = User.objects.get(username='generic_user')
+        self.staff_user = User.objects.get(username='staff_user')
 
-        self.valid_record_data = self.build_record_data()
+        self.valid_record_data = self.build_valid_record_data()
 
-    def build_record_data(self) -> dict:
+    def build_valid_record_data(self) -> dict:
         """Override to return valid record data for the tested resource.
 
         Returns:

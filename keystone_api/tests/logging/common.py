@@ -1,4 +1,4 @@
-"""Common tests applied to all logging endpoints."""
+"""Common tests for logging endpoints."""
 
 from rest_framework import status
 

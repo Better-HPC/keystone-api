@@ -71,7 +71,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_member_permissions(self) -> None:
-        """Verify team members have read and write permissions against their own group records."""
+        """Verify team members have read-only permissions against their own group records."""
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
