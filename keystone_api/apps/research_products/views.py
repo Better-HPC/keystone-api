@@ -21,7 +21,7 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 class BaseAffiliatedViewSet(viewsets.ModelViewSet):
     """Base viewset for filtering resources by user affiliation."""
 
-    model: Grant | Publication = None  # Defined by subclasses
+    model: Grant | Publication  # Defined by subclasses
 
     def get_queryset(self) -> models.QuerySet:
         """Return a queryset filtered by the user's team affiliation and permissions."""

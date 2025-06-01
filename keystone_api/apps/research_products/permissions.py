@@ -21,6 +21,7 @@ class IsTeamMember(permissions.BasePermission):
 
     Permissions:
         - Grants read and write access to team members.
+        - Grants read and write access to staff.
     """
 
     def get_team(self, request: Request) -> Team | None:

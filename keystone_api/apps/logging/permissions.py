@@ -10,10 +10,10 @@ from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.views import View
 
-__all__ = ["ReadIsAdmin"]
+__all__ = ["IsAdminRead"]
 
 
-class ReadIsAdmin(permissions.BasePermission):
+class IsAdminRead(permissions.BasePermission):
     """Restricts read access to administrators without restricting other actions.
 
     Permissions:
@@ -24,4 +24,4 @@ class ReadIsAdmin(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        return request.method not in permissions.SAFE_METHODS or request.user.is_staff
+        return request.user.is_staff or request.method not in permissions.SAFE_METHODS
