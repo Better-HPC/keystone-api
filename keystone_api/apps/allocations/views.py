@@ -7,8 +7,8 @@ URLs to business logic.
 """
 
 from django.db.models import Model, QuerySet
-from drf_spectacular.utils import extend_schema
-from rest_framework import status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status, viewsets
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -39,7 +39,6 @@ class ChoicesAPIView(GenericAPIView):
 
     _choices = {}  # Must be set in subclass
 
-    @extend_schema(responses={'200': _choices})
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Return a dictionary mapping choice values to human-readable names."""
 
@@ -80,6 +79,14 @@ class ScopedModelViewSet(viewsets.ModelViewSet):
 
 # --- Concrete Views ---
 
+@extend_schema_view(
+    get=extend_schema(
+        responses=inline_serializer(
+            name="AllocationRequestStatusChoices",
+            fields={k: serializers.CharField(default=v) for k, v in AllocationRequest.StatusChoices.choices}
+        )
+    )
+)
 class AllocationRequestStatusChoicesView(ChoicesAPIView):
     """Exposes valid values for the allocation request `status` field."""
 
@@ -87,6 +94,14 @@ class AllocationRequestStatusChoicesView(ChoicesAPIView):
     permission_classes = [IsAuthenticated]
 
 
+@extend_schema_view(
+    get=extend_schema(
+        responses=inline_serializer(
+            name="AllocationReviewStatusChoices",
+            fields={k: serializers.CharField(default=v) for k, v in AllocationReview.StatusChoices.choices}
+        )
+    )
+)
 class AllocationReviewStatusChoicesView(ChoicesAPIView):
     """Exposes valid values for the allocation review `status` field."""
 

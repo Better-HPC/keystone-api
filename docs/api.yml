@@ -7,7 +7,7 @@ paths:
   /allocations/allocation-request/status-choices/:
     get:
       operationId: allocations_allocation_request_status_choices_retrieve
-      description: Return valid choice values.
+      description: Return a dictionary mapping choice values to human-readable names.
       tags:
       - allocations
       security:
@@ -15,11 +15,15 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationRequestStatusChoices'
+          description: ''
   /allocations/allocation-review/status-choices/:
     get:
       operationId: allocations_allocation_review_status_choices_retrieve
-      description: Return valid choice values.
+      description: Return a dictionary mapping choice values to human-readable names.
       tags:
       - allocations
       security:
@@ -27,7 +31,11 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationReviewStatusChoices'
+          description: ''
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
@@ -6310,6 +6318,21 @@ components:
       - submitted
       - team
       - title
+    AllocationRequestStatusChoices:
+      type: object
+      properties:
+        PD:
+          type: string
+          default: Pending
+        AP:
+          type: string
+          default: Approved
+        DC:
+          type: string
+          default: Declined
+        CR:
+          type: string
+          default: Changes Requested
     AllocationRequestSummary:
       type: object
       description: Serializer for summarizing allocation requests in nested responses.
@@ -6371,6 +6394,18 @@ components:
       - last_modified
       - request
       - status
+    AllocationReviewStatusChoices:
+      type: object
+      properties:
+        AP:
+          type: string
+          default: Approved
+        DC:
+          type: string
+          default: Declined
+        CR:
+          type: string
+          default: Changes Requested
     AppLog:
       type: object
       description: Object serializer for the `AppLog` class.
