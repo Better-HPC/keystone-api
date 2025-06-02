@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 
-class BasePermission(permissions.BasePermission):
+class PermissionUtils:
     """Common permission logic."""
 
     def is_create(self, view: View) -> bool:
@@ -45,7 +45,7 @@ class BasePermission(permissions.BasePermission):
         return request.user in obj.get_team().get_all_members()
 
 
-class AllocationRequestPermissions(BasePermission):
+class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
     """RBAC permissions model for `AllocationRequest` objects.
 
     Permissions:
@@ -76,7 +76,7 @@ class AllocationRequestPermissions(BasePermission):
         return self.user_is_staff(request) or (self.is_read_only(request) and self.user_in_team(request, obj))
 
 
-class ClusterPermissions(BasePermission):
+class ClusterPermissions(PermissionUtils, permissions.BasePermission):
     """Grant read-only access to all authenticated users.
 
     Permissions:
@@ -96,7 +96,7 @@ class ClusterPermissions(BasePermission):
         return self.user_is_staff(request) or self.is_read_only(request)
 
 
-class CommentPermissions(BasePermission):
+class CommentPermissions(PermissionUtils, permissions.BasePermission):
     """Grant write permissions to users in the same team as the requested object.
 
     Permissions:
@@ -125,7 +125,7 @@ class CommentPermissions(BasePermission):
         return self.user_is_staff(request) or self.user_in_team(request, obj)
 
 
-class StaffWriteMemberRead(BasePermission):
+class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
     """Grant read access to users in to the same team as the requested object.
 
     Permissions:
