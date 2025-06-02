@@ -1,3 +1,11 @@
+"""Custom permission objects used to manage access to HTTP endpoints.
+
+Permission classes control access to API resources by determining user
+privileges for different HTTP operations. They are applied at the view level,
+enabling authentication and authorization to secure endpoints based on
+predefined access rules.
+"""
+
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.views import View
