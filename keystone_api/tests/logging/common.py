@@ -1,4 +1,4 @@
-"""Common tests applied to all logging endpoints."""
+"""Common tests for logging endpoints."""
 
 from rest_framework import status
 
@@ -6,7 +6,7 @@ from apps.users.models import User
 from tests.utils import CustomAsserts
 
 
-class LoggingPermissionTests(CustomAsserts):
+class BaseEndpointPermissionTests(CustomAsserts):
     """Test endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
@@ -14,7 +14,7 @@ class LoggingPermissionTests(CustomAsserts):
     | Authentication             | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
+    | Authenticated User         | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
@@ -48,11 +48,11 @@ class LoggingPermissionTests(CustomAsserts):
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:

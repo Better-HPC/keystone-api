@@ -7,7 +7,7 @@ paths:
   /allocations/allocation-request/status-choices/:
     get:
       operationId: allocations_allocation_request_status_choices_retrieve
-      description: Return valid values for the allocation request `status` field.
+      description: Return a dictionary mapping choice values to human-readable names.
       tags:
       - allocations
       security:
@@ -18,15 +18,12 @@ paths:
           content:
             application/json:
               schema:
-                PD: Pending
-                AP: Approved
-                DC: Declined
-                CR: Changes Requested
+                $ref: '#/components/schemas/AllocationRequestStatusChoices'
           description: ''
   /allocations/allocation-review/status-choices/:
     get:
       operationId: allocations_allocation_review_status_choices_retrieve
-      description: Return valid values for the allocation review `status` field.
+      description: Return a dictionary mapping choice values to human-readable names.
       tags:
       - allocations
       security:
@@ -37,9 +34,7 @@ paths:
           content:
             application/json:
               schema:
-                AP: Approved
-                DC: Declined
-                CR: Changes Requested
+                $ref: '#/components/schemas/AllocationReviewStatusChoices'
           description: ''
   /allocations/allocations/:
     get:
@@ -6323,6 +6318,21 @@ components:
       - submitted
       - team
       - title
+    AllocationRequestStatusChoices:
+      type: object
+      properties:
+        PD:
+          type: string
+          default: Pending
+        AP:
+          type: string
+          default: Approved
+        DC:
+          type: string
+          default: Declined
+        CR:
+          type: string
+          default: Changes Requested
     AllocationRequestSummary:
       type: object
       description: Serializer for summarizing allocation requests in nested responses.
@@ -6384,6 +6394,18 @@ components:
       - last_modified
       - request
       - status
+    AllocationReviewStatusChoices:
+      type: object
+      properties:
+        AP:
+          type: string
+          default: Approved
+        DC:
+          type: string
+          default: Declined
+        CR:
+          type: string
+          default: Changes Requested
     AppLog:
       type: object
       description: Object serializer for the `AppLog` class.

@@ -17,8 +17,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authentication              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |-----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User        | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member    | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 403   |
-    | Team member                 | 404 | 404  | 200     | 403  | 403 | 403   | 403    | 403   |
+    | Authenticated non-member    | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Staff User                  | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
@@ -59,14 +59,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.client.force_authenticate(user=self.non_member)
         self.assert_http_responses(
             self.endpoint,
-            get=status.HTTP_404_NOT_FOUND,
-            head=status.HTTP_404_NOT_FOUND,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
     def test_team_member_permissions(self) -> None:
@@ -78,11 +78,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:
