@@ -11,18 +11,18 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### Core Security
 
-| Setting Name             | Default Value         | Description                                                            |
-|--------------------------|-----------------------|------------------------------------------------------------------------|
-| `SECURE_SECRET_KEY`      | Randomly generated    | Key value used to enforce cryptographic signing.                       |
+| Setting Name        | Default Value      | Description                                      |
+|---------------------|--------------------|--------------------------------------------------|
+| `SECURE_SECRET_KEY` | Randomly generated | Key value used to enforce cryptographic signing. |
 
 ### SSL/TLS
 
-| Setting Name             | Default Value         | Description                                                            |
-|--------------------------|-----------------------|------------------------------------------------------------------------|
-| `SECURE_SSL_REDIRECT`    | `False`               | Automatically redirect all HTTP traffic to HTTPS.                      |
-| `SECURE_HSTS_SECONDS`    | `0` (Disabled)        | HSTS cache duration in seconds.                                        |
-| `SECURE_HSTS_SUBDOMAINS` | `False`               | Enable HSTS for subdomains.                                            |
-| `SECURE_HSTS_PRELOAD`    | `False`               | Enable HSTS preload functionality.                                     |
+| Setting Name             | Default Value  | Description                                       |
+|--------------------------|----------------|---------------------------------------------------|
+| `SECURE_SSL_REDIRECT`    | `False`        | Automatically redirect all HTTP traffic to HTTPS. |
+| `SECURE_HSTS_SECONDS`    | `0` (Disabled) | HSTS cache duration in seconds.                   |
+| `SECURE_HSTS_SUBDOMAINS` | `False`        | Enable HSTS for subdomains.                       |
+| `SECURE_HSTS_PRELOAD`    | `False`        | Enable HSTS preload functionality.                |
 
 ### CORS/CSRF
 
@@ -46,8 +46,9 @@ By default, these files are stored in subdirectories of the installed applicatio
 | `CONFIG_UPLOAD_DIR`        | `<app>/upload_files` | Where to store file data uploaded by users.                                                                 |
 | `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)   | Maximum allowed file upload size in bytes.                                                                  |
 | `CONFIG_LOG_LEVEL`         | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
-| `CONFIG_LOG_RETENTION`     | `604800` (1 week)    | How long to store application logs in seconds. Set to 0 to keep all records.                                |
-| `CONFIG_REQUEST_RETENTION` | `604800` (1 week)    | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `CONFIG_LOG_RETENTION`     | `2592000` (30 days)  | How long to store application logs in seconds. Set to 0 to keep all records.                                |
+| `CONFIG_REQUEST_RETENTION` | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `CONFIG_AUDIT_RETENTION`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
 
 ## API Throttling
 
