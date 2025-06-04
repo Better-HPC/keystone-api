@@ -12,5 +12,5 @@ nav:
     - api/filtering.md
     - api/logging.md
   - Developer Notes:
-      - Common Tasks: developer/common.md
+      - developer/project_setup.md
       - developer/design_guidelines.md

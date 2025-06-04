@@ -12,10 +12,10 @@ The first failing validation step dictates the returned status code to maintain 
 ### Request Validation Hierarchy
 
 1. **User authentication status:**
-   Requests from unauthenticated users attempting to access protected resources must return a `401 Unauthorized` error.
+   Requests from unauthenticated users attempting to access protected resources must return a `403 Forbidden` error.
 2. **Support for the requested method:**
    Requests using unsupported HTTP methods (e.g., `TRACE`, `CONNECT`) must return a `405 Method Not Allowed` error.
-3. **Role Based Access Controls (RBAC):**
+3. **Role-Based Access Controls (RBAC):**
    Requests that fail RBAC or business logic authorization checks must return a `403 Forbidden` error.
 4. **Additional request verification:**
    Any further request-specific validation logic must be processed in this step, with response codes adhering to
@@ -109,7 +109,7 @@ data is represented as an array of objects. Serialized relationships should incl
 
 !!! example "Example: Serializing a One-to-Many"
 
-    The following schema demonstrates a one-to-many relationship between the `User` and `Message` models.
+    The following schema demonstrates a one-to-many relationships between the `User` and `Message` models.
 
     ```mermaid
     classDiagram
@@ -186,7 +186,7 @@ In this case attributes stored in the through table must be included within the 
       "name": "Alice",
       "courses": [
         {
-          "id": 1 
+          "id": 1,
           "enrolled_on": "2025-01-15",
           "grade": "A",
           "course": 101,
@@ -196,7 +196,7 @@ In this case attributes stored in the through table must be included within the 
           }
         },
         {
-          "is": 2,
+          "id": 2,
           "enrolled_on": "2025-02-10",
           "grade": "B+",
           "course": 102,

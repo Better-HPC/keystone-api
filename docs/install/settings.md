@@ -1,6 +1,6 @@
 # Application Settings
 
-Keystone API reads application settings from environmental variables.
+Keystone API reads application settings from environment variables.
 Individual settings are listed below by category and use case.
 
 ## Security Settings
@@ -63,7 +63,7 @@ Limits are specified as the maximum number of requests per `day`, `minute`, `hou
 ## Database Connection
 
 Official support is included for both SQLite and PostgreSQL database backends.
-Using SQLite is intended for development and demonstrative use-cases only.
+Using SQLite is intended for development and demonstrative use cases only.
 The PostgreSQL backend should always be used in production settings.
 
 | Setting Name         | Default Value | Description                                             |
@@ -92,14 +92,14 @@ Enabling password authentication is recommended.
 Keystone will default to using the local server when issuing email notifications.
 Securing your production email server with a username/password is recommended, but not required.
 
-| Setting Name          | Default Value          | Description                               |
-|-----------------------|------------------------|-------------------------------------------|
-| `EMAIL_HOST`          | `localhost`            | The host server to use for sending email. |
-| `EMAIL_PORT`          | `25`                   | Port to use for the SMTP server.          |
-| `EMAIL_HOST_USER`     |                        | Username to use for the SMTP server.      |
-| `EMAIL_HOST_PASSWORD` |                        | Password to use for the SMTP server.      |
-| `EMAIL_USE_TLS`       | `False`                | Use a TLS connection to the SMTP server.  |
-| `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot` | Use a TLS connection to the SMTP server.  |
+| Setting Name          | Default Value          | Description                                             |
+|-----------------------|------------------------|---------------------------------------------------------|
+| `EMAIL_HOST`          | `localhost`            | The host server to use for sending email.               |
+| `EMAIL_PORT`          | `25`                   | Port to use for the SMTP server.                        |
+| `EMAIL_HOST_USER`     |                        | Username to use for the SMTP server.                    |
+| `EMAIL_HOST_PASSWORD` |                        | Password to use for the SMTP server.                    |
+| `EMAIL_USE_TLS`       | `False`                | Use a TLS connection to the SMTP server.                |
+| `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot` | The default "from" address used in email notifications. |
 
 ## LDAP Authentication
 
@@ -137,5 +137,5 @@ The following settings are intended exclusively for use in development.
 
 | Setting Name      | Default Value | Description                                            |
 |-------------------|---------------|--------------------------------------------------------|
-| `DEBUG`           | `False`       | Enable or disable in browser error tracebacks.         |
+| `DEBUG`           | `False`       | Enables in-browser error tracebacks.                   |
 | `DEBUG_EMAIL_DIR` | ``            | Write emails to disk instead of using the SMTP server. |
