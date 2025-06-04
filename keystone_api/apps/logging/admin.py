@@ -55,12 +55,12 @@ class AppLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
     """Admin interface for viewing application logs."""
 
     readonly_fields = [field.name for field in AppLog._meta.fields]
-    list_display = ['time', 'level', 'name']
-    search_fields = ['time', 'level', 'name']
-    ordering = ['-time']
+    list_display = ['timestamp', 'level', 'name']
+    search_fields = ['timestamp', 'level', 'name']
+    ordering = ['-timestamp']
     actions = []
     list_filter = [
-        ('time', admin.DateFieldListFilter),
+        ('timestamp', admin.DateFieldListFilter),
         ('level', admin.AllValuesFieldListFilter),
         ('name', admin.AllValuesFieldListFilter),
     ]
@@ -71,12 +71,12 @@ class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
     """Admin interface for viewing request logs."""
 
     readonly_fields = [field.name for field in RequestLog._meta.fields]
-    list_display = ['time', 'method', 'endpoint', 'response_code', 'remote_address', 'cid']
+    list_display = ['timestamp', 'method', 'endpoint', 'response_code', 'remote_address', 'cid']
     search_fields = ['endpoint', 'method', 'response_code', 'remote_address', 'cid']
-    ordering = ['-time']
+    ordering = ['-timestamp']
     actions = []
     list_filter = [
-        ('time', admin.DateFieldListFilter),
+        ('timestamp', admin.DateFieldListFilter),
         ('method', admin.AllValuesFieldListFilter),
         ('response_code', admin.AllValuesFieldListFilter),
     ]
