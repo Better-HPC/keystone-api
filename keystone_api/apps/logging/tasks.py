@@ -19,13 +19,13 @@ def clear_log_files() -> None:
     from .models import AppLog, RequestLog, AuditLog
 
     log_configs = [
-        (AppLog, 'time', settings.CONFIG_LOG_RETENTION),
-        (RequestLog, 'time', settings.CONFIG_REQUEST_RETENTION),
-        (AuditLog, 'timestamp', settings.CONFIG_AUDIT_RETENTION),
+        (AppLog, settings.CONFIG_LOG_RETENTION),
+        (RequestLog, settings.CONFIG_REQUEST_RETENTION),
+        (AuditLog, settings.CONFIG_AUDIT_RETENTION),
     ]
 
     now = timezone.now()
-    for model, field, retention in log_configs:
+    for model, retention in log_configs:
         if retention > 0:
             cutoff = now - timedelta(seconds=retention)
-            model.objects.filter(**{f"{field}__lt": cutoff}).delete()
+            model.objects.filter(timestamp__lt=cutoff).delete()

@@ -26,13 +26,13 @@ class ClearLogFilesMethod(TestCase):
             pathname='/test',
             lineno=100,
             message='This is a log',
-            time=timestamp
+            timestamp=timestamp
         )
 
         RequestLog.objects.create(
             endpoint='/api',
             response_code=200,
-            time=timestamp
+            timestamp=timestamp
         )
 
     @override_settings(CONFIG_LOG_RETENTION=4)
