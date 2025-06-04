@@ -12,7 +12,7 @@ The first failing validation step dictates the returned status code to maintain 
 ### Request Validation Hierarchy
 
 1. **User authentication status:**
-   Requests from unauthenticated users attempting to access protected resources must return a `401 Unauthorized` error.
+   Requests from unauthenticated users attempting to access protected resources must return a `403 Forbidden` error.
 2. **Support for the requested method:**
    Requests using unsupported HTTP methods (e.g., `TRACE`, `CONNECT`) must return a `405 Method Not Allowed` error.
 3. **Role Based Access Controls (RBAC):**

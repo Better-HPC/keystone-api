@@ -1,9 +1,9 @@
 # Filtering Queries
 
 Keystone API uses query parameters to sort and filter records in API responses.
-Since these operations are performed on the server, using query parameters is often more performant than filtering data client side.
+Since these operations are performed on the server, using query parameters is typically more performant than filtering data client side.
 
-## Sorting Requests
+## Ordering Responses
 
 The `_order` parameter is used to sort records by one or more fields.
 
@@ -13,14 +13,22 @@ The `_order` parameter is used to sort records by one or more fields.
 ```
 
 To sort in descending order, a hyphen is prefixed to the field name.
-In the following example, `field1` is sorted in ascending order and `field2` in descending order.
+In the following example, `field1` is sorted in ascending order followed by `field2` in descending order.
 
 ```bash
 .../endpoint/?_order=field1,-field2
 ```
 
+## Searching Records
 
-## Filtering Requests
+Most API endpoints support semantic search via the `_search` parameter (see the [API specification](../../api) for specifics).
+When provided with search text, the API will compare the search value against the record fields and return any case-insensitive partial matches.
+
+```bash
+.../endpoint/?_search=user%20search%20input
+```
+
+## Filtering Records
 
 Query parameters provide basic support for filtering records by the value of their fields.
 In the following example, returned records are limited to those where the `example` field equals `100`:

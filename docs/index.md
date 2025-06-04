@@ -1,8 +1,7 @@
 # Keystone-API
 
-Keystone-API is the official RESTful API designed to support the Keystone web interface. 
-The application is developed in Python leveraging the Django web framework, and extends the resource management 
-capabilities provided by the Slurm workload manager.
+Keystone-API is the RESTful interface behind the Keystone web platform.
+It extends the capabilities of the Slurm workload manager by adding centralized controls and simplified management. 
 
 <div class="grid cards" markdown>
 

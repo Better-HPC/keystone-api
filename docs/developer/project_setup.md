@@ -1,8 +1,8 @@
-# Common Developer Tasks
+# Project Setup
 
 The following sections outline common tasks for application developers and contributors.
 
-## Python Environment Setup
+## Python Environment
 
 Start by cloning the project repository from GitHub.
 
