@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from django.test import override_settings, TestCase
 from django.utils.timezone import now
 
-from apps.logging.models import AppLog, RequestLog
+from apps.logging.models import AppLog, AuditLog, RequestLog
 from apps.logging.tasks import clear_log_files
 
 
@@ -35,6 +35,18 @@ class ClearLogFilesMethod(TestCase):
             timestamp=timestamp
         )
 
+        AuditLog.objects.create(
+            content_type=1,
+            object_pk=str(1),
+            object_id=1,
+            object_repr="dummy",
+            serialized_data={"example_field": "example_value"},
+            action=AuditLog.Action.CREATE,
+            changes_text="Created dummy object",
+            changes={"message": ["", "Audit log object"]},
+            timestamp=timestamp,
+        )
+
     @override_settings(CONFIG_LOG_RETENTION=4)
     @override_settings(CONFIG_REQUEST_RETENTION=4)
     @patch('django.utils.timezone.now')
@@ -58,6 +70,7 @@ class ClearLogFilesMethod(TestCase):
         # Ensure records exist
         self.assertEqual(2, AppLog.objects.count())
         self.assertEqual(2, RequestLog.objects.count())
+        self.assertEqual(2, AuditLog.objects.count())
 
         # Run rotation
         clear_log_files()
@@ -65,14 +78,16 @@ class ClearLogFilesMethod(TestCase):
         # Assert only the newer records remain
         self.assertEqual(1, AppLog.objects.count())
         self.assertEqual(1, RequestLog.objects.count())
+        self.assertEqual(1, AuditLog.objects.count())
 
     @override_settings(CONFIG_LOG_RETENTION=0)
     @override_settings(CONFIG_REQUEST_RETENTION=0)
     def test_deletion_disabled(self) -> None:
         """Verify log files are not deleted when log clearing is disabled."""
 
-        self.create_dummy_records(now())
+        self.create_dummy_records(now() - + timedelta(hours=1))
 
         clear_log_files()
         self.assertEqual(1, AppLog.objects.count())
         self.assertEqual(1, RequestLog.objects.count())
+        self.assertEqual(1, AuditLog.objects.count())
