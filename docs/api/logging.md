@@ -18,4 +18,4 @@ This unique value is propagated through internal logs, enabling record correlati
 
 Clients may optionally specify the correlation ID using the `X-KEYSTONE-CID` header.
 The value must be a valid UUIDv4 string, including dashes (e.g. `d61eef0b-258d-42ca-b14b-852860a54259`).
-This enables clients to self organize their generated logs around a common transaction or user session.
+This enables clients to self-organize their generated logs around a common transaction or user session.

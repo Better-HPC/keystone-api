@@ -88,7 +88,7 @@ grant all privileges on database keystone to keystone_service;
 
 ### Celery
 
-Celery and Celery Beat are both included when installing the `keystone_api` package.
+Both Celery and Celery Beat are included when installing the `keystone_api` package.
 Both applications should be launched using `keystone_api.apps.scheduler` as the target application.
 
 ```bash
@@ -157,8 +157,8 @@ keystone-api migrate
 keystone-api collectstatic
 ```
 
-Gunicorn is the recommended webserver for running the Keystone-API.
-When launching the webserver, use the WSGI entrypoint located under `keystone_api.main.wsgi:application`.
+Gunicorn is the recommended web server for running the Keystone-API.
+When launching the web server, use the WSGI entrypoint located under `keystone_api.main.wsgi:application`.
 
 ```bash
 gunicorn --bind 0.0.0.0:8000 keystone_api.main.wsgi:application
@@ -238,7 +238,7 @@ server {
 }
 ```
 
-1. The aliased directory is used to host user provided files and should match the `CONFIG_UPLOAD_DIR` in application
+1. The aliased directory is used to host user-provided files and should match the `CONFIG_UPLOAD_DIR` in application
    settings.
    Don't forget the trailing slash when specifying file paths via the `alias` directive.
 
@@ -266,7 +266,7 @@ System services should be taken offline before upgrading to a new version.
     systemctl stop keystone-beat
     systemctl stop keystone-worker
 
-    # Pause here to backup the application database
+    # Pause here to back up the application database
 
     pipx upgrade keystone-api
     keystone-api migrate
@@ -286,7 +286,7 @@ System services should be taken offline before upgrading to a new version.
     systemctl stop keystone-beat
     systemctl stop keystone-worker
 
-    # Pause here to backup the application database
+    # Pause here to back up the application database
     
     pip install --upgrade keystone-api
     keystone-api migrate

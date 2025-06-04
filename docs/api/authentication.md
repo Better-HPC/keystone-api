@@ -1,7 +1,7 @@
 # Authentication
 
 Keystone uses session tokens to manage user authentication and permissions.
-New sessions are generate using the `authentication/login/` endpoint.
+New sessions are generated using the `authentication/login/` endpoint.
 Once successfully authenticated, the endpoint will issue a `200`
 response and include cookies for the session ID and CSRF token.
 
@@ -91,7 +91,7 @@ Users can manually invalidate their session using the `authentication/logout/` e
 
     ```bash
     logout_response=$(curl -s -X POST \
-      -b cookies.txt 
+      -b cookies.txt \ 
       -H "X-CSRFToken: $csrf_token" \
       "https://keystone.domain.com/authentication/logout/")
     

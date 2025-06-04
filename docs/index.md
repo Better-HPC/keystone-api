@@ -17,7 +17,7 @@ It extends the capabilities of the Slurm workload manager by adding centralized 
 
     ---
 
-    Learn how Keystone integrates with Slurm to manage HPC resources. 
+    Learn how Keystone integrates with Slurm to manage HPC resources.
 
     [:octicons-arrow-right-24: Configuring Slurm](install/slurm.md)
 

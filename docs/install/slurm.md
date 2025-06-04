@@ -19,12 +19,12 @@ The steps below outline the configuration required for integration with Slurm.
 
 ## Enable Resource Tracking
 
-To impose usage limits, Keystone requires the utilized resource to be represented as a TRES in Slurm.
+To impose usage limits, Keystone requires the utilized resources to be represented as a TRES in Slurm.
 Tracking is enabled by default for common resources such as CPU, memory, and energy.
 Administrators may extend this list to include additional resource types, such as GPUs.
 
 The `AccountingStorageTRES` setting is used to configure which TRES values are stored in the Slurm database.
-Refer to the official [Surm documentation](https://slurm.schedmd.com/tres.html#conf) for more details.
+Refer to the official [Slurm documentation](https://slurm.schedmd.com/tres.html#conf) for more details.
 
 ??? Example "Example: Tracking GPU usage"
 
@@ -62,7 +62,7 @@ PriorityUsageResetPeriod=NONE
 !!! Important
 
     Disabling these settings may affect your Slurm fairshare policy.  
-    Administrators are strongly encouraged to review their fairshair policy settings. 
+    Administrators are strongly encouraged to review their fairshare policy settings.
 
 ## Configure Charging Rates
 
