@@ -1,6 +1,6 @@
 # Deploying with Docker
 
-The Keystone API can be deployed as a single container using Docker, or as several containers using Docker Compose.
+Keystone-API can be deployed as a single container using Docker, or as several containers using Docker Compose.
 Single-container deployments are best suited for those looking to test-drive Keystone's capabilities.
 Multi-container deployments are strongly recommended for teams operating at scale.
 
@@ -111,7 +111,7 @@ volumes:
 
 1. The `cache` service acts as a job queue for background tasks. Note that cache data is mounted onto the host machine to ensure data persistence between container restarts.
 2. The `db` service defines the application database. User credentials are provided as environmental variables in the `db.env` file. Note the mounting of database data onto the host machine to ensure data persistence between container restarts.
-3. The `api` service defines the Keystone API application. It migrates the database schema, configures static file hosting, and launches the API behind a production quality web server.
+3. The `api` service defines the Keystone-API application. It migrates the database schema, configures static file hosting, and launches the API behind a production quality web server.
 4. The `celery-worker` service executes background tasks for the API application. It uses the same base image as the `api` service.
 5. The `celery-beat` service handles task scheduling for the `celery-worker` service. It uses the same base image as the `api` service.
 

@@ -1,6 +1,6 @@
 # Design Guidelines
 
-Keystone API uses the following design principles to ensure project consistency and maintainability.
+Keystone-API uses the following design principles to ensure project consistency and maintainability.
 
 ## Request Error Handling
 
@@ -9,7 +9,7 @@ Since multiple validation steps may apply to a single request, the system follow
 to determine the appropriate error response.
 The first failing validation step dictates the returned status code to maintain consistency across all endpoints.
 
-### Request Validation Hierarchy
+The request validation order is as follows:
 
 1. **User authentication status:**
    Requests from unauthenticated users attempting to access protected resources must return a `403 Forbidden` error.
