@@ -4,15 +4,15 @@ Keystone-API uses the following design principles to ensure project consistency 
 
 ## Request Error Handling
 
-When an HTTP request fails, the response should provide a clear and unambiguous indication of the failure reason.
-Since multiple validation steps may apply to a single request, the system follows a standardized order of validation
-to determine the appropriate error response.
-The first failing validation step dictates the returned status code to maintain consistency across all endpoints.
+HTTP requests undergo several validation steps before being executed by the server.
+This provides multiple opportunities for a request to fail, each generating a different possible error.
+To ensure consistent behavior across endpoints, the system enforces a standardized validation order where
+the first step to fail determines the returned status code and error message.
 
 The request validation order is as follows:
 
 1. **User authentication status:**
-   Requests from unauthenticated users attempting to access protected resources must return a `403 Forbidden` error.
+   Requests from unauthenticated users attempting to access protected resources must return a `401 Unauthorized` error.
 2. **Support for the requested method:**
    Requests using unsupported HTTP methods (e.g., `TRACE`, `CONNECT`) must return a `405 Method Not Allowed` error.
 3. **Role-Based Access Controls (RBAC):**
@@ -45,7 +45,7 @@ To ensure consistent and predictable API responses, database records must be ser
         }
     ```
 
-    A serialized `User` record should appear as follows:
+    The serialized record should appear as follows:
     
     ```json
     {
@@ -61,7 +61,7 @@ To ensure consistent and predictable API responses, database records must be ser
 When serializing one-to-one or many-to-one relationships, the related entity should be represented using two fields:
 
 1. A writable field, matching the name of the database or ORM field, that stores the related record's primary key. 
-2. A read-only field, prefixed with an underscore (_), providing a nested representation of the related entity.
+2. A read-only field, prefixed with an underscore (`_`), providing a nested representation of the related entity.
 
 Nested representations do not need to be complete, and should only include data explicitly required by the frontend application.
 
@@ -85,7 +85,7 @@ Nested representations do not need to be complete, and should only include data 
         }
     ```
     
-    A serialized `User` record should include both the primary key reference and a nested representation:
+    The serialized `User` record should include both the primary key reference and a nested representation:
     
     ```json
     {
@@ -105,7 +105,7 @@ One-to-many and many-to-many relationships are serialized similarly to other rel
 data is represented as an array of objects. Serialized relationships should include:
 
 1. A writable field, matching the name of the database or ORM field, that stores an array of related primary keys. 
-2. A read-only field, prefixed with an underscore (_), providing an array of nested representations for the related entity.
+2. A read-only field, prefixed with an underscore (`_`), providing an array of nested representations for the related entity.
 
 !!! example "Example: Serializing a One-to-Many"
 
@@ -146,11 +146,11 @@ data is represented as an array of objects. Serialized relationships should incl
     }
     ```
 
-### Serializing Many-to-Many
+### Serializing with Through Tables
 
-Serializing many-to-many relationships follows the same general guidelines as a one-to-many relationship.
-However, special consideration is given to relationships which include additional data as attributes in the through table.
-In this case attributes stored in the through table must be included within the nested representation as writable fields.
+Special handling is required for relationships that involve an intermediate (or "through") table.
+When serializing such relationships, the intermediate records are represented directly using writable fields.
+The related target record is then nested within each intermediate record, following the same conventions as a one-to-one relationships.
 
 !!! example "Example: Serializing a Through Table"
 
@@ -178,7 +178,8 @@ In this case attributes stored in the through table must be included within the 
         }
     ```
     
-    When serializing a `Student` record, the `courses` field contains a list of course IDs, while `_courses` provides additional enrollment details.  
+    When serializing a `Student` record, the `courses` field contains a list of related `Enrollment` records.  
+    Each entry includes both the enrollment-specific fields (`enrolled_on`, `grade`, etc.) and a nested representation of the associated `Course`.  
     
     ```json
     {
