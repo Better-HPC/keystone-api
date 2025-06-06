@@ -1,9 +1,9 @@
 # Filtering Queries
 
 Keystone API uses query parameters to sort and filter records in API responses.
-Since these operations are performed on the server, using query parameters is often more performant than filtering data client side.
+Since these operations are performed on the server, using query parameters is typically more performant than filtering data client-side.
 
-## Sorting Requests
+## Ordering Responses
 
 The `_order` parameter is used to sort records by one or more fields.
 
@@ -13,14 +13,22 @@ The `_order` parameter is used to sort records by one or more fields.
 ```
 
 To sort in descending order, a hyphen is prefixed to the field name.
-In the following example, `field1` is sorted in ascending order and `field2` in descending order.
+In the following example, `field1` is sorted in ascending order followed by `field2` in descending order.
 
 ```bash
 .../endpoint/?_order=field1,-field2
 ```
 
+## Searching Records
 
-## Filtering Requests
+Most API endpoints support semantic search via the `_search` parameter (see the [API specification](../../api) for specifics).
+When provided with search text, the API will compare the search value against the record fields and return any case-insensitive partial matches.
+
+```bash
+.../endpoint/?_search=user%20search%20input
+```
+
+## Filtering Records
 
 Query parameters provide basic support for filtering records by the value of their fields.
 In the following example, returned records are limited to those where the `example` field equals `100`:
@@ -29,12 +37,12 @@ In the following example, returned records are limited to those where the `examp
 .../endpoint?example=100
 ```
 
-More advanced filtering is achieved by adding filters.
+More advanced filtering is achieved by adding filter expressions.
 Query filters are specified using a double underscore (`__`) followed by a filter expression.
 For example, the following API call will return records when the `example` field is greater than `50` but less than `150`:
 
 ```
-.../endpoint?example__gt=50&example_lt=150
+.../endpoint?example__gt=50&example__lt=150
 ```
 
 Available query filters are summarized in the tables below.
@@ -46,7 +54,7 @@ The following filters are available for all data types.
 | Query Expression | Description                                              | Example              |
 |------------------|----------------------------------------------------------|----------------------|
 | `in`             | Whether the value is in a comma-separated list of values | `field__in=1,2,3`    |
-| `isnull`         | Whether the value is none                                | `field__isnull=true` |
+| `isnull`         | Whether the value is None                                | `field__isnull=true` |
 
 ### Numeric Filters
 
@@ -79,7 +87,7 @@ The following filters are available for date and datetime values in ISO-8601 for
 | `month`          | Whether the date value matches a given month                | `field__month=12`       |
 | `day`            | Whether the date value matches a given day                  | `field__day=25`         |
 | `week`           | Whether the date value falls on a given week of the month   | `field__week=52`        |
-| `week_day`       | Whether the date value falls a given day of the week        | `field__week_day=1`     |
+| `week_day`       | Whether the date value falls on a given day of the week     | `field__week_day=1`     |
 | `lt`             | Whether the value is less than another value                | `field__lt=2020-01-22`  |
 | `lte`            | Whether the value is less than or equal to another value    | `field__lte=2020-01-22` |
 | `gt`             | Whether the value is greater than another value             | `field__gt=2020-01-22`  |

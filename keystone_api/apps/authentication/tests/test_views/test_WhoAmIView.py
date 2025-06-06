@@ -10,6 +10,7 @@ from apps.users.serializers import RestrictedUserSerializer
 
 User = get_user_model()
 
+
 class GetMethod(TestCase):
     """Test HTTP request handling by the `get` method."""
 

@@ -1,8 +1,8 @@
 # Authentication
 
 Keystone uses session tokens to manage user authentication and permissions.
-New sessions are generate using the `authentication/login/` endpoint.
-Once successfully authenticated, the endpoint will automatically issue a `200`
+New sessions are generated using the `authentication/login/` endpoint.
+Once successfully authenticated, the endpoint will issue a `200`
 response and include cookies for the session ID and CSRF token.
 
 === "python"
@@ -37,7 +37,7 @@ response and include cookies for the session ID and CSRF token.
     cat cookies.txt
     ```
 
-Future requests to API endpoints are authenticated by including the session cookie.
+Future requests to API endpoints are authorized by including the session cookie.
 Write operations (`POST`, `PUT`, `PATCH`, `DELETE`) will also require the CSRF token in the request header.
 
 === "python"
@@ -91,7 +91,7 @@ Users can manually invalidate their session using the `authentication/logout/` e
 
     ```bash
     logout_response=$(curl -s -X POST \
-      -b cookies.txt 
+      -b cookies.txt \ 
       -H "X-CSRFToken: $csrf_token" \
       "https://keystone.domain.com/authentication/logout/")
     

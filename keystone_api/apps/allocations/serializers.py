@@ -1,4 +1,4 @@
-"""Serializers for casting database models to/from JSON and XML representations.
+"""Serializers for casting database models to/from JSON representations.
 
 Serializers handle the casting of database models to/from HTTP compatible
 representations in a manner that is suitable for use by RESTful endpoints.
@@ -6,43 +6,27 @@ They encapsulate object serialization, data validation, and database object
 creation.
 """
 
+from mimetypes import guess_type
+
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 
-from apps.research_products.serializers import *
-from apps.users.models import User
-from apps.users.serializers import *
+from apps.logging.nested import AuditLogSummarySerializer
+from apps.research_products.serializers import GrantSerializer, PublicationSerializer
+from apps.users.models import (User)
+from apps.users.nested import TeamSummarySerializer, UserSummarySerializer
 from .models import *
+from .nested import *
 
 __all__ = [
-    'AttachmentSerializer',
-    'AllocationSerializer',
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
+    'AllocationSerializer',
+    'AttachmentSerializer',
     'ClusterSerializer',
     'CommentSerializer'
 ]
-
-
-class ClusterSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing cluster names in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Cluster
-        fields = ['name', 'enabled']
-
-
-class AllocationRequestSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing allocation requests in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = AllocationRequest
-        fields = ['title', 'status', 'active', 'expire']
 
 
 class AllocationSerializer(serializers.ModelSerializer):
@@ -50,6 +34,7 @@ class AllocationSerializer(serializers.ModelSerializer):
 
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -65,6 +50,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _assignees = UserSummarySerializer(source='assignees', many=True, read_only=True)
     _publications = PublicationSerializer(source='publications', many=True, read_only=True)
     _grants = GrantSerializer(source='grants', many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -78,6 +64,7 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     _reviewer = UserSummarySerializer(source='reviewer', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -100,6 +87,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     file = serializers.FileField(use_url=False)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     name = serializers.CharField(required=False)
 
     class Meta:
@@ -110,18 +98,32 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def validate_file(value: UploadedFile) -> UploadedFile:
-        """Validate uploaded files do not exceed the maximum allowed size."""
+        """Validate the uploaded file against size and type constraints.
+
+        Returns:
+            The validated file.
+
+        Raises:
+            serializers.ValidationError: If the file exceeds the size limit or has a disallowed MIME type.
+        """
 
         max_size = settings.MAX_FILE_SIZE
         if value.size > max_size:
             limit_in_mb = max_size / (1024 * 1024)
             raise serializers.ValidationError(f"File size should not exceed {limit_in_mb:.2f} MB.")
 
+        allowed_types = settings.ALLOWED_FILE_TYPES
+        mime_type, _ = guess_type(value.name)
+        if mime_type not in allowed_types:
+            raise serializers.ValidationError(f"File type '{mime_type}' is not allowed.")
+
         return value
 
 
 class ClusterSerializer(serializers.ModelSerializer):
     """Object serializer for the `Cluster` class."""
+
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -133,6 +135,9 @@ class ClusterSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Comment` class."""
 
+    _user = UserSummarySerializer(source='user', read_only=True)
+    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()

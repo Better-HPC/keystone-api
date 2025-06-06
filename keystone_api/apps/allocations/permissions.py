@@ -21,7 +21,31 @@ __all__ = [
 ]
 
 
-class AllocationRequestPermissions(permissions.BasePermission):
+class PermissionUtils:
+    """Common permission logic."""
+
+    def is_create(self, view: View) -> bool:
+        """Return whether the requested operation creates a new record."""
+
+        return getattr(view, 'action', None) == 'create'
+
+    def is_read_only(self, request: Request) -> bool:
+        """Return whether the requested operation is read-only."""
+
+        return request.method in permissions.SAFE_METHODS
+
+    def user_is_staff(self, request: Request) -> bool:
+        """Return whether the requested operation was made by a staff user."""
+
+        return request.user and request.user.is_staff
+
+    def user_in_team(self, request, obj) -> bool:
+        """Return whether the requested operation was made by a team member."""
+
+        return request.user in obj.get_team().get_all_members()
+
+
+class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
     """RBAC permissions model for `AllocationRequest` objects.
 
     Permissions:
@@ -34,31 +58,25 @@ class AllocationRequestPermissions(permissions.BasePermission):
         """Return whether the request has permissions to access the requested resource."""
 
         # Staff users are OK. Read operations are also OK.
-        if request.user.is_staff or request.method in permissions.SAFE_METHODS:
+        if self.user_is_staff(request) or self.is_read_only(request):
             return True
 
-        # To check write permissions we need to know what team the record belongs to.
-        # Deny permissions if the team is not provided or does not exist.
         try:
-            team_id = request.data.get('team', None)
+            team_id = request.data.get('team')
             team = Team.objects.get(pk=team_id)
 
         except (Team.DoesNotExist, Exception):
-            return False
+            return not self.is_create(view)
 
-        return request.user in team.get_privileged_members()
+        return not self.is_create(view) or request.user in team.get_privileged_members()
 
     def has_object_permission(self, request: Request, view: View, obj: AllocationRequest) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        is_staff = request.user.is_staff
-        is_team_member = request.user in obj.get_team().get_all_members()
-        is_read_only = request.method in permissions.SAFE_METHODS
-
-        return is_staff or (is_read_only and is_team_member)
+        return self.user_is_staff(request) or (self.is_read_only(request) and self.user_in_team(request, obj))
 
 
-class ClusterPermissions(permissions.BasePermission):
+class ClusterPermissions(PermissionUtils, permissions.BasePermission):
     """Grant read-only access to all authenticated users.
 
     Permissions:
@@ -69,13 +87,16 @@ class ClusterPermissions(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        is_staff = request.user.is_staff
-        is_read_only = request.method in permissions.SAFE_METHODS
+        # Only staff can create new records.
+        return self.user_is_staff(request) or not self.is_create(view)
 
-        return is_staff or is_read_only
+    def has_object_permission(self, request: Request, view: View, obj: Cluster) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
+        return self.user_is_staff(request) or self.is_read_only(request)
 
 
-class CommentPermissions(permissions.BasePermission):
+class CommentPermissions(PermissionUtils, permissions.BasePermission):
     """Grant write permissions to users in the same team as the requested object.
 
     Permissions:
@@ -85,29 +106,26 @@ class CommentPermissions(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.user.is_staff or request.method in permissions.SAFE_METHODS:
+        if self.user_is_staff(request) or self.is_read_only(request):
             return True
 
-        # To check write permissions we need to know what team the record belongs to.
-        # Deny permissions if the team is not provided or does not exist.
         try:
-            alloc_request_id = request.data.get('request', None)
-            team = AllocationRequest.objects.get(pk=alloc_request_id).team
+            alloc_request_id = request.data.get('request')
+            alloc_request = AllocationRequest.objects.get(pk=alloc_request_id)
+            team = alloc_request.team
 
         except (Team.DoesNotExist, Exception):
-            return False
+            return not self.is_create(view)
 
-        return request.user in team.get_all_members()
+        return not self.is_create(view) or request.user in team.get_all_members()
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        is_staff = request.user.is_staff
-        user_in_team = request.user in obj.get_team().get_all_members()
-        return user_in_team or is_staff
+        return self.user_is_staff(request) or self.user_in_team(request, obj)
 
 
-class StaffWriteMemberRead(permissions.BasePermission):
+class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
     """Grant read access to users in to the same team as the requested object.
 
     Permissions:
@@ -118,16 +136,10 @@ class StaffWriteMemberRead(permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.is_authenticated
-
-        return request.user.is_staff
+        # Only staff can create new records.
+        return self.user_is_staff(request) or not self.is_create(view)
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        is_staff = request.user.is_staff
-        is_read_only = request.method in permissions.SAFE_METHODS
-        user_is_in_team = request.user in obj.get_team().get_all_members()
-
-        return is_staff or (is_read_only and user_is_in_team)
+        return self.user_is_staff(request) or (self.is_read_only(request) and self.user_in_team(request, obj))

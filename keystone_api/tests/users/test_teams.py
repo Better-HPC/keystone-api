@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import Team, User
+from apps.users.models import User
 from tests.utils import CustomAsserts
 
 

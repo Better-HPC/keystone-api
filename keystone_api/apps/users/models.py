@@ -11,6 +11,7 @@ import itertools
 import random
 from io import BytesIO
 
+from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -53,6 +54,8 @@ class Membership(models.Model):
         ADMIN = 'AD', 'Admin'
         MEMBER = 'MB', 'Member'
 
+    history = AuditlogHistoryField()
+
     user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
     team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
@@ -65,6 +68,7 @@ class Team(models.Model):
     name = models.CharField(max_length=255, unique=True)
     users = models.ManyToManyField('User', through=Membership)
     is_active = models.BooleanField(default=True)
+    history = AuditlogHistoryField()
 
     objects = TeamManager()
 
@@ -143,6 +147,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     department = models.CharField(max_length=1000, null=True, blank=True)
     role = models.CharField(max_length=1000, null=True, blank=True)  # User's role in their department
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    history = AuditlogHistoryField()
 
     # Administrative values for user management/permissions
     is_active = models.BooleanField(default=True)

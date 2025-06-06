@@ -1,8 +1,8 @@
-# Common Developer Tasks
+# Project Setup
 
 The following sections outline common tasks for application developers and contributors.
 
-## Python Environment Setup
+## Python Environment
 
 Start by cloning the project repository from GitHub.
 
@@ -49,7 +49,7 @@ Use the `keystone-api <command> --help` option for specific usage information.
 | `clean`                   | Clean up files generated when launching a new application instance.                      |
 | `quickstart`              | A helper utility for quickly migrating/deploying an application instance.                |
 
-## Running In Debug Mode
+## Running in Debug Mode
 
 The Django framework provides a debug mode which enables detailed error tracebacks directly in the browser.
 To enable debug mode, specify the `DEBUG=true` setting.
