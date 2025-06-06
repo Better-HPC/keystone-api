@@ -2,7 +2,7 @@
 
 The following sections outline common tasks for application developers and contributors.
 
-## Python Environment
+## Environment Setup
 
 Start by cloning the project repository from GitHub.
 
@@ -49,7 +49,7 @@ Use the `keystone-api <command> --help` option for specific usage information.
 | `clean`                   | Clean up files generated when launching a new application instance.                      |
 | `quickstart`              | A helper utility for quickly migrating/deploying an application instance.                |
 
-## Running in Debug Mode
+### Running in Debug Mode
 
 The Django framework provides a debug mode which enables detailed error tracebacks directly in the browser.
 To enable debug mode, specify the `DEBUG=true` setting.
@@ -66,7 +66,7 @@ DEBUG=True keystone-api runserver
 
 Application tests are organized based on the testing methodology.
 Function tests are packaged in the top level `keystone_api/tests/` directory.
-Unit tests are contained within the application/plugin being tested under `keystone_api/<app_path>/tests/`.
+Unit tests are contained within the module being tested under `keystone_api/<module_path>/tests/`.
 
 Before executing the test suite, ensure the necessary dependencies are installed:
 
@@ -116,5 +116,5 @@ The `spectacular` command will dynamically generate an OpenAPI schema in YAML fo
 Rendering the specification into HTML is left to the developer using the documentation tool of their choice.
 
 ```bash
-keystone-api spectacular --file api.yml
+keystone-api spectacular --file docs/api.yml
 ```
