@@ -1,6 +1,6 @@
 # Application Settings
 
-Keystone API reads application settings from environment variables.
+Keystone-API reads application settings from environment variables.
 Individual settings are listed below by category and use case.
 
 ## Security Settings
