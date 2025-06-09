@@ -13,12 +13,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | User Status                             | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |-----------------------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User                    | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User Accessing Own Data   | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 403   |
-    | Authenticated User Accessing Other Data | 404 | 404  | 200     | 403  | 403 | 403   | 403    | 403   |
-    | Staff User Accessing Other Data         | 404 | 404  | 200     | 403  | 403 | 403   | 403    | 403   |
+    | User Status                               | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |-------------------------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User                      | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User Accessing Own Data     | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Authenticated User Accessing Other's Data | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Staff User Accessing Other's Data         | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
     """
 
     endpoint_pattern = '/notifications/notifications/{pk}/'
@@ -62,11 +62,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
     def test_authenticated_user_different_user(self) -> None:
@@ -78,14 +78,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.assert_http_responses(
             endpoint,
-            get=status.HTTP_404_NOT_FOUND,
-            head=status.HTTP_404_NOT_FOUND,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -96,12 +96,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.assert_http_responses(
             endpoint,
-            get=status.HTTP_404_NOT_FOUND,
-            head=status.HTTP_404_NOT_FOUND,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )

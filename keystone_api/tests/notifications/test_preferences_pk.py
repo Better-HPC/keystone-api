@@ -13,12 +13,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | User Status                             | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |-----------------------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User                    | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User Accessing Own Data   | 404 | 404  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Authenticated User Accessing Other Data | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
-    | Staff User Accessing Other Data         | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
+    | User Status                               | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |-------------------------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User                      | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User Accessing Own Data     | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Authenticated User Accessing Other's Data | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Staff User Accessing Other's Data         | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
     endpoint_pattern = '/notifications/preferences/{pk}/'

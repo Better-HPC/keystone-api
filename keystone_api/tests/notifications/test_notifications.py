@@ -15,8 +15,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 403   |
-    | Staff User                 | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 403   |
+    | Authenticated User         | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
+    | Staff User                 | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = '/notifications/notifications/'
@@ -53,10 +53,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
             post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -69,8 +69,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
             post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
