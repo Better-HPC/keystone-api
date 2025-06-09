@@ -29,8 +29,5 @@ class WhoAmIView(GenericAPIView):
             A 200 response with user data if authenticated, and a 401 response otherwise
         """
 
-        if not request.user.is_authenticated:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
         serializer = self.serializer_class(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
