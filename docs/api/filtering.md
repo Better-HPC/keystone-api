@@ -1,6 +1,6 @@
 # Filtering Queries
 
-Keystone API uses query parameters to sort and filter records in API responses.
+Keystone-API uses query parameters to sort and filter records in API responses.
 Since these operations are performed on the server, using query parameters is typically more performant than filtering data client-side.
 
 ## Ordering Responses

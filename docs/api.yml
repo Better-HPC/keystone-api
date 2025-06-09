@@ -2533,30 +2533,30 @@ paths:
         schema:
           type: string
       - in: query
-        name: time
+        name: timestamp
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__day
+        name: timestamp__day
         schema:
           type: number
       - in: query
-        name: time__gt
+        name: timestamp__gt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__gte
+        name: timestamp__gte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__hour
+        name: timestamp__hour
         schema:
           type: number
       - in: query
-        name: time__in
+        name: timestamp__in
         schema:
           type: array
           items:
@@ -2566,41 +2566,41 @@ paths:
         explode: false
         style: form
       - in: query
-        name: time__isnull
+        name: timestamp__isnull
         schema:
           type: boolean
       - in: query
-        name: time__lt
+        name: timestamp__lt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__lte
+        name: timestamp__lte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__minute
+        name: timestamp__minute
         schema:
           type: number
       - in: query
-        name: time__month
+        name: timestamp__month
         schema:
           type: number
       - in: query
-        name: time__second
+        name: timestamp__second
         schema:
           type: number
       - in: query
-        name: time__week
+        name: timestamp__week
         schema:
           type: number
       - in: query
-        name: time__week_day
+        name: timestamp__week_day
         schema:
           type: number
       - in: query
-        name: time__year
+        name: timestamp__year
         schema:
           type: number
       tags:
@@ -3303,30 +3303,30 @@ paths:
         schema:
           type: integer
       - in: query
-        name: time
+        name: timestamp
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__day
+        name: timestamp__day
         schema:
           type: number
       - in: query
-        name: time__gt
+        name: timestamp__gt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__gte
+        name: timestamp__gte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__hour
+        name: timestamp__hour
         schema:
           type: number
       - in: query
-        name: time__in
+        name: timestamp__in
         schema:
           type: array
           items:
@@ -3336,41 +3336,41 @@ paths:
         explode: false
         style: form
       - in: query
-        name: time__isnull
+        name: timestamp__isnull
         schema:
           type: boolean
       - in: query
-        name: time__lt
+        name: timestamp__lt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__lte
+        name: timestamp__lte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__minute
+        name: timestamp__minute
         schema:
           type: number
       - in: query
-        name: time__month
+        name: timestamp__month
         schema:
           type: number
       - in: query
-        name: time__second
+        name: timestamp__second
         schema:
           type: number
       - in: query
-        name: time__week
+        name: timestamp__week
         schema:
           type: number
       - in: query
-        name: time__week_day
+        name: timestamp__week_day
         schema:
           type: number
       - in: query
-        name: time__year
+        name: timestamp__year
         schema:
           type: number
       - in: query
@@ -6827,7 +6827,7 @@ components:
         sinfo:
           type: string
           nullable: true
-        time:
+        timestamp:
           type: string
           format: date-time
           readOnly: true
@@ -6838,7 +6838,7 @@ components:
       - message
       - name
       - pathname
-      - time
+      - timestamp
     Attachment:
       type: object
       description: Object serializer for the `Attachment` class.
@@ -7771,7 +7771,7 @@ components:
           type: string
           nullable: true
           maxLength: 40
-        time:
+        timestamp:
           type: string
           format: date-time
           readOnly: true
@@ -7788,7 +7788,7 @@ components:
       - id
       - method
       - response_code
-      - time
+      - timestamp
     RequestStatusChoices:
       enum:
       - PD
