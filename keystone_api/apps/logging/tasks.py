@@ -28,4 +28,4 @@ def clear_log_files() -> None:
     for model, retention in log_configs:
         if retention > 0:
             cutoff = now - timedelta(seconds=retention)
-            model.objects.filter(timestamp__lt=cutoff).delete()
+            model.objects.filter(timestamp__lte=cutoff).delete()
