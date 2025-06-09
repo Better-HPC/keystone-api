@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 
+from django.contrib.contenttypes.models import ContentType
 from django.test import override_settings, TestCase
 from django.utils.timezone import now
 
@@ -13,7 +14,8 @@ from apps.logging.tasks import clear_log_files
 class ClearLogFilesMethod(TestCase):
     """Test the deletion of log records by the  clear_log_files` method."""
 
-    def create_dummy_records(self, timestamp: datetime) -> None:
+    @staticmethod
+    def create_dummy_records(timestamp: datetime) -> None:
         """Create a single record in each logging database table.
 
         Args:
@@ -36,7 +38,7 @@ class ClearLogFilesMethod(TestCase):
         )
 
         AuditLog.objects.create(
-            content_type=1,
+            content_type=ContentType.objects.get_for_model(RequestLog),
             object_pk=str(1),
             object_id=1,
             object_repr="dummy",
@@ -49,22 +51,18 @@ class ClearLogFilesMethod(TestCase):
 
     @override_settings(CONFIG_LOG_RETENTION=4)
     @override_settings(CONFIG_REQUEST_RETENTION=4)
+    @override_settings(CONFIG_AUDIT_RETENTION=4)
     @patch('django.utils.timezone.now')
-    def test_log_files_deleted(self, mock_now: Mock) -> None:
+    def test_log_files_deleted(self, mock_current_time: Mock) -> None:
         """Verify expired log files are deleted."""
 
-        # Mock the current time
+        # Create pairs of newer and older log records
         initial_time = now()
-        mock_now.return_value = initial_time
-
-        # Create an older set of records
+        mock_current_time.return_value = initial_time
         self.create_dummy_records(timestamp=initial_time)
 
-        # Simulate the passage of time
         later_time = initial_time + timedelta(seconds=5)
-        mock_now.return_value = later_time
-
-        # Create a newer set of records
+        mock_current_time.return_value = later_time
         self.create_dummy_records(timestamp=later_time)
 
         # Ensure records exist
@@ -72,7 +70,8 @@ class ClearLogFilesMethod(TestCase):
         self.assertEqual(2, RequestLog.objects.count())
         self.assertEqual(2, AuditLog.objects.count())
 
-        # Run rotation
+        # Simulate the passage of time and run log rotation
+        mock_current_time.return_value = later_time
         clear_log_files()
 
         # Assert only the newer records remain
