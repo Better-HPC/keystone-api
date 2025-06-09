@@ -4,7 +4,8 @@ from datetime import date
 
 from rest_framework.test import APITestCase
 
-from .common import ListEndpointPermissionsTests
+from apps.research_products.models import Grant
+from .common import ListEndpointFilteringTests, ListEndpointPermissionsTests
 
 
 class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
@@ -25,3 +26,10 @@ class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
             'grant_number': 'abc-123',
             'team': self.team.pk
         }
+
+
+class RecordFiltering(ListEndpointFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user team membership."""
+
+    endpoint = '/research/grants/'
+    model = Grant

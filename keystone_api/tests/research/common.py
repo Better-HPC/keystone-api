@@ -1,15 +1,16 @@
 """Common tests for research endpoints."""
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Type
 
+from django.db.models import Model, QuerySet
 from rest_framework import status
 
 from apps.users.models import Team, User
 from tests.utils import CustomAsserts
 
 
-class ListEndpointPermissionsTests(ABC, CustomAsserts):
+class ListEndpointPermissionsTests(CustomAsserts):
     """Test user permissions for list endpoints.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
@@ -162,6 +163,61 @@ class ListEndpointPermissionsTests(ABC, CustomAsserts):
         )
 
 
+class ListEndpointFilteringTests:
+
+    # To be defined by subclass
+    model: Model
+    endpoint: str
+
+    # Test Fixtures
+    team: Team
+    team_member: User
+    staff_user: User
+    generic_user: User
+    team_records: QuerySet
+    all_records: QuerySet
+
+    fixtures = ['testing_common.yaml']
+
+    def setUp(self) -> None:
+        """Load records from test fixtures."""
+
+        self.team = Team.objects.get(name='Team 1')
+        self.team_records = self.model.objects.filter(team=self.team)
+        self.all_records = self.model.objects.all()
+
+        self.team_member = User.objects.get(username='member_1')
+        self.generic_user = User.objects.get(username='generic_user')
+        self.staff_user = User.objects.get(username='staff_user')
+
+    def test_user_returned_filtered_records(self) -> None:
+        """Verify users are only returned records for teams they belong to."""
+
+        self.client.force_login(self.team_member)
+        response = self.client.get(self.endpoint)
+
+        response_ids = {record['id'] for record in response.json()}
+        expected_ids = set(self.team_records.values_list('id', flat=True))
+        self.assertSetEqual(expected_ids, response_ids)
+
+    def test_staff_returned_all_records(self) -> None:
+        """Verify staff users are returned all records."""
+
+        self.client.force_login(self.staff_user)
+        response = self.client.get(self.endpoint)
+
+        response_ids = {record['id'] for record in response.json()}
+        expected_ids = set(self.all_records.values_list('id', flat=True))
+        self.assertSetEqual(expected_ids, response_ids)
+
+    def test_user_with_no_records(self) -> None:
+        """Verify user's not belonging to any teams are returned an empty list."""
+
+        self.client.force_login(self.generic_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(0, len(response.json()))
+
+
 class RecordEndpointPermissionsTests(CustomAsserts):
     """Test user permissions for per-record endpoints.
 
@@ -177,7 +233,7 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     """
 
     # To be defined by subclass
-    model: Type
+    model: Model
     endpoint_pattern: str
 
     # Test Fixtures

@@ -34,6 +34,11 @@ class ScopedListMixin:
     def list(self, request: Request) -> Response:
         """Return a list of serialized records filtered by user team permissions."""
 
-        teams = Team.objects.teams_for_user(request.user)
-        query = self.queryset.filter(**{self.team_field + '__in': teams})
+        if request.user.is_staff:
+            query = self.queryset
+
+        else:
+            teams = Team.objects.teams_for_user(request.user)
+            query = self.queryset.filter(**{self.team_field + '__in': teams})
+
         return Response(self.get_serializer(query, many=True).data)

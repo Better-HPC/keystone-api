@@ -4,7 +4,8 @@ import datetime
 
 from rest_framework.test import APITestCase
 
-from .common import ListEndpointPermissionsTests
+from apps.research_products.models import Publication
+from .common import ListEndpointFilteringTests, ListEndpointPermissionsTests
 
 
 class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
@@ -22,3 +23,10 @@ class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
             'date': datetime.date(1990, 1, 1),
             'team': self.team.pk
         }
+
+
+class RecordFiltering(ListEndpointFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user team membership."""
+
+    endpoint = '/research/publications/'
+    model = Publication
