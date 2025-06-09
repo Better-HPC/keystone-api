@@ -31,7 +31,7 @@ __all__ = [
 ]
 
 
-@extend_schema_view(
+@extend_schema_view(  # pragma: nocover
     get=extend_schema(
         responses=inline_serializer(
             name="AllocationRequestStatusChoices",
@@ -46,7 +46,7 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
 
 
-@extend_schema_view(
+@extend_schema_view(  # pragma: nocover
     get=extend_schema(
         responses=inline_serializer(
             name="AllocationReviewStatusChoices",
