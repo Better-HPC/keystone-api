@@ -37,7 +37,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.endpoint = self.endpoint_pattern.format(pk=self.comment.pk)
         self.record_data = {'content': 'foobar', 'request': self.request.pk}
 
-
         # Load (non)member accounts for the team
         self.staff_user = User.objects.get(username='staff_user')
         self.non_member = User.objects.get(username='generic_user')

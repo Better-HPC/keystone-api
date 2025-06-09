@@ -30,4 +30,3 @@ class RenderResponseMethod(TestCase):
         response = HealthCheckPrometheusView.render_response(health_checks)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(expected_response, response.content.decode())
-

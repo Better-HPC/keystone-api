@@ -1,7 +1,6 @@
 """Common tests for research endpoints."""
 
 from abc import abstractmethod
-from typing import Type
 
 from django.db.models import Model, QuerySet
 from rest_framework import status
