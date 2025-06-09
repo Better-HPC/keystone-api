@@ -131,15 +131,17 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
             '{name}{{critical_service="{critical_service}",message="{message}"}} {status:.1f}'
         )
 
-        status_data = [
-            prom_format.format(
-                name=plugin_name,
-                critical_service=plugin.critical_service,
-                message=plugin.pretty_status(),
-                status=200 if plugin.status else 500,
-                module=plugin.__class__.__module__ + plugin.__class__.__name__
-            ) for plugin_name, plugin in plugins.items()
-        ]
+        status_data = []
+        for plugin_name, plugin in plugins.items():
+            status_data.append(
+                prom_format.format(
+                    name=plugin_name,
+                    critical_service=plugin.critical_service,
+                    message=plugin.pretty_status(),
+                    status=200 if plugin.status else 500,
+                    module=plugin.__class__.__module__ + plugin.__class__.__name__
+                )
+            )
 
         return HttpResponse('\n\n'.join(status_data), status=200, content_type="text/plain")
 
