@@ -16,12 +16,16 @@ from django.utils import timezone
 def clear_log_files() -> None:
     """Delete request and application logs according to retention policies set in application settings."""
 
-    from .models import AppLog, RequestLog
+    from .models import AppLog, RequestLog, AuditLog
 
-    if settings.CONFIG_LOG_RETENTION > 0:
-        max_app_log_age = timezone.now() - timedelta(seconds=settings.CONFIG_LOG_RETENTION)
-        AppLog.objects.filter(time__lt=max_app_log_age).delete()
+    log_configs = [
+        (AppLog, settings.CONFIG_LOG_RETENTION),
+        (RequestLog, settings.CONFIG_REQUEST_RETENTION),
+        (AuditLog, settings.CONFIG_AUDIT_RETENTION),
+    ]
 
-    if settings.CONFIG_REQUEST_RETENTION > 0:
-        max_request_log_age = timezone.now() - timedelta(seconds=settings.CONFIG_REQUEST_RETENTION)
-        RequestLog.objects.filter(time__lt=max_request_log_age).delete()
+    now = timezone.now()
+    for model, retention in log_configs:
+        if retention > 0:
+            cutoff = now - timedelta(seconds=retention)
+            model.objects.filter(timestamp__lte=cutoff).delete()

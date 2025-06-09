@@ -353,8 +353,9 @@ TIME_ZONE = env.str('CONFIG_TIMEZONE', 'UTC')
 
 # Logging
 
-CONFIG_LOG_RETENTION = env.int('CONFIG_LOG_RETENTION', timedelta(days=14).total_seconds())
-CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=14).total_seconds())
+CONFIG_LOG_RETENTION = env.int('CONFIG_LOG_RETENTION', timedelta(days=30).total_seconds())
+CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
+CONFIG_AUDIT_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
 
 LOGGING = {
     "version": 1,
