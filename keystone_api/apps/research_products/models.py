@@ -12,7 +12,6 @@ from django.db import models
 from django.template.defaultfilters import truncatechars
 
 from apps.users.models import Team
-from .managers import *
 
 __all__ = ['Grant', 'Publication']
 
@@ -47,8 +46,6 @@ class Grant(models.Model):
     history = AuditlogHistoryField()
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-
-    objects = GrantManager()
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the grant title truncated to 100 characters."""
@@ -87,8 +84,6 @@ class Publication(models.Model):
     history = AuditlogHistoryField()
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-
-    objects = PublicationManager()
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the publication title truncated to 100 characters."""

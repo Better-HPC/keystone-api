@@ -6,16 +6,15 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import Model, QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status, viewsets
-from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.users.models import Team
+from apps.users.mixins import ScopedListMixin
+from .mixins import *
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -32,53 +31,6 @@ __all__ = [
 ]
 
 
-# --- Base Classes ---
-
-class ChoicesAPIView(GenericAPIView):
-    """Base class for views that return a dictionary of model field choices."""
-
-    _choices = {}  # Must be set in subclass
-
-    def get(self, request: Request, *args, **kwargs) -> Response:
-        """Return a dictionary mapping choice values to human-readable names."""
-
-        return Response(dict(self._choices), status=status.HTTP_200_OK)
-
-
-class ScopedModelViewSet(viewsets.ModelViewSet):
-
-    model = None  # Must be set in subclass
-
-    def get_queryset(self) -> QuerySet:
-        """Return a queryset filtered by the user's team affiliation and permissions."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return self.queryset.filter(**{f"{self.team_field}__in": teams})
-
-    def get_object(self) -> Model:
-        """Return the object and apply object-level permission checks.
-
-        Fetches database records regardless of user affiliation and relies on
-        object permissions to regulate per-record user access. This bypasses
-        any filters applied to the queryset, ensuring users without appropriate
-        permissions are returned a `403` error instead of a `404`.
-        """
-
-        try:
-            obj = self.model.objects.get(pk=self.kwargs["pk"])
-
-        except self.model.DoesNotExist:
-            raise NotFound(f"No {self.model.__name__} matches the given query.")
-
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-
-# --- Concrete Views ---
-
 @extend_schema_view(
     get=extend_schema(
         responses=inline_serializer(
@@ -87,10 +39,10 @@ class ScopedModelViewSet(viewsets.ModelViewSet):
         )
     )
 )
-class AllocationRequestStatusChoicesView(ChoicesAPIView):
+class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     """Exposes valid values for the allocation request `status` field."""
 
-    _choices = dict(AllocationRequest.StatusChoices.choices)
+    response_content = dict(AllocationRequest.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
 
 
@@ -102,14 +54,14 @@ class AllocationRequestStatusChoicesView(ChoicesAPIView):
         )
     )
 )
-class AllocationReviewStatusChoicesView(ChoicesAPIView):
+class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
     """Exposes valid values for the allocation review `status` field."""
 
-    _choices = dict(AllocationReview.StatusChoices.choices)
+    response_content = dict(AllocationReview.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
 
 
-class AllocationRequestViewSet(ScopedModelViewSet):
+class AllocationRequestViewSet(ScopedListMixin, viewsets.ModelViewSet):
     """Manage allocation requests."""
 
     model = AllocationRequest
@@ -120,7 +72,7 @@ class AllocationRequestViewSet(ScopedModelViewSet):
     search_fields = ['title', 'description', 'team__name']
 
 
-class AllocationReviewViewSet(ScopedModelViewSet):
+class AllocationReviewViewSet(ScopedListMixin, viewsets.ModelViewSet):
     """Manage administrator reviews of allocation requests."""
 
     model = AllocationReview
@@ -144,7 +96,7 @@ class AllocationReviewViewSet(ScopedModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class AllocationViewSet(ScopedModelViewSet):
+class AllocationViewSet(ScopedListMixin, viewsets.ModelViewSet):
     """Manage HPC resource allocations."""
 
     model = Allocation
@@ -155,7 +107,7 @@ class AllocationViewSet(ScopedModelViewSet):
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
 
 
-class AttachmentViewSet(ScopedModelViewSet):
+class AttachmentViewSet(ScopedListMixin, viewsets.ModelViewSet):
     """Files submitted as attachments to allocation requests"""
 
     model = Attachment
@@ -175,7 +127,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
 
 
-class CommentViewSet(ScopedModelViewSet):
+class CommentViewSet(ScopedListMixin, viewsets.ModelViewSet):
     """Comments on allocation requests."""
 
     model = Comment
