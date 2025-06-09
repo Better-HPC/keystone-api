@@ -50,10 +50,8 @@ class ClearLogFilesMethod(TestCase):
         )
 
     @override_settings(CONFIG_LOG_RETENTION=4)
-    @override_settings(CONFIG_REQUEST_RETENTION=4)
-    @override_settings(CONFIG_AUDIT_RETENTION=4)
     @patch('django.utils.timezone.now')
-    def test_log_files_deleted(self, mock_current_time: Mock) -> None:
+    def test_app_log_rotation(self, mock_current_time: Mock) -> None:
         """Verify expired log files are deleted."""
 
         # Create pairs of newer and older log records
@@ -74,9 +72,65 @@ class ClearLogFilesMethod(TestCase):
         mock_current_time.return_value = later_time
         clear_log_files()
 
-        # Assert only the newer records remain
+        # Verify only the newer records remain
         self.assertEqual(1, AppLog.objects.count())
+        self.assertEqual(2, RequestLog.objects.count())
+        self.assertEqual(2, AuditLog.objects.count())
+
+    @override_settings(CONFIG_REQUEST_RETENTION=4)
+    @patch('django.utils.timezone.now')
+    def test_request_log_rotation(self, mock_current_time: Mock) -> None:
+        """Verify expired log files are deleted."""
+
+        # Create pairs of newer and older log records
+        initial_time = now()
+        mock_current_time.return_value = initial_time
+        self.create_dummy_records(timestamp=initial_time)
+
+        later_time = initial_time + timedelta(seconds=5)
+        mock_current_time.return_value = later_time
+        self.create_dummy_records(timestamp=later_time)
+
+        # Ensure records exist
+        self.assertEqual(2, AppLog.objects.count())
+        self.assertEqual(2, RequestLog.objects.count())
+        self.assertEqual(2, AuditLog.objects.count())
+
+        # Simulate the passage of time and run log rotation
+        mock_current_time.return_value = later_time
+        clear_log_files()
+
+        # Verify only the newer records remain
+        self.assertEqual(2, AppLog.objects.count())
         self.assertEqual(1, RequestLog.objects.count())
+        self.assertEqual(2, AuditLog.objects.count())
+
+    @override_settings(CONFIG_AUDIT_RETENTION=4)
+    @patch('django.utils.timezone.now')
+    def test_audit_log_rotation(self, mock_current_time: Mock) -> None:
+        """Verify expired log files are deleted."""
+
+        # Create pairs of newer and older log records
+        initial_time = now()
+        mock_current_time.return_value = initial_time
+        self.create_dummy_records(timestamp=initial_time)
+
+        later_time = initial_time + timedelta(seconds=5)
+        mock_current_time.return_value = later_time
+        self.create_dummy_records(timestamp=later_time)
+
+        # Ensure records exist
+        self.assertEqual(2, AppLog.objects.count())
+        self.assertEqual(2, RequestLog.objects.count())
+        self.assertEqual(2, AuditLog.objects.count())
+
+        # Simulate the passage of time and run log rotation
+        mock_current_time.return_value = later_time
+        clear_log_files()
+
+        # Verify only the newer records remain
+        self.assertEqual(2, AppLog.objects.count())
+        self.assertEqual(2, RequestLog.objects.count())
         self.assertEqual(1, AuditLog.objects.count())
 
     @override_settings(CONFIG_LOG_RETENTION=0)
