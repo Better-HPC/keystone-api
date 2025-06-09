@@ -25,11 +25,6 @@ class NotificationOwnerReadOnly(BasePermission):
         - Grants read access to users accessing their own notifications.
     """
 
-    def has_permission(self, request: Request, view: View) -> bool:
-        """Allow access only for safe HTTP methods (GET, HEAD, OPTIONS)."""
-
-        return request.method in SAFE_METHODS
-
     def has_object_permission(self, request, view, obj: Notification) -> bool:
         """Allow access only if the notification belongs to the requesting user."""
 
