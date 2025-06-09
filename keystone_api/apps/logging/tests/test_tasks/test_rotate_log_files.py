@@ -17,7 +17,14 @@ class ClearLogFilesMethod(TestCase):
 
     now = datetime(2025, 1, 1, tzinfo=timezone.utc)
 
-    def assert_log_counts(self, *, app=None, request=None, audit=None) -> None:
+    def assert_log_counts(self, *, app: int = None, request: int = None, audit: int = None) -> None:
+        """Assert the given number of log records exist.
+
+        Args:
+            app: The number of expected application logs.
+            request: The number of expected request logs.
+            audit: The number of expected audit logs.
+        """
 
         if app is not None:
             self.assertEqual(app, AppLog.objects.count())
@@ -29,6 +36,14 @@ class ClearLogFilesMethod(TestCase):
             self.assertEqual(audit, AuditLog.objects.count())
 
     def create_dummy_records(self, mock_now: Mock, *timestamps: datetime) -> None:
+        """Create a series of log records at the given timestamps.
+
+        Creates an application, request, and audit log record for each of the given timestamps.
+
+        Args:
+            mock_now: Mocked function used to return the current datetime.
+            timestamps: The timestamps to create log records for.
+        """
 
         log_count = len(timestamps)
         content_type = ContentType.objects.get_for_model(RequestLog)
@@ -68,6 +83,7 @@ class ClearLogFilesMethod(TestCase):
     @override_settings(CONFIG_REQUEST_RETENTION=0)
     @override_settings(CONFIG_AUDIT_RETENTION=0)
     def test_app_log_rotation(self, mock_now: Mock) -> None:
+        """Verify the `CONFIG_AUDIT_RETENTION` setting enables app log rotation."""
 
         later_time = self.now + timedelta(seconds=settings.CONFIG_LOG_RETENTION)
         self.create_dummy_records(mock_now, self.now, later_time)
@@ -82,6 +98,7 @@ class ClearLogFilesMethod(TestCase):
     @override_settings(CONFIG_REQUEST_RETENTION=4)
     @override_settings(CONFIG_AUDIT_RETENTION=0)
     def test_request_log_rotation(self, mock_now: Mock) -> None:
+        """Verify the `CONFIG_AUDIT_RETENTION` setting enables request log rotation."""
 
         later_time = self.now + timedelta(seconds=settings.CONFIG_REQUEST_RETENTION)
         self.create_dummy_records(mock_now, self.now, later_time)
@@ -96,6 +113,7 @@ class ClearLogFilesMethod(TestCase):
     @override_settings(CONFIG_REQUEST_RETENTION=0)
     @override_settings(CONFIG_AUDIT_RETENTION=4)
     def test_audit_log_rotation(self, mock_now: Mock) -> None:
+        """Verify the `CONFIG_AUDIT_RETENTION` setting enables audit log rotation."""
 
         later_time = self.now + timedelta(seconds=settings.CONFIG_AUDIT_RETENTION)
         self.create_dummy_records(mock_now, self.now, later_time)
