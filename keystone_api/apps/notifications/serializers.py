@@ -40,6 +40,7 @@ class PreferenceSerializer(serializers.ModelSerializer):
 
         model = Preference
         fields = '__all__'
+        extra_kwargs = {'user': {'required': False}}  # Default value set by the view class
 
     def validate_user(self, value: User) -> User:
         """Validate the reviewer matches the user submitting the request."""

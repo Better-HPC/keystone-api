@@ -53,28 +53,55 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_same_user(self) -> None:
         """Verify authenticated users can access and modify their own records."""
 
-        # Define a user / record endpoint from the SAME user
+        # Define a user / record endpoint for the SAME user
         endpoint = self.endpoint_pattern.format(pk=self.user1_preference.id)
         self.client.force_authenticate(user=self.user1)
 
-        # Todo
-        self.fail()
+        self.assert_http_responses(
+            endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def test_authenticated_user_different_user(self) -> None:
         """Verify users cannot modify other users' records."""
 
-        # Define a user / record endpoint from a DIFFERENT user
+        # Define a user / record endpoint for DIFFERENT users
         endpoint = self.endpoint_pattern.format(pk=self.user1_preference.id)
         self.client.force_authenticate(user=self.user2)
 
-        # Todo
-        self.fail()
+        self.assert_http_responses(
+            endpoint,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def test_staff_user_permissions(self) -> None:
-        """Verify staff users cannot modify other users' records."""
+        """Verify staff users can modify other users' records."""
 
         endpoint = self.endpoint_pattern.format(pk=self.user1_preference.id)
         self.client.force_authenticate(user=self.staff_user)
 
-        # Todo
-        self.fail()
+        self.assert_http_responses(
+            endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )

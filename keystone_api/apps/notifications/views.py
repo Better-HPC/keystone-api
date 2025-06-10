@@ -6,8 +6,10 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from .mixins import *
 from .models import *
@@ -36,3 +38,9 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     serializer_class = PreferenceSerializer
     search_fields = ['user__username']
     permission_classes = [IsAuthenticated, PreferenceOwnerWrite]
+
+    def create(self, request: Request, *args, **kwargs) -> Response:
+        """Create a new `Preference` object."""
+
+        request.data.setdefault('reviewer', request.user.pk)
+        return super().create(request, *args, **kwargs)
