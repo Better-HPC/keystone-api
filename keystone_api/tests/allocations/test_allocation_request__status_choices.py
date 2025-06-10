@@ -3,8 +3,12 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.models import AllocationRequest
 from apps.users.models import User
 from tests.utils import CustomAsserts
+from .common import GetResponseContentTests
+
+ENDPOINT = '/allocations/allocation-request/status-choices/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -18,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/allocation-request/status-choices/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -73,3 +77,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+
+class ResponseContent(GetResponseContentTests, APITestCase):
+    """Test the endpoint returns valid Allocation Request status codes."""
+
+    endpoint = ENDPOINT
+    expected_content = dict(AllocationRequest.StatusChoices.choices)

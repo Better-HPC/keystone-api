@@ -4,8 +4,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.models import Attachment
 from apps.users.models import User
-from tests.utils import CustomAsserts
+from tests.utils import CustomAsserts, ListEndpointFilteringTests
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -78,3 +79,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={'file': test_file, 'request': 1}
         )
+
+
+class RecordFiltering(ListEndpointFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user team membership."""
+
+    endpoint = '/allocations/attachments/'
+    model = Attachment
+    team_field = 'request__team'

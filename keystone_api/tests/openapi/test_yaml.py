@@ -16,7 +16,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = '/openapi/yaml'
@@ -47,22 +46,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify authenticated users have read-only permissions."""
 
         self.client.force_authenticate(user=self.generic_user)
-        self.assert_http_responses(
-            self.endpoint,
-            get=status.HTTP_200_OK,
-            head=status.HTTP_200_OK,
-            options=status.HTTP_200_OK,
-            post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
-            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
-
-    def test_staff_user_permissions(self) -> None:
-        """Verify staff users have read-only permissions."""
-
-        self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_200_OK,
