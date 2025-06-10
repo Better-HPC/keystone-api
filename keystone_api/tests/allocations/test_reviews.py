@@ -125,3 +125,4 @@ class RecordFiltering(ListEndpointFilteringTests, APITestCase):
 
     endpoint = '/allocations/reviews/'
     model = AllocationReview
+    team_field = 'request__team'

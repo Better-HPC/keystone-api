@@ -86,3 +86,4 @@ class RecordFiltering(ListEndpointFilteringTests, APITestCase):
 
     endpoint = '/allocations/attachments/'
     model = Attachment
+    team_field = 'request__team'

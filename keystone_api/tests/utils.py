@@ -74,6 +74,7 @@ class ListEndpointFilteringTests:
     # Defined by subclasses
     model: Model
     endpoint: str
+    team_field = 'team'
 
     # Test Fixtures
     team: Team
@@ -89,7 +90,7 @@ class ListEndpointFilteringTests:
         """Load records from test fixtures."""
 
         self.team = Team.objects.get(name='Team 1')
-        self.team_records = self.model.objects.filter(team=self.team)
+        self.team_records = self.model.objects.filter(**{self.team_field: self.team})
         self.all_records = self.model.objects.all()
 
         self.team_member = User.objects.get(username='member_1')

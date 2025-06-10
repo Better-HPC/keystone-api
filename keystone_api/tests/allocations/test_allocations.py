@@ -77,8 +77,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             post_body={'requested': 1000, 'cluster': 1, 'request': 1}
         )
 
+
 class RecordFiltering(ListEndpointFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/allocations/'
     model = Allocation
+    team_field = 'request__team'

@@ -149,3 +149,4 @@ class RecordFiltering(ListEndpointFilteringTests, APITestCase):
 
     endpoint = '/allocations/comments/'
     model = Comment
+    team_field = 'request__team'
