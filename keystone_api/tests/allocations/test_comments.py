@@ -3,9 +3,9 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import AllocationRequest
+from apps.allocations.models import AllocationRequest, Comment
 from apps.users.models import Team, User
-from tests.utils import CustomAsserts
+from tests.utils import CustomAsserts, ListEndpointFilteringTests
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -142,3 +142,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body=self.valid_record_data
         )
+
+
+class RecordFiltering(ListEndpointFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user team membership."""
+
+    endpoint = '/allocations/comments/'
+    model = Comment

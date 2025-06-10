@@ -5,7 +5,8 @@ import datetime
 from rest_framework.test import APITestCase
 
 from apps.research_products.models import Publication
-from .common import ListEndpointFilteringTests, ListEndpointPermissionsTests
+from tests.utils import ListEndpointFilteringTests
+from .common import ListEndpointPermissionsTests
 
 
 class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
