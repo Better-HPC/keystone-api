@@ -46,6 +46,7 @@ class AllocationSerializer(serializers.ModelSerializer):
 class AllocationRequestSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationRequest` class."""
 
+    _submitter = UserSummarySerializer(source='submitter', read_only=True)
     _team = TeamSummarySerializer(source='team', read_only=True)
     _assignees = UserSummarySerializer(source='assignees', many=True, read_only=True)
     _publications = PublicationSerializer(source='publications', many=True, read_only=True)
@@ -85,10 +86,10 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
 class AttachmentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Attachment` class."""
 
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
     file = serializers.FileField(use_url=False)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     name = serializers.CharField(required=False)
+    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -135,13 +136,13 @@ class ClusterSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     """Object serializer for the `Comment` class."""
 
-    _user = UserSummarySerializer(source='user', read_only=True)
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()
     )
+    _user = UserSummarySerializer(source='user', read_only=True)
+    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
