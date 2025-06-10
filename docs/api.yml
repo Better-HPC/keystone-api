@@ -6293,6 +6293,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _submitter:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' submitter'
         _team:
           allOf:
           - $ref: '#/components/schemas/TeamSummary'
@@ -6364,6 +6369,7 @@ components:
       - _grants
       - _history
       - _publications
+      - _submitter
       - _team
       - description
       - id
@@ -6507,21 +6513,21 @@ components:
         id:
           type: integer
           readOnly: true
+        file:
+          type: string
+        name:
+          type: string
         _request:
           allOf:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
-        file:
-          type: string
         _history:
           type: array
           items:
             $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
-        name:
-          type: string
         uploaded:
           type: string
           format: date-time
@@ -6660,6 +6666,8 @@ components:
         id:
           type: integer
           readOnly: true
+        user:
+          type: integer
         _user:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
@@ -6676,8 +6684,6 @@ components:
             $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
-        user:
-          type: integer
         content:
           type: string
           maxLength: 2000
@@ -6865,6 +6871,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _submitter:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' submitter'
         _team:
           allOf:
           - $ref: '#/components/schemas/TeamSummary'
@@ -6972,21 +6983,21 @@ components:
         id:
           type: integer
           readOnly: true
+        file:
+          type: string
+        name:
+          type: string
         _request:
           allOf:
           - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
           title: ' request'
-        file:
-          type: string
         _history:
           type: array
           items:
             $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
-        name:
-          type: string
         uploaded:
           type: string
           format: date-time
@@ -7022,6 +7033,8 @@ components:
         id:
           type: integer
           readOnly: true
+        user:
+          type: integer
         _user:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
@@ -7038,8 +7051,6 @@ components:
             $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
-        user:
-          type: integer
         content:
           type: string
           maxLength: 2000
