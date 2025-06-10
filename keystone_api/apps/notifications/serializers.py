@@ -8,6 +8,7 @@ creation.
 
 from rest_framework import serializers
 
+from apps.users.models import User
 from apps.users.nested import UserSummarySerializer
 from .models import *
 
@@ -20,7 +21,7 @@ __all__ = [
 class NotificationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Notification` class."""
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField()
     _user = UserSummarySerializer(read_only=True)
 
     class Meta:
@@ -33,7 +34,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 class PreferenceSerializer(serializers.ModelSerializer):
     """Object serializer for the `Preference` class."""
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = serializers.PrimaryKeyRelatedField()
     _user = UserSummarySerializer(read_only=True)
 
     class Meta:
@@ -41,3 +42,12 @@ class PreferenceSerializer(serializers.ModelSerializer):
 
         model = Preference
         fields = '__all__'
+
+    def validate_user(self, value: User) -> User:
+        """Validate the reviewer matches the user submitting the request."""
+
+        request_submitter = self.context['request'].user
+        if not (request_submitter.is_staff or value == request_submitter):
+            raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
+
+        return value
