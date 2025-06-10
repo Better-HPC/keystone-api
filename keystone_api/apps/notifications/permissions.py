@@ -25,10 +25,12 @@ class NotificationOwnerReadOnly(BasePermission):
         - Grants read access to users accessing their own notifications.
     """
 
+    _allowed_methods = SAFE_METHODS + ('PATCH',)
+
     def has_object_permission(self, request, view, obj: Notification) -> bool:
         """Allow access only if the notification belongs to the requesting user."""
 
-        if request.method in SAFE_METHODS:
+        if request.method in self._allowed_methods:
             return obj.user == request.user
 
         return False

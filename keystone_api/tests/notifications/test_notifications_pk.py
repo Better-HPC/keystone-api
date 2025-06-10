@@ -16,7 +16,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                               | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |-------------------------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User                      | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User Accessing Own Data     | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authenticated User Accessing Own Data     | 200 | 200  | 200     | 405  | 405 | 200   | 405    | 405   |
     | Authenticated User Accessing Other's Data | 403 | 403  | 200     | 405  | 405 | 405   | 405    | 405   |
     | Staff User Accessing Other's Data         | 403 | 403  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
@@ -64,7 +64,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_200_OK,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
@@ -83,7 +83,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
@@ -101,7 +101,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             options=status.HTTP_200_OK,
             post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )

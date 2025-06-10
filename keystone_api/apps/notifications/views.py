@@ -22,13 +22,14 @@ __all__ = [
 ]
 
 
-class NotificationViewSet(UserScopedListMixin, viewsets.ReadOnlyModelViewSet):
+class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """Returns user notifications."""
 
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
     search_fields = ['message', 'user__username']
     permission_classes = [IsAuthenticated, NotificationOwnerReadOnly]
+    http_method_names = ['get', 'head', 'options', 'patch']
 
 
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
