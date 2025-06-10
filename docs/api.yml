@@ -3645,6 +3645,77 @@ paths:
         schema:
           type: number
       - in: query
+        name: date_started
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__day
+        schema:
+          type: number
+      - in: query
+        name: date_started__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__hour
+        schema:
+          type: number
+      - in: query
+        name: date_started__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: date_started__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: date_started__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__minute
+        schema:
+          type: number
+      - in: query
+        name: date_started__month
+        schema:
+          type: number
+      - in: query
+        name: date_started__second
+        schema:
+          type: number
+      - in: query
+        name: date_started__week
+        schema:
+          type: number
+      - in: query
+        name: date_started__week_day
+        schema:
+          type: number
+      - in: query
+        name: date_started__year
+        schema:
+          type: number
+      - in: query
         name: id
         schema:
           type: integer
@@ -3768,25 +3839,6 @@ paths:
         name: status
         schema:
           type: string
-          title: Task State
-          enum:
-          - FAILURE
-          - PENDING
-          - RECEIVED
-          - RETRY
-          - REVOKED
-          - STARTED
-          - SUCCESS
-        description: |-
-          Current state of the task being run
-
-          * `FAILURE` - FAILURE
-          * `PENDING` - PENDING
-          * `RECEIVED` - RECEIVED
-          * `RETRY` - RETRY
-          * `REVOKED` - REVOKED
-          * `STARTED` - STARTED
-          * `SUCCESS` - SUCCESS
       - in: query
         name: status__contains
         schema:
@@ -7517,19 +7569,10 @@ components:
           title: Task Named Arguments
           description: JSON representation of the named arguments used with the task
         status:
-          allOf:
-          - $ref: '#/components/schemas/TaskResultStatusEnum'
+          type: string
           title: Task State
-          description: |-
-            Current state of the task being run
-
-            * `FAILURE` - FAILURE
-            * `PENDING` - PENDING
-            * `RECEIVED` - RECEIVED
-            * `RETRY` - RETRY
-            * `REVOKED` - REVOKED
-            * `STARTED` - STARTED
-            * `SUCCESS` - SUCCESS
+          description: Current state of the task being run
+          maxLength: 50
         worker:
           type: string
           nullable: true
@@ -7558,6 +7601,12 @@ components:
           readOnly: true
           title: Created DateTime
           description: Datetime field when the task result was created in UTC
+        date_started:
+          type: string
+          format: date-time
+          nullable: true
+          title: Started DateTime
+          description: Datetime field when the task was started in UTC
         date_done:
           type: string
           format: date-time
@@ -7584,24 +7633,6 @@ components:
       - meta
       - result
       - task_id
-    TaskResultStatusEnum:
-      enum:
-      - FAILURE
-      - PENDING
-      - RECEIVED
-      - RETRY
-      - REVOKED
-      - STARTED
-      - SUCCESS
-      type: string
-      description: |-
-        * `FAILURE` - FAILURE
-        * `PENDING` - PENDING
-        * `RECEIVED` - RECEIVED
-        * `RETRY` - RETRY
-        * `REVOKED` - REVOKED
-        * `STARTED` - STARTED
-        * `SUCCESS` - SUCCESS
     Team:
       type: object
       description: Object serializer for the `Team` model.
