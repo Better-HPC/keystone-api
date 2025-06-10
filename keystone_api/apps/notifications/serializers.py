@@ -8,6 +8,7 @@ creation.
 
 from rest_framework import serializers
 
+from apps.users.nested import UserSummarySerializer
 from .models import *
 
 __all__ = [
@@ -19,6 +20,9 @@ __all__ = [
 class NotificationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Notification` class."""
 
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    _user = UserSummarySerializer(read_only=True)
+
     class Meta:
         """Serializer settings."""
 
@@ -28,6 +32,9 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 class PreferenceSerializer(serializers.ModelSerializer):
     """Object serializer for the `Preference` class."""
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    _user = UserSummarySerializer(read_only=True)
 
     class Meta:
         """Serializer settings."""
