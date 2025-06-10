@@ -3,8 +3,9 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.models import AllocationReview
 from apps.users.models import User
-from tests.utils import CustomAsserts
+from tests.utils import CustomAsserts, ListEndpointFilteringTests
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -117,3 +118,11 @@ class ReviewerAssignment(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('reviewer', response.data)
         self.assertEqual('reviewer cannot be set to a different user than the submitter', response.data['reviewer'][0].lower())
+
+
+class RecordFiltering(ListEndpointFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user team membership."""
+
+    endpoint = '/allocations/reviews/'
+    model = AllocationReview
+    team_field = 'request__team'

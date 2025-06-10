@@ -39,7 +39,7 @@ paths:
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Manage HPC resource allocations.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false
@@ -371,7 +371,7 @@ paths:
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Files submitted as attachments to allocation requests
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false
@@ -961,7 +961,7 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Comments on allocation requests.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false
@@ -1311,7 +1311,7 @@ paths:
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Manage allocation requests.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false
@@ -1818,7 +1818,7 @@ paths:
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Manage administrator reviews of allocation requests.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false
@@ -4026,7 +4026,7 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Track funding awards and grant information.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false
@@ -4513,7 +4513,7 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Manage metadata for research publications.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
       - name: _order
         required: false

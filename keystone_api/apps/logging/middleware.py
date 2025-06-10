@@ -8,6 +8,7 @@ an outgoing client response.
 import uuid
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.http import HttpRequest
 
 from .models import RequestLog
@@ -49,7 +50,7 @@ class LogRequestMiddleware:
         try:
             request_log.save()
 
-        except Exception:
+        except (IntegrityError, Exception):  # pragma: no cover
             pass
 
         return response

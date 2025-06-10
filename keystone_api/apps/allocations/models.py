@@ -263,7 +263,7 @@ class Comment(models.Model):
 
         return self.request.team
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # pragma: nocover
         """Return a string representation of the comment."""
 
         return f'Comment by {self.user} made on request "{self.request.title[:50]}"'

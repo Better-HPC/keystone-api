@@ -1,15 +1,15 @@
 """Common tests for research endpoints."""
 
-from abc import ABC, abstractmethod
-from typing import Type
+from abc import abstractmethod
 
+from django.db.models import Model
 from rest_framework import status
 
 from apps.users.models import Team, User
 from tests.utils import CustomAsserts
 
 
-class ListEndpointPermissionsTests(ABC, CustomAsserts):
+class ListEndpointPermissionsTests(CustomAsserts):
     """Test user permissions for list endpoints.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
@@ -25,7 +25,8 @@ class ListEndpointPermissionsTests(ABC, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint: str = None  # To be defined by subclass
+    # Defined by subclasses
+    endpoint: str = None
 
     # Test Fixtures
     team: Team
@@ -176,8 +177,8 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    # To be defined by subclass
-    model: Type
+    # Defined by subclasses
+    model: Model
     endpoint_pattern: str
 
     # Test Fixtures
