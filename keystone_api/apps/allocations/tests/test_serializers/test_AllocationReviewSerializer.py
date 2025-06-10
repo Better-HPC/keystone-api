@@ -9,8 +9,8 @@ from apps.allocations.serializers import AllocationReviewSerializer
 from apps.users.models import Team, User
 
 
-class ValidationMethod(TestCase):
-    """Test record validation."""
+class ValidateReviewerMethod(TestCase):
+    """Test validation of the `reviewer` field."""
 
     def setUp(self) -> None:
         """Create dummy user accounts and test data."""

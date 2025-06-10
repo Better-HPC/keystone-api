@@ -14,10 +14,10 @@ from rest_framework.serializers import Serializer
 
 from .models import Team
 
-__all__ = ['ScopedListMixin']
+__all__ = ['TeamScopedListMixin']
 
 
-class ScopedListMixin:
+class TeamScopedListMixin:
     """Adds team-based filtering to list views based on user access.
 
     Extends Model Viewset classes by filtering list response data

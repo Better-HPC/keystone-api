@@ -8,9 +8,8 @@ URLs to business logic.
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.request import Request
-from rest_framework.response import Response
 
+from .mixins import *
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -21,18 +20,7 @@ __all__ = [
 ]
 
 
-class UserFilteredReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    """Base viewset to return user-specific data from a queryset.
-
-    Subclasses must define `queryset`, `serializer_class`, and `permission_classes`.
-    """
-
-    def list(self, request: Request, *args, **kwargs) -> Response:
-        query = self.queryset.filter(user=request.user)
-        return Response(self.get_serializer(query, many=True).data)
-
-
-class NotificationViewSet(UserFilteredReadOnlyViewSet):
+class NotificationViewSet(UserScopedListMixin, viewsets.ReadOnlyModelViewSet):
     """Returns user notifications."""
 
     queryset = Notification.objects.all()
@@ -41,7 +29,7 @@ class NotificationViewSet(UserFilteredReadOnlyViewSet):
     permission_classes = [IsAuthenticated, NotificationOwnerReadOnly]
 
 
-class PreferenceViewSet(UserFilteredReadOnlyViewSet):
+class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """Returns user notification preferences."""
 
     queryset = Preference.objects.all()

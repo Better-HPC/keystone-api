@@ -39,19 +39,19 @@ class PreferenceOwnerWrite(BasePermission):
 
     Permissions:
         - Grants full permissions to users accessing their own preferences.
+        - Grants full permissions to staff users accessing any user's preferences.
     """
 
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        if request.user.is_staff or request.method in SAFE_METHODS:
-            return True
+        # Only staff can create new records
+        if getattr(view, 'action', None) == 'create' or request.method in SAFE_METHODS:
+            return request.user.is_staff or request.method in SAFE_METHODS
 
-        # Users are only allowed to write to their own records
-        user_id = request.data.get('user', None)
-        return request.user.id == user_id
+        return True
 
     def has_object_permission(self, request: Request, view: View, obj: Preference) -> bool:
         """Allow access only if the preference belongs to the requesting user."""
 
-        return obj.user == request.user
+        return request.user.is_staff or obj.user == request.user

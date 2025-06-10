@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.users.mixins import ScopedListMixin
+from apps.users.mixins import TeamScopedListMixin
 from .mixins import *
 from .models import *
 from .permissions import *
@@ -61,7 +61,7 @@ class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class AllocationRequestViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Manage allocation requests."""
 
     model = AllocationRequest
@@ -72,7 +72,7 @@ class AllocationRequestViewSet(ScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'team__name']
 
 
-class AllocationReviewViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Manage administrator reviews of allocation requests."""
 
     model = AllocationReview
@@ -96,7 +96,7 @@ class AllocationReviewViewSet(ScopedListMixin, viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class AllocationViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Manage HPC resource allocations."""
 
     model = Allocation
@@ -107,7 +107,7 @@ class AllocationViewSet(ScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
 
 
-class AttachmentViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Files submitted as attachments to allocation requests"""
 
     model = Attachment
@@ -127,7 +127,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
 
 
-class CommentViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Comments on allocation requests."""
 
     model = Comment
