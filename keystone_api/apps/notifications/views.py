@@ -6,9 +6,10 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import QuerySet
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from .models import *
 from .permissions import *
@@ -20,7 +21,18 @@ __all__ = [
 ]
 
 
-class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+class UserFilteredReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """Base viewset to return user-specific data from a queryset.
+
+    Subclasses must define `queryset`, `serializer_class`, and `permission_classes`.
+    """
+
+    def list(self, request: Request, *args, **kwargs) -> Response:
+        query = self.queryset.filter(user=request.user)
+        return Response(self.get_serializer(query, many=True).data)
+
+
+class NotificationViewSet(UserFilteredReadOnlyViewSet):
     """Returns user notifications."""
 
     queryset = Notification.objects.all()
@@ -28,20 +40,10 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ['message']
     permission_classes = [IsAuthenticated, NotificationOwnerReadOnly]
 
-    def get_queryset(self) -> QuerySet:
-        """Return a queryset of notifications for the requesting user."""
 
-        return self.queryset.filter(user=self.request.user)
-
-
-class PreferenceViewSet(viewsets.ReadOnlyModelViewSet):
+class PreferenceViewSet(UserFilteredReadOnlyViewSet):
     """Returns user notification preferences."""
 
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
     permission_classes = [IsAuthenticated, PreferenceOwnerWrite]
-
-    def get_queryset(self) -> QuerySet:
-        """Return a queryset of notifications for the requesting user."""
-
-        return self.queryset.filter(user=self.request.user)
