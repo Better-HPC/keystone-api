@@ -25,7 +25,8 @@ class ListEndpointPermissionsTests(CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint: str = None  # To be defined by subclass
+    # Defined by subclasses
+    endpoint: str = None
 
     # Test Fixtures
     team: Team
@@ -163,8 +164,9 @@ class ListEndpointPermissionsTests(CustomAsserts):
 
 
 class ListEndpointFilteringTests:
+    """Test the filtering of returned records based on user team membership."""
 
-    # To be defined by subclass
+    # Defined by subclasses
     model: Model
     endpoint: str
 
@@ -231,7 +233,7 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    # To be defined by subclass
+    # Defined by subclasses
     model: Model
     endpoint_pattern: str
 

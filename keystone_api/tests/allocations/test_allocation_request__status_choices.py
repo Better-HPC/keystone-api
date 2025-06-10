@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 from apps.allocations.models import AllocationRequest
 from apps.users.models import User
 from tests.utils import CustomAsserts
+from .common import GetResponseContentTests
 
 ENDPOINT = '/allocations/allocation-request/status-choices/'
 
@@ -78,18 +79,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class ReturnedValues(APITestCase):
+class ResponseContent(GetResponseContentTests, APITestCase):
     """Test the endpoint returns valid Allocation Request status codes."""
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
-
-    def test_return_matches_model(self) -> None:
-        """Verify returned values match Allocation Request status codes."""
-
-        self.generic_user = User.objects.get(username='generic_user')
-        self.client.force_authenticate(user=self.generic_user)
-
-        response = self.client.get(self.endpoint)
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(dict(AllocationRequest.StatusChoices.choices), response.json())
+    expected_content = dict(AllocationRequest.StatusChoices.choices)
