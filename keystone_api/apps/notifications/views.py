@@ -25,7 +25,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ReadOnlyModelViewSet):
 
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    search_fields = ['message']
+    search_fields = ['message', 'user__username']
     permission_classes = [IsAuthenticated, NotificationOwnerReadOnly]
 
 
@@ -34,4 +34,5 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
+    search_fields = ['user__username']
     permission_classes = [IsAuthenticated, PreferenceOwnerWrite]
