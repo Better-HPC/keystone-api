@@ -20,7 +20,7 @@ class CreateMethod(TestCase):
         self.allocation_request = AllocationRequest.objects.get(pk=1)
 
     @staticmethod
-    def create_viewset_with_post(data: dict, user: User) -> AllocationReviewViewSet:
+    def _create_viewset_with_post(data: dict, user: User) -> AllocationReviewViewSet:
         """Create a new viewset instance with a mock POST request."""
 
         request = RequestFactory().post('/dummy-endpoint/')
@@ -32,11 +32,11 @@ class CreateMethod(TestCase):
         viewset.format_kwarg = None
         return viewset
 
-    def test_create_with_automatic_reviewer(self) -> None:
+    def test_reviewer_field_is_missing(self) -> None:
         """Verify the reviewer field is automatically set to the current user."""
 
         data = {'request': self.allocation_request.id, 'status': 'AP'}
-        viewset = self.create_viewset_with_post(data, self.staff_user)
+        viewset = self._create_viewset_with_post(data, self.staff_user)
         response = viewset.create(viewset.request)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -47,11 +47,11 @@ class CreateMethod(TestCase):
         self.assertEqual(review.request, self.allocation_request)
         self.assertEqual(review.status, 'AP')
 
-    def test_create_with_provided_reviewer(self) -> None:
+    def test_reviewer_field_is_provided(self) -> None:
         """Verify the reviewer field in the request data is respected if provided."""
 
         data = {'request': self.allocation_request.id, 'reviewer': self.staff_user.id, 'status': 'AP'}
-        viewset = self.create_viewset_with_post(data, self.staff_user)
+        viewset = self._create_viewset_with_post(data, self.staff_user)
         response = viewset.create(viewset.request)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

@@ -42,5 +42,5 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `Preference` object."""
 
-        request.data.setdefault('reviewer', request.user.pk)
+        request.data.setdefault('user', request.user.id)
         return super().create(request, *args, **kwargs)
