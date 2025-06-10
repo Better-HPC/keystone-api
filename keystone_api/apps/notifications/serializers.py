@@ -47,6 +47,6 @@ class PreferenceSerializer(serializers.ModelSerializer):
 
         request_submitter = self.context['request'].user
         if not (request_submitter.is_staff or value == request_submitter):
-            raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
+            raise serializers.ValidationError("User field cannot be set to a different user than the request submitter.")
 
         return value

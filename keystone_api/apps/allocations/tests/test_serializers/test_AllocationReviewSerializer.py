@@ -25,34 +25,53 @@ class ValidateReviewerMethod(TestCase):
             team=self.team
         )
 
+    @staticmethod
+    def _create_serializer(requesting_user: User, data: dict) -> AllocationReviewSerializer:
+        """Return a serializer instance with the given user and data.
+
+        Args:
+            requesting_user: The authenticated user tied to the serialized HTTP request.
+            data: The data to be serialized.
+        """
+
+        request = APIRequestFactory().post('/reviews/', data)
+        request.user = requesting_user
+        return AllocationReviewSerializer(data=data, context={'request': request})
+
     def test_reviewer_matches_submitter(self) -> None:
         """Verify validation passes when the reviewer is the user submitting the HTTP request."""
 
         # Create a POST where the submitter matches the reviewer
-        post_data = {'request': self.request.id, 'reviewer': self.user.id, 'status': AllocationReview.StatusChoices.APPROVED}
-        request = APIRequestFactory().post('/reviews/', post_data)
-        request.user = self.user
+        post_data = {
+            'request': self.request.id,
+            'reviewer': self.user.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        }
 
-        serializer = AllocationReviewSerializer(data=post_data, context={'request': request})
+        serializer = self._create_serializer(self.user, post_data)
         self.assertTrue(serializer.is_valid(raise_exception=True))
 
     def test_different_reviewer_from_submitter(self) -> None:
         """Verify validation fails when the reviewer is different from the user submitting the HTTP request."""
 
         # Create a POST where the submitter is different from the reviewer
-        post_data = {'request': self.request.id, 'reviewer': self.user.id, 'status': AllocationReview.StatusChoices.APPROVED}
-        request = APIRequestFactory().post('/reviews/', post_data)
-        request.user = self.another_user
+        post_data = {
+            'request': self.request.id,
+            'reviewer': self.user.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        }
 
-        serializer = AllocationReviewSerializer(data=post_data, context={'request': request})
+        serializer = self._create_serializer(self.another_user, post_data)
         with self.assertRaisesRegex(ValidationError, "Reviewer cannot be set to a different user"):
             serializer.is_valid(raise_exception=True)
 
     def test_reviewer_is_optional(self) -> None:
         """Verify the reviewer field is optional."""
 
-        post_data = {'request': self.request.id, 'status': AllocationReview.StatusChoices.APPROVED}
-        request = APIRequestFactory().post('/reviews/', post_data)
+        post_data = {
+            'request': self.request.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        }
 
-        serializer = AllocationReviewSerializer(data=post_data, context={'request': request})
+        serializer = self._create_serializer(self.user, post_data)
         self.assertTrue(serializer.is_valid(raise_exception=True))
