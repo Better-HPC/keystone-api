@@ -21,8 +21,7 @@ __all__ = [
 class NotificationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Notification` class."""
 
-    user = serializers.PrimaryKeyRelatedField()
-    _user = UserSummarySerializer(read_only=True)
+    _user = UserSummarySerializer(source='user', read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -34,8 +33,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 class PreferenceSerializer(serializers.ModelSerializer):
     """Object serializer for the `Preference` class."""
 
-    user = serializers.PrimaryKeyRelatedField()
-    _user = UserSummarySerializer(read_only=True)
+    _user = UserSummarySerializer(source='user', read_only=True)
 
     class Meta:
         """Serializer settings."""
