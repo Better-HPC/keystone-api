@@ -12,11 +12,9 @@ class DummyChoicesView(GetChoicesMixin, APIView):
 
     permission_classes = []
     response_content = {
-
         'AP': 'Approved',
         'RJ': 'Rejected',
         'PD': 'Pending'
-
     }
 
 
