@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from .mixins import *
+from apps.users.mixins import UserScopedListMixin
 from .models import *
 from .permissions import *
 from .serializers import *
