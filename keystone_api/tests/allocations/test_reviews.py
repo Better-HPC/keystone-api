@@ -7,6 +7,8 @@ from apps.allocations.models import AllocationReview
 from apps.users.models import User
 from tests.utils import CustomAsserts, ListEndpointFilteringTests
 
+ENDPOINT = '/allocations/reviews/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -20,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/reviews/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -81,7 +83,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class ReviewerAssignment(APITestCase):
     """Test the automatic assignment and verification of the `reviewer` field."""
 
-    endpoint = '/allocations/reviews/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -123,6 +125,6 @@ class ReviewerAssignment(APITestCase):
 class RecordFiltering(ListEndpointFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
-    endpoint = '/allocations/reviews/'
+    endpoint = ENDPOINT
     model = AllocationReview
     team_field = 'request__team'

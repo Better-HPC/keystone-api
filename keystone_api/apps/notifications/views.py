@@ -6,7 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -43,5 +43,12 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `Preference` object."""
 
-        request.data.setdefault('user', request.user.id)
-        return super().create(request, *args, **kwargs)
+        data = request.data.copy()
+        data.setdefault('user', request.user.pk)
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

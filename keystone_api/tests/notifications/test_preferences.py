@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
+ENDPOINT = '/notifications/preferences/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -19,7 +21,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User Accessing | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/notifications/preferences/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -74,3 +76,54 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+
+class ReviewerAssignment(APITestCase):
+    """Test the automatic assignment and verification of the `reviewer` field."""
+
+    endpoint = ENDPOINT
+    fixtures = ['testing_common.yaml']
+
+    def setUp(self) -> None:
+        """Load user accounts from test fixtures."""
+
+        self.user1 = User.objects.get(username='member_1')
+        self.user2 = User.objects.get(username='member_2')
+        self.staff_user = User.objects.get(username='staff_user')
+
+    def test_default_user(self) -> None:
+        """Verify the user field defaults to the current user."""
+
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.post(self.endpoint)
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(self.user1.id, response.data['user'])
+
+    def test_user_provided(self) -> None:
+        """Verify the user field is set correctly when provided."""
+
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.post(self.endpoint, {'user': self.user1.id})
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(self.user1.id, response.data['user'])
+
+    def test_error_when_not_matching_submitter(self) -> None:
+        """Verify an error is raised when the user field does not match the request submitter."""
+
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.post(self.endpoint, {'user': self.user2.id})
+
+        expected_error = 'user field cannot be set to a different user than the request submitter.'
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(expected_error, response.data['user'][0].lower())
+
+    def test_staff_can_override_field(self) -> None:
+        """Verify staff users can create records on behalf of other users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {'user': self.user2.id})
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(self.user2.id, response.data['user'])
