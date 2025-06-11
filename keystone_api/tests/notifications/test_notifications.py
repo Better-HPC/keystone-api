@@ -3,8 +3,11 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.notifications.models import Notification
 from apps.users.models import User
-from tests.utils import CustomAsserts
+from tests.utils import CustomAsserts, UserScopedListFilteringTests
+
+ENDPOINT = '/notifications/notifications/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -19,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/notifications/notifications/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -74,3 +77,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
+
+
+class RecordFiltering(UserScopedListFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user ownership."""
+
+    endpoint = ENDPOINT
+    model = Notification

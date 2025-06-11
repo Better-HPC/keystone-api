@@ -3,8 +3,9 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.notifications.models import Preference
 from apps.users.models import User
-from tests.utils import CustomAsserts
+from tests.utils import CustomAsserts, UserScopedListFilteringTests
 
 ENDPOINT = '/notifications/preferences/'
 
@@ -127,3 +128,10 @@ class ReviewerAssignment(APITestCase):
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(self.user2.id, response.data['user'])
+
+
+class RecordFiltering(UserScopedListFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user ownership."""
+
+    endpoint = ENDPOINT
+    model = Preference

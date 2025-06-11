@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.models import Allocation
 from apps.users.models import User
-from tests.utils import CustomAsserts, ListEndpointFilteringTests
+from tests.utils import CustomAsserts, TeamScopedListFilteringTests
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -78,7 +78,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(ListEndpointFilteringTests, APITestCase):
+class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/allocations/'
