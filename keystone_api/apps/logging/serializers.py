@@ -58,6 +58,7 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 
     record_name = serializers.SerializerMethodField()
     record_id = serializers.IntegerField(source='object_pk')
+    _actor = UserSummarySerializer(source='actor', read_only=True)
 
     class Meta:
         """Serializer settings."""

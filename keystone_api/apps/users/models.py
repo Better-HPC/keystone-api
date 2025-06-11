@@ -54,11 +54,11 @@ class Membership(models.Model):
         ADMIN = 'AD', 'Admin'
         MEMBER = 'MB', 'Member'
 
+    role = models.CharField(max_length=2, choices=Role.choices)
     history = AuditlogHistoryField()
 
     user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
     team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
-    role = models.CharField(max_length=2, choices=Role.choices)
 
 
 @auditlog.register()
