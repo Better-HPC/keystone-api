@@ -13,12 +13,12 @@ from rest_framework.views import View
 from apps.notifications.models import Notification, Preference
 
 __all__ = [
-    "NotificationOwnerReadOnly",
-    "PreferenceOwnerWrite"
+    "NotificationPermissions",
+    "PreferencePermissions"
 ]
 
 
-class NotificationOwnerReadOnly(BasePermission):
+class NotificationPermissions(BasePermission):
     """Grant read-only access to users accessing their own notifications.
 
     Permissions:
@@ -36,22 +36,13 @@ class NotificationOwnerReadOnly(BasePermission):
         return False
 
 
-class PreferenceOwnerWrite(BasePermission):
+class PreferencePermissions(BasePermission):
     """Greats read/write access to users accessing their own preferences.
 
     Permissions:
         - Grants full permissions to users accessing their own preferences.
         - Grants full permissions to staff users accessing any user's preferences.
     """
-
-    def has_permission(self, request: Request, view: View) -> bool:
-        """Return whether the request has permissions to access the requested resource."""
-
-        # Only staff can create new records
-        if getattr(view, 'action', None) == 'create' or request.method in SAFE_METHODS:
-            return request.user.is_staff or request.method in SAFE_METHODS
-
-        return True
 
     def has_object_permission(self, request: Request, view: View, obj: Preference) -> bool:
         """Allow access only if the preference belongs to the requesting user."""

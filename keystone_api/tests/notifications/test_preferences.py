@@ -12,12 +12,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | User Status                               | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |-------------------------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User                      | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User Accessing Own Data     | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Authenticated User Accessing Other's Data | 403 | 403  | 200     | 403  | 405 | 405   | 405    | 405   |
-    | Staff User Accessing Other's Data         | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | User Status          | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User   | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Staff User Accessing | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = '/notifications/preferences/'
@@ -44,20 +43,34 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_authenticated_user_same_user(self) -> None:
+    def test_authenticated_user(self) -> None:
         """Verify authenticated users can access and modify their own records."""
 
-        # Todo
-        self.fail()
-
-    def test_authenticated_user_different_user(self) -> None:
-        """Verify users cannot modify other users' records."""
-
-        # Todo
-        self.fail()
+        self.client.force_authenticate(self.generic_user)
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_201_CREATED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
     def test_staff_user_permissions(self) -> None:
         """Verify staff users have read-only permissions."""
 
-        # Todo
-        self.fail()
+        self.client.force_authenticate(self.staff_user)
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_201_CREATED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )

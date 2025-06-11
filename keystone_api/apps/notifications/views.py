@@ -28,7 +28,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
     search_fields = ['message', 'user__username']
-    permission_classes = [IsAuthenticated, NotificationOwnerReadOnly]
+    permission_classes = [IsAuthenticated, NotificationPermissions]
     http_method_names = ['get', 'head', 'options', 'patch']
 
 
@@ -38,7 +38,7 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer
     search_fields = ['user__username']
-    permission_classes = [IsAuthenticated, PreferenceOwnerWrite]
+    permission_classes = [IsAuthenticated, PreferencePermissions]
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `Preference` object."""
