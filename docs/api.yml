@@ -4075,6 +4075,542 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskResult'
           description: ''
+  /notifications/notifications/:
+    get:
+      operationId: notifications_notifications_list
+      description: Return a list of serialized records filtered for the requesting
+        user.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: message
+        schema:
+          type: string
+      - in: query
+        name: message__contains
+        schema:
+          type: string
+      - in: query
+        name: message__endswith
+        schema:
+          type: string
+      - in: query
+        name: message__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: message__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: message__startswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type
+        schema:
+          type: string
+          enum:
+          - GM
+          - RD
+          - RE
+        description: |-
+          * `GM` - General Message
+          * `RE` - Upcoming Request Expiration
+          * `RD` - Request Past Expiration
+      - in: query
+        name: notification_type__contains
+        schema:
+          type: string
+      - in: query
+        name: notification_type__endswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: notification_type__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: notification_type__startswith
+        schema:
+          type: string
+      - in: query
+        name: read
+        schema:
+          type: boolean
+      - in: query
+        name: read__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: read__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: subject
+        schema:
+          type: string
+      - in: query
+        name: subject__contains
+        schema:
+          type: string
+      - in: query
+        name: subject__endswith
+        schema:
+          type: string
+      - in: query
+        name: subject__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: subject__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: subject__startswith
+        schema:
+          type: string
+      - in: query
+        name: time
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__day
+        schema:
+          type: number
+      - in: query
+        name: time__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__hour
+        schema:
+          type: number
+      - in: query
+        name: time__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: time__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: time__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__minute
+        schema:
+          type: number
+      - in: query
+        name: time__month
+        schema:
+          type: number
+      - in: query
+        name: time__second
+        schema:
+          type: number
+      - in: query
+        name: time__week
+        schema:
+          type: number
+      - in: query
+        name: time__week_day
+        schema:
+          type: number
+      - in: query
+        name: time__year
+        schema:
+          type: number
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+  /notifications/notifications/{id}/:
+    get:
+      operationId: notifications_notifications_retrieve
+      description: Returns user notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: notifications_notifications_partial_update
+      description: Returns user notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /notifications/preferences/:
+    get:
+      operationId: notifications_preferences_list
+      description: Return a list of serialized records filtered for the requesting
+        user.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: notify_on_expiration
+        schema:
+          type: boolean
+      - in: query
+        name: notify_on_expiration__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: notify_on_expiration__isnull
+        schema:
+          type: boolean
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Preference'
+          description: ''
+    post:
+      operationId: notifications_preferences_create
+      description: Create a new `Preference` object.
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Preference'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+  /notifications/preferences/{id}/:
+    get:
+      operationId: notifications_preferences_retrieve
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    put:
+      operationId: notifications_preferences_update
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Preference'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    patch:
+      operationId: notifications_preferences_partial_update
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPreference'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    delete:
+      operationId: notifications_preferences_destroy
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /research/grants/:
     get:
       operationId: research_grants_list
@@ -6820,6 +7356,59 @@ components:
         critical_service:
           type: boolean
           default: true
+    Notification:
+      type: object
+      description: Object serializer for the `Notification` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        time:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+        subject:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        metadata:
+          readOnly: true
+          nullable: true
+        notification_type:
+          allOf:
+          - $ref: '#/components/schemas/NotificationTypeEnum'
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - _user
+      - id
+      - message
+      - metadata
+      - notification_type
+      - subject
+      - time
+      - user
+    NotificationTypeEnum:
+      enum:
+      - GM
+      - RE
+      - RD
+      type: string
+      description: |-
+        * `GM` - General Message
+        * `RE` - Upcoming Request Expiration
+        * `RD` - Request Past Expiration
     PatchedAllocation:
       type: object
       description: Object serializer for the `Allocation` class.
@@ -7135,6 +7724,57 @@ components:
           type: integer
         team:
           type: integer
+    PatchedNotification:
+      type: object
+      description: Object serializer for the `Notification` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        time:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+        subject:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        metadata:
+          readOnly: true
+          nullable: true
+        notification_type:
+          allOf:
+          - $ref: '#/components/schemas/NotificationTypeEnum'
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+    PatchedPreference:
+      type: object
+      description: Object serializer for the `Preference` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        request_expiry_thresholds: {}
+        notify_on_expiration:
+          type: boolean
+        user:
+          type: integer
     PatchedPublication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -7303,6 +7943,26 @@ components:
           items:
             type: integer
           readOnly: true
+    Preference:
+      type: object
+      description: Object serializer for the `Preference` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        request_expiry_thresholds: {}
+        notify_on_expiration:
+          type: boolean
+        user:
+          type: integer
+      required:
+      - _user
+      - id
     Publication:
       type: object
       description: Object serializer for the `Publication` class.

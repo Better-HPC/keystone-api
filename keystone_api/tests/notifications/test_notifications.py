@@ -1,12 +1,13 @@
-"""Function tests for the `/allocations/attachments/` endpoint."""
+"""Function tests for the `/notifications/notifications/` endpoint."""
 
-from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import Attachment
+from apps.notifications.models import Notification
 from apps.users.models import User
-from tests.utils import CustomAsserts, TeamScopedListFilteringTests
+from tests.utils import CustomAsserts, UserScopedListFilteringTests
+
+ENDPOINT = '/notifications/notifications/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -17,11 +18,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/attachments/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -54,36 +55,32 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Verify staff users have full read and write permissions."""
+        """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
-        test_file = SimpleUploadedFile("file.txt", b"dummy content")
-
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_201_CREATED,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'file': test_file, 'request': 1}
         )
 
 
-class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
-    """Test the filtering of returned records based on user team membership."""
+class RecordFiltering(UserScopedListFilteringTests, APITestCase):
+    """Test the filtering of returned records based on user ownership."""
 
-    endpoint = '/allocations/attachments/'
-    model = Attachment
-    team_field = 'request__team'
+    endpoint = ENDPOINT
+    model = Notification

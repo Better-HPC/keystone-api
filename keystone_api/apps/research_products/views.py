@@ -9,7 +9,7 @@ URLs to business logic.
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
-from apps.users.mixins import ScopedListMixin
+from apps.users.mixins import TeamScopedListMixin
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -17,7 +17,7 @@ from .serializers import *
 __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 
-class GrantViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Track funding awards and grant information."""
 
     model = Grant
@@ -28,7 +28,7 @@ class GrantViewSet(ScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
 
 
-class PublicationViewSet(ScopedListMixin, viewsets.ModelViewSet):
+class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Manage metadata for research publications."""
 
     model = Publication

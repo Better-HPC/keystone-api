@@ -68,7 +68,7 @@ class CustomAsserts:
         return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
 
 
-class ListEndpointFilteringTests:
+class TeamScopedListFilteringTests:
     """Test the filtering of returned records based on user team membership."""
 
     # Defined by subclasses
@@ -121,5 +121,60 @@ class ListEndpointFilteringTests:
         """Verify user's not belonging to any teams are returned an empty list."""
 
         self.client.force_login(self.generic_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(0, len(response.json()))
+
+
+class UserScopedListFilteringTests:
+    """Test the filtering of returned records based on user ownership."""
+
+    # Defined by subclasses
+    model: Model
+    endpoint: str
+    user_field = 'user'
+
+    # Test Fixtures
+    owner_user: User
+    other_user: User
+    staff_user: User
+    user_records: QuerySet
+    all_records: QuerySet
+
+    fixtures = ['testing_common.yaml']
+
+    def setUp(self) -> None:
+        """Load records from test fixtures."""
+
+        self.owner_user = User.objects.get(username='member_1')
+        self.other_user = User.objects.get(username='generic_user')
+        self.staff_user = User.objects.get(username='staff_user')
+
+        self.user_records = self.model.objects.filter(**{self.user_field: self.owner_user})
+        self.all_records = self.model.objects.all()
+
+    def test_user_returned_own_records(self) -> None:
+        """Verify users only receive records they own."""
+
+        self.client.force_login(self.owner_user)
+        response = self.client.get(self.endpoint)
+
+        response_ids = {record['id'] for record in response.json()}
+        expected_ids = set(self.user_records.values_list('id', flat=True))
+        self.assertSetEqual(expected_ids, response_ids)
+
+    def test_staff_returned_all_records(self) -> None:
+        """Verify staff users are returned all records."""
+
+        self.client.force_login(self.staff_user)
+        response = self.client.get(self.endpoint)
+
+        response_ids = {record['id'] for record in response.json()}
+        expected_ids = set(self.all_records.values_list('id', flat=True))
+        self.assertSetEqual(expected_ids, response_ids)
+
+    def test_user_with_no_records(self) -> None:
+        """Verify users with no associated records receive an empty list."""
+
+        self.client.force_login(self.other_user)
         response = self.client.get(self.endpoint)
         self.assertEqual(0, len(response.json()))
