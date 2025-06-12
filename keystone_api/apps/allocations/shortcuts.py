@@ -14,12 +14,13 @@ from apps.users.models import User
 log = logging.getLogger(__name__)
 
 
-def send_notification_upcoming_expiration(user: User, request: AllocationRequest) -> None:
+def send_notification_upcoming_expiration(user: User, request: AllocationRequest, save=True) -> None:
     """Send a notification to alert a user their allocation request will expire soon.
 
     Args:
         user: The user to notify.
         request: The allocation request to notify the user about.
+        save: Whether to save the notification to the application database.
     """
 
     log.info(f'Sending notification to user "{user.username}" on upcoming expiration for request {request.id}.')
@@ -38,16 +39,18 @@ def send_notification_upcoming_expiration(user: User, request: AllocationRequest
         notification_metadata={
             'request_id': request.id,
             'days_to_expire': days_until_expire
-        }
+        },
+        save=save
     )
 
 
-def send_notification_past_expiration(user: User, request: AllocationRequest) -> None:
+def send_notification_past_expiration(user: User, request: AllocationRequest, save=True) -> None:
     """Send a notification to alert a user their allocation request has expired.
 
     Args:
         user: The user to notify.
         request: The allocation request to notify the user about.
+        save: Whether to save the notification to the application database.
     """
 
     log.info(f'Sending notification to user "{user.username}" on expiration of request {request.id}.')
@@ -62,5 +65,6 @@ def send_notification_past_expiration(user: User, request: AllocationRequest) ->
         notification_type=Notification.NotificationType.request_expired,
         notification_metadata={
             'request_id': request.id
-        }
+        },
+        save=save
     )

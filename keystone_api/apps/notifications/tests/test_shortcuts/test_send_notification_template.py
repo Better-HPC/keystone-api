@@ -68,7 +68,7 @@ class SendNotificationTemplateMethod(TestCase):
     def test_missing_template(self) -> None:
         """Verify an error is raised when a template is not found."""
 
-        with self.assertRaises(TemplateDoesNotExist):
+        with self.assertRaises(FileNotFoundError):
             send_notification_template(
                 self.user,
                 "Test subject",
