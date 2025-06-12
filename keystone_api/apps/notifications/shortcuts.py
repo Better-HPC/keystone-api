@@ -3,6 +3,7 @@
 Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
+
 import re
 from html import unescape
 
