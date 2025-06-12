@@ -43,7 +43,7 @@ class GetTemplateMethod(TestCase):
             tpl = get_template(self.template_name)
 
         self.assertIsInstance(tpl, Template)
-        self.assertEqual(tpl.render(), self.custom_template_content)
+        self.assertEqual( self.custom_template_content, tpl.render())
 
     def test_falls_back_to_default_template_when_custom_not_found(self) -> None:
         """Verify the default template is returned when a custom template is not found."""
@@ -55,7 +55,7 @@ class GetTemplateMethod(TestCase):
             tpl = get_template(self.template_name)
 
         self.assertIsInstance(tpl, Template)
-        self.assertEqual(tpl.render(), self.default_template_content)
+        self.assertEqual(self.default_template_content, tpl.render())
 
     def test_raises_error_if_no_template_exists(self) -> None:
         """Verify an error is raised if no template exists."""

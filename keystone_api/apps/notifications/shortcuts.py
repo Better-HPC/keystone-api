@@ -50,10 +50,18 @@ def format_template(template, context) -> (str, str):
 
     Returns:
         A tuple containing the rendered HTML content and a plain text version.
+
+    Raises:
+        RuntimeError: If the rendered template is empty.
+        UndefinedError: If the rendered template contains missing fields.
     """
 
     html_content = template.render(**context)
     text_content = strip_tags(html_content)
+
+    if not (html_content and text_content):
+        raise RuntimeError("Loaded template is empty.")
+
     return html_content, text_content
 
 
