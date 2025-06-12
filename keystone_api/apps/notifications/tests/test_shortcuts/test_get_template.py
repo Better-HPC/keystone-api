@@ -51,7 +51,7 @@ class GetTemplateMethod(TestCase):
         default_template_path = Path(self.default_dir.name) / self.template_name
         default_template_path.write_text(self.default_template_content)
 
-        with override_settings(EMAIL_TEMPLATE_DIR=Path(self.custom_dir.name)):
+        with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
             tpl = get_template(self.template_name)
 
         self.assertIsInstance(tpl, Template)

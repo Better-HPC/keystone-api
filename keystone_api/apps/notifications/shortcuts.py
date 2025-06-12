@@ -4,8 +4,6 @@ Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
 
-from pathlib import Path
-
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
@@ -32,7 +30,7 @@ def get_template(template_name: str) -> Template:
     """
 
     custom_template_path = settings.EMAIL_TEMPLATE_DIR / template_name
-    default_template_path = Path(__file__).parent / 'templates' / template_name
+    default_template_path = settings.EMAIL_DEFAULT_DIR / template_name
 
     if custom_template_path.exists():
         return Template(custom_template_path.read_text())
