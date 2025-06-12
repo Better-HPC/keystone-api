@@ -261,6 +261,8 @@ CELERY_RESULT_EXTENDED = True
 # Email server
 
 EMAIL_FROM_ADDRESS = env.str('EMAIL_FROM_ADDRESS', 'noreply@keystone.bot')
+EMAIL_TEMPLATE_DIR = env.path('EMAIL_TEMPLATE_DIR', '/etc/keystone/templates')
+
 if _email_path := env.get_value('DEBUG_EMAIL_DIR', default=None):
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = _email_path

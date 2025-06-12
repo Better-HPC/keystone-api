@@ -92,14 +92,15 @@ Enabling password authentication is recommended.
 Keystone will default to using the local server when issuing email notifications.
 Securing your production email server with a username/password is recommended, but not required.
 
-| Setting Name          | Default Value          | Description                                             |
-|-----------------------|------------------------|---------------------------------------------------------|
-| `EMAIL_HOST`          | `localhost`            | The host server to use for sending email.               |
-| `EMAIL_PORT`          | `25`                   | Port to use for the SMTP server.                        |
-| `EMAIL_HOST_USER`     |                        | Username to use for the SMTP server.                    |
-| `EMAIL_HOST_PASSWORD` |                        | Password to use for the SMTP server.                    |
-| `EMAIL_USE_TLS`       | `False`                | Use a TLS connection to the SMTP server.                |
-| `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot` | The default "from" address used in email notifications. |
+| Setting Name          | Default Value             | Description                                             |
+|-----------------------|---------------------------|---------------------------------------------------------|
+| `EMAIL_HOST`          | `localhost`               | The host server to use for sending email.               |
+| `EMAIL_PORT`          | `25`                      | Port to use for the SMTP server.                        |
+| `EMAIL_HOST_USER`     |                           | Username to use for the SMTP server.                    |
+| `EMAIL_HOST_PASSWORD` |                           | Password to use for the SMTP server.                    |
+| `EMAIL_USE_TLS`       | `False`                   | Use a TLS connection to the SMTP server.                |
+| `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot`    | The default "from" address used in email notifications. |
+| `EMAIL_TEMPLATE_DIR`  | `/etc/keystone/templates` | Directory to search for customized email templates.     |
 
 ## LDAP Authentication
 
