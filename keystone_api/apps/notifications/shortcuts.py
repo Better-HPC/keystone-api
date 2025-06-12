@@ -3,7 +3,7 @@
 Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
-
+import re
 from html import unescape
 
 from django.conf import settings
@@ -60,7 +60,20 @@ def format_template(template: Template, context: dict[str, any]) -> (str, str):
     """
 
     html_content = template.render(**context)
-    text_content = unescape(strip_tags(html_content))
+
+    # Replace <p> and <br> tags with line breaks
+    text_content = (
+        html_content.replace('<br>', '\n')
+        .replace('<br/>', '\n')
+        .replace('<p>', '\n\n')
+        .replace('</p>', '')
+    )
+
+    text_content = strip_tags(text_content)  # Remove HTML tags
+    text_content = unescape(text_content)  # Unescape special HTML characters
+    text_content = re.sub(r'\n\s*\n+', '\n\n', text_content)  # Collapse excessive newlines
+    text_content = re.sub(r'[ \t]+', ' ', text_content)  # Remove redundant spacing between words
+    text_content = text_content.strip()  # Remove trailing whitespace
 
     if not (html_content and text_content):
         raise RuntimeError("Loaded template is empty.")
