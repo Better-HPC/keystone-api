@@ -36,7 +36,7 @@ class Command(BaseCommand):
         parser.add_argument('--out', type=Path, help='The output directory to write templates to.')
 
     def handle(self, *args, **options):
-        # Ensure the output directory exists
+        """Handle the command execution."""
 
         # Define custom SMTP/notification settings
         output_dir = options['out']
@@ -48,13 +48,14 @@ class Command(BaseCommand):
         alloc_request = self._create_dummy_allocation_request()
 
         # Override settings so notifications are written to disk
-        with override_settings(EMAIL_BACKEND=backend, EMAIL_FILE_PATH=output_dir):
+        with override_settings(EMAIL_BACKEND=backend, EMAIL_FILE_PATH=output_dir, EMAIL_TEMPLATE_DIR=input_dir):
             send_notification_upcoming_expiration(user=user, request=alloc_request, save=False)
             send_notification_past_expiration(user=user, request=alloc_request, save=False)
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 
-    def _create_dummy_user(self) -> User:
+    @staticmethod
+    def _create_dummy_user() -> User:
         """Create a `User` object suitable for use when formatting example notification templates."""
 
         return User(
@@ -64,7 +65,8 @@ class Command(BaseCommand):
             email="username.email.com"
         )
 
-    def _create_dummy_allocation_request(self) -> AllocationRequest:
+    @staticmethod
+    def _create_dummy_allocation_request() -> AllocationRequest:
         """Create an `AllocationRequest` object suitable for use when formatting example notification templates."""
 
         return AllocationRequest(
