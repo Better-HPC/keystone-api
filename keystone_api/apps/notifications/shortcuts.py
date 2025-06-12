@@ -4,6 +4,8 @@ Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
 
+from html import unescape
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
@@ -57,7 +59,7 @@ def format_template(template, context) -> (str, str):
     """
 
     html_content = template.render(**context)
-    text_content = strip_tags(html_content)
+    text_content = unescape(strip_tags(html_content))
 
     if not (html_content and text_content):
         raise RuntimeError("Loaded template is empty.")
