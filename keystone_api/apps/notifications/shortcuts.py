@@ -9,10 +9,12 @@ from html import unescape
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
-from jinja2 import Template
+from jinja2 import Environment, StrictUndefined, Template
 
 from apps.notifications.models import Notification
 from apps.users.models import User
+
+ENV = Environment(undefined=StrictUndefined)
 
 
 def get_template(template_name: str) -> Template:
@@ -35,15 +37,15 @@ def get_template(template_name: str) -> Template:
     default_template_path = settings.EMAIL_DEFAULT_DIR / template_name
 
     if custom_template_path.exists():
-        return Template(custom_template_path.read_text())
+        return ENV.from_string(custom_template_path.read_text())
 
     if default_template_path.exists():
-        return Template(default_template_path.read_text())
+        return ENV.from_string(default_template_path.read_text())
 
     raise FileNotFoundError(f"Could not find template matching the name '{template_name}'.")
 
 
-def format_template(template, context) -> (str, str):
+def format_template(template: Template, context: dict[str, any]) -> (str, str):
     """Render a Jinja2 template with context and return both HTML and plain text output.
 
     Args:
@@ -55,7 +57,6 @@ def format_template(template, context) -> (str, str):
 
     Raises:
         RuntimeError: If the rendered template is empty.
-        UndefinedError: If the rendered template contains missing fields.
     """
 
     html_content = template.render(**context)

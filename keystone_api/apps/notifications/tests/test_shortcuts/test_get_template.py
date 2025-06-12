@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 
 from django.test import override_settings, TestCase
-from jinja2 import Template
+from jinja2 import StrictUndefined, Template
 
 from apps.notifications.shortcuts import get_template
 
@@ -43,7 +43,7 @@ class GetTemplateMethod(TestCase):
             tpl = get_template(self.template_name)
 
         self.assertIsInstance(tpl, Template)
-        self.assertEqual( self.custom_template_content, tpl.render())
+        self.assertEqual(self.custom_template_content, tpl.render())
 
     def test_falls_back_to_default_template_when_custom_not_found(self) -> None:
         """Verify the default template is returned when a custom template is not found."""
@@ -62,3 +62,14 @@ class GetTemplateMethod(TestCase):
 
         with self.assertRaises(FileNotFoundError):
             get_template(self.template_name)
+
+    def test_strict_undefined_enabled(self) -> bool:
+        """Verify the returned template is configured to enforce StrictUndefined mode."""
+
+        default_template_path = Path(self.default_dir.name) / self.template_name
+        default_template_path.write_text(self.default_template_content)
+
+        with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
+            tpl = get_template(self.template_name)
+
+        return tpl.environment.undefined is StrictUndefined

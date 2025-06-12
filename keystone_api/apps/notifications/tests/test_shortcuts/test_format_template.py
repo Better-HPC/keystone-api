@@ -1,7 +1,7 @@
 """Unit tests for the `format_template` function."""
 
 from django.test import TestCase
-from jinja2 import Template, UndefinedError
+from jinja2 import Environment, StrictUndefined, Template, UndefinedError
 
 from apps.notifications.shortcuts import format_template
 
@@ -55,11 +55,10 @@ class FormatTemplateMethod(TestCase):
         with self.assertRaises(RuntimeError):
             format_template(Template(""), {})
 
-    def test_missing_context_variable_raises_error(self) -> None:
-        """Verify an error is raised when a template is missing context variables."""
+    def test_respects_strict_mode(self) -> None:
+        """Verify an error is raised when rendering a StrictUndefined template with missing variables."""
 
-        template = Template("Hello {{ name }}")
-        context = {}  # Missing 'name' field
-
+        env = Environment(undefined=StrictUndefined)
+        template = env.from_string("Hello {{ name }}")
         with self.assertRaises(UndefinedError):
-            format_template(template, context)
+            format_template(template, {})
