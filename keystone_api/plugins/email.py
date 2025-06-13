@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 from django.conf import settings
@@ -22,7 +23,13 @@ class EmlFileBasedEmailBackend(BaseEmailBackend):
     def _generate_file_path(self, message) -> Path:
 
         # Generate a file name from the message subject
-        filename = slugify(message.subject)
+        subject = getattr(message, 'subject', '')
+        filename = slugify(subject)
+
+        # If there is no subject, default to  the datetime
+        if not filename.strip('-'):
+            filename = datetime.now().strftime('%Y%m%d%H%M%S')
+
         return self._output_dir / f"{filename}.eml"
 
     def write_message(self, message) -> None:
