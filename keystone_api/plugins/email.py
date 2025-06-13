@@ -36,7 +36,7 @@ class EmlFileBasedEmailBackend(BaseEmailBackend):
         if not self._output_dir.exists():
             raise RuntimeError(f'Directory does not exist: {self._output_dir}')
 
-    def _generate_file_path(self, message) -> Path:
+    def generate_file_path(self, message) -> Path:
         """Generate the destination file path for the given email message.
 
         Args:
@@ -52,7 +52,7 @@ class EmlFileBasedEmailBackend(BaseEmailBackend):
 
         # If there is no subject, default to  the datetime
         if not filename.strip('-'):
-            filename = datetime.now().strftime('%Y%m%d%H%M%S')
+            filename = str(datetime.now().timestamp())
 
         return self._output_dir / f"{filename}.eml"
 
@@ -63,7 +63,7 @@ class EmlFileBasedEmailBackend(BaseEmailBackend):
             message: The message to write.
         """
 
-        filename = self._generate_file_path(message)
+        filename = self.generate_file_path(message)
         with open(filename, 'a') as out_file:
             out_file.write(message.message().as_string())
 
