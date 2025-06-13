@@ -15,7 +15,7 @@ from jinja2 import Environment, StrictUndefined, Template
 from apps.notifications.models import Notification
 from apps.users.models import User
 
-ENV = Environment(undefined=StrictUndefined)
+ENV = Environment(undefined=StrictUndefined, autoescape=True)
 
 
 def get_template(template_name: str) -> Template:
