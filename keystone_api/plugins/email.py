@@ -1,3 +1,10 @@
+"""Extends the `django` package with custom email backends.
+
+Email backends define how Django delivers email. This plugin provides
+backends for writing custom email messages a `.eml` files in a configured
+directory, rather than sending them via external service like SMTP.
+"""
+
 from datetime import datetime
 from pathlib import Path
 
@@ -8,8 +15,17 @@ from django.utils.text import slugify
 
 
 class EmlFileBasedEmailBackend(BaseEmailBackend):
+    """Django email backend that writes email messages to .eml files on disk.
+
+    This backend writes each outgoing email message to a file in the directory
+    specified by the `EMAIL_FILE_PATH` setting. The filenames are derived from
+    the message subject. If the subject is empty or slugifies to an empty
+    string, the current timestamp is used instead. Duplicate file names are
+    overwritten.
+    """
 
     def __init__(self, *args, **kwargs) -> None:
+        """Initialize the backend and validate relevant application settings."""
 
         super().__init__(*args, **kwargs)
 
@@ -21,6 +37,14 @@ class EmlFileBasedEmailBackend(BaseEmailBackend):
             raise RuntimeError(f'Directory does not exist: {self._output_dir}')
 
     def _generate_file_path(self, message) -> Path:
+        """Generate the destination file path for the given email message.
+
+        Args:
+            message: The email message instance.
+
+        Returns:
+            Path: The full path to an output .eml file.
+        """
 
         # Generate a file name from the message subject
         subject = getattr(message, 'subject', '')
