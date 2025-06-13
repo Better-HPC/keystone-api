@@ -15,7 +15,7 @@ from jinja2 import Environment, StrictUndefined, Template
 from apps.notifications.models import Notification
 from apps.users.models import User
 
-ENV = Environment(undefined=StrictUndefined)
+ENV = Environment(undefined=StrictUndefined, autoescape=True)
 
 
 def get_template(template_name: str) -> Template:
@@ -88,7 +88,8 @@ def send_notification(
     plain_text: str,
     html_text: str,
     notification_type: Notification.NotificationType,
-    notification_metadata: dict | None = None
+    notification_metadata: dict | None = None,
+    save=True
 ) -> None:
     """Send a notification email to a specified user with both plain text and HTML content.
 
@@ -99,6 +100,7 @@ def send_notification(
         html_text: The HTML version of the email content.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
+        save: Whether to save the notification to the application database.
     """
 
     send_mail(
@@ -108,13 +110,14 @@ def send_notification(
         recipient_list=[user.email],
         html_message=html_text)
 
-    Notification.objects.create(
-        user=user,
-        subject=subject,
-        message=plain_text,
-        notification_type=notification_type,
-        metadata=notification_metadata
-    )
+    if save:
+        Notification.objects.create(
+            user=user,
+            subject=subject,
+            message=plain_text,
+            notification_type=notification_type,
+            metadata=notification_metadata
+        )
 
 
 def send_notification_template(
@@ -123,7 +126,8 @@ def send_notification_template(
     template: str,
     context: dict,
     notification_type: Notification.NotificationType,
-    notification_metadata: dict | None = None
+    notification_metadata: dict | None = None,
+    save=True
 ) -> None:
     """Render an email template and send it to a specified user.
 
@@ -134,6 +138,7 @@ def send_notification_template(
         context: Variable definitions used to populate the template.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
+        save: Whether to save the notification to the application database.
 
     Raises:
         UndefinedError: When template variables are not defined in the notification metadata
@@ -148,23 +153,26 @@ def send_notification_template(
         text_content,
         html_content,
         notification_type,
-        notification_metadata
+        notification_metadata,
+        save=save
     )
 
 
-def send_general_notification(user: User, subject: str, message: str) -> None:
+def send_general_notification(user: User, subject: str, message: str, /, save=True) -> None:
     """Send a general notification email to a specified user.
 
     Args:
         user: The user object to whom the email will be sent.
         subject: The subject line of the email.
         message: The message content to include.
+        save: Whether to save the notification to the application database.
     """
 
-    send_notification_template(
+    return send_notification_template(
         user=user,
         subject=subject,
         template='general.html',
         notification_type=Notification.NotificationType.general_message,
-        context={'user': user, 'message': message}
+        context={'user': user, 'message': message},
+        save=save
     )
