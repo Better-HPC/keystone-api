@@ -10,6 +10,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.core.mail import EmailMessage
 from django.core.mail.backends.base import BaseEmailBackend
 from django.utils.text import slugify
 
@@ -36,7 +37,7 @@ class EmlFileEmailBackend(BaseEmailBackend):
         if not self._output_dir.exists():
             raise RuntimeError(f'Directory does not exist: {self._output_dir}')
 
-    def generate_file_path(self, message) -> Path:
+    def generate_file_path(self, message: EmailMessage) -> Path:
         """Generate the destination file path for the given email message.
 
         Args:
@@ -56,7 +57,7 @@ class EmlFileEmailBackend(BaseEmailBackend):
 
         return self._output_dir / f"{filename}.eml"
 
-    def write_message(self, message) -> None:
+    def write_message(self, message: EmailMessage) -> None:
         """Write an email message to disk.
 
         Args:
@@ -64,10 +65,10 @@ class EmlFileEmailBackend(BaseEmailBackend):
         """
 
         filename = self.generate_file_path(message)
-        with open(filename, 'a') as out_file:
+        with open(filename, 'w') as out_file:
             out_file.write(message.message().as_string())
 
-    def send_messages(self, email_messages) -> None:
+    def send_messages(self, email_messages: list[EmailMessage]) -> None:
         """Send a list of email messages.
 
         Args:

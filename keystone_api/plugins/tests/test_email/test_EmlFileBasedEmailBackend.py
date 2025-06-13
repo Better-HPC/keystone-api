@@ -6,16 +6,17 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
-from django.test import override_settings, SimpleTestCase
+from django.core.mail import EmailMessage
+from django.test import override_settings, TestCase
 
 from plugins.email import EmlFileEmailBackend
 
 
-class GenerateFilePathMethod(SimpleTestCase):
+class GenerateFilePathMethod(TestCase):
     """Test file name generation by the `generate_file_path` method."""
 
     def setUp(self) -> None:
-        """Create a temporary directory for email output."""
+        """Create a temporary directory for file outputs."""
 
         self._tempdir = tempfile.TemporaryDirectory()
         self.test_dir = Path(self._tempdir.name)
@@ -77,3 +78,89 @@ class GenerateFilePathMethod(SimpleTestCase):
         with override_settings(EMAIL_FILE_PATH=fake_path):
             with self.assertRaises(RuntimeError):
                 EmlFileEmailBackend()
+
+
+class WriteMessageMethod(TestCase):
+    """Test the writing of messages to disk via the `write_message` method."""
+
+    def setUp(self) -> None:
+        """Create a temporary directory for file outputs."""
+
+        self._tempdir = tempfile.TemporaryDirectory()
+        self.test_dir = Path(self._tempdir.name)
+
+        with override_settings(EMAIL_FILE_PATH=self.test_dir):
+            self.backend = EmlFileEmailBackend()
+
+    def tearDown(self) -> None:
+        """Clean up temporary files."""
+
+        self._tempdir.cleanup()
+
+    def test_writes_correct_content(self) -> None:
+        """Verify message content is written to the output file."""
+
+        target_file = self.test_dir / "test-output.eml"
+        email = EmailMessage(subject="test subject", body="This is the body of the email.")
+        with patch.object(self.backend, "generate_file_path", return_value=target_file):
+            self.backend.write_message(email)
+
+        with open(target_file) as f:
+            content = f.read()
+
+        self.assertIn("This is the body of the email.", content)
+        self.assertIn("Subject: test subject", content)
+
+    def test_overwrites_existing_file(self) -> None:
+        """Verify existing files are overwritten."""
+
+        # Populate the destination file with existing content
+        target_file = self.test_dir / "overwrite-test.eml"
+        with open(target_file, "w") as f:
+            f.write("Old content that should be replaced.")
+
+        # Execute the email backend
+        email = EmailMessage(subject="overwrite test", body="New content.")
+        with patch.object(self.backend, "generate_file_path", return_value=target_file):
+            self.backend.write_message(email)
+
+        with open(target_file) as f:
+            content = f.read()
+
+        # Verify the file content was overwritten
+        self.assertIn("New content.", content)
+        self.assertNotIn("Old content that should be replaced.", content)
+
+
+class SendMessagesMethod(TestCase):
+    """Test sending multiple messages via the `send_messages` method."""
+
+    def setUp(self) -> None:
+        """Set up a temporary output directory for the backend."""
+
+        self._tempdir = tempfile.TemporaryDirectory()
+        self.test_dir = Path(self._tempdir.name)
+        with override_settings(EMAIL_FILE_PATH=self.test_dir):
+            self.backend = EmlFileEmailBackend()
+
+    def tearDown(self) -> None:
+        """Clean up temporary files."""
+
+        self._tempdir.cleanup()
+
+    def test_calls_write_message_for_each_email(self) -> None:
+        """Verify the `write_message` method is called for each message."""
+
+        messages = [
+            EmailMessage(subject="one", body="Body 1", from_email="a@x.com", to=["b@x.com"]),
+            EmailMessage(subject="two", body="Body 2", from_email="a@x.com", to=["c@x.com"]),
+            EmailMessage(subject="three", body="Body 3", from_email="a@x.com", to=["d@x.com"]),
+        ]
+
+        with patch.object(self.backend, "write_message") as mock_write:
+            self.backend.send_messages(messages)
+
+        self.assertEqual(len(messages), mock_write.call_count)
+        mock_write.assert_any_call(messages[0])
+        mock_write.assert_any_call(messages[1])
+        mock_write.assert_any_call(messages[2])
