@@ -1,4 +1,4 @@
-"""Unit tests for the `EmlFileBasedEmailBackend` class."""
+"""Unit tests for the `EmlFileEmailBackend` class."""
 
 import tempfile
 from datetime import datetime
@@ -8,11 +8,11 @@ from unittest.mock import Mock, patch
 from django.core.exceptions import ImproperlyConfigured
 from django.test import override_settings, SimpleTestCase
 
-from plugins.email import EmlFileBasedEmailBackend
+from plugins.email import EmlFileEmailBackend
 
 
 class GenerateFilePathMethod(SimpleTestCase):
-    """Tests file name generation by the `generate_file_path` method."""
+    """Test file name generation by the `generate_file_path` method."""
 
     def setUp(self) -> None:
         """Create a temporary directory for email output."""
@@ -21,7 +21,7 @@ class GenerateFilePathMethod(SimpleTestCase):
         self.test_dir = Path(self._tempdir.name)
 
         with override_settings(EMAIL_FILE_PATH=self.test_dir):
-            self.backend = EmlFileBasedEmailBackend()
+            self.backend = EmlFileEmailBackend()
 
     def tearDown(self) -> None:
         """Clean up temporary files."""
@@ -29,7 +29,7 @@ class GenerateFilePathMethod(SimpleTestCase):
         self._tempdir.cleanup()
 
     def test_file_path_with_subject(self) -> None:
-        """Verify filenames are based on the slugified email subject."""
+        """Verify filenames are based on the slugified message subject."""
 
         message = Mock(subject="Test Subject Line")
         path = self.backend.generate_file_path(message)
@@ -38,7 +38,7 @@ class GenerateFilePathMethod(SimpleTestCase):
         self.assertEqual(expected_filename, path)
 
     def test_file_path_with_empty_subject(self) -> None:
-        """Verify filenames default to the current timestamp when there is no email subject."""
+        """Verify filenames default to the current timestamp when there is no message subject."""
 
         message = Mock(subject="")
         mock_now = datetime(2024, 1, 1, 12, 0, 0)
@@ -51,7 +51,7 @@ class GenerateFilePathMethod(SimpleTestCase):
         self.assertEqual(path, expected_filename)
 
     def test_file_path_with_invalid_slug(self) -> None:
-        """Verify filenames default to the current timestamp when the subject is not sluggable."""
+        """Verify filenames default to the current timestamp when the message subject is not sluggable."""
 
         message = Mock(subject="!@#$%^&*()")
         mock_now = datetime(2024, 1, 1, 12, 0, 0)
@@ -68,7 +68,7 @@ class GenerateFilePathMethod(SimpleTestCase):
 
         with override_settings(EMAIL_FILE_PATH=None):
             with self.assertRaises(ImproperlyConfigured):
-                EmlFileBasedEmailBackend()
+                EmlFileEmailBackend()
 
     def test_output_path_does_not_exist(self) -> None:
         """Verify an error is raised during init if the output path does not exist."""
@@ -76,4 +76,4 @@ class GenerateFilePathMethod(SimpleTestCase):
         fake_path = Path("/tmp/nonexistent_test_emails")
         with override_settings(EMAIL_FILE_PATH=fake_path):
             with self.assertRaises(RuntimeError):
-                EmlFileBasedEmailBackend()
+                EmlFileEmailBackend()

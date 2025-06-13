@@ -4,8 +4,8 @@
 
 | Argument    | Description                                                      |
 |-------------|------------------------------------------------------------------|
-| --templates | The directory of HTML templates to render.                       |
-| --out       | The output directory to write templates to.                      |
+| --out       | The output directory where rendered templates are written.       |
+| --templates | An optional directory of custom HTML templates to render.        |
 """
 
 from argparse import ArgumentParser
@@ -24,7 +24,7 @@ class Command(BaseCommand):
     """Render user notification templates and save examples to disk."""
 
     help = __doc__
-    _backend = 'plugins.email.EmlFileBasedEmailBackend'
+    _email_backend = 'plugins.email.EmlFileBasedEmailBackend'
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command-line arguments to the parser.
@@ -33,8 +33,14 @@ class Command(BaseCommand):
             parser: The argument parser instance.
         """
 
-        parser.add_argument('--templates', type=Path, help='The directory of HTML templates to render.')
-        parser.add_argument('--out', type=Path, help='The output directory to write templates to.')
+        parser.add_argument('--out',
+            type=Path,
+            help='The output directory where rendered templates are written.')
+
+        parser.add_argument('--templates',
+            type=Path,
+            default=Path.cwd(),
+            help='An optional directory of custom HTML templates to render.')
 
     def handle(self, *args, **options):
         """Handle the command execution."""
@@ -46,7 +52,11 @@ class Command(BaseCommand):
         alloc_request = self._create_dummy_allocation_request()
 
         # Override settings so notifications are written to disk
-        with override_settings(EMAIL_BACKEND=self._backend, EMAIL_FILE_PATH=output_dir, EMAIL_TEMPLATE_DIR=input_dir):
+        with override_settings(
+            EMAIL_BACKEND=self._email_backend,
+            EMAIL_FILE_PATH=output_dir,
+            EMAIL_TEMPLATE_DIR=input_dir
+        ):
             send_notification_upcoming_expiration(user=user, request=alloc_request, save=False)
             send_notification_past_expiration(user=user, request=alloc_request, save=False)
 

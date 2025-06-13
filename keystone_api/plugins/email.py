@@ -14,12 +14,12 @@ from django.core.mail.backends.base import BaseEmailBackend
 from django.utils.text import slugify
 
 
-class EmlFileBasedEmailBackend(BaseEmailBackend):
-    """Django email backend that writes email messages to .eml files on disk.
+class EmlFileEmailBackend(BaseEmailBackend):
+    """A Django email backend that writes email messages to .eml files on disk.
 
     This backend writes each outgoing email message to a file in the directory
-    specified by the `EMAIL_FILE_PATH` setting. The filenames are derived from
-    the message subject. If the subject is empty or slugifies to an empty
+    specified by the `EMAIL_FILE_PATH` setting. Output filenames are derived
+    from the message subject. If the subject is empty or slugifies to an empty
     string, the current timestamp is used instead. Duplicate file names are
     overwritten.
     """
