@@ -24,6 +24,7 @@ class Command(BaseCommand):
     """Render user notification templates and save examples to disk."""
 
     help = __doc__
+    _backend = 'plugins.email.EmlFileBasedEmailBackend'
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command-line arguments to the parser.
@@ -38,21 +39,30 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Handle the command execution."""
 
-        # Define custom SMTP/notification settings
-        output_dir = options['out']
-        input_dir = options['templates']
-        backend = 'plugins.email.EmlFileBasedEmailBackend'
-
         # Define mock data to populate notifications
         user = self._create_dummy_user()
         alloc_request = self._create_dummy_allocation_request()
 
         # Override settings so notifications are written to disk
-        with override_settings(EMAIL_BACKEND=backend, EMAIL_FILE_PATH=output_dir, EMAIL_TEMPLATE_DIR=input_dir):
+        input_dir, output_dir = self._validate_args(*args, **options)
+        with override_settings(EMAIL_BACKEND=self._backend, EMAIL_FILE_PATH=output_dir, EMAIL_TEMPLATE_DIR=input_dir):
             send_notification_upcoming_expiration(user=user, request=alloc_request, save=False)
             send_notification_past_expiration(user=user, request=alloc_request, save=False)
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
+
+    @staticmethod
+    def _validate_args(*args, **options) -> (Path, Path):
+        """Validate and return command line arguments.
+
+        Returns:
+            A tuple containing the input and directories.
+        """
+
+        output_dir = options['out']
+        input_dir = options['templates']
+
+        return input_dir, output_dir
 
     @staticmethod
     def _create_dummy_user() -> User:
