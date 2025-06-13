@@ -41,7 +41,7 @@ class Command(BaseCommand):
         # Define custom SMTP/notification settings
         output_dir = options['out']
         input_dir = options['templates']
-        backend = 'django.core.mail.backends.filebased.EmailBackend'
+        backend = 'plugins.email.EmlFileBasedEmailBackend'
 
         # Define mock data to populate notifications
         user = self._create_dummy_user()
