@@ -15,7 +15,8 @@ __all__ = ['AdvancedFilterBackend', 'FactoryBuiltFilterSet']
 class FactoryBuiltFilterSet:
     """A factory generated filterset class
 
-    This is an empty class used for type checking/hinting.
+    This is an empty base class used to enable type checking/hinting
+    on dynamically generated subclasses.
     """
 
 
