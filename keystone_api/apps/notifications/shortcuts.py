@@ -4,13 +4,82 @@ Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
 
+import re
+from html import unescape
+
 from django.conf import settings
 from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from jinja2 import Environment, StrictUndefined, Template
 
 from apps.notifications.models import Notification
 from apps.users.models import User
+
+ENV = Environment(undefined=StrictUndefined, autoescape=True)
+
+
+def get_template(template_name: str) -> Template:
+    """Retrieve a Jinja2 email template by name.
+
+    Attempts to return a user-defined template file from the `EMAIL_TEMPLATE_DIR` directory
+    and falls back to the default application template if not found.
+
+    Args:
+        template_name: The name of the template file.
+
+    Returns:
+        A Jinja2 Template.
+
+    Raises:
+        FileNotFoundError: If the template is not found in either the custom or default location.
+    """
+
+    custom_template_path = settings.EMAIL_TEMPLATE_DIR / template_name
+    default_template_path = settings.EMAIL_DEFAULT_DIR / template_name
+
+    if custom_template_path.exists():
+        return ENV.from_string(custom_template_path.read_text())
+
+    if default_template_path.exists():
+        return ENV.from_string(default_template_path.read_text())
+
+    raise FileNotFoundError(f"Could not find template matching the name '{template_name}'.")
+
+
+def format_template(template: Template, context: dict[str, any]) -> (str, str):
+    """Render a Jinja2 template with context and return both HTML and plain text output.
+
+    Args:
+        template: The Jinja2 Template object to render.
+        context: A dictionary of variables to inject into the template.
+
+    Returns:
+        A tuple containing the rendered HTML content and a plain text version.
+
+    Raises:
+        RuntimeError: If the rendered template is empty.
+    """
+
+    html_content = template.render(**context)
+
+    # Replace <p> and <br> tags with line breaks
+    text_content = (
+        html_content.replace('<br>', '\n')
+        .replace('<br/>', '\n')
+        .replace('<p>', '\n\n')
+        .replace('</p>', '')
+    )
+
+    text_content = strip_tags(text_content)  # Remove HTML tags
+    text_content = unescape(text_content)  # Unescape special HTML characters
+    text_content = re.sub(r'\n\s*\n+', '\n\n', text_content)  # Collapse excessive newlines
+    text_content = re.sub(r'[ \t]+', ' ', text_content)  # Remove redundant spacing between words
+    text_content = text_content.strip()  # Remove trailing whitespace
+
+    if not (html_content and text_content):
+        raise RuntimeError("Loaded template is empty.")
+
+    return html_content, text_content
 
 
 def send_notification(
@@ -19,7 +88,8 @@ def send_notification(
     plain_text: str,
     html_text: str,
     notification_type: Notification.NotificationType,
-    notification_metadata: dict | None = None
+    notification_metadata: dict | None = None,
+    save=True
 ) -> None:
     """Send a notification email to a specified user with both plain text and HTML content.
 
@@ -30,6 +100,7 @@ def send_notification(
         html_text: The HTML version of the email content.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
+        save: Whether to save the notification to the application database.
     """
 
     send_mail(
@@ -39,13 +110,14 @@ def send_notification(
         recipient_list=[user.email],
         html_message=html_text)
 
-    Notification.objects.create(
-        user=user,
-        subject=subject,
-        message=plain_text,
-        notification_type=notification_type,
-        metadata=notification_metadata
-    )
+    if save:
+        Notification.objects.create(
+            user=user,
+            subject=subject,
+            message=plain_text,
+            notification_type=notification_type,
+            metadata=notification_metadata
+        )
 
 
 def send_notification_template(
@@ -54,7 +126,8 @@ def send_notification_template(
     template: str,
     context: dict,
     notification_type: Notification.NotificationType,
-    notification_metadata: dict | None = None
+    notification_metadata: dict | None = None,
+    save=True
 ) -> None:
     """Render an email template and send it to a specified user.
 
@@ -65,13 +138,14 @@ def send_notification_template(
         context: Variable definitions used to populate the template.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
+        save: Whether to save the notification to the application database.
 
     Raises:
         UndefinedError: When template variables are not defined in the notification metadata
     """
 
-    html_content = render_to_string(template, context, using='jinja2')
-    text_content = strip_tags(html_content)
+    jinja_template = get_template(template)
+    html_content, text_content = format_template(jinja_template, context)
 
     send_notification(
         user,
@@ -79,23 +153,26 @@ def send_notification_template(
         text_content,
         html_content,
         notification_type,
-        notification_metadata
+        notification_metadata,
+        save=save
     )
 
 
-def send_general_notification(user: User, subject: str, message: str) -> None:
+def send_general_notification(user: User, subject: str, message: str, /, save=True) -> None:
     """Send a general notification email to a specified user.
 
     Args:
         user: The user object to whom the email will be sent.
         subject: The subject line of the email.
         message: The message content to include.
+        save: Whether to save the notification to the application database.
     """
 
-    send_notification_template(
+    return send_notification_template(
         user=user,
         subject=subject,
         template='general.html',
         notification_type=Notification.NotificationType.general_message,
-        context={'user': user, 'message': message}
+        context={'user': user, 'message': message},
+        save=save
     )

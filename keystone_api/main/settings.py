@@ -168,13 +168,6 @@ TEMPLATES = [
             ],
         },
     },
-    {  # Jinja2 backend used when rendering user notifications
-        "BACKEND": "django.template.backends.jinja2.Jinja2",
-        'APP_DIRS': True,
-        "OPTIONS": {
-            "undefined": StrictUndefined,
-        },
-    },
 ]
 
 # Base styling for the Admin UI
@@ -261,6 +254,9 @@ CELERY_RESULT_EXTENDED = True
 # Email server
 
 EMAIL_FROM_ADDRESS = env.str('EMAIL_FROM_ADDRESS', 'noreply@keystone.bot')
+EMAIL_TEMPLATE_DIR = Path(env.path('EMAIL_TEMPLATE_DIR', '/etc/keystone/templates'))
+EMAIL_DEFAULT_DIR = BASE_DIR / 'templates'
+
 if _email_path := env.get_value('DEBUG_EMAIL_DIR', default=None):
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = _email_path
