@@ -81,7 +81,7 @@ class GenerateFilePathMethod(TestCase):
 
 
 class WriteMessageMethod(TestCase):
-    """Test the writing of messages to disk via the `write_message` method."""
+    """Test writing messages to disk via the `write_message` method."""
 
     def setUp(self) -> None:
         """Create a temporary directory for file outputs."""
