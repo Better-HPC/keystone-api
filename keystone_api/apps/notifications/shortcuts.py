@@ -10,12 +10,13 @@ from html import unescape
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
-from jinja2 import Environment, StrictUndefined, Template
+from jinja2 import FileSystemLoader, Environment, StrictUndefined, Template
 
 from apps.notifications.models import Notification
 from apps.users.models import User
 
-ENV = Environment(undefined=StrictUndefined, autoescape=True)
+loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
+ENV = Environment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
 
 def get_template(template_name: str) -> Template:
@@ -34,16 +35,11 @@ def get_template(template_name: str) -> Template:
         FileNotFoundError: If the template is not found in either the custom or default location.
     """
 
-    custom_template_path = settings.EMAIL_TEMPLATE_DIR / template_name
-    default_template_path = settings.EMAIL_DEFAULT_DIR / template_name
+    try:
+        return ENV.get_template(template_name)
 
-    if custom_template_path.exists():
-        return ENV.from_string(custom_template_path.read_text())
-
-    if default_template_path.exists():
-        return ENV.from_string(default_template_path.read_text())
-
-    raise FileNotFoundError(f"Could not find template matching the name '{template_name}'.")
+    except Exception as e:
+        raise FileNotFoundError(f"Could not find template '{template_name}': {e}")
 
 
 def format_template(template: Template, context: dict[str, any]) -> (str, str):

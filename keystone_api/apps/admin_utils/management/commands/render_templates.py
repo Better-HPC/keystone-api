@@ -24,7 +24,7 @@ class Command(BaseCommand):
     """Render user notification templates and save examples to disk."""
 
     help = __doc__
-    _email_backend = 'plugins.email.EmlFileBasedEmailBackend'
+    _email_backend = 'plugins.email.EmlFileEmailBackend'
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command-line arguments to the parser.
