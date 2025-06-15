@@ -4,7 +4,9 @@ Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
 
+import os
 import re
+import stat
 from html import unescape
 
 from django.conf import settings
@@ -41,6 +43,14 @@ def get_template(template_name: str) -> Template:
         raise ValueError("Invalid template name")
 
     try:
+        # Get resolved path from the loader
+        source, filename, _ = ENV.loader.get_source(ENV, template_name)
+
+        # Check file permissions
+        st = os.stat(filename)
+        if st.st_mode & stat.S_IWOTH:
+            raise PermissionError(f"Template file '{filename}' has insecure permissions")
+
         return ENV.get_template(template_name)
 
     except Exception as e:
