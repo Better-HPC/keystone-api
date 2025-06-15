@@ -5,7 +5,7 @@ backends for writing custom email messages a `.eml` files in a configured
 directory, rather than sending them via external service like SMTP.
 """
 
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 from django.conf import settings
@@ -13,6 +13,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.mail.backends.base import BaseEmailBackend
 from django.utils.text import slugify
+from jinja2.sandbox import SandboxedEnvironment
 
 
 class EmlFileEmailBackend(BaseEmailBackend):
@@ -77,3 +78,31 @@ class EmlFileEmailBackend(BaseEmailBackend):
 
         for message in email_messages:
             self.write_message(message)
+
+
+class SecureSandboxedEnvironment(SandboxedEnvironment):
+    """A security hardened Jinja2 environment that blocks access to insecure Django functionality."""
+
+    # Globally forbidden attributes
+    _forbidden_attrs = {'objects', }
+
+    def is_safe_attribute(self, obj: object, attr: str, value: any) -> bool:
+        """Block access to private and forbidden attributes."""
+
+        # Block private methods and explicitly forbidden names
+        if attr.startswith('_') or attr in self._forbidden_attrs:
+            return False
+
+        return super().is_safe_attribute(obj, attr, value)
+
+    def is_safe_callable(self, obj: callable) -> bool:
+        """Block all callables unless it's a method from a primitive type."""
+
+        obj_type = type(obj.__self__)
+
+        # Allow methods from primitive types (e.g., str.upper)
+        if obj_type in (str, int, float, bool, list, tuple, dict, set, frozenset, datetime, date):
+            return super().is_safe_callable(obj)
+
+        # Block all other callables (e.g., model methods, custom functions, etc.)
+        return False
