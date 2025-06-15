@@ -35,14 +35,9 @@ def get_template(template_name: str) -> Template:
         A Jinja2 Template.
 
     Raises:
-        RuntimeError: If the template name includes invalid characters.
         FileNotFoundError: If the template is not found in either the custom or default location.
         PermissionError: When attempting to load a template with insecure file permissions.
     """
-
-    # Prevent path traversal for better security when fetching template names
-    if not re.fullmatch(r'[a-zA-Z0-9_\-/]+\.html', template_name):
-        raise RuntimeError("Invalid template name")
 
     try:
         # Get resolved path from the loader
