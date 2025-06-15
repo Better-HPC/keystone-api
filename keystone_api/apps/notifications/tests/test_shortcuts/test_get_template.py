@@ -88,8 +88,11 @@ class TemplateResolution(TestCase):
     def test_file_permissions_restricted(self) -> None:
         """Verify an error is raised when loading templates with `O+W` permissions."""
 
-        # Create and load a template with world-writable permissions
+        # Create a template with world-writable permissions
         self._prepare_template(self.default_dir, self.default_template_content, chmod=0o446)
-        with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
-            with self.assertRaisesRegex(PermissionError, "Template file has insecure file permissions"):
-                get_template(self.template_name)
+
+        with (
+            override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)),
+            self.assertRaisesRegex(PermissionError, "Template file has insecure file permissions")
+        ):
+            get_template(self.template_name)
