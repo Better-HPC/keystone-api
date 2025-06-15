@@ -9,7 +9,7 @@ from jinja2 import StrictUndefined, Template
 from apps.notifications.shortcuts import get_template
 
 
-class GetTemplateMethod(TestCase):
+class TemplateResolution(TestCase):
     """Test fetching notification templates via the `get_template` function."""
 
     def setUp(self) -> None:
@@ -30,32 +30,44 @@ class GetTemplateMethod(TestCase):
         self.custom_dir.cleanup()
         self.default_dir.cleanup()
 
+    def _prepare_template(self, directory: tempfile.TemporaryDirectory, content: str, chmod: int = 0o440) -> None:
+        """Helper function for creating a template file in the given directory.
+
+        Args:
+            directory: The directory to create the template in.
+            content: The content of the template.
+            chmod: The permissions of the file in OCTAL format.
+        """
+
+        template_path = Path(directory.name) / self.template_name
+        template_path.write_text(content)
+        template_path.chmod(chmod)
+
     def test_returns_custom_template_when_present(self) -> None:
         """Verify the custom template takes precedence over the default template."""
 
-        custom_template_path = Path(self.custom_dir.name) / self.template_name
-        custom_template_path.write_text(self.custom_template_content)
+        self._prepare_template(self.custom_dir, self.custom_template_content)
+        self._prepare_template(self.default_dir, self.default_template_content)
 
-        default_template_path = Path(self.default_dir.name) / self.template_name
-        default_template_path.write_text(self.default_template_content)
+        with override_settings(
+            EMAIL_TEMPLATE_DIR=Path(self.custom_dir.name),
+            EMAIL_DEFAULT_DIR=Path(self.default_dir.name),
+        ):
+            template = get_template(self.template_name)
 
-        with override_settings(EMAIL_TEMPLATE_DIR=Path(self.custom_dir.name)):
-            tpl = get_template(self.template_name)
-
-        self.assertIsInstance(tpl, Template)
-        self.assertEqual(self.custom_template_content, tpl.render())
+        self.assertIsInstance(template, Template)
+        self.assertEqual(self.custom_template_content, template.render())
 
     def test_falls_back_to_default_template_when_custom_not_found(self) -> None:
         """Verify the default template is returned when a custom template is not found."""
 
-        default_template_path = Path(self.default_dir.name) / self.template_name
-        default_template_path.write_text(self.default_template_content)
+        self._prepare_template(self.default_dir, self.default_template_content)
 
         with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
-            tpl = get_template(self.template_name)
+            template = get_template(self.template_name)
 
-        self.assertIsInstance(tpl, Template)
-        self.assertEqual(self.default_template_content, tpl.render())
+        self.assertIsInstance(template, Template)
+        self.assertEqual(self.default_template_content, template.render())
 
     def test_raises_error_if_no_template_exists(self) -> None:
         """Verify an error is raised if no template exists."""
@@ -63,13 +75,24 @@ class GetTemplateMethod(TestCase):
         with self.assertRaises(FileNotFoundError):
             get_template(self.template_name)
 
-    def test_strict_undefined_enabled(self) -> bool:
+    def test_strict_undefined_enabled(self) -> None:
         """Verify the returned template is configured to enforce StrictUndefined mode."""
 
-        default_template_path = Path(self.default_dir.name) / self.template_name
-        default_template_path.write_text(self.default_template_content)
+        self._prepare_template(self.default_dir, self.default_template_content)
 
         with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
-            tpl = get_template(self.template_name)
+            template = get_template(self.template_name)
 
-        return tpl.environment.undefined is StrictUndefined
+        self.assertIs(template.environment.undefined, StrictUndefined)
+
+    def test_file_permissions_restricted(self) -> None:
+        """Verify an error is raised when loading templates with `O+W` permissions."""
+
+        # Create a template with world-writable permissions
+        self._prepare_template(self.default_dir, self.default_template_content, chmod=0o446)
+
+        with (
+            override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)),
+            self.assertRaisesRegex(PermissionError, "Template file has insecure file permissions")
+        ):
+            get_template(self.template_name)

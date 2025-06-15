@@ -4,18 +4,19 @@ Shortcuts are designed to simplify common tasks such as rendering templates,
 redirecting URLs, issuing notifications, and handling HTTP responses.
 """
 
+import os
 import re
+import stat
 from html import unescape
 
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
-from jinja2 import Environment, StrictUndefined, Template
+from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
 
 from apps.notifications.models import Notification
 from apps.users.models import User
-
-ENV = Environment(undefined=StrictUndefined, autoescape=True)
+from plugins.email import SecureSandboxedEnvironment
 
 
 def get_template(template_name: str) -> Template:
@@ -32,18 +33,25 @@ def get_template(template_name: str) -> Template:
 
     Raises:
         FileNotFoundError: If the template is not found in either the custom or default location.
+        PermissionError: When attempting to load a template with insecure file permissions.
     """
 
-    custom_template_path = settings.EMAIL_TEMPLATE_DIR / template_name
-    default_template_path = settings.EMAIL_DEFAULT_DIR / template_name
+    loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
+    environment = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
-    if custom_template_path.exists():
-        return ENV.from_string(custom_template_path.read_text())
+    # Get resolved path from the loader
+    try:
+        source, filepath, _ = environment.loader.get_source(environment, template_name)
 
-    if default_template_path.exists():
-        return ENV.from_string(default_template_path.read_text())
+    except TemplateNotFound:
+        raise FileNotFoundError(f"Template file not found '{template_name}'")
 
-    raise FileNotFoundError(f"Could not find template matching the name '{template_name}'.")
+    # Check file permissions
+    mode = os.stat(filepath).st_mode
+    if mode & stat.S_IWOTH:
+        raise PermissionError(f"Template file has insecure file permissions: {filepath}")
+
+    return environment.get_template(template_name)
 
 
 def format_template(template: Template, context: dict[str, any]) -> (str, str):
@@ -154,25 +162,5 @@ def send_notification_template(
         html_content,
         notification_type,
         notification_metadata,
-        save=save
-    )
-
-
-def send_general_notification(user: User, subject: str, message: str, /, save=True) -> None:
-    """Send a general notification email to a specified user.
-
-    Args:
-        user: The user object to whom the email will be sent.
-        subject: The subject line of the email.
-        message: The message content to include.
-        save: Whether to save the notification to the application database.
-    """
-
-    return send_notification_template(
-        user=user,
-        subject=subject,
-        template='general.html',
-        notification_type=Notification.NotificationType.general_message,
-        context={'user': user, 'message': message},
         save=save
     )
