@@ -30,8 +30,14 @@ class TemplateResolution(TestCase):
         self.custom_dir.cleanup()
         self.default_dir.cleanup()
 
-    def _prepare_template(self, directory: tempfile.TemporaryDirectory, content: str, chmod: int = 440) -> None:
-        """Helper function for creating a template file in the given directory."""
+    def _prepare_template(self, directory: tempfile.TemporaryDirectory, content: str, chmod: int = 0o440) -> None:
+        """Helper function for creating a template file in the given directory.
+
+        Args:
+            directory: The directory to create the template in.
+            content: The content of the template.
+            chmod: The permissions of the file in OCTAL format.
+        """
 
         template_path = Path(directory.name) / self.template_name
         template_path.write_text(content)
@@ -83,6 +89,7 @@ class TemplateResolution(TestCase):
         """Verify an error is raised when loading templates with `O+W` permissions."""
 
         # Create and load a template with world-writable permissions
-        self._prepare_template(self.default_dir, self.default_template_content, chmod=666)
+        self._prepare_template(self.default_dir, self.default_template_content, chmod=0o446)
         with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
-            self.assertRaisesRegex(PermissionError, "insecure file permissions")
+            with self.assertRaisesRegex(PermissionError, "Template file has insecure file permissions"):
+                get_template(self.template_name)
