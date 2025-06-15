@@ -12,14 +12,11 @@ from html import unescape
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
-from jinja2 import FileSystemLoader, StrictUndefined, Template
+from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
 
 from apps.notifications.models import Notification
 from apps.users.models import User
 from plugins.email import SecureSandboxedEnvironment
-
-loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
-ENV = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
 
 def get_template(template_name: str) -> Template:
@@ -39,19 +36,22 @@ def get_template(template_name: str) -> Template:
         PermissionError: When attempting to load a template with insecure file permissions.
     """
 
-    try:
-        # Get resolved path from the loader
-        source, filename, _ = ENV.loader.get_source(ENV, template_name)
+    loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
+    environment = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
-    except Exception as e:
+    # Get resolved path from the loader
+    try:
+        source, filepath, _ = environment.loader.get_source(environment, template_name)
+
+    except TemplateNotFound:
         raise FileNotFoundError(f"Template file not found '{template_name}'")
 
     # Check file permissions
-    st = os.stat(filename)
-    if not st.st_mode & stat.S_IWOTH:
-        raise PermissionError(f"Template file has insecure file permissions: {filename}")
+    mode = os.stat(filepath).st_mode
+    if mode & stat.S_IWOTH:
+        raise PermissionError(f"Template file has insecure file permissions: {filepath}")
 
-    return ENV.get_template(template_name)
+    return environment.get_template(template_name)
 
 
 def format_template(template: Template, context: dict[str, any]) -> (str, str):

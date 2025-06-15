@@ -30,16 +30,23 @@ class GetTemplateMethod(TestCase):
         self.custom_dir.cleanup()
         self.default_dir.cleanup()
 
+    def _prepare_template(self, directory: tempfile.TemporaryDirectory, content: str) -> None:
+        """Helper function for creating a template file in the given directory."""
+
+        template_path = Path(directory.name) / self.template_name
+        template_path.write_text(content)
+        template_path.chmod(0o440)
+
     def test_returns_custom_template_when_present(self) -> None:
         """Verify the custom template takes precedence over the default template."""
 
-        custom_template_path = Path(self.custom_dir.name) / self.template_name
-        custom_template_path.write_text(self.custom_template_content)
+        self._prepare_template(self.custom_dir, self.custom_template_content)
+        self._prepare_template(self.default_dir, self.default_template_content)
 
-        default_template_path = Path(self.default_dir.name) / self.template_name
-        default_template_path.write_text(self.default_template_content)
-
-        with override_settings(EMAIL_TEMPLATE_DIR=Path(self.custom_dir.name)):
+        with override_settings(
+            EMAIL_TEMPLATE_DIR=Path(self.custom_dir.name),
+            EMAIL_DEFAULT_DIR=Path(self.default_dir.name),
+        ):
             tpl = get_template(self.template_name)
 
         self.assertIsInstance(tpl, Template)
@@ -48,8 +55,7 @@ class GetTemplateMethod(TestCase):
     def test_falls_back_to_default_template_when_custom_not_found(self) -> None:
         """Verify the default template is returned when a custom template is not found."""
 
-        default_template_path = Path(self.default_dir.name) / self.template_name
-        default_template_path.write_text(self.default_template_content)
+        self._prepare_template(self.default_dir, self.default_template_content)
 
         with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
             tpl = get_template(self.template_name)
@@ -63,13 +69,12 @@ class GetTemplateMethod(TestCase):
         with self.assertRaises(FileNotFoundError):
             get_template(self.template_name)
 
-    def test_strict_undefined_enabled(self) -> bool:
+    def test_strict_undefined_enabled(self) -> None:
         """Verify the returned template is configured to enforce StrictUndefined mode."""
 
-        default_template_path = Path(self.default_dir.name) / self.template_name
-        default_template_path.write_text(self.default_template_content)
+        self._prepare_template(self.default_dir, self.default_template_content)
 
         with override_settings(EMAIL_DEFAULT_DIR=Path(self.default_dir.name)):
             tpl = get_template(self.template_name)
 
-        return tpl.environment.undefined is StrictUndefined
+        self.assertIs(tpl.environment.undefined, StrictUndefined)
