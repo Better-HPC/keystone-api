@@ -74,8 +74,8 @@ class Command(BaseCommand):
         """Render a copy of user notification templates and write them to disk.
 
         Args:
-            input_dir: Optional input directory with custom templates.
             output_dir: The output directory where rendered templates are written.
+            input_dir: Optional input directory with custom templates.
         """
 
         # Define mock data to populate notifications
