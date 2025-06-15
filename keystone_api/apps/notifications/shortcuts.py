@@ -46,15 +46,15 @@ def get_template(template_name: str) -> Template:
         # Get resolved path from the loader
         source, filename, _ = ENV.loader.get_source(ENV, template_name)
 
-        # Check file permissions
-        st = os.stat(filename)
-        if st.st_mode & stat.S_IWOTH:
-            raise PermissionError(f"Template file '{filename}' has insecure permissions")
-
-        return ENV.get_template(template_name)
-
     except Exception as e:
-        raise FileNotFoundError(f"Could not find template '{template_name}': {e}")
+        raise FileNotFoundError(f"Template file not found '{template_name}'")
+
+    # Check file permissions
+    st = os.stat(filename)
+    if not st.st_mode & stat.S_IWOTH:
+        raise PermissionError(f"Template file has insecure file permissions: {filename}")
+
+    return ENV.get_template(template_name)
 
 
 def format_template(template: Template, context: dict[str, any]) -> (str, str):

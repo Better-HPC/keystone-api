@@ -45,7 +45,38 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Handle the command execution."""
 
-        input_dir, output_dir = self._validate_args(*args, **options)
+        output_dir, input_dir = self._validate_args(*args, **options)
+
+        try:
+            self._render_templates(output_dir, input_dir)
+
+        except Exception as e:
+            self.stderr.write(str(e))
+
+    def _validate_args(self, *args, **options) -> (Path, Path | None):
+        """Validate and return command line arguments.
+
+        Returns:
+            A tuple containing the input and directories.
+        """
+
+        output_dir = options['out']
+        input_dir = options['templates']
+
+        for path in (input_dir, output_dir):
+            if not path.exists():
+                self.stderr.write(f'No such file or directory: {path.resolve()}')
+                exit(1)
+
+        return output_dir, input_dir
+
+    def _render_templates(self, output_dir: Path, input_dir: Path | None) -> None:
+        """Render a copy of user notification templates and write them to disk.
+
+        Args:
+            input_dir: Optional input directory with custom templates.
+            output_dir: The output directory where rendered templates are written.
+        """
 
         # Define mock data to populate notifications
         user = self._create_dummy_user()
@@ -61,23 +92,6 @@ class Command(BaseCommand):
             send_notification_past_expiration(user=user, request=alloc_request, save=False)
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
-
-    def _validate_args(self, *args, **options) -> (Path, Path):
-        """Validate and return command line arguments.
-
-        Returns:
-            A tuple containing the input and directories.
-        """
-
-        output_dir = options['out']
-        input_dir = options['templates']
-
-        for path in (input_dir, output_dir):
-            if not path.exists():
-                self.stderr.write(f'No such file or directory: {path.resolve()}')
-                exit(1)
-
-        return input_dir, output_dir
 
     @staticmethod
     def _create_dummy_user() -> User:
