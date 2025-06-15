@@ -10,13 +10,14 @@ from html import unescape
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
-from jinja2 import FileSystemLoader, Environment, StrictUndefined, Template
+from jinja2 import FileSystemLoader, StrictUndefined, Template
+from jinja2.sandbox import SandboxedEnvironment
 
 from apps.notifications.models import Notification
 from apps.users.models import User
 
 loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
-ENV = Environment(undefined=StrictUndefined, autoescape=True, loader=loader)
+ENV = SandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
 
 def get_template(template_name: str) -> Template:
