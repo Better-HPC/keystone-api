@@ -164,23 +164,3 @@ def send_notification_template(
         notification_metadata,
         save=save
     )
-
-
-def send_general_notification(user: User, subject: str, message: str, /, save=True) -> None:
-    """Send a general notification email to a specified user.
-
-    Args:
-        user: The user object to whom the email will be sent.
-        subject: The subject line of the email.
-        message: The message content to include.
-        save: Whether to save the notification to the application database.
-    """
-
-    return send_notification_template(
-        user=user,
-        subject=subject,
-        template='general.html',
-        notification_type=Notification.NotificationType.general_message,
-        context={'user': user, 'message': message},
-        save=save
-    )

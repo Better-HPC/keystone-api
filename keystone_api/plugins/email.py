@@ -5,8 +5,9 @@ backends for writing custom email messages a `.eml` files in a configured
 directory, rather than sending them via external service like SMTP.
 """
 
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
+from types import BuiltinFunctionType, BuiltinMethodType
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -83,8 +84,8 @@ class EmlFileEmailBackend(BaseEmailBackend):
 class SecureSandboxedEnvironment(SandboxedEnvironment):
     """A security hardened Jinja2 environment that blocks access to insecure Django functionality."""
 
-    # Globally forbidden attributes
     _forbidden_attrs = {'objects', }
+    _allowed_constructors = {str, int, float, bool, list, tuple, dict, set, frozenset}
 
     def is_safe_attribute(self, obj: object, attr: str, value: any) -> bool:
         """Block access to private and forbidden attributes."""
@@ -96,13 +97,8 @@ class SecureSandboxedEnvironment(SandboxedEnvironment):
         return super().is_safe_attribute(obj, attr, value)
 
     def is_safe_callable(self, obj: callable) -> bool:
-        """Block all callables unless it's a method from a primitive type."""
+        """Block all callables unless it's a constructor/method from a primitive type."""
 
-        obj_type = type(obj.__self__)
-
-        # Allow methods from primitive types (e.g., str.upper)
-        if obj_type in (str, int, float, bool, list, tuple, dict, set, frozenset, datetime, date):
-            return super().is_safe_callable(obj)
-
-        # Block all other callables (e.g., model methods, custom functions, etc.)
-        return False
+        is_builtin_constructor = obj in self._allowed_constructors
+        is_builtin_method = isinstance(obj, (BuiltinFunctionType, BuiltinMethodType))
+        return is_builtin_constructor or is_builtin_method
