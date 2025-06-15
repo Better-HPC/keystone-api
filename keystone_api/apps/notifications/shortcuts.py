@@ -36,6 +36,10 @@ def get_template(template_name: str) -> Template:
         FileNotFoundError: If the template is not found in either the custom or default location.
     """
 
+    # Prevent path traversal for better security when fetching template names
+    if not re.fullmatch(r'[a-zA-Z0-9_\-/]+\.html', template_name):
+        raise ValueError("Invalid template name")
+
     try:
         return ENV.get_template(template_name)
 
