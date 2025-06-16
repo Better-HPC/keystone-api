@@ -3,6 +3,8 @@ keystone_api/keystone.db
 keystone_api/static_files/
 keystone_api/media/
 keystone_api/email/
+*.log
+*.eml
 
 # Distribution and packaging
 __pycache__/
