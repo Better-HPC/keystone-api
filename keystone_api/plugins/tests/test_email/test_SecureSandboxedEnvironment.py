@@ -24,8 +24,9 @@ class IsSafeAttributeMethod(SimpleTestCase):
     def test_blocks_forbidden_attributes(self) -> None:
         """Verify explicitly forbidden attributes are blocked."""
 
-        result = self.env.is_safe_attribute(object(), 'objects', None)
-        self.assertFalse(result)
+        self.assertFalse(self.env.is_safe_attribute(object(), 'objects', None))
+        self.assertFalse(self.env.is_safe_attribute(object(), 'password', None))
+        self.assertFalse(self.env.is_safe_attribute(object(), 'history', None))
 
     def test_allows_public_safe_attributes(self) -> None:
         """Verify normal public attributes are allowed."""

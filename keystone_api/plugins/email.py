@@ -84,7 +84,7 @@ class EmlFileEmailBackend(BaseEmailBackend):
 class SecureSandboxedEnvironment(SandboxedEnvironment):
     """A security hardened Jinja2 environment that blocks access to insecure Django functionality."""
 
-    _forbidden_attrs = {'objects', }
+    _forbidden_attrs = {'objects', 'password', 'history'}
     _allowed_constructors = {str, int, float, bool, list, tuple, dict, set, frozenset}
 
     def is_safe_attribute(self, obj: object, attr: str, value: any) -> bool:
