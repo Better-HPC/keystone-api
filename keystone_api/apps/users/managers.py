@@ -37,6 +37,24 @@ class TeamManager(models.Manager):
 class UserManager(BaseUserManager):
     """Object manager for the `User` database model."""
 
+    def get_from_username(self, username: str) -> 'User | None':
+        """Return a user record matching the given username.
+
+        Returns `None` if a user does not exist.
+
+        Args:
+            username: The username to look for.
+
+        Returns:
+            A `User` record or `None`.
+        """
+
+        try:
+            return self.get(username=username)
+
+        except User.DoesNotExist:
+            return None
+
     def create_user(self, username: str, password: str, **extra_fields) -> 'User':
         """Create a new user account.
 

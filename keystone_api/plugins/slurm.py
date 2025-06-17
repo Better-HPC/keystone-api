@@ -2,6 +2,7 @@
 
 import logging
 import re
+from datetime import datetime
 from shlex import split
 from subprocess import PIPE, Popen
 
@@ -153,3 +154,42 @@ def get_cluster_usage(account_name: str, cluster_name: str) -> int:
 
     usage = int(usage) if usage.isnumeric() else 0
     return usage // 60  # convert from minutes to hours
+
+
+def get_cluster_jobs(cluster_name: str) -> list[dict[str, any]]:
+    """Retrieve SLURM job information for a given cluster.
+
+    Args:
+        cluster_name: Name of the SLURM cluster to query jobs for.
+
+    Returns:
+        A list of dictionaries, each containing metadata for a different job.
+    """
+
+    # Field names to fetch from slurm and their returned order
+    fields = (
+        "Account", "AllocNodes", "AllocTres", "DerivedExitCode", "Elapsed",
+        "End", "Group", "JobId", "JobName", "NodeList", "Priority",
+        "Partition", "QOS", "Start", "State", "Submit", "User"
+    )
+
+    cmd = split(
+        f"sacct --allusers --noheader --parsable2 "
+        f"--clusters={cluster_name} --format={','.join(fields)}"
+    )
+
+    job_list = []
+    for line in subprocess_call(cmd).splitlines():
+        parsed_line = line.split('|')
+        job_data = {field.lower(): value for field, value in zip(fields, parsed_line)}
+
+        for field in ('submit', 'start', 'end'):
+            try:
+                job_data[field] = datetime.strptime(job_data[field], "%Y-%m-%dT%H:%M:%S")
+
+            except (ValueError, Exception):
+                job_data[field] = None
+
+        job_list.append(job_data)
+
+    return job_list
