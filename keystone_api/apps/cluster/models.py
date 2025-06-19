@@ -8,7 +8,7 @@ the associated table/fields/records are presented by parent interfaces.
 
 from django.db import models
 
-from apps.users.models import User
+from apps.users.models import Team, User
 
 __all__ = ['JobStats']
 
@@ -37,6 +37,7 @@ class JobStats(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         """Database model settings."""

@@ -8,6 +8,7 @@ creation.
 
 from rest_framework import serializers
 
+from apps.users.nested import TeamSummarySerializer, UserSummarySerializer
 from .models import *
 
 __all__ = ['JobStatsSerializer']
@@ -15,6 +16,9 @@ __all__ = ['JobStatsSerializer']
 
 class JobStatsSerializer(serializers.ModelSerializer):
     """Object serializer for the `JobStats` class."""
+
+    _user = UserSummarySerializer(source='user', read_only=True)
+    _team = TeamSummarySerializer(source='team', read_only=True)
 
     class Meta:
         """Serializer settings."""
