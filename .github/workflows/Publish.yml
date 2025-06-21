@@ -118,7 +118,9 @@ jobs:
     name: Trigger Docs
     runs-on: ubuntu-latest
 
-    environment: docs
+    environment:
+      name: docs
+      url: https://github.com/Better-HPC/keystone-docs
 
     steps:
       - name: Update docs
