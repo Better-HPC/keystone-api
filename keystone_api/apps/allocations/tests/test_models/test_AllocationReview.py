@@ -25,7 +25,7 @@ class GetTeamMethod(TestCase):
 
         # Create an AllocationReview instance linked to the AllocationRequest
         self.reviewer = User.objects.create_user(username='reviewer', password='foobar123!')
-        self.allocation_request_review = AllocationReview.objects.create(
+        self.allocation_review = AllocationReview.objects.create(
             status=AllocationReview.StatusChoices.APPROVED,
             request=self.allocation_request,
             reviewer=self.reviewer
@@ -34,5 +34,5 @@ class GetTeamMethod(TestCase):
     def test_get_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""
 
-        team = self.allocation_request_review.get_team()
-        self.assertEqual(team, self.team)
+        self.assertEqual(self.team, self.allocation_review.get_team())
+
