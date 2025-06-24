@@ -1355,19 +1355,19 @@ paths:
         schema:
           type: string
       - in: query
-        name: alloc_nodes
+        name: allocnodes
         schema:
           type: string
       - in: query
-        name: alloc_nodes__contains
+        name: allocnodes__contains
         schema:
           type: string
       - in: query
-        name: alloc_nodes__endswith
+        name: allocnodes__endswith
         schema:
           type: string
       - in: query
-        name: alloc_nodes__in
+        name: allocnodes__in
         schema:
           type: array
           items:
@@ -1376,27 +1376,27 @@ paths:
         explode: false
         style: form
       - in: query
-        name: alloc_nodes__isnull
+        name: allocnodes__isnull
         schema:
           type: boolean
       - in: query
-        name: alloc_nodes__startswith
+        name: allocnodes__startswith
         schema:
           type: string
       - in: query
-        name: alloc_tres
+        name: alloctres
         schema:
           type: string
       - in: query
-        name: alloc_tres__contains
+        name: alloctres__contains
         schema:
           type: string
       - in: query
-        name: alloc_tres__endswith
+        name: alloctres__endswith
         schema:
           type: string
       - in: query
-        name: alloc_tres__in
+        name: alloctres__in
         schema:
           type: array
           items:
@@ -1405,11 +1405,11 @@ paths:
         explode: false
         style: form
       - in: query
-        name: alloc_tres__isnull
+        name: alloctres__isnull
         schema:
           type: boolean
       - in: query
-        name: alloc_tres__startswith
+        name: alloctres__startswith
         schema:
           type: string
       - in: query
@@ -1501,38 +1501,34 @@ paths:
         schema:
           type: number
       - in: query
-        name: derived_exit_code
+        name: derivedexitcode
         schema:
-          type: integer
+          type: string
       - in: query
-        name: derived_exit_code__gt
+        name: derivedexitcode__contains
         schema:
-          type: integer
+          type: string
       - in: query
-        name: derived_exit_code__gte
+        name: derivedexitcode__endswith
         schema:
-          type: integer
+          type: string
       - in: query
-        name: derived_exit_code__in
+        name: derivedexitcode__in
         schema:
           type: array
           items:
-            type: integer
+            type: string
         description: Multiple values may be separated by commas.
         explode: false
         style: form
       - in: query
-        name: derived_exit_code__isnull
+        name: derivedexitcode__isnull
         schema:
           type: boolean
       - in: query
-        name: derived_exit_code__lt
+        name: derivedexitcode__startswith
         schema:
-          type: integer
-      - in: query
-        name: derived_exit_code__lte
-        schema:
-          type: integer
+          type: string
       - in: query
         name: elapsed
         schema:
@@ -1686,19 +1682,19 @@ paths:
         schema:
           type: integer
       - in: query
-        name: job_id
+        name: jobid
         schema:
           type: string
       - in: query
-        name: job_id__contains
+        name: jobid__contains
         schema:
           type: string
       - in: query
-        name: job_id__endswith
+        name: jobid__endswith
         schema:
           type: string
       - in: query
-        name: job_id__in
+        name: jobid__in
         schema:
           type: array
           items:
@@ -1707,27 +1703,27 @@ paths:
         explode: false
         style: form
       - in: query
-        name: job_id__isnull
+        name: jobid__isnull
         schema:
           type: boolean
       - in: query
-        name: job_id__startswith
+        name: jobid__startswith
         schema:
           type: string
       - in: query
-        name: job_name
+        name: jobname
         schema:
           type: string
       - in: query
-        name: job_name__contains
+        name: jobname__contains
         schema:
           type: string
       - in: query
-        name: job_name__endswith
+        name: jobname__endswith
         schema:
           type: string
       - in: query
-        name: job_name__in
+        name: jobname__in
         schema:
           type: array
           items:
@@ -1736,27 +1732,27 @@ paths:
         explode: false
         style: form
       - in: query
-        name: job_name__isnull
+        name: jobname__isnull
         schema:
           type: boolean
       - in: query
-        name: job_name__startswith
+        name: jobname__startswith
         schema:
           type: string
       - in: query
-        name: node_list
+        name: nodelist
         schema:
           type: string
       - in: query
-        name: node_list__contains
+        name: nodelist__contains
         schema:
           type: string
       - in: query
-        name: node_list__endswith
+        name: nodelist__endswith
         schema:
           type: string
       - in: query
-        name: node_list__in
+        name: nodelist__in
         schema:
           type: array
           items:
@@ -1765,11 +1761,11 @@ paths:
         explode: false
         style: form
       - in: query
-        name: node_list__isnull
+        name: nodelist__isnull
         schema:
           type: boolean
       - in: query
-        name: node_list__startswith
+        name: nodelist__startswith
         schema:
           type: string
       - in: query
@@ -8196,19 +8192,17 @@ components:
           type: string
           nullable: true
           maxLength: 128
-        alloc_nodes:
+        allocnodes:
           type: string
           nullable: true
           maxLength: 128
-        alloc_tres:
+        alloctres:
           type: string
           nullable: true
-        derived_exit_code:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
+        derivedexitcode:
+          type: string
           nullable: true
+          maxLength: 4
         elapsed:
           type: string
           nullable: true
@@ -8220,14 +8214,14 @@ components:
           type: string
           nullable: true
           maxLength: 128
-        job_id:
+        jobid:
           type: string
           maxLength: 64
-        job_name:
+        jobname:
           type: string
           nullable: true
           maxLength: 512
-        node_list:
+        nodelist:
           type: string
           nullable: true
         priority:
@@ -8279,7 +8273,7 @@ components:
       - _team
       - created_at
       - id
-      - job_id
+      - jobid
       - updated_at
     Login:
       type: object
