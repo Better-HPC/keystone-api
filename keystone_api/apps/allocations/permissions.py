@@ -126,7 +126,7 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
 
 
 class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
-    """Grant read access to users in the same team as the requested object.
+    """Grant read access to users in the same team as the requested object and write access to staff.
 
     Permissions:
         - Grants read access to users in the same team as the requested object.

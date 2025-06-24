@@ -1,3 +1,5 @@
+"""Background tasks for synchronizing cached job statistics against Slurm."""
+
 from celery import shared_task
 
 from apps.allocations.models import Cluster, JobStats
