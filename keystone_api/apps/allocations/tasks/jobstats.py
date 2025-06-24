@@ -28,9 +28,17 @@ def slurm_update_job_stats_for_cluster(cluster_id: int) -> None:
         job['team'] = team_map.get(job['account'], None)
         objs.append(JobStats(**job))
 
+
+    unique_fields, update_fields = [], []
+    for field in JobStats._meta.get_fields():
+        if field.unique:
+            unique_fields.append(field.name)
+
+        else:
+            update_fields.append(field.name)
+
     # Bulk insert, updating non-unique fields when unique fields have a conflict
-    update_fields = [field.name for field in JobStats._meta.get_fields() if not field.unique]
-    JobStats.objects.bulk_create(objs, update_conflicts=True, update_fields=update_fields)
+    JobStats.objects.bulk_create(objs, update_conflicts=True, unique_fields=unique_fields, update_fields=update_fields)
 
 
 @shared_task
