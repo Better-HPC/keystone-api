@@ -11,15 +11,24 @@ from plugins.slurm import get_cluster_jobs
 def slurm_update_job_stats_for_cluster(cluster_id: int) -> None:
     """Fetch job statistics for a single cluster and update the DB."""
 
+    # Fetch job information from slurm
     cluster = Cluster.objects.get(pk=cluster_id)
+    cluster_jobs = get_cluster_jobs(cluster.name)
 
+    # Prefetch team objects
+    account_names = set(job['account'] for job in cluster_jobs)
+    teams = Team.objects.filter(name__in=account_names)
+    team_map = {team.name: team for team in teams}
+
+    # Prepare JobStats objects
     objs = []
-    for job in get_cluster_jobs(cluster.name):
-        job['username'] = job['user']
-        job['team'] = Team.objects.get_from_teamname(job['account'])
+    for job in cluster_jobs:
         job['cluster'] = cluster
+        job['username'] = job.pop('user', None)
+        job['team'] = team_map.get(job['account'], None)
         objs.append(JobStats(**job))
 
+    # Bulk insert/update
     JobStats.objects.bulk_create(objs, update_conflicts=True)
 
 
