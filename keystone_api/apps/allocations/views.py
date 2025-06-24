@@ -145,5 +145,5 @@ class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
     model = JobStats
     queryset = JobStats.objects.all()
     serializer_class = JobStatsSerializer
-    search_fields = ['title', 'agency', 'team__name']
+    search_fields = ['account', 'username', 'group', 'team__name']
     permission_classes = [IsAuthenticated]
