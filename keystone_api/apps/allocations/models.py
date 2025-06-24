@@ -29,6 +29,7 @@ __all__ = [
     'Attachment',
     'Cluster',
     'Comment',
+    'JobStats',
     'TeamModelInterface',
 ]
 
@@ -267,3 +268,41 @@ class Comment(models.Model):
         """Return a string representation of the comment."""
 
         return f'Comment by {self.user} made on request "{self.request.title[:50]}"'
+
+
+class JobStats(models.Model):
+    """Slurm Job status and statistics."""
+
+    account = models.CharField(max_length=128, null=True, blank=True)
+    alloc_nodes = models.CharField(max_length=128, null=True, blank=True)
+    alloc_tres = models.TextField(null=True, blank=True)
+    derived_exit_code = models.IntegerField(null=True, blank=True)
+    elapsed = models.CharField(max_length=32, null=True, blank=True)  # e.g., "01:23:45"
+    end = models.DateTimeField(null=True, blank=True)
+    group = models.CharField(max_length=128, null=True, blank=True)
+    job_id = models.CharField(max_length=64, unique=True)
+    job_name = models.CharField(max_length=512, null=True, blank=True)
+    node_list = models.TextField(null=True, blank=True)
+    priority = models.IntegerField(null=True, blank=True)
+    partition = models.CharField(max_length=128, null=True, blank=True)
+    qos = models.CharField(max_length=128, null=True, blank=True)
+    start = models.DateTimeField(null=True, blank=True)
+    state = models.CharField(max_length=64, null=True, blank=True)
+    submit = models.DateTimeField(null=True, blank=True)
+    username = models.CharField(max_length=128, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        """Database model settings."""
+
+        ordering = ["-submit"]
+        indexes = [
+            models.Index(fields=["job_id"]),
+            models.Index(fields=["user"]),
+            models.Index(fields=["state"]),
+        ]

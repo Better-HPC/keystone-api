@@ -28,6 +28,7 @@ __all__ = [
     'AttachmentViewSet',
     'ClusterViewSet',
     'CommentViewSet',
+    'JobStatsViewSet',
 ]
 
 
@@ -136,3 +137,13 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, CommentPermissions]
     search_fields = ['content', 'request__title', 'user__username']
+
+
+class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
+    """Slurm Job status and statistics."""
+
+    model = JobStats
+    queryset = JobStats.objects.all()
+    serializer_class = JobStatsSerializer
+    search_fields = ['title', 'agency', 'team__name']
+    permission_classes = [IsAuthenticated]

@@ -1,14 +1,6 @@
-"""Scheduled tasks executed in parallel by Celery.
-
-Tasks are scheduled and executed in the background by Celery. They operate
-asynchronously from the rest of the application and log their results in the
-application database.
-"""
-
 from celery import shared_task
 
-from apps.allocations.models import Cluster
-from apps.cluster.models import JobStats
+from apps.allocations.models import Cluster, JobStats
 from apps.users.models import Team, User
 from plugins.slurm import get_cluster_jobs
 
@@ -24,6 +16,7 @@ def slurm_update_job_stats_for_cluster(cluster_id: int) -> None:
         job['username'] = job['user']
         job['user'] = User.objects.get_from_username(job['username'])
         job['team'] = Team.objects.get_from_teamname(job['account'])
+        job['cluster'] = cluster
         objs.append(JobStats(**job))
 
     JobStats.objects.bulk_create(objs, update_conflicts=True)
