@@ -46,28 +46,32 @@ def parse_slurm_elapsed(elapsed_str: str) -> timedelta | None:
         The `timedelta` object or `None` if the value fails to parse.
     """
 
-    if '-' in elapsed_str:
-        days_part, time_part = elapsed_str.split('-')
-        days = int(days_part)
+    try:
+        if '-' in elapsed_str:
+            days_part, time_part = elapsed_str.split('-')
+            days = int(days_part)
 
-    else:
-        days = 0
-        time_part = elapsed_str
+        else:
+            days = 0
+            time_part = elapsed_str
 
-    parts = list(map(int, time_part.split(':')))
+        parts = list(map(int, time_part.split(':')))
 
-    if len(parts) == 3:
-        hours, minutes, seconds = parts
+        if len(parts) == 3:
+            hours, minutes, seconds = parts
 
-    elif len(parts) == 2:
-        hours, minutes = parts
-        seconds = 0
+        elif len(parts) == 2:
+            hours, minutes = parts
+            seconds = 0
 
-    else:
+        else:
+            raise ValueError
+
+        return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+
+    except (ValueError, Exception):
         log.error(f'Invalid slurm duration: {elapsed_str}')
         return None
-
-    return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
 
 def subprocess_call(args: list[str]) -> str:
