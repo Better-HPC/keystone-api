@@ -13,7 +13,7 @@ class ParseSlurmDateMethod(unittest.TestCase):
         """Verify a valid datetime string parses correctly."""
 
         date_str = '2025-06-23T14:30:45'
-        expected = datetime(2025, 6, 23, 14, 30, 45)
+        expected = datetime(2025, 6, 23, 14, 30, 45).astimezone()
         result = parse_slurm_date(date_str)
         self.assertEqual(expected, result)
 

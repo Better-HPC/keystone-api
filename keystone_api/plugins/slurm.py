@@ -29,7 +29,7 @@ def parse_slurm_date(date_str: str) -> datetime | None:
     """
 
     try:
-        return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+        return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S").astimezone()
 
     except (ValueError, Exception):
         log.error(f'Invalid slurm datetime: {date_str}')
