@@ -239,7 +239,7 @@ class Cluster(models.Model):
 
 
 @auditlog.register()
-class Comment(models.Model):
+class Comment(TeamModelInterface, models.Model):
     """Comment associated with an allocation review."""
 
     class Meta:
@@ -270,7 +270,7 @@ class Comment(models.Model):
         return f'Comment by {self.user} made on request "{self.request.title[:50]}"'
 
 
-class JobStats(models.Model):
+class JobStats(TeamModelInterface, models.Model):
     """Slurm Job status and statistics."""
 
     account = models.CharField(max_length=128, null=True, blank=True)
@@ -305,3 +305,8 @@ class JobStats(models.Model):
             models.Index(fields=["team", "state"]),
             models.Index(fields=["state"]),
         ]
+
+    def get_team(self) -> Team:
+        """Return the user team tied to the current record."""
+
+        return self.team

@@ -17,6 +17,7 @@ from apps.users.mixins import TeamScopedListMixin
 from .mixins import *
 from .models import *
 from .permissions import *
+from .permissions import MemberReadOnly
 from .serializers import *
 
 __all__ = [
@@ -146,4 +147,4 @@ class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
     queryset = JobStats.objects.all()
     serializer_class = JobStatsSerializer
     search_fields = ['account', 'username', 'group', 'team__name']
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, MemberReadOnly]
