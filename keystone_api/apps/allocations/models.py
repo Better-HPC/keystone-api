@@ -274,15 +274,15 @@ class JobStats(TeamModelInterface, models.Model):
     """Slurm Job status and statistics."""
 
     account = models.CharField(max_length=128, null=True, blank=True)
-    alloc_nodes = models.CharField(max_length=128, null=True, blank=True)
-    alloc_tres = models.TextField(null=True, blank=True)
-    derived_exit_code = models.IntegerField(null=True, blank=True)
+    allocnodes = models.CharField(max_length=128, null=True, blank=True)
+    alloctres = models.TextField(null=True, blank=True)
+    derivedexitcode = models.IntegerField(null=True, blank=True)
     elapsed = models.DurationField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
     group = models.CharField(max_length=128, null=True, blank=True)
-    job_id = models.CharField(max_length=64, unique=True)
-    job_name = models.CharField(max_length=512, null=True, blank=True)
-    node_list = models.TextField(null=True, blank=True)
+    jobid = models.CharField(max_length=64, unique=True)
+    jobname = models.CharField(max_length=512, null=True, blank=True)
+    nodelist = models.TextField(null=True, blank=True)
     priority = models.IntegerField(null=True, blank=True)
     partition = models.CharField(max_length=128, null=True, blank=True)
     qos = models.CharField(max_length=128, null=True, blank=True)
@@ -290,6 +290,7 @@ class JobStats(TeamModelInterface, models.Model):
     state = models.CharField(max_length=64, null=True, blank=True)
     submit = models.DateTimeField(null=True, blank=True)
     username = models.CharField(max_length=128, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -301,7 +302,7 @@ class JobStats(TeamModelInterface, models.Model):
 
         ordering = ["-submit"]
         indexes = [
-            models.Index(fields=["job_id"]),
+            models.Index(fields=["jobid"]),
             models.Index(fields=["team", "state"]),
             models.Index(fields=["state"]),
         ]
