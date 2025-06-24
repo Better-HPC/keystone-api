@@ -1537,20 +1537,14 @@ paths:
         name: elapsed
         schema:
           type: string
-      - in: query
-        name: elapsed__contains
-        schema:
-          type: string
-      - in: query
-        name: elapsed__endswith
-        schema:
-          type: string
+          format: duration
       - in: query
         name: elapsed__in
         schema:
           type: array
           items:
             type: string
+            format: duration
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -1558,10 +1552,6 @@ paths:
         name: elapsed__isnull
         schema:
           type: boolean
-      - in: query
-        name: elapsed__startswith
-        schema:
-          type: string
       - in: query
         name: end
         schema:
@@ -8222,7 +8212,6 @@ components:
         elapsed:
           type: string
           nullable: true
-          maxLength: 32
         end:
           type: string
           format: date-time

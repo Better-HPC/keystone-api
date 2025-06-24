@@ -2,7 +2,7 @@
 
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from shlex import split
 from subprocess import PIPE, Popen
 
@@ -16,6 +16,58 @@ __all__ = [
     'get_slurm_account_users',
     'set_cluster_limit',
 ]
+
+
+def parse_slurm_date(date_str: str) -> datetime | None:
+    """Convert a slurm datetime string into a `datetime` object.
+
+    Args:
+        date_str: The value to convert.
+
+    Returns:
+        The `datetime` object or `None` if the value fails to parse.
+    """
+
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+
+    except (ValueError, Exception):
+        log.error(f'Invalid slurm datetime: {date_str}')
+        return None
+
+
+def parse_slurm_elapsed(elapsed_str: str) -> timedelta | None:
+    """Convert a slurm time string into a `timedelta` object.
+
+    Args:
+        elapsed_str: The value to convert.
+
+    Returns:
+        The `timedelta` object or `None` if the value fails to parse.
+    """
+
+    if '-' in elapsed_str:
+        days_part, time_part = elapsed_str.split('-')
+        days = int(days_part)
+
+    else:
+        days = 0
+        time_part = elapsed_str
+
+    parts = list(map(int, time_part.split(':')))
+
+    if len(parts) == 3:
+        hours, minutes, seconds = parts
+
+    elif len(parts) == 2:
+        hours, minutes = parts
+        seconds = 0
+
+    else:
+        log.error(f'Invalid slurm duration: {elapsed_str}')
+        return None
+
+    return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
 
 def subprocess_call(args: list[str]) -> str:
@@ -156,7 +208,7 @@ def get_cluster_usage(account_name: str, cluster_name: str) -> int:
     return usage // 60  # convert from minutes to hours
 
 
-def get_cluster_jobs(cluster_name: str) -> list[dict[str, any]]:
+def get_cluster_jobs(cluster_name: str) -> list[dict]:
     """Retrieve SLURM job information for a given cluster.
 
     Args:
@@ -183,12 +235,11 @@ def get_cluster_jobs(cluster_name: str) -> list[dict[str, any]]:
         parsed_line = line.split('|')
         job_data = {field.lower(): value for field, value in zip(fields, parsed_line)}
 
-        for field in ('submit', 'start', 'end'):
-            try:
-                job_data[field] = datetime.strptime(job_data[field], "%Y-%m-%dT%H:%M:%S")
-
-            except (ValueError, Exception):
-                job_data[field] = None
+        # Cast select values into Python objects
+        job_data['submit'] = parse_slurm_date(job_data['submit'])
+        job_data['start'] = parse_slurm_date(job_data['start'])
+        job_data['end'] = parse_slurm_date(job_data['end'])
+        job_data['elapsed'] = parse_slurm_elapsed(job_data['elapsed'])
 
         job_list.append(job_data)
 
