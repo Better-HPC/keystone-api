@@ -240,7 +240,7 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
         job_data = {field.lower(): value for field, value in zip(fields, parsed_line)}
 
         # Cast select values into Python objects
-        job_data['priority'] = int(job_data['priority'])
+        job_data['priority'] = int(job_data['priority']) if job_data['priority'] else None
         job_data['submit'] = parse_slurm_date(job_data['submit'])
         job_data['start'] = parse_slurm_date(job_data['start'])
         job_data['end'] = parse_slurm_date(job_data['end'])
