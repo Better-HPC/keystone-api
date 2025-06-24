@@ -3,7 +3,7 @@
 from celery import shared_task
 
 from apps.allocations.models import Cluster, JobStats
-from apps.users.models import Team, User
+from apps.users.models import Team
 from plugins.slurm import get_cluster_jobs
 
 
@@ -16,7 +16,6 @@ def slurm_update_job_stats_for_cluster(cluster_id: int) -> None:
     objs = []
     for job in get_cluster_jobs(cluster.name):
         job['username'] = job['user']
-        job['user'] = User.objects.get_from_username(job['username'])
         job['team'] = Team.objects.get_from_teamname(job['account'])
         job['cluster'] = cluster
         objs.append(JobStats(**job))
