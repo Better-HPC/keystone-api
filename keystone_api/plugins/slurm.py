@@ -241,7 +241,6 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
 
         # Cast select values into Python objects
         job_data['priority'] = int(job_data['priority'])
-        job_data['derivedexitcode'] = int(job_data['derivedexitcode'])
         job_data['submit'] = parse_slurm_date(job_data['submit'])
         job_data['start'] = parse_slurm_date(job_data['start'])
         job_data['end'] = parse_slurm_date(job_data['end'])

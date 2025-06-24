@@ -276,7 +276,7 @@ class JobStats(TeamModelInterface, models.Model):
     account = models.CharField(max_length=128, null=True, blank=True)
     allocnodes = models.CharField(max_length=128, null=True, blank=True)
     alloctres = models.TextField(null=True, blank=True)
-    derivedexitcode = models.IntegerField(null=True, blank=True)
+    derivedexitcode = models.CharField(max_length=4, null=True, blank=True)
     elapsed = models.DurationField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
     group = models.CharField(max_length=128, null=True, blank=True)
