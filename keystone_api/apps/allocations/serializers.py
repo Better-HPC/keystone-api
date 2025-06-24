@@ -151,11 +151,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+
 class JobStatsSerializer(serializers.ModelSerializer):
     """Object serializer for the `JobStats` class."""
 
-    _user = UserSummarySerializer(source='user', read_only=True)
     _team = TeamSummarySerializer(source='team', read_only=True)
+    _cluster = ClusterSerializer(source='cluster', read_only=True)
 
     class Meta:
         """Serializer settings."""

@@ -293,7 +293,6 @@ class JobStats(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
     cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -303,6 +302,6 @@ class JobStats(models.Model):
         ordering = ["-submit"]
         indexes = [
             models.Index(fields=["job_id"]),
-            models.Index(fields=["user"]),
+            models.Index(fields=["team", "state"]),
             models.Index(fields=["state"]),
         ]
