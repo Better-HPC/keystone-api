@@ -122,7 +122,7 @@ jobs:
       - name: Run tests
         run: |
           docker load --input /tmp/keystone-api.tar
-          docker run keystone-api test tests
+          docker run -e API_THROTTLE_ANON="1000/sec" -e API_THROTTLE_USER="1000/sec" keystone-api test tests
 
   report-test-status:
     name: Report Test Status
