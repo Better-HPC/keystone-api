@@ -8,7 +8,6 @@ combined with other mixins or base view classes as needed.
 from typing import Callable
 
 from django.db.models import QuerySet
-from rest_framework.mixins import ListModelMixin
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
