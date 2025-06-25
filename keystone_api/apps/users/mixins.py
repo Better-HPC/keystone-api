@@ -35,14 +35,18 @@ class TeamScopedListMixin:
     def list(self, request: Request) -> Response:
         """Return a list of serialized records filtered by user team permissions."""
 
-        if request.user.is_staff:
-            query = self.queryset
-
-        else:
+        queryset = self.filter_queryset(self.get_queryset())
+        if not request.user.is_staff:
             teams = Team.objects.teams_for_user(request.user)
-            query = self.queryset.filter(**{self.team_field + '__in': teams})
+            queryset = queryset.filter(**{self.team_field + '__in': teams})
 
-        return Response(self.get_serializer(query, many=True).data)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class UserScopedListMixin:
@@ -60,10 +64,14 @@ class UserScopedListMixin:
     def list(self, request: Request, *args, **kwargs) -> Response:
         """Return a list of serialized records filtered for the requesting user."""
 
-        if request.user.is_staff:
-            query = self.queryset
+        queryset = self.filter_queryset(self.get_queryset())
+        if not request.user.is_staff:
+            queryset = self.queryset.filter(**{self.user_field: request.user})
 
-        else:
-            query = self.queryset.filter(**{self.user_field: request.user})
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-        return Response(self.get_serializer(query, many=True).data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
