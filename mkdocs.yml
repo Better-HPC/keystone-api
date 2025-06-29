@@ -5,7 +5,8 @@ nav:
       - install/slurm.md
       - install/docker.md
       - install/systemd.md
-      - install/settings.md
+  - Setup:
+      - setup/settings.md
   - REST API:
     - API Specification: api/index.html
     - api/authentication.md
