@@ -1,16 +1,33 @@
 {% extends "base.html" %}
 
 {% block main %}
-  {% if user.first_name and user.last_name %}
-    <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+  {% if user_first and user_last %}
+    <p>Dear {{ user_first }} {{ user_last }},</p>
   {% else %}
-    <p>Dear {{ user.username }},</p>
+    <p>Dear {{ user_username }},</p>
   {% endif %}
-  <p>
-    This notification is to alert you your HPC compute allocation <strong>"{{ request.title }}"</strong>
-    expired on {{ request.expire.isoformat() }}. You will no longer be able to use the resources awarded
-    to you under this allocation when submitting new jobs.
-  </p>
+  <p>This is a courtesy notification that one of your team's resource allocations has expired:</p>
+  <ul>
+    <li><strong>Team:</strong> {{ team_name }}</li>
+    <li><strong>Request Title:</strong> {{ request_title }}</li>
+    <li><strong>Submitted On:</strong> {{ request_submitted }}</li>
+    <li><strong>Expired On:</strong> {{ request_expire }}</li>
+  </ul>
+
+  {% if active %}
+    <p>Additionally, the following allocation(s) for your team are currently active and approaching expiration:</p>
+    <ul>
+      {% for allocation in active %}
+        <li>
+          <strong>Request Title:</strong> {{ allocation.request_title }}<br />
+          <strong>Expires On:</strong> {{ allocation.request_expire }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Your team has no additional allocation requests that are active at this time.</p>
+  {% endif %}
+
   <p>Sincerely,</p>
   <p>The keystone HPC utility</p>
 {% endblock %}
