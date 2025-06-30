@@ -18,9 +18,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.defaultfilters import truncatechars
 
-from apps.allocations.managers import AllocationManager
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team, User
+from .managers import *
 
 __all__ = [
     'Allocation',
@@ -115,6 +115,8 @@ class AllocationRequest(TeamModelInterface, models.Model):
     assignees = models.ManyToManyField(User, blank=True, related_name='assigned_allocationrequest_set')
     publications = models.ManyToManyField(Publication, blank=True)
     grants = models.ManyToManyField(Grant, blank=True)
+
+    objects = AllocationRequestManager()
 
     def clean(self) -> None:
         """Validate the model instance.
