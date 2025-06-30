@@ -87,7 +87,7 @@ Enabling password authentication is recommended.
 | `REDIS_DB`       | `0`           | The Redis database number to use.            |
 | `REDIS_PASSWORD` |               | Optionally connect using the given password. |
 
-## Email Server
+## Email Notifications
 
 Keystone will default to using the local server when issuing email notifications.
 Securing your production email server with a username/password is recommended, but not required.
