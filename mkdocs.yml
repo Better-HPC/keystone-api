@@ -7,6 +7,7 @@ nav:
       - install/systemd.md
   - Setup:
       - setup/settings.md
+      - setup/email.md
   - REST API:
     - API Specification: api/index.html
     - api/authentication.md
