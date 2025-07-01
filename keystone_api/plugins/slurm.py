@@ -230,7 +230,7 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
     )
 
     cmd = split(
-        f"sacct --allusers --noheader --parsable2 "
+        f"sacct --allusers --allocations --noheader --parsable2 "
         f"--clusters={cluster_name} --format={','.join(fields)}"
     )
 
