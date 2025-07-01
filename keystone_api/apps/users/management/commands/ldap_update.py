@@ -12,7 +12,7 @@ from apps.users.tasks import ldap_update_users
 
 
 class Command(BaseCommand):
-    """Create/update user accounts to reflect changes made in LDAP."""
+    """Create or update user accounts to reflect changes made in LDAP."""
 
     help = 'Create/update user accounts to reflect changes made in LDAP.'
 
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         """Add command-line arguments to the parser.
 
         Args:
-          parser: The argument parser instance
+            parser: The argument parser instance.
         """
 
         parser.add_argument('--prune', action='store_true', help='Delete accounts with usernames not found in LDAP.')

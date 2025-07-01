@@ -8,8 +8,8 @@ from apps.allocations.models import AllocationRequest
 from apps.users.models import Team, User
 
 
-class TeamInterface(TestCase):
-    """Test the implementation of methods required by the `RGModelInterface`."""
+class GetTeamMethod(TestCase):
+    """Test the retrieval of a request's parent team via the `get_team` method.."""
 
     def setUp(self) -> None:
         """Create mock user records"""
@@ -23,14 +23,14 @@ class TeamInterface(TestCase):
         )
 
     def test_get_team(self) -> None:
-        """Test the `get_team` method returns the correct `Team`."""
+        """Verify the `get_team` method returns the correct `Team` instance."""
 
-        team = self.allocation_request.get_team()
-        self.assertEqual(team, self.team)
+        self.assertEqual(self.team, self.allocation_request.get_team())
 
 
-class Clean(TestCase):
-    """Test the validation of record data."""
+
+class CleanMethod(TestCase):
+    """Test the validation of record data via the `clean` method."""
 
     def setUp(self) -> None:
         """Create mock user records"""
@@ -39,7 +39,7 @@ class Clean(TestCase):
         self.team = Team.objects.create(name='Test Team')
 
     def test_clean_method_valid(self) -> None:
-        """Test the clean method returns successfully when dates are valid."""
+        """Verify the clean method returns successfully when dates are valid."""
 
         allocation_request = AllocationRequest.objects.create(
             title='Test Request',
@@ -52,7 +52,7 @@ class Clean(TestCase):
         allocation_request.clean()
 
     def test_clean_method_invalid(self) -> None:
-        """Test the clean method raises a `ValidationError` when active date is after or equal to expire."""
+        """Verify the clean method raises a `ValidationError` when active date is after or equal to expire."""
 
         allocation_request_after = AllocationRequest.objects.create(
             title='Test Request',
@@ -77,7 +77,7 @@ class Clean(TestCase):
             allocation_request_equal.clean()
 
 
-class GetDaysUntilExpired(TestCase):
+class GetDaysUntilExpiredMethod(TestCase):
     """Test calculating the number of days until a request expires."""
 
     def setUp(self) -> None:
@@ -87,7 +87,7 @@ class GetDaysUntilExpired(TestCase):
         self.team = Team.objects.create(name='Test Team')
 
     def test_future_date(self) -> None:
-        """Test when the expiration date is in the future."""
+        """Verify the calculation for an expiration date in the future."""
 
         request = AllocationRequest.objects.create(
             title="Test Request",
@@ -98,7 +98,7 @@ class GetDaysUntilExpired(TestCase):
         self.assertEqual(request.get_days_until_expire(), 10)
 
     def test_past_date(self) -> None:
-        """Test when the expiration date is in the past."""
+        """Verify the calculation for an expiration date in the past."""
 
         request = AllocationRequest.objects.create(
             title="Test Request",
@@ -109,7 +109,7 @@ class GetDaysUntilExpired(TestCase):
         self.assertEqual(request.get_days_until_expire(), -5)
 
     def test_today_date(self) -> None:
-        """Test when the expiration date is today."""
+        """Verify the calculation when the expiration date is today."""
 
         request = AllocationRequest.objects.create(
             title="Test Request",
@@ -120,7 +120,7 @@ class GetDaysUntilExpired(TestCase):
         self.assertEqual(request.get_days_until_expire(), 0)
 
     def test_none_date(self) -> None:
-        """Test when the expiration date is `None`."""
+        """Verify the calculation when the expiration date is `None`."""
 
         request = AllocationRequest.objects.create(
             title="Test Request",

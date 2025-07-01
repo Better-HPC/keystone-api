@@ -1,13 +1,13 @@
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.1"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "keystone-api"
 version = "0.0.0"
 readme = "README.md"
 description = "A REST API for managing user resource allocations on HPC systems."
-authors = ["Better HPC LLC"]
+authors = [{ name = "Better HPC LLC" }]
 keywords = ["Better", "HPC", "keystone", "api"]
 classifiers = [
     "Environment :: Web Environment",
@@ -26,41 +26,56 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Typing :: Typed"
 ]
+requires-python = ">=3.11,<4"
+dependencies = [
+    "coverage==7.8.2",
+    "dj-rest-auth==7.0.1",
+    "django==5.2.3",
+    "django-auditlog==3.1.2",
+    "django-celery-beat==2.8.1",
+    "django-celery-results==2.6.0",
+    "django-cors-headers==4.7.0",
+    "django-environ==0.12.0",
+    "django-filter==25.1",
+    "django-health-check==3.19.1",
+    "django-jazzmin==3.0.1",
+    "django-prometheus==2.3.1",
+    "djangorestframework==3.16.0",
+    "drf_spectacular[sidecar]==0.28.0",
+    "flower==2.0.1",
+    "gunicorn==23.0.0",
+    "jinja2==3.1.6",
+    "pillow==11.2.1",
+    "psycopg2-binary==2.9.10",
+    "pyyaml==6.0.2",
+    "redis==6.2.0",
+    "tqdm==4.67.1",
+    "uritemplate==4.2.0",
+    "whitenoise==6.9.0",
+]
 
-[tool.poetry.scripts]
-keystone-api = "keystone_api.manage:main"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-coverage = "*"
-dj-rest-auth = "^6.0.0"
-django = "5.1.2"
-django-celery-beat = "2.7.0"
-django-celery-results = "2.5.1"
-django-cors-headers = "4.6.0"
-django-environ = "0.11.2"
-django-filter = "24.3"
-django-health-check = "3.18.3"
-django-jazzmin = "3.0.1"
-djangorestframework = "3.15.2"
-django-prometheus = "^2.3.1"
-drf_spectacular = { version = "0.27.2", extras = ["sidecar"] }
-flower = "^2.0.1"
-gunicorn = "23.0.0"
-jinja2 = "^3.1.4"
-pillow = ">=10.4,<12.0"
-psycopg2-binary = "2.9.10"
-pyyaml = "6.0.2"
-redis = "5.2.0"
-tqdm = "4.66.6"
-uritemplate = "4.1.1"
-whitenoise = "6.8.2"
-
-# Optional dependencies installed via extras
-django-auth-ldap = { version = "5.1.0", optional = true }
-aiosmtpd = { version = "1.4.6", optional = true }
-
-[tool.poetry.extras]
+[project.optional-dependencies]
 ldap = ["django-auth-ldap"]
 smtp = ["aiosmtpd"]
-all = ["django-auth-ldap", "aiosmtpd"]
+tests = ["coverage"]
+all = ["django-auth-ldap", "aiosmtpd", "coverage"]
+
+[tool.poetry.group.tests.dependencies]
+coverage = { version = "*", optional = true }
+
+[tool.poetry.group.ldap.dependencies]
+django-auth-ldap = { version = "5.2.0", optional = true }
+
+[tool.poetry.group.smtp.dependencies]
+aiosmtpd = { version = "1.4.6", optional = true }
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "keystone_api/main/*",
+]
+
+[project.scripts]
+keystone-api = "keystone_api.manage:main"

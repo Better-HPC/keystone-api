@@ -4,6 +4,8 @@ Extends and customizes the site-wide administration utility with
 interfaces for managing application database constructs.
 """
 
+import auditlog.admin
+import auditlog.models
 import django_celery_results.admin
 import django_celery_results.models
 from django.conf import settings
@@ -12,6 +14,7 @@ from django.contrib import admin
 from .models import *
 
 settings.JAZZMIN_SETTINGS['icons'].update({
+    'logging.AuditLog': 'fa fa-lock',
     'logging.AppLog': 'fa fa-clipboard-list',
     'logging.RequestLog': 'fa fa-exchange-alt',
     'logging.TaskResult': 'fa fa-tasks',
@@ -25,6 +28,7 @@ settings.JAZZMIN_SETTINGS['order_with_respect_to'].extend([
 
 admin.site.unregister(django_celery_results.models.TaskResult)
 admin.site.unregister(django_celery_results.models.GroupResult)
+admin.site.unregister(auditlog.models.LogEntry)
 
 
 class ReadOnlyModelAdminMixin:
@@ -51,12 +55,12 @@ class AppLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
     """Admin interface for viewing application logs."""
 
     readonly_fields = [field.name for field in AppLog._meta.fields]
-    list_display = ['time', 'level', 'name']
-    search_fields = ['time', 'level', 'name']
-    ordering = ['-time']
+    list_display = ['timestamp', 'level', 'name']
+    search_fields = ['timestamp', 'level', 'name']
+    ordering = ['-timestamp']
     actions = []
     list_filter = [
-        ('time', admin.DateFieldListFilter),
+        ('timestamp', admin.DateFieldListFilter),
         ('level', admin.AllValuesFieldListFilter),
         ('name', admin.AllValuesFieldListFilter),
     ]
@@ -67,12 +71,12 @@ class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
     """Admin interface for viewing request logs."""
 
     readonly_fields = [field.name for field in RequestLog._meta.fields]
-    list_display = ['time', 'method', 'endpoint', 'response_code', 'remote_address']
-    search_fields = ['endpoint', 'method', 'response_code', 'remote_address']
-    ordering = ['-time']
+    list_display = ['timestamp', 'method', 'endpoint', 'response_code', 'remote_address', 'cid']
+    search_fields = ['endpoint', 'method', 'response_code', 'remote_address', 'cid']
+    ordering = ['-timestamp']
     actions = []
     list_filter = [
-        ('time', admin.DateFieldListFilter),
+        ('timestamp', admin.DateFieldListFilter),
         ('method', admin.AllValuesFieldListFilter),
         ('response_code', admin.AllValuesFieldListFilter),
     ]
@@ -81,3 +85,8 @@ class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
 @admin.register(TaskResult)
 class TaskResultAdmin(ReadOnlyModelAdminMixin, django_celery_results.admin.TaskResultAdmin):
     """Admin interface for viewing Celery task results."""
+
+
+@admin.register(AuditLog)
+class AuditLogAdmin(ReadOnlyModelAdminMixin, auditlog.admin.LogEntryAdmin):
+    """Admin interface for viewing Audit log entries."""

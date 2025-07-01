@@ -1,8 +1,8 @@
-"""Application configuration and initialization.
+"""Application level configuration and setup.
 
-This module defines application-specific configuration and initialization routines.
-It defines application settings and ensures proper application integration within
-the parent project.
+Application configuration objects are used to override Django's default
+application setup. They define application metadata and ensure proper
+integration with the parent project.
 """
 
 from django.apps import AppConfig
@@ -18,7 +18,7 @@ class SchedulerAppConfig(AppConfig):
 
     name = 'apps.scheduler'
 
-    def ready(self):
+    def ready(self) -> None:
         """Setup tasks executed after loading the application configuration and models"""
 
         register(check_celery_beat_configuration)

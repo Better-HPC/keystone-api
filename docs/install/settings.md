@@ -1,6 +1,6 @@
 # Application Settings
 
-Keystone API reads application settings from environmental variables.
+Keystone-API reads application settings from environment variables.
 Individual settings are listed below by category and use case.
 
 ## Security Settings
@@ -11,18 +11,18 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### Core Security
 
-| Setting Name             | Default Value         | Description                                                            |
-|--------------------------|-----------------------|------------------------------------------------------------------------|
-| `SECURE_SECRET_KEY`      | Randomly generated    | Key value used to enforce cryptographic signing.                       |
+| Setting Name        | Default Value      | Description                                      |
+|---------------------|--------------------|--------------------------------------------------|
+| `SECURE_SECRET_KEY` | Randomly generated | Key value used to enforce cryptographic signing. |
 
 ### SSL/TLS
 
-| Setting Name             | Default Value         | Description                                                            |
-|--------------------------|-----------------------|------------------------------------------------------------------------|
-| `SECURE_SSL_REDIRECT`    | `False`               | Automatically redirect all HTTP traffic to HTTPS.                      |
-| `SECURE_HSTS_SECONDS`    | `0` (Disabled)        | HSTS cache duration in seconds.                                        |
-| `SECURE_HSTS_SUBDOMAINS` | `False`               | Enable HSTS for subdomains.                                            |
-| `SECURE_HSTS_PRELOAD`    | `False`               | Enable HSTS preload functionality.                                     |
+| Setting Name             | Default Value  | Description                                       |
+|--------------------------|----------------|---------------------------------------------------|
+| `SECURE_SSL_REDIRECT`    | `False`        | Automatically redirect all HTTP traffic to HTTPS. |
+| `SECURE_HSTS_SECONDS`    | `0` (Disabled) | HSTS cache duration in seconds.                   |
+| `SECURE_HSTS_SUBDOMAINS` | `False`        | Enable HSTS for subdomains.                       |
+| `SECURE_HSTS_PRELOAD`    | `False`        | Enable HSTS preload functionality.                |
 
 ### CORS/CSRF
 
@@ -44,9 +44,11 @@ By default, these files are stored in subdirectories of the installed applicatio
 | `CONFIG_TIMEZONE`          | `UTC`                | The timezone to use when rendering date/time values.                                                        |
 | `CONFIG_STATIC_DIR`        | `<app>/static_files` | Where to store internal static files required by the application.                                           |
 | `CONFIG_UPLOAD_DIR`        | `<app>/upload_files` | Where to store file data uploaded by users.                                                                 |
+| `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)   | Maximum allowed file upload size in bytes.                                                                  |
 | `CONFIG_LOG_LEVEL`         | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
-| `CONFIG_LOG_RETENTION`     | `604800` (1 week)    | How long to store application logs in seconds. Set to 0 to keep all records.                                |
-| `CONFIG_REQUEST_RETENTION` | `604800` (1 week)    | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `CONFIG_LOG_RETENTION`     | `2592000` (30 days)  | How long to store application logs in seconds. Set to 0 to keep all records.                                |
+| `CONFIG_REQUEST_RETENTION` | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `CONFIG_AUDIT_RETENTION`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
 
 ## API Throttling
 
@@ -61,7 +63,7 @@ Limits are specified as the maximum number of requests per `day`, `minute`, `hou
 ## Database Connection
 
 Official support is included for both SQLite and PostgreSQL database backends.
-Using SQLite is intended for development and demonstrative use-cases only.
+Using SQLite is intended for development and demonstrative use cases only.
 The PostgreSQL backend should always be used in production settings.
 
 | Setting Name         | Default Value | Description                                             |
@@ -90,14 +92,15 @@ Enabling password authentication is recommended.
 Keystone will default to using the local server when issuing email notifications.
 Securing your production email server with a username/password is recommended, but not required.
 
-| Setting Name          | Default Value          | Description                               |
-|-----------------------|------------------------|-------------------------------------------|
-| `EMAIL_HOST`          | `localhost`            | The host server to use for sending email. |
-| `EMAIL_PORT`          | `25`                   | Port to use for the SMTP server.          |
-| `EMAIL_HOST_USER`     |                        | Username to use for the SMTP server.      |
-| `EMAIL_HOST_PASSWORD` |                        | Password to use for the SMTP server.      |
-| `EMAIL_USE_TLS`       | `False`                | Use a TLS connection to the SMTP server.  |
-| `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot` | Use a TLS connection to the SMTP server.  |
+| Setting Name          | Default Value             | Description                                             |
+|-----------------------|---------------------------|---------------------------------------------------------|
+| `EMAIL_HOST`          | `localhost`               | The host server to use for sending email.               |
+| `EMAIL_PORT`          | `25`                      | Port to use for the SMTP server.                        |
+| `EMAIL_HOST_USER`     |                           | Username to use for the SMTP server.                    |
+| `EMAIL_HOST_PASSWORD` |                           | Password to use for the SMTP server.                    |
+| `EMAIL_USE_TLS`       | `False`                   | Use a TLS connection to the SMTP server.                |
+| `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot`    | The default "from" address used in email notifications. |
+| `EMAIL_TEMPLATE_DIR`  | `/etc/keystone/templates` | Directory to search for customized email templates.     |
 
 ## LDAP Authentication
 
@@ -135,5 +138,5 @@ The following settings are intended exclusively for use in development.
 
 | Setting Name      | Default Value | Description                                            |
 |-------------------|---------------|--------------------------------------------------------|
-| `DEBUG`           | `False`       | Enable or disable in browser error tracebacks.         |
+| `DEBUG`           | `False`       | Enables in-browser error tracebacks.                   |
 | `DEBUG_EMAIL_DIR` | ``            | Write emails to disk instead of using the SMTP server. |

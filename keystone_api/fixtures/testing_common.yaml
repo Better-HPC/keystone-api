@@ -101,19 +101,19 @@
   pk: 1
   fields:
     name: Team 1
-- model: users.teammembership
+- model: users.membership
   pk: 1
   fields:
     team: 1
     user: 1
     role: 'OW'
-- model: users.teammembership
+- model: users.membership
   pk: 2
   fields:
     team: 1
     user: 2
     role: 'AD'
-- model: users.teammembership
+- model: users.membership
   pk: 3
   fields:
     team: 1
@@ -124,19 +124,19 @@
   pk: 2
   fields:
     name: Team 2
-- model: users.teammembership
+- model: users.membership
   pk: 4
   fields:
     team: 2
     user: 4
     role: 'OW'
-- model: users.teammembership
+- model: users.membership
   pk: 5
   fields:
     team: 2
     user: 5
     role: 'AD'
-- model: users.teammembership
+- model: users.membership
   pk: 6
   fields:
     team: 2
@@ -164,7 +164,16 @@
     status: AP
     request: 1
     reviewer: 9
-    last_modified: "2023-01-01"
+    last_modified: "2023-01-01T00:00:00-00:00"
+
+# Allocation Request Comments
+- model: allocations.comment
+  pk: 1
+  fields:
+    user: 1
+    request: 1
+    content: "This is a comment"
+    created: "2023-01-01T00:00:00-00:00"
 
 # Allocations
 - model: allocations.allocation
@@ -187,14 +196,16 @@
   pk: 1
   fields:
     request: 1
-    path: /dummy/file1.txt
-    uploaded: "2000-01-01"
+    file: /dummy/file1.txt
+    name: file1.txt
+    uploaded: "2000-01-01T00:00:00-00:00"
 - model: allocations.attachment
   pk: 2
   fields:
     request: 1
-    path: /dummy/file1.txt
-    uploaded: "2000-01-01"
+    file: /dummy/file2.txt
+    name: file2.txt
+    uploaded: "2000-01-01T00:00:00-00:00"
 
 # Publications
 - model: research_products.publication
@@ -202,7 +213,7 @@
   fields:
     title: "Publication (Team 1)"
     abstract: "Abstract Text"
-    date: "2000-01-01"
+    published: "2000-01-01"
     journal: "Journal Name"
     team: 1
 - model: research_products.publication
@@ -210,7 +221,7 @@
   fields:
     title: "Publication (Team 2)"
     abstract: "Abstract text."
-    date: "2000-01-01"
+    published: "2000-01-01"
     journal: "Journal Name"
     team: 2
 
@@ -237,3 +248,37 @@
     end_date: "2000-01-31"
     grant_number: "abc-123"
     team: 2
+
+# Notifications
+- model: notifications.notification
+  pk: 1
+  fields:
+    user: 1  # owner_1
+    notification_type: "GM"
+    subject: "Your allocation request has been approved."
+    time: "2023-01-02T00:00:00-00:00"
+    read: false
+
+- model: notifications.notification
+  pk: 2
+  fields:
+    user: 2  # admin_1
+    notification_type: "GM"
+    subject: "A new allocation review has been posted."
+    time: "2023-01-02T00:00:00-00:00"
+    read: false
+
+# Preferences
+- model: notifications.preference
+  pk: 1
+  fields:
+    user: 1 # owner_1
+    request_expiry_thresholds: [7, 14, 30]
+    notify_on_expiration: true
+
+- model: notifications.preference
+  pk: 2
+  fields:
+    user: 2  # admin_1
+    request_expiry_thresholds: [3, 10, 21]
+    notify_on_expiration: true

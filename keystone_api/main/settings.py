@@ -60,6 +60,40 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_SUBDOMAINS", False)
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = env.list("SECURE_ALLOWED_ORIGINS", default=_trusted_local)
 
+ALLOWED_FILE_TYPES = [
+    # Documents
+    "application/pdf",
+    "application/rtf",
+    "application/msword",  # .doc
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  # .docx
+    "application/vnd.oasis.opendocument.text",  # .odt
+    "application/x-latex",  # .latex
+    "application/x-tex",  # .tex
+
+    # Spreadsheets
+    "application/vnd.ms-excel",  # .xls
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",  # .xlsx
+    "application/vnd.oasis.opendocument.spreadsheet",  # .ods
+
+    # Presentations
+    "application/vnd.ms-powerpoint",  # .ppt
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",  # .pptx
+
+    # Plain and structured text
+    "text/plain",  # .txt
+    "text/markdown",  # .md
+    "text/richtext",  # .rtx
+    "text/csv",  # .csv
+
+    # Images
+    "image/png",
+    "image/jpeg",
+    "image/gif",
+    "image/svg+xml",
+    "image/tiff",
+    "image/bmp"
+]
+
 # App Configuration
 
 ROOT_URLCONF = 'main.urls'
@@ -68,6 +102,7 @@ SITE_ID = 1
 
 INSTALLED_APPS = [
     'jazzmin',
+    'auditlog',
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -106,16 +141,17 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'apps.logging.middleware.LogRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'apps.logging.middleware.LogRequestMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
@@ -130,13 +166,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-        },
-    },
-    {  # Jinja2 backend used when rendering user notifications
-        "BACKEND": "django.template.backends.jinja2.Jinja2",
-        'APP_DIRS': True,
-        "OPTIONS": {
-            "undefined": StrictUndefined,
         },
     },
 ]
@@ -162,6 +191,12 @@ JAZZMIN_SETTINGS = {
 # REST API settings
 
 REST_FRAMEWORK = {
+    'SEARCH_PARAM': '_search',
+    'ORDERING_PARAM': '_order',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
@@ -171,19 +206,23 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': env.str('API_THROTTLE_ANON', '120/min'),
-        'user': env.str('API_THROTTLE_USER', '240/min')
+        'user': env.str('API_THROTTLE_USER', '300/min')
     },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_FILTER_BACKENDS': (
         'plugins.filter.AdvancedFilterBackend',
-        'rest_framework.filters.OrderingFilter'
-
+        'rest_framework.filters.OrderingFilter',
+        'rest_framework.filters.SearchFilter'
     ),
     'DEFAULT_PAGINATION_CLASS': 'plugins.pagination.PaginationHandler',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# Audit logging
+
+AUDITLOG_CID_HEADER = "X-KEYSTONE-CID"  # Use uppercase and dashes
 
 # Customize the generation of OpenAPI specifications
 
@@ -193,6 +232,10 @@ SPECTACULAR_SETTINGS = {
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
     'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAuthenticated'],
+    'ENUM_NAME_OVERRIDES': {
+        'RequestStatusChoices': 'apps.allocations.models.AllocationRequest.StatusChoices',
+        'ReviewStatusChoices': 'apps.allocations.models.AllocationReview.StatusChoices',
+    }
 }
 
 # Redis backend and Celery scheduler
@@ -212,6 +255,9 @@ CELERY_RESULT_EXTENDED = True
 # Email server
 
 EMAIL_FROM_ADDRESS = env.str('EMAIL_FROM_ADDRESS', 'noreply@keystone.bot')
+EMAIL_TEMPLATE_DIR = Path(env.path('EMAIL_TEMPLATE_DIR', '/etc/keystone/templates'))
+EMAIL_DEFAULT_DIR = BASE_DIR / 'templates'
+
 if _email_path := env.get_value('DEBUG_EMAIL_DIR', default=None):
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = _email_path
@@ -285,10 +331,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Static file handling (CSS, JavaScript, Images)
 
-STATIC_URL = 'static/'
+MAX_FILE_SIZE = env.int('CONFIG_UPLOAD_SIZE', 2.5 * 1024 * 1024)  # 2.5 MB
+
+STATIC_URL = '/static/'
 STATIC_ROOT = Path(env.path('CONFIG_STATIC_DIR', BASE_DIR / 'static_files'))
 STATIC_ROOT.mkdir(parents=True, exist_ok=True)
 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = Path(env.path('CONFIG_UPLOAD_DIR', BASE_DIR / 'media'))
 MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
@@ -301,8 +350,9 @@ TIME_ZONE = env.str('CONFIG_TIMEZONE', 'UTC')
 
 # Logging
 
-CONFIG_LOG_RETENTION = env.int('CONFIG_LOG_RETENTION', timedelta(days=14).total_seconds())
-CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=14).total_seconds())
+CONFIG_LOG_RETENTION = env.int('CONFIG_LOG_RETENTION', timedelta(days=30).total_seconds())
+CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
+CONFIG_AUDIT_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
 
 LOGGING = {
     "version": 1,

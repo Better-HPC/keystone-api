@@ -11,6 +11,8 @@ import itertools
 import random
 from io import BytesIO
 
+from auditlog.models import AuditlogHistoryField
+from auditlog.registry import auditlog
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.files.base import ContentFile
@@ -21,10 +23,11 @@ from PIL import Image
 
 from .managers import *
 
-__all__ = ['Team', 'TeamMembership', 'User']
+__all__ = ['Membership', 'Team', 'User']
 
 
-class TeamMembership(models.Model):
+@auditlog.register()
+class Membership(models.Model):
     """Relationship table between the `User` and `Team` models."""
 
     class Meta:
@@ -32,6 +35,13 @@ class TeamMembership(models.Model):
 
         constraints = [
             UniqueConstraint(fields=['user', 'team'], name='unique_user_team')
+        ]
+
+        indexes = [
+            models.Index(fields=['role']),
+            models.Index(fields=['user', 'role']),
+            models.Index(fields=['team', 'role']),
+            models.Index(fields=['team', 'user', 'role']),
         ]
 
     class Role(models.TextChoices):
@@ -44,17 +54,21 @@ class TeamMembership(models.Model):
         ADMIN = 'AD', 'Admin'
         MEMBER = 'MB', 'Member'
 
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', on_delete=models.CASCADE)
     role = models.CharField(max_length=2, choices=Role.choices)
+    history = AuditlogHistoryField()
+
+    user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
 
 
+@auditlog.register()
 class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
     name = models.CharField(max_length=255, unique=True)
-    users = models.ManyToManyField('User', through=TeamMembership)
+    users = models.ManyToManyField('User', through=Membership)
     is_active = models.BooleanField(default=True)
+    history = AuditlogHistoryField()
 
     objects = TeamManager()
 
@@ -66,12 +80,12 @@ class Team(models.Model):
     def get_privileged_members(self) -> models.QuerySet:
         """Return a queryset of all team with admin privileges."""
 
-        return self.users.filter(teammembership__role__in=[
-            TeamMembership.Role.ADMIN,
-            TeamMembership.Role.OWNER
+        return self.users.filter(membership__role__in=[
+            Membership.Role.ADMIN,
+            Membership.Role.OWNER
         ])
 
-    def add_or_update_member(self, user: 'User', role: str = TeamMembership.Role.MEMBER) -> TeamMembership:
+    def add_or_update_member(self, user: 'User', role: str = Membership.Role.MEMBER) -> Membership:
         """Add a user to the team with the specified role.
 
         If the user is already a member, their role will be updated.
@@ -84,7 +98,7 @@ class Team(models.Model):
             The team membership record
         """
 
-        membership_query = TeamMembership.objects.filter(user=user, team=self)
+        membership_query = Membership.objects.filter(user=user, team=self)
         if membership_query.exists():
             record = membership_query.first()
             record.role = role
@@ -92,16 +106,32 @@ class Team(models.Model):
             return record
 
         else:
-            return TeamMembership.objects.create(user=user, team=self, role=role)
+            return Membership.objects.create(user=user, team=self, role=role)
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the team's account name."""
+        """Return the team name."""
 
         return str(self.name)
 
 
+@auditlog.register(exclude_fields=["last_login"], mask_fields=["password"])
 class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     """Proxy model for the built-in django `User` model."""
+
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['username']),
+            models.Index(fields=['first_name']),
+            models.Index(fields=['last_name', 'first_name']),
+            models.Index(fields=['email']),
+            models.Index(fields=['is_staff']),
+            models.Index(fields=['is_ldap_user']),
+            models.Index(fields=['date_joined']),
+            models.Index(fields=['last_login']),
+            models.Index(fields=['is_active', 'is_staff']),
+        ]
 
     # These values should always be defined when extending AbstractBaseUser
     USERNAME_FIELD = 'username'
@@ -109,14 +139,15 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     REQUIRED_FIELDS = []
 
     # User metadata
-    username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()])
+    username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()], db_index=True)
     password = models.CharField(max_length=128)
     first_name = models.CharField(max_length=150, null=True)
     last_name = models.CharField(max_length=150, null=True)
     email = models.EmailField(null=True)
     department = models.CharField(max_length=1000, null=True, blank=True)
-    role = models.CharField(max_length=1000, null=True, blank=True)
+    role = models.CharField(max_length=1000, null=True, blank=True)  # User's role in their department
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    history = AuditlogHistoryField()
 
     # Administrative values for user management/permissions
     is_active = models.BooleanField(default=True)

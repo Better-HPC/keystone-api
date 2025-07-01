@@ -16,7 +16,7 @@ celery_app.autodiscover_tasks()
 celery_app.conf.beat_schedule = {
     'apps.users.tasks.ldap_update_users': {
         'task': 'apps.users.tasks.ldap_update_users',
-        'schedule': crontab(minute='0'),
+        'schedule': crontab(minute='*/15'),
         'description': 'This task synchronizes user data against LDAP. This task does nothing if LDAP is disabled.'
     },
     'apps.logging.tasks.clear_log_files': {
@@ -38,5 +38,10 @@ celery_app.conf.beat_schedule = {
         'task': 'apps.allocations.tasks.notifications.notify_past_expirations',
         'schedule': crontab(hour='0', minute='0'),
         'description': 'This task issues notifications informing users when their allocations have expired.'
+    },
+    'apps.allocations.tasks.jobstats.slurm_update_job_stats': {
+        'task': 'apps.allocations.tasks.jobstats.slurm_update_job_stats',
+        'schedule': crontab(minute='*/10'),
+        'description': 'This task synchronizes slurm job information with the application database.'
     },
 }

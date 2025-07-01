@@ -22,10 +22,10 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
     """Establish a new LDAP connection."""
 
     conn = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
-    if settings.AUTH_LDAP_BIND_DN:
+    if settings.AUTH_LDAP_BIND_DN:  # pragma: no branch
         conn.bind(settings.AUTH_LDAP_BIND_DN, settings.AUTH_LDAP_BIND_PASSWORD)
 
-    if settings.AUTH_LDAP_START_TLS:
+    if settings.AUTH_LDAP_START_TLS:  # pragma: no branch
         ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
         conn.start_tls_s()
 
@@ -36,8 +36,8 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
 def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
     """Update the user database with the latest data from LDAP.
 
-    This function performs no action if the `AUTH_LDAP_SERVER_URI` setting
-    is not configured in the application settings.
+    This function does nothing if the `AUTH_LDAP_SERVER_URI` value is not
+    configured in application settings.
 
     Args:
         prune: Optionally delete accounts with usernames no longer found in LDAP.
@@ -46,7 +46,7 @@ def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
     if not settings.AUTH_LDAP_SERVER_URI:
         return
 
-    # Search LDAP for all users
+    # Search LDAP for all user entries
     conn = get_ldap_connection()
     search = conn.search_s(settings.AUTH_LDAP_USER_SEARCH.base_dn, ldap.SCOPE_SUBTREE, '(objectClass=account)')
 
@@ -58,7 +58,7 @@ def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
     backend = LDAPBackend()
     for username in tqdm(ldap_names):
         user = backend.populate_user(username)
-        if user is not None:
+        if user is not None:  # pragma: no branch
             user.is_ldap_user = True
             user.save()
 

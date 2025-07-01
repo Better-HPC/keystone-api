@@ -8,11 +8,10 @@ from .views import *
 app_name = 'users'
 
 router = DefaultRouter()
-router.register('membership', TeamMembershipViewSet)
+router.register('membership', MembershipViewSet)
 router.register('teams', TeamViewSet)
 router.register('users', UserViewSet)
 
-urlpatterns = router.urls
-urlpatterns += [
-    path('team-membership/role-choices/', TeamMembershipRoleChoicesView.as_view(), name='team_membership_roles'),
+urlpatterns = router.urls + [
+    path('team-membership/role-choices/', MembershipRoleChoicesView.as_view(), name='team_membership_roles'),
 ]

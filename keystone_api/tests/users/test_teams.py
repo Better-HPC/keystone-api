@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import Team, User
+from apps.users.models import User
 from tests.utils import CustomAsserts
 
 
@@ -14,7 +14,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated user       | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
+    | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated user         | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     | Staff user                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
@@ -29,22 +29,22 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
-            get=status.HTTP_403_FORBIDDEN,
-            head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            get=status.HTTP_401_UNAUTHORIZED,
+            head=status.HTTP_401_UNAUTHORIZED,
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test authenticated users can create new teams."""
+        """Verify authenticated users can create new teams."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -61,7 +61,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(

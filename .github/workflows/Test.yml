@@ -73,9 +73,34 @@ jobs:
       - name: Run tests
         run: |
           docker load --input /tmp/keystone-api.tar
-          docker run -v $(pwd)/coverage:/tmp/test --entrypoint coverage keystone-api run    --data-file /tmp/test/.coverage --source /usr/local/lib/python3.11/site-packages/keystone_api /usr/local/bin/keystone-api test apps plugins
-          docker run -v $(pwd)/coverage:/tmp/test --entrypoint coverage keystone-api report --data-file /tmp/test/.coverage --omit "*/tests/*","*/migrations/*" --include "*/keystone_api/apps/*","*/keystone_api/plugins/*"
-          docker run -v $(pwd)/coverage:/tmp/test --entrypoint coverage keystone-api xml    --data-file /tmp/test/.coverage --omit "*/tests/*","*/migrations/*" --include "*/keystone_api/apps/*","*/keystone_api/plugins/*" -o /tmp/test/report.xml
+      
+          # Dynamically determine the Python package directory
+          PACKAGE_DIR=$(docker run --entrypoint python --rm keystone-api -c 'import site; print(site.getsitepackages()[0])')
+      
+          # Common options for coverage commands
+          COVERAGE_DATA="/tmp/test/.coverage"
+          OMIT_PATHS="*/tests/*,*/migrations/*"
+          INCLUDE_PATHS="*/keystone_api/apps/*,*/keystone_api/plugins/*"
+          VOLUME_MAPPING="-v $(pwd)/coverage:/tmp/test"
+      
+          # Run tests and collect coverage
+          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api run \
+            --data-file $COVERAGE_DATA \
+            --source $PACKAGE_DIR/keystone_api \
+            /usr/local/bin/keystone-api test apps plugins
+      
+          # Report coverage to the console
+          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api report \
+            --data-file $COVERAGE_DATA \
+            --omit "$OMIT_PATHS" \
+            --include "$INCLUDE_PATHS"
+      
+          # Write coverage report to disk in XML format
+          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api xml \
+            --data-file $COVERAGE_DATA \
+            --omit "$OMIT_PATHS" \
+            --include "$INCLUDE_PATHS" \
+            -o /tmp/test/report.xml
 
       - name: Report coverage results
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r coverage/report.xml
@@ -97,7 +122,7 @@ jobs:
       - name: Run tests
         run: |
           docker load --input /tmp/keystone-api.tar
-          docker run keystone-api test tests
+          docker run -e API_THROTTLE_ANON="1000/sec" -e API_THROTTLE_USER="1000/sec" keystone-api test tests
 
   report-test-status:
     name: Report Test Status

@@ -13,7 +13,10 @@ jobs:
   publish-docker:
     runs-on: ubuntu-latest
     name: Docker Image
-    environment: publish
+
+    environment:
+      name: ghcr
+      url: https://github.com/Better-HPC/keystone-api/pkgs/container/keystone-api
 
     steps:
       - name: Checkout source
@@ -39,6 +42,8 @@ jobs:
       - name: Define Docker metadata
         id: meta
         uses: docker/metadata-action@v5
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           images: ghcr.io/better-hpc/keystone-api
           tags: |
@@ -75,12 +80,16 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           platforms: linux/amd64,linux/arm64
 
   publish-pypi:
     name: Python Distribution
     runs-on: ubuntu-latest
-    environment: publish
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/keystone-api/
 
     steps:
       - name: Set up Python
@@ -108,7 +117,10 @@ jobs:
   trigger-docs:
     name: Trigger Docs
     runs-on: ubuntu-latest
-    environment: publish
+
+    environment:
+      name: docs
+      url: https://github.com/Better-HPC/keystone-docs
 
     steps:
       - name: Update docs

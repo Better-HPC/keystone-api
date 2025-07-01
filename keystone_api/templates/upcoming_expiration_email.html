@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block main %}
+  {% if user.first_name and user.last_name %}
+    <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+  {% else %}
+    <p>Dear {{ user.username }},</p>
+  {% endif %}
+  <p>
+    This notification is to remind you your HPC compute allocation <strong>"{{ request.title }}"</strong>
+    is set to expire in {{ days_to_expire }} days on {{ request.expire.isoformat() }}.
+  </p>
+  <p>Sincerely,</p>
+  <p>The keystone HPC utility</p>
+{% endblock %}

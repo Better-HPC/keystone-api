@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
+ENDPOINT_PATTERN = '/users/users/{pk}/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -14,13 +16,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated user       | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
-    | User accessing own account | 200 | 200  | 200     | 403  | 200 | 200   | 204    | 405   |
-    | User accessing other user  | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 405   |
+    | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | User accessing other user  | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | User accessing own account | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/users/users/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -31,24 +33,43 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = User.objects.get(username='staff_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
 
         self.assert_http_responses(
             endpoint,
-            get=status.HTTP_403_FORBIDDEN,
-            head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
+            get=status.HTTP_401_UNAUTHORIZED,
+            head=status.HTTP_401_UNAUTHORIZED,
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
+        )
+
+    def test_authenticated_user_different_user(self) -> None:
+        """Verify users cannot modify other users' records."""
+
+        # Define a user / record endpoint from a DIFFERENT user
+        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+        self.client.force_authenticate(user=self.user2)
+
+        self.assert_http_responses(
+            endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
     def test_authenticated_user_same_user(self) -> None:
-        """Test permissions for authenticated users accessing their own user record."""
+        """Verify authenticated users can access and modify their own records."""
 
         # Define a user / record endpoint from the SAME user
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
@@ -59,7 +80,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_200_OK,
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
@@ -73,27 +94,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch_body={'email': 'member_3@newdomain.com'},
         )
 
-    def test_authenticated_user_different_user(self) -> None:
-        """Test permissions for authenticated users accessing records of another user."""
-
-        # Define a user / record endpoint from a DIFFERENT user
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
-        self.client.force_authenticate(user=self.user2)
-
-        self.assert_http_responses(
-            endpoint,
-            get=status.HTTP_200_OK,
-            head=status.HTTP_200_OK,
-            options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-        )
-
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         endpoint = self.endpoint_pattern.format(pk=self.user1.id)
         self.client.force_authenticate(user=self.staff_user)
@@ -121,7 +123,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class CredentialHandling(APITestCase):
     """Test the getting/setting of user credentials."""
 
-    endpoint_pattern = '/users/users/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
@@ -132,7 +134,7 @@ class CredentialHandling(APITestCase):
         self.staff_user = User.objects.get(username='staff_user')
 
     def test_user_get_own_password(self) -> None:
-        """Test a user cannot get their own password."""
+        """Verify users cannot retrieve their own password."""
 
         self.client.force_authenticate(user=self.user1)
         response = self.client.get(
@@ -143,7 +145,7 @@ class CredentialHandling(APITestCase):
         self.assertNotIn('password', response.json())
 
     def test_user_set_own_password(self) -> None:
-        """Test a user can set their own password."""
+        """Verify users can change their own password."""
 
         self.client.force_authenticate(user=self.user1)
         response = self.client.patch(
@@ -156,7 +158,7 @@ class CredentialHandling(APITestCase):
         self.assertTrue(self.user1.check_password('new_password123'))
 
     def test_user_get_others_password(self) -> None:
-        """Test a user cannot get another user's password."""
+        """Verify users cannot retrieve another user's password."""
 
         authenticated_user = self.user1
         other_user = self.user2
@@ -170,7 +172,7 @@ class CredentialHandling(APITestCase):
         self.assertNotIn('password', response.data)
 
     def test_user_set_others_password(self) -> None:
-        """Test a user cannot set another user's password."""
+        """Verify users cannot change another user's password."""
 
         authenticated_user = self.user1
         other_user = self.user2
@@ -184,7 +186,7 @@ class CredentialHandling(APITestCase):
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_staff_get_password(self) -> None:
-        """Test a staff user cannot get another user's password."""
+        """Verify staff users cannot retrieve user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get(
@@ -195,7 +197,7 @@ class CredentialHandling(APITestCase):
         self.assertNotIn('password', response.json())
 
     def test_staff_set_password(self) -> None:
-        """Test the password field is settable by staff users."""
+        """Verify staff users can change user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.patch(
@@ -206,3 +208,36 @@ class CredentialHandling(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
         self.assertTrue(self.user1.check_password('new_password123'))
+
+
+class RecordHistory(APITestCase):
+    """Test the serialization of record history."""
+
+    endpoint_pattern = ENDPOINT_PATTERN
+    fixtures = ['testing_common.yaml']
+
+    def setUp(self) -> None:
+        """Authenticate as a generic application user."""
+
+        user = User.objects.get(username='generic_user')
+        self.endpoint = self.endpoint_pattern.format(pk=user.id)
+        self.client.force_authenticate(user=user)
+
+    def test_password_masked(self) -> None:
+        """Verify password values are masked in returned responses."""
+
+        # Update the user's password
+        self.client.patch(self.endpoint, data={'email': 'new@email.com', 'password': 'NewSecureValue'})
+
+        # Fetch the User's audit history
+        api_response = self.client.get(self.endpoint)
+        history = api_response.json().get('_history')
+
+        # Select the most recent change
+        date_from_record = lambda record: record['timestamp']
+        last_change = max(history, key=date_from_record)
+
+        # Masked values should have their first half replaced with asterisks
+        password_old, password_new = last_change['changes']['password']
+        self.assertTrue(password_new.startswith('*****'))
+        self.assertTrue(password_old.startswith('*****'))

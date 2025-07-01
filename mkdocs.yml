@@ -4,12 +4,13 @@ nav:
   - Installation:
       - install/slurm.md
       - install/docker.md
-      - install/python.md
+      - install/systemd.md
       - install/settings.md
   - REST API:
     - API Specification: api/index.html
     - api/authentication.md
     - api/filtering.md
+    - api/logging.md
   - Developer Notes:
-      - Common Tasks: developer/common.md
+      - developer/project_setup.md
       - developer/design_guidelines.md

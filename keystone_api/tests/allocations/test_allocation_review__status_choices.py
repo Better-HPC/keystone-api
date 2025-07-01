@@ -3,8 +3,12 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.models import AllocationReview
 from apps.users.models import User
 from tests.utils import CustomAsserts
+from .common import GetResponseContentTests
+
+ENDPOINT = '/allocations/allocation-review/status-choices/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -14,35 +18,36 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
+    | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/allocation-review/status-choices/'
+    endpoint = ENDPOINT
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Load user accounts from test fixtures."""
 
         self.generic_user = User.objects.get(username='generic_user')
+        self.staff_user = User.objects.get(username='staff_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
-            get=status.HTTP_403_FORBIDDEN,
-            head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            get=status.HTTP_401_UNAUTHORIZED,
+            head=status.HTTP_401_UNAUTHORIZED,
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test general authenticated users have read-only permissions."""
+        """Verify authenticated users have read-only permissions."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -56,3 +61,26 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+    def test_staff_user_permissions(self) -> None:
+        """Verify staff users have read-only permissions."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_405_METHOD_NOT_ALLOWED,
+            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
+            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+
+class ResponseContent(GetResponseContentTests, APITestCase):
+    """Test the endpoint returns valid Allocation Review status codes."""
+
+    endpoint = ENDPOINT
+    expected_content = dict(AllocationReview.StatusChoices.choices)

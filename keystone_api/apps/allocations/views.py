@@ -1,18 +1,24 @@
 """Application logic for rendering HTML templates and handling HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
-from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status, viewsets
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
+from apps.users.mixins import TeamScopedListMixin
+from .mixins import *
 from .models import *
 from .permissions import *
+from .permissions import MemberReadOnly
 from .serializers import *
-from ..users.models import Team
 
 __all__ = [
     'AllocationRequestStatusChoicesView',
@@ -21,68 +27,64 @@ __all__ = [
     'AllocationReviewViewSet',
     'AllocationViewSet',
     'AttachmentViewSet',
-    'ClusterViewSet'
+    'ClusterViewSet',
+    'CommentViewSet',
+    'JobStatsViewSet',
 ]
 
 
-class AllocationRequestStatusChoicesView(GenericAPIView):
+@extend_schema_view(  # pragma: nocover
+    get=extend_schema(
+        responses=inline_serializer(
+            name="AllocationRequestStatusChoices",
+            fields={k: serializers.CharField(default=v) for k, v in AllocationRequest.StatusChoices.choices}
+        )
+    )
+)
+class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     """Exposes valid values for the allocation request `status` field."""
 
-    _resp_body = dict(AllocationRequest.StatusChoices.choices)
-
-    @extend_schema(responses={'200': _resp_body})
-    def get(self, request, *args, **kwargs) -> Response:
-        """Return valid values for the allocation review `status` field."""
-
-        return Response(self._resp_body, status=status.HTTP_200_OK)
+    response_content = dict(AllocationRequest.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
 
-class AllocationRequestViewSet(viewsets.ModelViewSet):
-    """Manage allocation requests."""
-
-    queryset = AllocationRequest.objects.all()
-    serializer_class = AllocationRequestSerializer
-    permission_classes = [permissions.IsAuthenticated, TeamAdminCreateMemberRead]
-
-    def get_queryset(self) -> list[AllocationRequest]:
-        """Return a list of allocation requests for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return AllocationRequest.objects.filter(team__in=teams)
-
-
-class AllocationReviewStatusChoicesView(GenericAPIView):
+@extend_schema_view(  # pragma: nocover
+    get=extend_schema(
+        responses=inline_serializer(
+            name="AllocationReviewStatusChoices",
+            fields={k: serializers.CharField(default=v) for k, v in AllocationReview.StatusChoices.choices}
+        )
+    )
+)
+class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
     """Exposes valid values for the allocation review `status` field."""
 
-    _resp_body = dict(AllocationReview.StatusChoices.choices)
-
-    @extend_schema(responses={'200': _resp_body})
-    def get(self, request, *args, **kwargs) -> Response:
-        """Return valid values for the allocation review `status` field."""
-
-        return Response(self._resp_body, status=status.HTTP_200_OK)
+    response_content = dict(AllocationReview.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
 
-class AllocationReviewViewSet(viewsets.ModelViewSet):
+class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
+    """Manage allocation requests."""
+
+    model = AllocationRequest
+    team_field = 'team'
+    queryset = AllocationRequest.objects.all()
+    serializer_class = AllocationRequestSerializer
+    permission_classes = [IsAuthenticated, AllocationRequestPermissions]
+    search_fields = ['title', 'description', 'team__name']
+
+
+class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Manage administrator reviews of allocation requests."""
 
+    model = AllocationReview
+    team_field = 'request__team'
     queryset = AllocationReview.objects.all()
     serializer_class = AllocationReviewSerializer
-    permission_classes = [permissions.IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
 
-    def get_queryset(self) -> list[Allocation]:
-        """Return a list of allocation reviews for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return AllocationReview.objects.filter(request__team__in=teams)
-
-    def create(self, request, *args, **kwargs) -> Response:
+    def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `AllocationReview` object."""
 
         data = request.data.copy()
@@ -96,38 +98,26 @@ class AllocationReviewViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class AllocationViewSet(viewsets.ModelViewSet):
+class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Manage HPC resource allocations."""
 
+    model = Allocation
+    team_field = 'request__team'
     queryset = Allocation.objects.all()
     serializer_class = AllocationSerializer
-    permission_classes = [permissions.IsAuthenticated, StaffWriteMemberRead]
-
-    def get_queryset(self) -> list[Allocation]:
-        """Return a list of allocations for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return Allocation.objects.filter(request__team__in=teams)
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    search_fields = ['request__team__name', 'request__title', 'cluster__name']
 
 
-class AttachmentViewSet(viewsets.ModelViewSet):
+class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Files submitted as attachments to allocation requests"""
 
+    model = Attachment
+    team_field = 'request__team'
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated, StaffWriteMemberRead]
-
-    def get_queryset(self) -> list[Allocation]:
-        """Return a list of attachments for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        teams = Team.objects.teams_for_user(self.request.user)
-        return Attachment.objects.filter(request__team__in=teams)
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    search_fields = ['path', 'request__title', 'request__submitter']
 
 
 class ClusterViewSet(viewsets.ModelViewSet):
@@ -135,4 +125,26 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
-    permission_classes = [permissions.IsAuthenticated, StaffWriteAuthenticatedRead]
+    permission_classes = [IsAuthenticated, ClusterPermissions]
+    search_fields = ['name', 'description']
+
+
+class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
+    """Comments on allocation requests."""
+
+    model = Comment
+    team_field = 'request__team'
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated, CommentPermissions]
+    search_fields = ['content', 'request__title', 'user__username']
+
+
+class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
+    """Slurm Job status and statistics."""
+
+    model = JobStats
+    queryset = JobStats.objects.all()
+    serializer_class = JobStatsSerializer
+    search_fields = ['account', 'username', 'group', 'team__name']
+    permission_classes = [IsAuthenticated, MemberReadOnly]

@@ -1,11 +1,15 @@
 """Application logic for rendering HTML templates and handling HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
+from apps.users.mixins import TeamScopedListMixin
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -13,39 +17,23 @@ from .serializers import *
 __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 
-class PublicationViewSet(viewsets.ModelViewSet):
-    """Manage metadata for research publications."""
-
-    queryset = Publication.objects.all()
-    serializer_class = PublicationSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-        permissions.IsAdminUser | TeamMemberAll
-    ]
-
-    def get_queryset(self) -> list[Publication]:
-        """Return a list of allocation requests for the currently authenticated user."""
-
-        if self.request.user.is_staff:
-            return self.queryset
-
-        return Publication.objects.affiliated_with_user(self.request.user).all()
-
-
-class GrantViewSet(viewsets.ModelViewSet):
+class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """Track funding awards and grant information."""
 
+    model = Grant
+    team_field = 'team'
     queryset = Grant.objects.all()
     serializer_class = GrantSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-        permissions.IsAdminUser | TeamMemberReadTeamAdminWrite
-    ]
+    search_fields = ['title', 'agency', 'team__name']
+    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
 
-    def get_queryset(self) -> list[Grant]:
-        """Return a list of allocation requests for the currently authenticated user."""
 
-        if self.request.user.is_staff:
-            return self.queryset
+class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
+    """Manage metadata for research publications."""
 
-        return Grant.objects.affiliated_with_user(self.request.user).all()
+    model = Publication
+    team_field = 'team'
+    queryset = Publication.objects.all()
+    serializer_class = PublicationSerializer
+    search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
+    permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]

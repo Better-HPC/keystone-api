@@ -16,9 +16,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated user       | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
-    | Authenticated non-member   | 404 | 404  | 200     | 403  | 403 | 403   | 403    | 403   |
-    | Team member                | 200 | 200  | 200     | 403  | 403 | 403   | 403    | 403   |
+    | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated non-member   | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member                | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
@@ -39,38 +39,38 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.team_member = User.objects.get(username='member_1')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
-            get=status.HTTP_403_FORBIDDEN,
-            head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            get=status.HTTP_401_UNAUTHORIZED,
+            head=status.HTTP_401_UNAUTHORIZED,
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_non_member_permissions(self) -> None:
-        """Test permissions for authenticated users accessing records owned by someone else's team."""
+        """Verify users cannot access records for a team they are not in."""
 
         self.client.force_authenticate(user=self.non_member)
         self.assert_http_responses(
             self.endpoint,
-            get=status.HTTP_404_NOT_FOUND,
-            head=status.HTTP_404_NOT_FOUND,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_team_member_permissions(self) -> None:
-        """Test permissions for authenticated users accessing records owned by their team."""
+        """Verify team members have read-only access."""
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
@@ -78,15 +78,15 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users have read and write permissions."""
+        """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(

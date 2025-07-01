@@ -7,6 +7,8 @@ interfaces for managing application database constructs.
 import django.contrib.auth.admin
 from django.conf import settings
 from django.contrib import admin, auth
+from django.db.models import Count, Prefetch, QuerySet
+from django.http import HttpRequest
 
 from .models import *
 
@@ -36,24 +38,42 @@ class UserAdmin(auth.admin.UserAdmin):
 
         queryset.update(is_active=False)
 
-    readonly_fields = ("last_login", "date_joined", "is_ldap_user")
+    readonly_fields = ('last_login', 'date_joined', 'is_ldap_user')
     actions = [activate_selected_users, deactivate_selected_users]
+    search_fields = ['username', 'first_name', 'last_name', 'email', 'department', 'role']
     fieldsets = (
-        ("User Info", {"fields": ("first_name", "last_name", "email", "department", "role", "last_login", "date_joined", 'is_ldap_user')}),
-        ("Credentials", {"fields": ("username", "password")}),
-        ("Permissions",
-         {"fields": (
-             "is_active",
-             "is_staff",
-             "is_superuser",
-         )})
+        ('User Info', {
+            'fields': (
+                'first_name',
+                'last_name',
+                'email',
+                'department',
+                'role',
+                'last_login',
+                'date_joined',
+                'is_ldap_user'
+            )
+        }),
+        ('Credentials', {
+            'fields': (
+                'username',
+                'password'
+            )
+        }),
+        ('Permissions', {
+            'fields': (
+                'is_active',
+                'is_staff',
+                'is_superuser',
+            )
+        })
     )
 
 
-class TeamMembershipInline(admin.TabularInline):
+class MembershipInline(admin.TabularInline):
     """Inline interface for managing team membership."""
 
-    model = TeamMembership
+    model = Membership
     raw_id_fields = ('user',)
     extra = 1
 
@@ -62,24 +82,41 @@ class TeamMembershipInline(admin.TabularInline):
 class TeamAdmin(admin.ModelAdmin):
     """Admin interface for managing user teams."""
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records.
+
+        Optimizes database interactions by prefetching related data.
+        """
+
+        # Define query for prefetching owner memberships
+        owner_memberships = Membership.objects.filter(
+            role=Membership.Role.OWNER
+        ).select_related('user')
+
+        return super().get_queryset(
+            request
+        ).prefetch_related(
+            Prefetch('membership', queryset=owner_memberships, to_attr='_prefetched_owner_memberships'),
+        ).annotate(
+            member_count=Count('users')
+        )
+
     @staticmethod
     @admin.display
     def owners(obj: Team) -> str:
         """Return a CSV of team owners."""
 
-        owners = obj.users.filter(teammembership__role=TeamMembership.Role.OWNER)
-        return ', '.join(owners.values_list('username', flat=True))
+        owners = [membership.user.username for membership in obj._prefetched_owner_memberships]
+        return ', '.join(owners)
 
     @staticmethod
-    @admin.display
-    def get_member_count(obj: Team) -> int:
+    @admin.display(ordering='member_count')
+    def total_members(obj: Team) -> int:
         """Return the total number of team members."""
 
-        return obj.users.count()
+        return obj.member_count
 
-    get_member_count.short_description = 'Member Count'
-
-    list_display = ('name', 'is_active', 'get_member_count', owners)
+    list_display = ('name', 'is_active', 'total_members', 'owners')
     search_fields = ('name',)
     list_filter = ('is_active',)
-    inlines = [TeamMembershipInline]
+    inlines = [MembershipInline]

@@ -7,13 +7,13 @@ from django.test import TestCase
 from apps.allocations.tasks import notify_upcoming_expirations
 
 
-class FailureReporting(TestCase):
+class NotifyUpcomingExpirationsMethod(TestCase):
     """Test the reporting of task failure."""
 
     @patch('apps.allocations.tasks.should_notify_past_expiration')
     @patch('apps.allocations.models.AllocationRequest.objects.filter')
     def test_raises_error_on_failure(self, mock_filter: Mock, mock_should_notify: Mock) -> None:
-        """Test a RuntimeError is raised when one or more notifications fail.
+        """Verify a RuntimeError is raised when one or more notifications fail.
 
         Raising an error on failure is required to ensure Celery tasks
         report the correct status on exit.

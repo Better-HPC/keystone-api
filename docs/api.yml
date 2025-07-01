@@ -7,45 +7,64 @@ paths:
   /allocations/allocation-request/status-choices/:
     get:
       operationId: allocations_allocation_request_status_choices_retrieve
-      description: Return valid values for the allocation review `status` field.
+      description: Return a dictionary mapping choice values to human-readable names.
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                PD: Pending
-                AP: Approved
-                DC: Declined
-                CR: Changes Requested
+                $ref: '#/components/schemas/AllocationRequestStatusChoices'
           description: ''
   /allocations/allocation-review/status-choices/:
     get:
       operationId: allocations_allocation_review_status_choices_retrieve
-      description: Return valid values for the allocation review `status` field.
+      description: Return a dictionary mapping choice values to human-readable names.
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                AP: Approved
-                DC: Declined
-                CR: Changes Requested
+                $ref: '#/components/schemas/AllocationReviewStatusChoices'
           description: ''
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Manage HPC resource allocations.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: awarded
         schema:
@@ -162,24 +181,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       - in: query
         name: request
         schema:
@@ -233,8 +234,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -260,8 +261,8 @@ paths:
               $ref: '#/components/schemas/Allocation'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -283,8 +284,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -317,8 +318,8 @@ paths:
               $ref: '#/components/schemas/Allocation'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -350,8 +351,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAllocation'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -372,16 +373,40 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Files submitted as attachments to allocation requests
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: id
         schema:
@@ -415,22 +440,33 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
+      - in: query
+        name: name
         schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
+          type: string
+      - in: query
+        name: name__contains
         schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
+          type: string
+      - in: query
+        name: name__endswith
+        schema:
+          type: string
+      - in: query
+        name: name__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: name__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: name__startswith
         schema:
           type: string
       - in: query
@@ -524,8 +560,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -551,8 +587,8 @@ paths:
               $ref: '#/components/schemas/Attachment'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -574,8 +610,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -608,8 +644,8 @@ paths:
               $ref: '#/components/schemas/Attachment'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -641,8 +677,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAttachment'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -663,8 +699,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -673,6 +709,30 @@ paths:
       operationId: allocations_clusters_list
       description: Configuration settings for managed Slurm clusters.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: description
         schema:
@@ -752,12 +812,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
       - in: query
         name: name
         schema:
@@ -787,23 +841,11 @@ paths:
         name: name__startswith
         schema:
           type: string
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -829,8 +871,8 @@ paths:
               $ref: '#/components/schemas/Cluster'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -852,8 +894,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -886,8 +928,8 @@ paths:
               $ref: '#/components/schemas/Cluster'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -919,8 +961,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedCluster'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -941,16 +983,1286 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
+  /allocations/comments/:
+    get:
+      operationId: allocations_comments_list
+      description: Return a list of serialized records filtered by user team permissions.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: content
+        schema:
+          type: string
+      - in: query
+        name: content__contains
+        schema:
+          type: string
+      - in: query
+        name: content__endswith
+        schema:
+          type: string
+      - in: query
+        name: content__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: content__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: content__startswith
+        schema:
+          type: string
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__day
+        schema:
+          type: number
+      - in: query
+        name: created__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__hour
+        schema:
+          type: number
+      - in: query
+        name: created__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: created__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: created__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created__minute
+        schema:
+          type: number
+      - in: query
+        name: created__month
+        schema:
+          type: number
+      - in: query
+        name: created__second
+        schema:
+          type: number
+      - in: query
+        name: created__week
+        schema:
+          type: number
+      - in: query
+        name: created__week_day
+        schema:
+          type: number
+      - in: query
+        name: created__year
+        schema:
+          type: number
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: private
+        schema:
+          type: boolean
+      - in: query
+        name: private__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: private__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: request
+        schema:
+          type: integer
+      - in: query
+        name: request__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: request__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentList'
+          description: ''
+    post:
+      operationId: allocations_comments_create
+      description: Comments on allocation requests.
+      tags:
+      - allocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+  /allocations/comments/{id}/:
+    get:
+      operationId: allocations_comments_retrieve
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    put:
+      operationId: allocations_comments_update
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Comment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Comment'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    patch:
+      operationId: allocations_comments_partial_update
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComment'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          description: ''
+    delete:
+      operationId: allocations_comments_destroy
+      description: Comments on allocation requests.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this comment.
+        required: true
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /allocations/jobs/:
+    get:
+      operationId: allocations_jobs_list
+      description: Return a list of serialized records filtered by user team permissions.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: account
+        schema:
+          type: string
+      - in: query
+        name: account__contains
+        schema:
+          type: string
+      - in: query
+        name: account__endswith
+        schema:
+          type: string
+      - in: query
+        name: account__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: account__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: account__startswith
+        schema:
+          type: string
+      - in: query
+        name: allocnodes
+        schema:
+          type: string
+      - in: query
+        name: allocnodes__contains
+        schema:
+          type: string
+      - in: query
+        name: allocnodes__endswith
+        schema:
+          type: string
+      - in: query
+        name: allocnodes__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: allocnodes__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: allocnodes__startswith
+        schema:
+          type: string
+      - in: query
+        name: alloctres
+        schema:
+          type: string
+      - in: query
+        name: alloctres__contains
+        schema:
+          type: string
+      - in: query
+        name: alloctres__endswith
+        schema:
+          type: string
+      - in: query
+        name: alloctres__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: alloctres__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: alloctres__startswith
+        schema:
+          type: string
+      - in: query
+        name: cluster
+        schema:
+          type: integer
+      - in: query
+        name: cluster__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cluster__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__day
+        schema:
+          type: number
+      - in: query
+        name: created_at__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__hour
+        schema:
+          type: number
+      - in: query
+        name: created_at__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: created_at__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: created_at__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__minute
+        schema:
+          type: number
+      - in: query
+        name: created_at__month
+        schema:
+          type: number
+      - in: query
+        name: created_at__second
+        schema:
+          type: number
+      - in: query
+        name: created_at__week
+        schema:
+          type: number
+      - in: query
+        name: created_at__week_day
+        schema:
+          type: number
+      - in: query
+        name: created_at__year
+        schema:
+          type: number
+      - in: query
+        name: derivedexitcode
+        schema:
+          type: string
+      - in: query
+        name: derivedexitcode__contains
+        schema:
+          type: string
+      - in: query
+        name: derivedexitcode__endswith
+        schema:
+          type: string
+      - in: query
+        name: derivedexitcode__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: derivedexitcode__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: derivedexitcode__startswith
+        schema:
+          type: string
+      - in: query
+        name: elapsed
+        schema:
+          type: string
+          format: duration
+      - in: query
+        name: elapsed__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: duration
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: elapsed__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: end
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__day
+        schema:
+          type: number
+      - in: query
+        name: end__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__hour
+        schema:
+          type: number
+      - in: query
+        name: end__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: end__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: end__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__minute
+        schema:
+          type: number
+      - in: query
+        name: end__month
+        schema:
+          type: number
+      - in: query
+        name: end__second
+        schema:
+          type: number
+      - in: query
+        name: end__week
+        schema:
+          type: number
+      - in: query
+        name: end__week_day
+        schema:
+          type: number
+      - in: query
+        name: end__year
+        schema:
+          type: number
+      - in: query
+        name: group
+        schema:
+          type: string
+      - in: query
+        name: group__contains
+        schema:
+          type: string
+      - in: query
+        name: group__endswith
+        schema:
+          type: string
+      - in: query
+        name: group__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: group__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: group__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: jobid
+        schema:
+          type: string
+      - in: query
+        name: jobid__contains
+        schema:
+          type: string
+      - in: query
+        name: jobid__endswith
+        schema:
+          type: string
+      - in: query
+        name: jobid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: jobid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: jobid__startswith
+        schema:
+          type: string
+      - in: query
+        name: jobname
+        schema:
+          type: string
+      - in: query
+        name: jobname__contains
+        schema:
+          type: string
+      - in: query
+        name: jobname__endswith
+        schema:
+          type: string
+      - in: query
+        name: jobname__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: jobname__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: jobname__startswith
+        schema:
+          type: string
+      - in: query
+        name: nodelist
+        schema:
+          type: string
+      - in: query
+        name: nodelist__contains
+        schema:
+          type: string
+      - in: query
+        name: nodelist__endswith
+        schema:
+          type: string
+      - in: query
+        name: nodelist__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: nodelist__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: nodelist__startswith
+        schema:
+          type: string
+      - in: query
+        name: partition
+        schema:
+          type: string
+      - in: query
+        name: partition__contains
+        schema:
+          type: string
+      - in: query
+        name: partition__endswith
+        schema:
+          type: string
+      - in: query
+        name: partition__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: partition__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: partition__startswith
+        schema:
+          type: string
+      - in: query
+        name: priority
+        schema:
+          type: integer
+      - in: query
+        name: priority__gt
+        schema:
+          type: integer
+      - in: query
+        name: priority__gte
+        schema:
+          type: integer
+      - in: query
+        name: priority__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: priority__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: priority__lt
+        schema:
+          type: integer
+      - in: query
+        name: priority__lte
+        schema:
+          type: integer
+      - in: query
+        name: qos
+        schema:
+          type: string
+      - in: query
+        name: qos__contains
+        schema:
+          type: string
+      - in: query
+        name: qos__endswith
+        schema:
+          type: string
+      - in: query
+        name: qos__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: qos__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: qos__startswith
+        schema:
+          type: string
+      - in: query
+        name: start
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__day
+        schema:
+          type: number
+      - in: query
+        name: start__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__hour
+        schema:
+          type: number
+      - in: query
+        name: start__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: start__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: start__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__minute
+        schema:
+          type: number
+      - in: query
+        name: start__month
+        schema:
+          type: number
+      - in: query
+        name: start__second
+        schema:
+          type: number
+      - in: query
+        name: start__week
+        schema:
+          type: number
+      - in: query
+        name: start__week_day
+        schema:
+          type: number
+      - in: query
+        name: start__year
+        schema:
+          type: number
+      - in: query
+        name: state
+        schema:
+          type: string
+      - in: query
+        name: state__contains
+        schema:
+          type: string
+      - in: query
+        name: state__endswith
+        schema:
+          type: string
+      - in: query
+        name: state__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: state__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: state__startswith
+        schema:
+          type: string
+      - in: query
+        name: submit
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__day
+        schema:
+          type: number
+      - in: query
+        name: submit__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__hour
+        schema:
+          type: number
+      - in: query
+        name: submit__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submit__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submit__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__minute
+        schema:
+          type: number
+      - in: query
+        name: submit__month
+        schema:
+          type: number
+      - in: query
+        name: submit__second
+        schema:
+          type: number
+      - in: query
+        name: submit__week
+        schema:
+          type: number
+      - in: query
+        name: submit__week_day
+        schema:
+          type: number
+      - in: query
+        name: submit__year
+        schema:
+          type: number
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: updated_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__day
+        schema:
+          type: number
+      - in: query
+        name: updated_at__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__hour
+        schema:
+          type: number
+      - in: query
+        name: updated_at__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: updated_at__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: updated_at__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__minute
+        schema:
+          type: number
+      - in: query
+        name: updated_at__month
+        schema:
+          type: number
+      - in: query
+        name: updated_at__second
+        schema:
+          type: number
+      - in: query
+        name: updated_at__week
+        schema:
+          type: number
+      - in: query
+        name: updated_at__week_day
+        schema:
+          type: number
+      - in: query
+        name: updated_at__year
+        schema:
+          type: number
+      - in: query
+        name: username
+        schema:
+          type: string
+      - in: query
+        name: username__contains
+        schema:
+          type: string
+      - in: query
+        name: username__endswith
+        schema:
+          type: string
+      - in: query
+        name: username__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: username__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: username__startswith
+        schema:
+          type: string
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobStatsList'
+          description: ''
+  /allocations/jobs/{id}/:
+    get:
+      operationId: allocations_jobs_retrieve
+      description: Slurm Job status and statistics.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job stats.
+        required: true
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStats'
+          description: ''
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Manage allocation requests.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: active
         schema:
@@ -1131,24 +2443,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       - in: query
         name: status
         schema:
@@ -1313,8 +2607,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1340,8 +2634,8 @@ paths:
               $ref: '#/components/schemas/AllocationRequest'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -1363,8 +2657,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1397,8 +2691,8 @@ paths:
               $ref: '#/components/schemas/AllocationRequest'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1430,8 +2724,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAllocationRequest'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1452,16 +2746,40 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Manage administrator reviews of allocation requests.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: id
         schema:
@@ -1566,82 +2884,6 @@ paths:
         name: last_modified__year
         schema:
           type: number
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
-      - in: query
-        name: private_comments
-        schema:
-          type: string
-      - in: query
-        name: private_comments__contains
-        schema:
-          type: string
-      - in: query
-        name: private_comments__endswith
-        schema:
-          type: string
-      - in: query
-        name: private_comments__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: private_comments__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: private_comments__startswith
-        schema:
-          type: string
-      - in: query
-        name: public_comments
-        schema:
-          type: string
-      - in: query
-        name: public_comments__contains
-        schema:
-          type: string
-      - in: query
-        name: public_comments__endswith
-        schema:
-          type: string
-      - in: query
-        name: public_comments__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: public_comments__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: public_comments__startswith
-        schema:
-          type: string
       - in: query
         name: request
         schema:
@@ -1716,8 +2958,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1743,8 +2985,8 @@ paths:
               $ref: '#/components/schemas/AllocationReview'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -1766,8 +3008,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1800,8 +3042,8 @@ paths:
               $ref: '#/components/schemas/AllocationReview'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1833,8 +3075,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedAllocationReview'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1855,8 +3097,8 @@ paths:
       tags:
       - allocations
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -1886,8 +3128,8 @@ paths:
               $ref: '#/components/schemas/Login'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
@@ -1907,8 +3149,8 @@ paths:
       tags:
       - authentication
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
@@ -1924,12 +3166,12 @@ paths:
         Return user metadata for the currently authenticated user.
 
         Returns:
-            A 200 response with user data if authenticated, and a 404 response otherwise
+            A 200 response with user data if authenticated, and a 401 response otherwise
       tags:
       - authentication
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1944,8 +3186,8 @@ paths:
       tags:
       - health
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           description: No response body
@@ -1958,8 +3200,8 @@ paths:
       tags:
       - health
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -1974,8 +3216,8 @@ paths:
       tags:
       - health
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           description: No response body
@@ -1984,6 +3226,30 @@ paths:
       operationId: logs_apps_list
       description: Returns application log data.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: func
         schema:
@@ -2075,12 +3341,6 @@ paths:
         name: level__startswith
         schema:
           type: string
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
       - in: query
         name: lineno
         schema:
@@ -2172,18 +3432,6 @@ paths:
         name: name__startswith
         schema:
           type: string
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       - in: query
         name: pathname
         schema:
@@ -2243,30 +3491,30 @@ paths:
         schema:
           type: string
       - in: query
-        name: time
+        name: timestamp
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__day
+        name: timestamp__day
         schema:
           type: number
       - in: query
-        name: time__gt
+        name: timestamp__gt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__gte
+        name: timestamp__gte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__hour
+        name: timestamp__hour
         schema:
           type: number
       - in: query
-        name: time__in
+        name: timestamp__in
         schema:
           type: array
           items:
@@ -2276,48 +3524,48 @@ paths:
         explode: false
         style: form
       - in: query
-        name: time__isnull
+        name: timestamp__isnull
         schema:
           type: boolean
       - in: query
-        name: time__lt
+        name: timestamp__lt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__lte
+        name: timestamp__lte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__minute
+        name: timestamp__minute
         schema:
           type: number
       - in: query
-        name: time__month
+        name: timestamp__month
         schema:
           type: number
       - in: query
-        name: time__second
+        name: timestamp__second
         schema:
           type: number
       - in: query
-        name: time__week
+        name: timestamp__week
         schema:
           type: number
       - in: query
-        name: time__week_day
+        name: timestamp__week_day
         schema:
           type: number
       - in: query
-        name: time__year
+        name: timestamp__year
         schema:
           type: number
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2339,8 +3587,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2348,25 +3596,522 @@ paths:
               schema:
                 $ref: '#/components/schemas/AppLog'
           description: ''
+  /logs/audit/:
+    get:
+      operationId: logs_audit_list
+      description: Returns results from the application audit log.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: action
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+        description: |-
+          * `0` - create
+          * `1` - update
+          * `2` - delete
+          * `3` - access
+      - in: query
+        name: action__gt
+        schema:
+          type: integer
+      - in: query
+        name: action__gte
+        schema:
+          type: integer
+      - in: query
+        name: action__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: action__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: action__lt
+        schema:
+          type: integer
+      - in: query
+        name: action__lte
+        schema:
+          type: integer
+      - in: query
+        name: actor
+        schema:
+          type: integer
+      - in: query
+        name: actor__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: actor__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: actor_email
+        schema:
+          type: string
+      - in: query
+        name: actor_email__contains
+        schema:
+          type: string
+      - in: query
+        name: actor_email__endswith
+        schema:
+          type: string
+      - in: query
+        name: actor_email__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: actor_email__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: actor_email__startswith
+        schema:
+          type: string
+      - in: query
+        name: changes_text
+        schema:
+          type: string
+      - in: query
+        name: changes_text__contains
+        schema:
+          type: string
+      - in: query
+        name: changes_text__endswith
+        schema:
+          type: string
+      - in: query
+        name: changes_text__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: changes_text__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: changes_text__startswith
+        schema:
+          type: string
+      - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
+        name: cid__contains
+        schema:
+          type: string
+      - in: query
+        name: cid__endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__startswith
+        schema:
+          type: string
+      - in: query
+        name: content_type
+        schema:
+          type: integer
+      - in: query
+        name: content_type__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: content_type__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: object_id
+        schema:
+          type: integer
+      - in: query
+        name: object_id__gt
+        schema:
+          type: integer
+      - in: query
+        name: object_id__gte
+        schema:
+          type: integer
+      - in: query
+        name: object_id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: object_id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: object_id__lt
+        schema:
+          type: integer
+      - in: query
+        name: object_id__lte
+        schema:
+          type: integer
+      - in: query
+        name: object_pk
+        schema:
+          type: string
+      - in: query
+        name: object_pk__contains
+        schema:
+          type: string
+      - in: query
+        name: object_pk__endswith
+        schema:
+          type: string
+      - in: query
+        name: object_pk__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: object_pk__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: object_pk__startswith
+        schema:
+          type: string
+      - in: query
+        name: object_repr
+        schema:
+          type: string
+      - in: query
+        name: object_repr__contains
+        schema:
+          type: string
+      - in: query
+        name: object_repr__endswith
+        schema:
+          type: string
+      - in: query
+        name: object_repr__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: object_repr__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: object_repr__startswith
+        schema:
+          type: string
+      - in: query
+        name: remote_addr
+        schema:
+          type: string
+      - in: query
+        name: remote_addr__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: remote_addr__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: remote_port
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__gt
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__gte
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: remote_port__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: remote_port__lt
+        schema:
+          type: integer
+      - in: query
+        name: remote_port__lte
+        schema:
+          type: integer
+      - in: query
+        name: timestamp
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__day
+        schema:
+          type: number
+      - in: query
+        name: timestamp__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__hour
+        schema:
+          type: number
+      - in: query
+        name: timestamp__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: timestamp__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: timestamp__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__minute
+        schema:
+          type: number
+      - in: query
+        name: timestamp__month
+        schema:
+          type: number
+      - in: query
+        name: timestamp__second
+        schema:
+          type: number
+      - in: query
+        name: timestamp__week
+        schema:
+          type: number
+      - in: query
+        name: timestamp__week_day
+        schema:
+          type: number
+      - in: query
+        name: timestamp__year
+        schema:
+          type: number
+      tags:
+      - logs
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditLogList'
+          description: ''
+  /logs/audit/{id}/:
+    get:
+      operationId: logs_audit_retrieve
+      description: Returns results from the application audit log.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this audit log.
+        required: true
+      tags:
+      - logs
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLog'
+          description: ''
   /logs/requests/:
     get:
       operationId: logs_requests_list
       description: Returns HTTP request log data.
       parameters:
-      - in: query
-        name: body_request
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
         schema:
           type: string
       - in: query
-        name: body_request__contains
+        name: cid
         schema:
           type: string
       - in: query
-        name: body_request__endswith
+        name: cid__contains
         schema:
           type: string
       - in: query
-        name: body_request__in
+        name: cid__endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__in
         schema:
           type: array
           items:
@@ -2375,40 +4120,11 @@ paths:
         explode: false
         style: form
       - in: query
-        name: body_request__isnull
+        name: cid__isnull
         schema:
           type: boolean
       - in: query
-        name: body_request__startswith
-        schema:
-          type: string
-      - in: query
-        name: body_response
-        schema:
-          type: string
-      - in: query
-        name: body_response__contains
-        schema:
-          type: string
-      - in: query
-        name: body_response__endswith
-        schema:
-          type: string
-      - in: query
-        name: body_response__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: body_response__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: body_response__startswith
+        name: cid__startswith
         schema:
           type: string
       - in: query
@@ -2473,12 +4189,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
       - in: query
         name: method
         schema:
@@ -2506,18 +4216,6 @@ paths:
           type: boolean
       - in: query
         name: method__startswith
-        schema:
-          type: string
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
         schema:
           type: string
       - in: query
@@ -2583,30 +4281,30 @@ paths:
         schema:
           type: integer
       - in: query
-        name: time
+        name: timestamp
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__day
+        name: timestamp__day
         schema:
           type: number
       - in: query
-        name: time__gt
+        name: timestamp__gt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__gte
+        name: timestamp__gte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__hour
+        name: timestamp__hour
         schema:
           type: number
       - in: query
-        name: time__in
+        name: timestamp__in
         schema:
           type: array
           items:
@@ -2616,41 +4314,41 @@ paths:
         explode: false
         style: form
       - in: query
-        name: time__isnull
+        name: timestamp__isnull
         schema:
           type: boolean
       - in: query
-        name: time__lt
+        name: timestamp__lt
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__lte
+        name: timestamp__lte
         schema:
           type: string
           format: date-time
       - in: query
-        name: time__minute
+        name: timestamp__minute
         schema:
           type: number
       - in: query
-        name: time__month
+        name: timestamp__month
         schema:
           type: number
       - in: query
-        name: time__second
+        name: timestamp__second
         schema:
           type: number
       - in: query
-        name: time__week
+        name: timestamp__week
         schema:
           type: number
       - in: query
-        name: time__week_day
+        name: timestamp__week_day
         schema:
           type: number
       - in: query
-        name: time__year
+        name: timestamp__year
         schema:
           type: number
       - in: query
@@ -2673,8 +4371,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2696,8 +4394,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -2710,6 +4408,30 @@ paths:
       operationId: logs_tasks_list
       description: Returns results from scheduled background tasks.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: content_encoding
         schema:
@@ -2911,6 +4633,77 @@ paths:
         schema:
           type: number
       - in: query
+        name: date_started
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__day
+        schema:
+          type: number
+      - in: query
+        name: date_started__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__hour
+        schema:
+          type: number
+      - in: query
+        name: date_started__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: date_started__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: date_started__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: date_started__minute
+        schema:
+          type: number
+      - in: query
+        name: date_started__month
+        schema:
+          type: number
+      - in: query
+        name: date_started__second
+        schema:
+          type: number
+      - in: query
+        name: date_started__week
+        schema:
+          type: number
+      - in: query
+        name: date_started__week_day
+        schema:
+          type: number
+      - in: query
+        name: date_started__year
+        schema:
+          type: number
+      - in: query
         name: id
         schema:
           type: integer
@@ -2943,12 +4736,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
       - in: query
         name: meta
         schema:
@@ -2976,18 +4763,6 @@ paths:
           type: boolean
       - in: query
         name: meta__startswith
-        schema:
-          type: string
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
         schema:
           type: string
       - in: query
@@ -3052,25 +4827,6 @@ paths:
         name: status
         schema:
           type: string
-          title: Task State
-          enum:
-          - FAILURE
-          - PENDING
-          - RECEIVED
-          - RETRY
-          - REVOKED
-          - STARTED
-          - SUCCESS
-        description: |-
-          Current state of the task being run
-
-          * `FAILURE` - FAILURE
-          * `PENDING` - PENDING
-          * `RECEIVED` - RECEIVED
-          * `RETRY` - RETRY
-          * `REVOKED` - REVOKED
-          * `STARTED` - STARTED
-          * `SUCCESS` - SUCCESS
       - in: query
         name: status__contains
         schema:
@@ -3273,8 +5029,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3296,8 +5052,8 @@ paths:
       tags:
       - logs
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3305,11 +5061,591 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskResult'
           description: ''
+  /notifications/notifications/:
+    get:
+      operationId: notifications_notifications_list
+      description: Return a list of serialized records filtered for the requesting
+        user.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: message
+        schema:
+          type: string
+      - in: query
+        name: message__contains
+        schema:
+          type: string
+      - in: query
+        name: message__endswith
+        schema:
+          type: string
+      - in: query
+        name: message__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: message__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: message__startswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type
+        schema:
+          type: string
+          enum:
+          - GM
+          - RD
+          - RE
+        description: |-
+          * `GM` - General Message
+          * `RE` - Upcoming Request Expiration
+          * `RD` - Request Past Expiration
+      - in: query
+        name: notification_type__contains
+        schema:
+          type: string
+      - in: query
+        name: notification_type__endswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: notification_type__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: notification_type__startswith
+        schema:
+          type: string
+      - in: query
+        name: read
+        schema:
+          type: boolean
+      - in: query
+        name: read__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: read__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: subject
+        schema:
+          type: string
+      - in: query
+        name: subject__contains
+        schema:
+          type: string
+      - in: query
+        name: subject__endswith
+        schema:
+          type: string
+      - in: query
+        name: subject__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: subject__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: subject__startswith
+        schema:
+          type: string
+      - in: query
+        name: time
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__day
+        schema:
+          type: number
+      - in: query
+        name: time__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__hour
+        schema:
+          type: number
+      - in: query
+        name: time__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: time__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: time__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__minute
+        schema:
+          type: number
+      - in: query
+        name: time__month
+        schema:
+          type: number
+      - in: query
+        name: time__second
+        schema:
+          type: number
+      - in: query
+        name: time__week
+        schema:
+          type: number
+      - in: query
+        name: time__week_day
+        schema:
+          type: number
+      - in: query
+        name: time__year
+        schema:
+          type: number
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /notifications/notifications/{id}/:
+    get:
+      operationId: notifications_notifications_retrieve
+      description: Returns user notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: notifications_notifications_partial_update
+      description: Returns user notifications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /notifications/preferences/:
+    get:
+      operationId: notifications_preferences_list
+      description: Return a list of serialized records filtered for the requesting
+        user.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: notify_on_expiration
+        schema:
+          type: boolean
+      - in: query
+        name: notify_on_expiration__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: notify_on_expiration__isnull
+        schema:
+          type: boolean
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPreferenceList'
+          description: ''
+    post:
+      operationId: notifications_preferences_create
+      description: Create a new `Preference` object.
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Preference'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+  /notifications/preferences/{id}/:
+    get:
+      operationId: notifications_preferences_retrieve
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    put:
+      operationId: notifications_preferences_update
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Preference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Preference'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    patch:
+      operationId: notifications_preferences_partial_update
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPreference'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    delete:
+      operationId: notifications_preferences_destroy
+      description: Returns user notification preferences.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this preference.
+        required: true
+      tags:
+      - notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Track funding awards and grant information.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: agency
         schema:
@@ -3526,24 +5862,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       - in: query
         name: start_date
         schema:
@@ -3652,8 +5970,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3679,8 +5997,8 @@ paths:
               $ref: '#/components/schemas/Grant'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -3702,8 +6020,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3736,8 +6054,8 @@ paths:
               $ref: '#/components/schemas/Grant'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3769,8 +6087,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedGrant'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -3791,16 +6109,40 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Manage metadata for research publications.
+      description: Return a list of serialized records filtered by user team permissions.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: abstract
         schema:
@@ -3830,65 +6172,6 @@ paths:
         name: abstract__startswith
         schema:
           type: string
-      - in: query
-        name: date
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__day
-        schema:
-          type: number
-      - in: query
-        name: date__gt
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__gte
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__in
-        schema:
-          type: array
-          items:
-            type: string
-            format: date
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: date__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: date__lt
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__lte
-        schema:
-          type: string
-          format: date
-      - in: query
-        name: date__month
-        schema:
-          type: number
-      - in: query
-        name: date__week
-        schema:
-          type: number
-      - in: query
-        name: date__week_day
-        schema:
-          type: number
-      - in: query
-        name: date__year
-        schema:
-          type: number
       - in: query
         name: doi
         schema:
@@ -3952,6 +6235,35 @@ paths:
         schema:
           type: integer
       - in: query
+        name: issue
+        schema:
+          type: string
+      - in: query
+        name: issue__contains
+        schema:
+          type: string
+      - in: query
+        name: issue__endswith
+        schema:
+          type: string
+      - in: query
+        name: issue__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: issue__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: issue__startswith
+        schema:
+          type: string
+      - in: query
         name: journal
         schema:
           type: string
@@ -3980,24 +6292,141 @@ paths:
         name: journal__startswith
         schema:
           type: string
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
+      - in: query
+        name: preparation
         schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
+          type: boolean
+      - in: query
+        name: preparation__in
         schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: preparation__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: published
         schema:
           type: string
+          format: date
+      - in: query
+        name: published__day
+        schema:
+          type: number
+      - in: query
+        name: published__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: published__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: published__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__month
+        schema:
+          type: number
+      - in: query
+        name: published__week
+        schema:
+          type: number
+      - in: query
+        name: published__week_day
+        schema:
+          type: number
+      - in: query
+        name: published__year
+        schema:
+          type: number
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
       - in: query
         name: team
         schema:
@@ -4044,11 +6473,40 @@ paths:
         name: title__startswith
         schema:
           type: string
+      - in: query
+        name: volume
+        schema:
+          type: string
+      - in: query
+        name: volume__contains
+        schema:
+          type: string
+      - in: query
+        name: volume__endswith
+        schema:
+          type: string
+      - in: query
+        name: volume__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: volume__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: volume__startswith
+        schema:
+          type: string
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4074,8 +6532,8 @@ paths:
               $ref: '#/components/schemas/Publication'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -4097,8 +6555,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4131,8 +6589,8 @@ paths:
               $ref: '#/components/schemas/Publication'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4164,8 +6622,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedPublication'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4186,8 +6644,8 @@ paths:
       tags:
       - research
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -4196,6 +6654,30 @@ paths:
       operationId: users_membership_list
       description: Manage team membership.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: id
         schema:
@@ -4229,24 +6711,6 @@ paths:
         name: id__lte
         schema:
           type: integer
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       - in: query
         name: role
         schema:
@@ -4321,14 +6785,14 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedTeamMembershipList'
+                $ref: '#/components/schemas/PaginatedMembershipList'
           description: ''
     post:
       operationId: users_membership_create
@@ -4339,23 +6803,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
   /users/membership/{id}/:
     get:
@@ -4366,19 +6830,19 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
     put:
       operationId: users_membership_update
@@ -4388,7 +6852,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
@@ -4396,23 +6860,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TeamMembership'
+              $ref: '#/components/schemas/Membership'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
     patch:
       operationId: users_membership_partial_update
@@ -4422,7 +6886,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
@@ -4430,22 +6894,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedTeamMembership'
+              $ref: '#/components/schemas/PatchedMembership'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedTeamMembership'
+              $ref: '#/components/schemas/PatchedMembership'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedTeamMembership'
+              $ref: '#/components/schemas/PatchedMembership'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamMembership'
+                $ref: '#/components/schemas/Membership'
           description: ''
     delete:
       operationId: users_membership_destroy
@@ -4455,13 +6919,13 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this team membership.
+        description: A unique integer value identifying this membership.
         required: true
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -4472,8 +6936,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4488,6 +6952,30 @@ paths:
       operationId: users_teams_list
       description: Manage user teams.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: id
         schema:
@@ -4538,12 +7026,6 @@ paths:
         name: is_active__isnull
         schema:
           type: boolean
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
       - in: query
         name: name
         schema:
@@ -4573,23 +7055,11 @@ paths:
         name: name__startswith
         schema:
           type: string
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4615,8 +7085,8 @@ paths:
               $ref: '#/components/schemas/Team'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -4638,8 +7108,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4672,8 +7142,8 @@ paths:
               $ref: '#/components/schemas/Team'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4705,8 +7175,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedTeam'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -4727,8 +7197,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -4737,6 +7207,30 @@ paths:
       operationId: users_users_list
       description: Manage user account data.
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       - in: query
         name: date_joined
         schema:
@@ -5096,24 +7590,6 @@ paths:
         name: last_name__startswith
         schema:
           type: string
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
       - in: query
         name: password
         schema:
@@ -5204,8 +7680,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5231,8 +7707,8 @@ paths:
               $ref: '#/components/schemas/RestrictedUser'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '201':
           content:
@@ -5254,8 +7730,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5288,8 +7764,8 @@ paths:
               $ref: '#/components/schemas/RestrictedUser'
         required: true
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5321,8 +7797,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedRestrictedUser'
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '200':
           content:
@@ -5343,8 +7819,8 @@ paths:
       tags:
       - users
       security:
+      - tokenAuth: []
       - cookieAuth: []
-      - basicAuth: []
       responses:
         '204':
           description: No response body
@@ -5357,6 +7833,22 @@ components:
         id:
           type: integer
           readOnly: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         requested:
           type: integer
           maximum: 9223372036854775807
@@ -5379,6 +7871,9 @@ components:
         request:
           type: integer
       required:
+      - _cluster
+      - _history
+      - _request
       - cluster
       - id
       - request
@@ -5390,6 +7885,40 @@ components:
         id:
           type: integer
           readOnly: true
+        _submitter:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' submitter'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' assignees'
+        _publications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publication'
+          readOnly: true
+          title: ' publications'
+        _grants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Grant'
+          readOnly: true
+          title: ' grants'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -5400,8 +7929,6 @@ components:
           type: string
           format: date
           readOnly: true
-        status:
-          $ref: '#/components/schemas/AllocationRequestStatusEnum'
         active:
           type: string
           format: date
@@ -5410,6 +7937,8 @@ components:
           type: string
           format: date
           nullable: true
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
         submitter:
           type: integer
           nullable: true
@@ -5419,24 +7948,60 @@ components:
           type: array
           items:
             type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
+          type: array
+          items:
+            type: integer
       required:
+      - _assignees
+      - _grants
+      - _history
+      - _publications
+      - _submitter
+      - _team
       - description
       - id
       - submitted
       - team
       - title
-    AllocationRequestStatusEnum:
-      enum:
-      - PD
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `PD` - Pending
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
+    AllocationRequestStatusChoices:
+      type: object
+      properties:
+        PD:
+          type: string
+          default: Pending
+        AP:
+          type: string
+          default: Approved
+        DC:
+          type: string
+          default: Declined
+        CR:
+          type: string
+          default: Changes Requested
+    AllocationRequestSummary:
+      type: object
+      description: Serializer for summarizing allocation requests in nested responses.
+      properties:
+        title:
+          type: string
+          maxLength: 250
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
+        active:
+          type: string
+          format: date
+          nullable: true
+        expire:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - title
     AllocationReview:
       type: object
       description: Object serializer for the `AllocationReview` class.
@@ -5444,16 +8009,24 @@ components:
         id:
           type: integer
           readOnly: true
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _reviewer:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' reviewer'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         status:
-          $ref: '#/components/schemas/AllocationReviewStatusEnum'
-        public_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
-        private_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
+          $ref: '#/components/schemas/ReviewStatusChoices'
         last_modified:
           type: string
           format: date-time
@@ -5464,20 +8037,25 @@ components:
           type: integer
           nullable: true
       required:
+      - _history
+      - _request
+      - _reviewer
       - id
       - last_modified
       - request
       - status
-    AllocationReviewStatusEnum:
-      enum:
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
+    AllocationReviewStatusChoices:
+      type: object
+      properties:
+        AP:
+          type: string
+          default: Approved
+        DC:
+          type: string
+          default: Declined
+        CR:
+          type: string
+          default: Changes Requested
     AppLog:
       type: object
       description: Object serializer for the `AppLog` class.
@@ -5508,7 +8086,7 @@ components:
         sinfo:
           type: string
           nullable: true
-        time:
+        timestamp:
           type: string
           format: date-time
           readOnly: true
@@ -5519,7 +8097,7 @@ components:
       - message
       - name
       - pathname
-      - time
+      - timestamp
     Attachment:
       type: object
       description: Object serializer for the `Attachment` class.
@@ -5527,9 +8105,21 @@ components:
         id:
           type: integer
           readOnly: true
-        path:
+        file:
           type: string
+        name:
+          type: string
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         uploaded:
           type: string
           format: date-time
@@ -5537,10 +8127,93 @@ components:
         request:
           type: integer
       required:
+      - _history
+      - _request
+      - file
       - id
-      - path
       - request
       - uploaded
+    AuditLog:
+      type: object
+      description: Object serializer for the `AuditLog` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        record_name:
+          type: string
+          description: Return the changed record type as a human-readable string.
+          readOnly: true
+        record_id:
+          type: integer
+        action:
+          type: string
+          description: Return the action type as a human-readable string.
+          readOnly: true
+        changes:
+          nullable: true
+          title: Change message
+        cid:
+          type: string
+          nullable: true
+          title: Correlation ID
+          maxLength: 255
+        remote_addr:
+          type: string
+          nullable: true
+          title: Remote address
+        remote_port:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        timestamp:
+          type: string
+          format: date-time
+        actor:
+          type: integer
+          nullable: true
+        _actor:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' actor'
+      required:
+      - _actor
+      - action
+      - id
+      - record_id
+      - record_name
+    AuditLogSummary:
+      type: object
+      description: Object serializer for the `AuditLog` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+        action:
+          type: string
+          description: Return the action type as a human-readable string.
+          readOnly: true
+        actor:
+          type: integer
+          nullable: true
+        _actor:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' actor'
+        changes:
+          nullable: true
+          title: Change message
+      required:
+      - _actor
+      - action
+      - id
     Cluster:
       type: object
       description: Object serializer for the `Cluster` class.
@@ -5548,6 +8221,12 @@ components:
         id:
           type: integer
           readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 50
@@ -5558,8 +8237,64 @@ components:
         enabled:
           type: boolean
       required:
+      - _history
       - id
       - name
+    ClusterSummary:
+      type: object
+      description: Serializer for summarizing cluster names in nested responses.
+      properties:
+        name:
+          type: string
+          maxLength: 50
+        enabled:
+          type: boolean
+      required:
+      - name
+    Comment:
+      type: object
+      description: Object serializer for the `Comment` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        request:
+          type: integer
+      required:
+      - _history
+      - _request
+      - _user
+      - content
+      - created
+      - id
+      - request
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -5567,6 +8302,17 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -5594,6 +8340,8 @@ components:
         team:
           type: integer
       required:
+      - _history
+      - _team
       - agency
       - amount
       - end_date
@@ -5603,6 +8351,110 @@ components:
       - start_date
       - team
       - title
+    JobStats:
+      type: object
+      description: Object serializer for the `JobStats` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/Cluster'
+          readOnly: true
+          title: ' cluster'
+        account:
+          type: string
+          nullable: true
+          maxLength: 128
+        allocnodes:
+          type: string
+          nullable: true
+          maxLength: 128
+        alloctres:
+          type: string
+          nullable: true
+        derivedexitcode:
+          type: string
+          nullable: true
+          maxLength: 4
+        elapsed:
+          type: string
+          nullable: true
+        end:
+          type: string
+          format: date-time
+          nullable: true
+        group:
+          type: string
+          nullable: true
+          maxLength: 128
+        jobid:
+          type: string
+          maxLength: 64
+        jobname:
+          type: string
+          nullable: true
+          maxLength: 512
+        nodelist:
+          type: string
+          nullable: true
+        priority:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        partition:
+          type: string
+          nullable: true
+          maxLength: 128
+        qos:
+          type: string
+          nullable: true
+          maxLength: 128
+        start:
+          type: string
+          format: date-time
+          nullable: true
+        state:
+          type: string
+          nullable: true
+          maxLength: 64
+        submit:
+          type: string
+          format: date-time
+          nullable: true
+        username:
+          type: string
+          nullable: true
+          maxLength: 128
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        team:
+          type: integer
+          nullable: true
+        cluster:
+          type: integer
+          nullable: true
+      required:
+      - _cluster
+      - _team
+      - created_at
+      - id
+      - jobid
+      - updated_at
     Login:
       type: object
       properties:
@@ -5615,6 +8467,43 @@ components:
           type: string
       required:
       - password
+    Membership:
+      type: object
+      description: Object serializer for the `Membership` model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        user:
+          type: integer
+        team:
+          type: integer
+      required:
+      - _history
+      - _team
+      - _user
+      - id
+      - role
+      - team
+      - user
     NestedInlineOneOff:
       type: object
       properties:
@@ -5627,6 +8516,59 @@ components:
         critical_service:
           type: boolean
           default: true
+    Notification:
+      type: object
+      description: Object serializer for the `Notification` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        time:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+        subject:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        metadata:
+          readOnly: true
+          nullable: true
+        notification_type:
+          allOf:
+          - $ref: '#/components/schemas/NotificationTypeEnum'
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+      required:
+      - _user
+      - id
+      - message
+      - metadata
+      - notification_type
+      - subject
+      - time
+      - user
+    NotificationTypeEnum:
+      enum:
+      - GM
+      - RE
+      - RD
+      type: string
+      description: |-
+        * `GM` - General Message
+        * `RE` - Upcoming Request Expiration
+        * `RD` - Request Past Expiration
     PaginatedAllocationList:
       type: object
       required:
@@ -5640,12 +8582,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5663,12 +8605,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5686,12 +8628,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5709,12 +8651,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5732,16 +8674,39 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
             $ref: '#/components/schemas/Attachment'
+    PaginatedAuditLogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLog'
     PaginatedClusterList:
       type: object
       required:
@@ -5755,16 +8720,39 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
             $ref: '#/components/schemas/Cluster'
+    PaginatedCommentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
     PaginatedGrantList:
       type: object
       required:
@@ -5778,16 +8766,108 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
             $ref: '#/components/schemas/Grant'
+    PaginatedJobStatsList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStats'
+    PaginatedMembershipList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Membership'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedPreferenceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Preference'
     PaginatedPublicationList:
       type: object
       required:
@@ -5801,12 +8881,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5824,12 +8904,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5847,12 +8927,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5870,12 +8950,12 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
@@ -5893,39 +8973,16 @@ components:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
         previous:
           type: string
           nullable: true
           format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
         results:
           type: array
           items:
             $ref: '#/components/schemas/Team'
-    PaginatedTeamMembershipList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/TeamMembership'
     PatchedAllocation:
       type: object
       description: Object serializer for the `Allocation` class.
@@ -5933,6 +8990,22 @@ components:
         id:
           type: integer
           readOnly: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         requested:
           type: integer
           maximum: 9223372036854775807
@@ -5961,6 +9034,40 @@ components:
         id:
           type: integer
           readOnly: true
+        _submitter:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' submitter'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' assignees'
+        _publications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publication'
+          readOnly: true
+          title: ' publications'
+        _grants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Grant'
+          readOnly: true
+          title: ' grants'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -5971,8 +9078,6 @@ components:
           type: string
           format: date
           readOnly: true
-        status:
-          $ref: '#/components/schemas/AllocationRequestStatusEnum'
         active:
           type: string
           format: date
@@ -5981,12 +9086,22 @@ components:
           type: string
           format: date
           nullable: true
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
         submitter:
           type: integer
           nullable: true
         team:
           type: integer
         assignees:
+          type: array
+          items:
+            type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
           type: array
           items:
             type: integer
@@ -5997,16 +9112,24 @@ components:
         id:
           type: integer
           readOnly: true
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _reviewer:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' reviewer'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         status:
-          $ref: '#/components/schemas/AllocationReviewStatusEnum'
-        public_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
-        private_comments:
-          type: string
-          nullable: true
-          maxLength: 1600
+          $ref: '#/components/schemas/ReviewStatusChoices'
         last_modified:
           type: string
           format: date-time
@@ -6023,9 +9146,21 @@ components:
         id:
           type: integer
           readOnly: true
-        path:
+        file:
           type: string
+        name:
+          type: string
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
           readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         uploaded:
           type: string
           format: date-time
@@ -6039,6 +9174,12 @@ components:
         id:
           type: integer
           readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 50
@@ -6048,6 +9189,42 @@ components:
           maxLength: 150
         enabled:
           type: boolean
+    PatchedComment:
+      type: object
+      description: Object serializer for the `Comment` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        request:
+          type: integer
     PatchedGrant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -6055,6 +9232,17 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
@@ -6081,6 +9269,86 @@ components:
           format: date
         team:
           type: integer
+    PatchedMembership:
+      type: object
+      description: Object serializer for the `Membership` model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        user:
+          type: integer
+        team:
+          type: integer
+    PatchedNotification:
+      type: object
+      description: Object serializer for the `Notification` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        time:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+        subject:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        metadata:
+          readOnly: true
+          nullable: true
+        notification_type:
+          allOf:
+          - $ref: '#/components/schemas/NotificationTypeEnum'
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+    PatchedPreference:
+      type: object
+      description: Object serializer for the `Preference` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        request_expiry_thresholds: {}
+        notify_on_expiration:
+          type: boolean
+        user:
+          type: integer
     PatchedPublication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -6088,32 +9356,69 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
         abstract:
           type: string
-        date:
+        published:
           type: string
           format: date
-          title: Publication Date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
         journal:
           type: string
+          nullable: true
           maxLength: 100
         doi:
           type: string
           nullable: true
           maxLength: 50
+        preparation:
+          type: boolean
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
         team:
           type: integer
     PatchedRestrictedUser:
       type: object
-      description: Object serializer for the `User` class with administrative fields
-        marked as read only.
+      description: Object serializer for the `User` class with sensitive fields marked
+        as read only.
       properties:
         id:
           type: integer
           readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamRole'
+          readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         is_superuser:
           type: boolean
           title: Superuser status
@@ -6191,6 +9496,17 @@ components:
         id:
           type: integer
           readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRole'
+          default: []
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 255
@@ -6201,19 +9517,26 @@ components:
           items:
             type: integer
           readOnly: true
-    PatchedTeamMembership:
+    Preference:
       type: object
-      description: Object serializer for the `TeamMembership` model.
+      description: Object serializer for the `Preference` class.
       properties:
         id:
           type: integer
           readOnly: true
-        role:
-          $ref: '#/components/schemas/RoleEnum'
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+        request_expiry_thresholds: {}
+        notify_on_expiration:
+          type: boolean
         user:
           type: integer
-        team:
-          type: integer
+      required:
+      - _user
+      - id
     Publication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -6221,29 +9544,55 @@ components:
         id:
           type: integer
           readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         title:
           type: string
           maxLength: 250
         abstract:
           type: string
-        date:
+        published:
           type: string
           format: date
-          title: Publication Date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
         journal:
           type: string
+          nullable: true
           maxLength: 100
         doi:
           type: string
           nullable: true
           maxLength: 50
+        preparation:
+          type: boolean
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
         team:
           type: integer
       required:
+      - _history
+      - _team
       - abstract
-      - date
       - id
-      - journal
       - team
       - title
     RequestLog:
@@ -6253,6 +9602,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
         method:
           type: string
           maxLength: 10
@@ -6264,29 +9618,40 @@ components:
           maximum: 9223372036854775807
           minimum: 0
           format: int64
-        body_request:
-          type: string
-        body_response:
-          type: string
         remote_address:
           type: string
           nullable: true
           maxLength: 40
-        time:
+        timestamp:
           type: string
           format: date-time
           readOnly: true
+        cid:
+          type: string
+          nullable: true
+          maxLength: 36
         user:
           type: integer
           nullable: true
       required:
-      - body_request
-      - body_response
+      - _user
       - endpoint
       - id
       - method
       - response_code
-      - time
+      - timestamp
+    RequestStatusChoices:
+      enum:
+      - PD
+      - AP
+      - DC
+      - CR
+      type: string
+      description: |-
+        * `PD` - Pending
+        * `AP` - Approved
+        * `DC` - Declined
+        * `CR` - Changes Requested
     RestAuthDetail:
       type: object
       properties:
@@ -6297,12 +9662,23 @@ components:
       - detail
     RestrictedUser:
       type: object
-      description: Object serializer for the `User` class with administrative fields
-        marked as read only.
+      description: Object serializer for the `User` class with sensitive fields marked
+        as read only.
       properties:
         id:
           type: integer
           readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamRole'
+          readOnly: true
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         is_superuser:
           type: boolean
           title: Superuser status
@@ -6374,15 +9750,27 @@ components:
             type: integer
           description: Specific permissions for this user.
       required:
+      - _history
       - date_joined
       - id
       - is_active
       - is_ldap_user
       - is_staff
       - last_login
+      - membership
       - password
       - profile_image
       - username
+    ReviewStatusChoices:
+      enum:
+      - AP
+      - DC
+      - CR
+      type: string
+      description: |-
+        * `AP` - Approved
+        * `DC` - Declined
+        * `CR` - Changes Requested
     RoleEnum:
       enum:
       - OW
@@ -6426,19 +9814,10 @@ components:
           title: Task Named Arguments
           description: JSON representation of the named arguments used with the task
         status:
-          allOf:
-          - $ref: '#/components/schemas/TaskResultStatusEnum'
+          type: string
           title: Task State
-          description: |-
-            Current state of the task being run
-
-            * `FAILURE` - FAILURE
-            * `PENDING` - PENDING
-            * `RECEIVED` - RECEIVED
-            * `RETRY` - RETRY
-            * `REVOKED` - REVOKED
-            * `STARTED` - STARTED
-            * `SUCCESS` - SUCCESS
+          description: Current state of the task being run
+          maxLength: 50
         worker:
           type: string
           nullable: true
@@ -6467,6 +9846,12 @@ components:
           readOnly: true
           title: Created DateTime
           description: Datetime field when the task result was created in UTC
+        date_started:
+          type: string
+          format: date-time
+          nullable: true
+          title: Started DateTime
+          description: Datetime field when the task was started in UTC
         date_done:
           type: string
           format: date-time
@@ -6493,24 +9878,6 @@ components:
       - meta
       - result
       - task_id
-    TaskResultStatusEnum:
-      enum:
-      - FAILURE
-      - PENDING
-      - RECEIVED
-      - RETRY
-      - REVOKED
-      - STARTED
-      - SUCCESS
-      type: string
-      description: |-
-        * `FAILURE` - FAILURE
-        * `PENDING` - PENDING
-        * `RECEIVED` - RECEIVED
-        * `RETRY` - RETRY
-        * `REVOKED` - REVOKED
-        * `STARTED` - STARTED
-        * `SUCCESS` - SUCCESS
     Team:
       type: object
       description: Object serializer for the `Team` model.
@@ -6518,6 +9885,17 @@ components:
         id:
           type: integer
           readOnly: true
+        membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRole'
+          default: []
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
         name:
           type: string
           maxLength: 255
@@ -6529,27 +9907,42 @@ components:
             type: integer
           readOnly: true
       required:
+      - _history
       - id
       - name
       - users
-    TeamMembership:
+    TeamRole:
       type: object
-      description: Object serializer for the `TeamMembership` model.
+      description: Serializer for summarizing team names and roles in nested responses.
       properties:
         id:
           type: integer
           readOnly: true
-        role:
-          $ref: '#/components/schemas/RoleEnum'
-        user:
-          type: integer
         team:
           type: integer
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
       required:
+      - _team
       - id
       - role
       - team
-      - user
+    TeamSummary:
+      type: object
+      description: Serializer for summarizing team information in nested responses.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        is_active:
+          type: boolean
+      required:
+      - name
     Token:
       type: object
       description: Serializer for Token model.
@@ -6559,6 +9952,51 @@ components:
           maxLength: 40
       required:
       - key
+    UserRole:
+      type: object
+      description: Serializer for summarizing team member usernames and roles in nested
+        responses.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+      required:
+      - _user
+      - id
+      - role
+      - user
+    UserSummary:
+      type: object
+      description: Serializer for summarizing user information in nested responses.
+      properties:
+        username:
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+      required:
+      - username
     health_json_ok:
       type: object
       properties:
@@ -6567,10 +10005,12 @@ components:
       required:
       - healthCheckName
   securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
     cookieAuth:
       type: apiKey
       in: cookie
       name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

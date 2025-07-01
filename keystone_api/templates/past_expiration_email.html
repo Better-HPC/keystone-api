@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block main %}
+  {% if user.first_name and user.last_name %}
+    <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+  {% else %}
+    <p>Dear {{ user.username }},</p>
+  {% endif %}
+  <p>
+    This notification is to alert you your HPC compute allocation <strong>"{{ request.title }}"</strong>
+    expired on {{ request.expire.isoformat() }}. You will no longer be able to use the resources awarded
+    to you under this allocation when submitting new jobs.
+  </p>
+  <p>Sincerely,</p>
+  <p>The keystone HPC utility</p>
+{% endblock %}

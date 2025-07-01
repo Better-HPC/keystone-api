@@ -1,15 +1,23 @@
 """Application logic for rendering HTML templates and handling HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
 from rest_framework import permissions, viewsets
 
 from .models import *
+from .permissions import *
 from .serializers import *
 
-__all__ = ['AppLogViewSet', 'RequestLogViewSet', 'TaskResultViewSet']
+__all__ = [
+    'AppLogViewSet',
+    'AuditLogViewSet',
+    'RequestLogViewSet',
+    'TaskResultViewSet',
+]
 
 
 class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -17,7 +25,8 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = AppLog.objects.all()
     serializer_class = AppLogSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    search_fields = ['name', 'level', 'pathname', 'message', 'func', 'sinfo']
+    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
 
 
 class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -25,7 +34,8 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = RequestLog.objects.all()
     serializer_class = RequestLogSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    search_fields = ['endpoint', 'method', 'response_code', 'body_request', 'body_response', 'remote_address']
+    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
 
 
 class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
@@ -33,4 +43,14 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = TaskResult.objects.all()
     serializer_class = TaskResultSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
+    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+
+
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """Returns results from the application audit log."""
+
+    queryset = AuditLog.objects.all()
+    serializer_class = AuditLogSerializer
+    search_fields = ['resource', 'action', 'user_username']
+    permission_classes = [permissions.IsAuthenticated, IsAdminRead]

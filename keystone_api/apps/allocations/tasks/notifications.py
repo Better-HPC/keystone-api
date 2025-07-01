@@ -45,7 +45,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
 
     # Check user notification preferences
     days_until_expire = request.get_days_until_expire()
-    next_threshold = Preference.get_user_preference(user).get_next_expiration_threshold(days_until_expire)
+    next_threshold = Preference.get_user_preference(user).get_expiration_threshold(days_until_expire)
     if next_threshold is None:
         log.debug(msg_prefix + 'No notification threshold has been hit yet.')
         return False
@@ -101,8 +101,8 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
     an existing notification has not already been issued.
 
     Args:
-        user: The user to notify
-        request: The allocation request to notify the user about
+        user: The user to notify.
+        request: The allocation request to notify the user about.
 
     Returns:
         A boolean reflecting whether to send a notification.
@@ -123,7 +123,7 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
 
 @shared_task()
 def notify_past_expirations() -> None:
-    """Send a notification to all users with expired allocations"""
+    """Send a notification to all users with expired allocations."""
 
     active_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,

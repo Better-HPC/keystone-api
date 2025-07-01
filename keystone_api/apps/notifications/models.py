@@ -24,6 +24,17 @@ def default_expiry_thresholds() -> list[int]:  # pragma: nocover
 class Notification(models.Model):
     """User notification."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['time']),
+            models.Index(fields=['notification_type']),
+            models.Index(fields=['user']),
+            models.Index(fields=['user', 'read', 'notification_type']),
+            models.Index(fields=['user', 'notification_type', 'time']),
+        ]
+
     class NotificationType(models.TextChoices):
         """Enumerated choices for the `notification_type` field."""
 
@@ -44,6 +55,13 @@ class Notification(models.Model):
 class Preference(models.Model):
     """User notification preferences."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['user']),
+        ]
+
     request_expiry_thresholds = models.JSONField(default=default_expiry_thresholds)
     notify_on_expiration = models.BooleanField(default=True)
 
@@ -62,17 +80,17 @@ class Preference(models.Model):
 
         cls.objects.update_or_create(user=user, defaults=kwargs)
 
-    def get_next_expiration_threshold(self, days_until_expire: int) -> int | None:
-        """Return the next threshold at which an expiration notification should be sent
+    def get_expiration_threshold(self, days_until_expire: int) -> int | None:
+        """Return the next threshold at which an expiration notification should be sent.
 
         The next notification occurs at the smallest threshold that is
-        greater than or equal the days until expiration
+        greater than or equal to the days until expiration.
 
         Args:
-            days_until_expire: The number of days until an allocation expires
+            days_until_expire: The number of days until an allocation expires.
 
-        Return:
-            The next notification threshold in days
+        Returns:
+            The next notification threshold in days, or `None` if none are met.
         """
 
         return min(
@@ -80,17 +98,17 @@ class Preference(models.Model):
             default=None
         )
 
-    def get_next_usage_threshold(self, usage_percentage: int) -> int | None:
-        """Return the next threshold at which a usage notification should be sent
+    def get_usage_threshold(self, usage_percentage: int) -> int | None:
+        """Return the next threshold at which a usage notification should be sent.
 
         The next notification occurs at the largest threshold that is
-        less than or equal the days until expiration
+        less than or equal to the usage percentage.
 
         Args:
-            usage_percentage: An allocation's percent utilization
+            usage_percentage: An allocation's percent utilization.
 
-        Return:
-            The next notification threshold in percent
+        Returns:
+            The next notification threshold in percent, or `None` if none are met.
         """
 
         return max(

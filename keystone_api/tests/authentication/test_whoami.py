@@ -12,32 +12,32 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | Authentication      | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |---------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User      | 401 | 401  | 200     | 405  | 405 | 405   | 405    | 405   |
-    | Authenticated User  | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authentication       | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User   | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = '/authentication/whoami/'
     fixtures = ['testing_common.yaml']
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access the endpoint."""
+        """Verify unauthenticated users cannot access the endpoint."""
 
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
-            options=status.HTTP_200_OK,
-            post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
-            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test authenticated users can perform read operations."""
+        """Verify authenticated users can perform read operations."""
 
         user = User.objects.get(username='generic_user')
         self.client.force_authenticate(user=user)
@@ -66,7 +66,7 @@ class UserData(APITestCase):
         self.user = User.objects.get(username='generic_user')
 
     def test_metadata_is_returned(self) -> None:
-        """Test GET responses include metadata for the currently authenticated user."""
+        """Verify GET responses include metadata for the currently authenticated user."""
 
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.endpoint)
@@ -80,7 +80,7 @@ class UserData(APITestCase):
         self.assertEqual(self.user.is_active, data['is_active'])
 
     def test_password_is_not_returned(self) -> None:
-        """Test the password field is excluded from the returned data."""
+        """Verify the password field is excluded from the returned data."""
 
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.endpoint)

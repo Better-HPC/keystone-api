@@ -3,7 +3,6 @@
 
 import os
 import sys
-from warnings import warn
 
 from django.core.management import execute_from_command_line
 
@@ -21,5 +20,4 @@ def main() -> None:  # pragma: nocover
 
 
 if __name__ == '__main__':  # pragma: nocover
-    warn("You are calling `manage.py' directly. Use the bundled `keystone-api` command instead.", RuntimeWarning)
     main()

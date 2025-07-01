@@ -31,7 +31,7 @@ class TeamManager(models.Manager):
             A filtered queryset.
         """
 
-        return self.filter(teammembership__user=user)
+        return self.filter(membership__user=user)
 
 
 class UserManager(BaseUserManager):
@@ -51,6 +51,7 @@ class UserManager(BaseUserManager):
 
         if 'email' in extra_fields:
             extra_fields['email'] = self.normalize_email(extra_fields['email'])
+
         password_validation.validate_password(password)
 
         user = self.model(username=username, **extra_fields)

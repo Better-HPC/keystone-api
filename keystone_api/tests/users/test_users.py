@@ -14,7 +14,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated user       | 403 | 403  | 403     | 403  | 403 | 403   | 403    | 403   |
+    | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated user         | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
     | Staff user                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
@@ -29,22 +29,22 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Test unauthenticated users cannot access resources."""
+        """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
             self.endpoint,
-            get=status.HTTP_403_FORBIDDEN,
-            head=status.HTTP_403_FORBIDDEN,
-            options=status.HTTP_403_FORBIDDEN,
-            post=status.HTTP_403_FORBIDDEN,
-            put=status.HTTP_403_FORBIDDEN,
-            patch=status.HTTP_403_FORBIDDEN,
-            delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_403_FORBIDDEN
+            get=status.HTTP_401_UNAUTHORIZED,
+            head=status.HTTP_401_UNAUTHORIZED,
+            options=status.HTTP_401_UNAUTHORIZED,
+            post=status.HTTP_401_UNAUTHORIZED,
+            put=status.HTTP_401_UNAUTHORIZED,
+            patch=status.HTTP_401_UNAUTHORIZED,
+            delete=status.HTTP_401_UNAUTHORIZED,
+            trace=status.HTTP_401_UNAUTHORIZED
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Test general authenticated users can access all user info."""
+        """Verify authenticated can read user info."""
 
         self.client.force_authenticate(user=self.generic_user)
         self.assert_http_responses(
@@ -60,7 +60,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Test staff users can access all user info."""
+        """Verify staff users can read user info."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
@@ -94,7 +94,7 @@ class CredentialHandling(APITestCase):
         self.generic_user = User.objects.get(username='generic_user')
 
     def test_new_user_credentials_are_set(self) -> None:
-        """Test the user is created with the correct password.
+        """Verify new users are created with the correctly hashed password.
 
         Passwords are provided in plain text but stored in the DB as a hash.
         """
@@ -124,7 +124,7 @@ class CredentialHandling(APITestCase):
         self.assertEqual(new_user.last_name, 'Bar')
 
     def test_credentials_not_gettable(self) -> None:
-        """Test credentials are not included in get requests."""
+        """Verify credentials are not included in get requests."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get('/users/users/')
@@ -136,7 +136,7 @@ class CredentialHandling(APITestCase):
             self.assertNotIn('password', record.keys(), f'Password field found in record: {record}')
 
     def test_passwords_are_validated(self) -> None:
-        """Test passwords are validated against security requirements."""
+        """Verify passwords are validated against security requirements."""
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.post(

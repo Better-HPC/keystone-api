@@ -5,42 +5,11 @@ from rest_framework import status
 
 from apps.allocations.models import AllocationRequest, AllocationReview
 from apps.allocations.views import AllocationReviewViewSet
-from apps.users.models import Team, User
+from apps.users.models import User
 
 
-class GetQueryset(TestCase):
-    """Test the filtering of database records based on user permissions."""
-
-    fixtures = ['testing_common.yaml']
-
-    def test_get_queryset_for_staff_user(self) -> None:
-        """Test staff users can query all reviews."""
-
-        request = RequestFactory()
-        request.user = User.objects.get(username='staff_user')
-
-        viewset = AllocationReviewViewSet()
-        viewset.request = request
-
-        expected_queryset = AllocationReview.objects.all()
-        self.assertQuerySetEqual(expected_queryset, viewset.get_queryset(), ordered=False)
-
-    def test_get_queryset_for_non_staff_user(self) -> None:
-        """Test non-staff users can only query reviews for their own teams."""
-
-        request = RequestFactory()
-        request.user = User.objects.get(username='member_1')
-
-        viewset = AllocationReviewViewSet()
-        viewset.request = request
-
-        team1 = Team.objects.get(name='Team 1')
-        expected_queryset = AllocationReview.objects.filter(request__team__in=[team1.id])
-        self.assertQuerySetEqual(expected_queryset, viewset.get_queryset(), ordered=False)
-
-
-class Create(TestCase):
-    """Test the creation of new records."""
+class CreateMethod(TestCase):
+    """Test the creation of new records via the `create` method."""
 
     fixtures = ['testing_common.yaml']
 
@@ -48,55 +17,52 @@ class Create(TestCase):
         """Load test data from fixtures."""
 
         self.staff_user = User.objects.get(username='staff_user')
-        self.request = AllocationRequest.objects.get(pk=1)
+        self.allocation_request = AllocationRequest.objects.get(pk=1)
 
-    def test_create_with_automatic_reviewer(self) -> None:
-        """Test the reviewer field is automatically set to the current user."""
+    @staticmethod
+    def _create_viewset_with_post(requesting_user: User, data: dict) -> AllocationReviewViewSet:
+        """Create a new viewset instance with a mock POST request.
 
-        request = RequestFactory().post('/allocation-reviews/')
-        request.user = self.staff_user
-        request.data = {
-            'request': self.request.id,
-            'status': 'AP'
-        }
+        Args:
+            requesting_user: The authenticated user tied to the serialized HTTP request.
+            data: The HTTP request data.
+        """
+
+        request = RequestFactory().post('/dummy-endpoint/')
+        request.data = data
+        request.user = requesting_user
 
         viewset = AllocationReviewViewSet()
         viewset.request = request
         viewset.format_kwarg = None
+        return viewset
 
-        # Test the returned response data
-        response = viewset.create(request)
+    def test_reviewer_field_is_missing(self) -> None:
+        """Verify the reviewer field is automatically set to the current user."""
+
+        data = {'request': self.allocation_request.id, 'status': 'AP'}
+        viewset = self._create_viewset_with_post(self.staff_user, data)
+        response = viewset.create(viewset.request)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['reviewer'], self.staff_user.id)
 
-        # Test the created DB record
         review = AllocationReview.objects.get(pk=response.data['id'])
         self.assertEqual(review.reviewer, self.staff_user)
-        self.assertEqual(review.request, self.request)
+        self.assertEqual(review.request, self.allocation_request)
         self.assertEqual(review.status, 'AP')
 
-    def test_create_with_provided_reviewer(self) -> None:
-        """Test the reviewer field in the request data is respected if provided."""
+    def test_reviewer_field_is_provided(self) -> None:
+        """Verify the reviewer field in the request data is respected if provided."""
 
-        request = RequestFactory().post('/allocation-reviews/')
-        request.user = self.staff_user
-        request.data = {
-            'request': self.request.id,
-            'reviewer': self.staff_user.id,
-            'status': 'AP'
-        }
+        data = {'request': self.allocation_request.id, 'reviewer': self.staff_user.id, 'status': 'AP'}
+        viewset = self._create_viewset_with_post(self.staff_user, data)
+        response = viewset.create(viewset.request)
 
-        viewset = AllocationReviewViewSet()
-        viewset.request = request
-        viewset.format_kwarg = None
-
-        # Test the returned response data
-        response = viewset.create(request)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['reviewer'], self.staff_user.id)
 
-        # Test the created DB record
         review = AllocationReview.objects.get(pk=response.data['id'])
         self.assertEqual(review.reviewer, self.staff_user)
-        self.assertEqual(review.request, self.request)
+        self.assertEqual(review.request, self.allocation_request)
         self.assertEqual(review.status, 'AP')
