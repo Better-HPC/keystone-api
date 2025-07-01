@@ -1308,6 +1308,882 @@ paths:
       responses:
         '204':
           description: No response body
+  /allocations/jobs/:
+    get:
+      operationId: allocations_jobs_list
+      description: Return a list of serialized records filtered by user team permissions.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: account
+        schema:
+          type: string
+      - in: query
+        name: account__contains
+        schema:
+          type: string
+      - in: query
+        name: account__endswith
+        schema:
+          type: string
+      - in: query
+        name: account__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: account__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: account__startswith
+        schema:
+          type: string
+      - in: query
+        name: allocnodes
+        schema:
+          type: string
+      - in: query
+        name: allocnodes__contains
+        schema:
+          type: string
+      - in: query
+        name: allocnodes__endswith
+        schema:
+          type: string
+      - in: query
+        name: allocnodes__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: allocnodes__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: allocnodes__startswith
+        schema:
+          type: string
+      - in: query
+        name: alloctres
+        schema:
+          type: string
+      - in: query
+        name: alloctres__contains
+        schema:
+          type: string
+      - in: query
+        name: alloctres__endswith
+        schema:
+          type: string
+      - in: query
+        name: alloctres__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: alloctres__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: alloctres__startswith
+        schema:
+          type: string
+      - in: query
+        name: cluster
+        schema:
+          type: integer
+      - in: query
+        name: cluster__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cluster__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: created_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__day
+        schema:
+          type: number
+      - in: query
+        name: created_at__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__hour
+        schema:
+          type: number
+      - in: query
+        name: created_at__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: created_at__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: created_at__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_at__minute
+        schema:
+          type: number
+      - in: query
+        name: created_at__month
+        schema:
+          type: number
+      - in: query
+        name: created_at__second
+        schema:
+          type: number
+      - in: query
+        name: created_at__week
+        schema:
+          type: number
+      - in: query
+        name: created_at__week_day
+        schema:
+          type: number
+      - in: query
+        name: created_at__year
+        schema:
+          type: number
+      - in: query
+        name: derivedexitcode
+        schema:
+          type: string
+      - in: query
+        name: derivedexitcode__contains
+        schema:
+          type: string
+      - in: query
+        name: derivedexitcode__endswith
+        schema:
+          type: string
+      - in: query
+        name: derivedexitcode__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: derivedexitcode__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: derivedexitcode__startswith
+        schema:
+          type: string
+      - in: query
+        name: elapsed
+        schema:
+          type: string
+          format: duration
+      - in: query
+        name: elapsed__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: duration
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: elapsed__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: end
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__day
+        schema:
+          type: number
+      - in: query
+        name: end__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__hour
+        schema:
+          type: number
+      - in: query
+        name: end__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: end__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: end__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: end__minute
+        schema:
+          type: number
+      - in: query
+        name: end__month
+        schema:
+          type: number
+      - in: query
+        name: end__second
+        schema:
+          type: number
+      - in: query
+        name: end__week
+        schema:
+          type: number
+      - in: query
+        name: end__week_day
+        schema:
+          type: number
+      - in: query
+        name: end__year
+        schema:
+          type: number
+      - in: query
+        name: group
+        schema:
+          type: string
+      - in: query
+        name: group__contains
+        schema:
+          type: string
+      - in: query
+        name: group__endswith
+        schema:
+          type: string
+      - in: query
+        name: group__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: group__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: group__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: jobid
+        schema:
+          type: string
+      - in: query
+        name: jobid__contains
+        schema:
+          type: string
+      - in: query
+        name: jobid__endswith
+        schema:
+          type: string
+      - in: query
+        name: jobid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: jobid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: jobid__startswith
+        schema:
+          type: string
+      - in: query
+        name: jobname
+        schema:
+          type: string
+      - in: query
+        name: jobname__contains
+        schema:
+          type: string
+      - in: query
+        name: jobname__endswith
+        schema:
+          type: string
+      - in: query
+        name: jobname__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: jobname__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: jobname__startswith
+        schema:
+          type: string
+      - in: query
+        name: nodelist
+        schema:
+          type: string
+      - in: query
+        name: nodelist__contains
+        schema:
+          type: string
+      - in: query
+        name: nodelist__endswith
+        schema:
+          type: string
+      - in: query
+        name: nodelist__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: nodelist__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: nodelist__startswith
+        schema:
+          type: string
+      - in: query
+        name: partition
+        schema:
+          type: string
+      - in: query
+        name: partition__contains
+        schema:
+          type: string
+      - in: query
+        name: partition__endswith
+        schema:
+          type: string
+      - in: query
+        name: partition__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: partition__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: partition__startswith
+        schema:
+          type: string
+      - in: query
+        name: priority
+        schema:
+          type: integer
+      - in: query
+        name: priority__gt
+        schema:
+          type: integer
+      - in: query
+        name: priority__gte
+        schema:
+          type: integer
+      - in: query
+        name: priority__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: priority__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: priority__lt
+        schema:
+          type: integer
+      - in: query
+        name: priority__lte
+        schema:
+          type: integer
+      - in: query
+        name: qos
+        schema:
+          type: string
+      - in: query
+        name: qos__contains
+        schema:
+          type: string
+      - in: query
+        name: qos__endswith
+        schema:
+          type: string
+      - in: query
+        name: qos__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: qos__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: qos__startswith
+        schema:
+          type: string
+      - in: query
+        name: start
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__day
+        schema:
+          type: number
+      - in: query
+        name: start__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__hour
+        schema:
+          type: number
+      - in: query
+        name: start__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: start__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: start__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: start__minute
+        schema:
+          type: number
+      - in: query
+        name: start__month
+        schema:
+          type: number
+      - in: query
+        name: start__second
+        schema:
+          type: number
+      - in: query
+        name: start__week
+        schema:
+          type: number
+      - in: query
+        name: start__week_day
+        schema:
+          type: number
+      - in: query
+        name: start__year
+        schema:
+          type: number
+      - in: query
+        name: state
+        schema:
+          type: string
+      - in: query
+        name: state__contains
+        schema:
+          type: string
+      - in: query
+        name: state__endswith
+        schema:
+          type: string
+      - in: query
+        name: state__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: state__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: state__startswith
+        schema:
+          type: string
+      - in: query
+        name: submit
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__day
+        schema:
+          type: number
+      - in: query
+        name: submit__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__hour
+        schema:
+          type: number
+      - in: query
+        name: submit__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submit__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submit__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submit__minute
+        schema:
+          type: number
+      - in: query
+        name: submit__month
+        schema:
+          type: number
+      - in: query
+        name: submit__second
+        schema:
+          type: number
+      - in: query
+        name: submit__week
+        schema:
+          type: number
+      - in: query
+        name: submit__week_day
+        schema:
+          type: number
+      - in: query
+        name: submit__year
+        schema:
+          type: number
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: updated_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__day
+        schema:
+          type: number
+      - in: query
+        name: updated_at__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__hour
+        schema:
+          type: number
+      - in: query
+        name: updated_at__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: updated_at__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: updated_at__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: updated_at__minute
+        schema:
+          type: number
+      - in: query
+        name: updated_at__month
+        schema:
+          type: number
+      - in: query
+        name: updated_at__second
+        schema:
+          type: number
+      - in: query
+        name: updated_at__week
+        schema:
+          type: number
+      - in: query
+        name: updated_at__week_day
+        schema:
+          type: number
+      - in: query
+        name: updated_at__year
+        schema:
+          type: number
+      - in: query
+        name: username
+        schema:
+          type: string
+      - in: query
+        name: username__contains
+        schema:
+          type: string
+      - in: query
+        name: username__endswith
+        schema:
+          type: string
+      - in: query
+        name: username__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: username__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: username__startswith
+        schema:
+          type: string
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobStats'
+          description: ''
+  /allocations/jobs/{id}/:
+    get:
+      operationId: allocations_jobs_retrieve
+      description: Slurm Job status and statistics.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this job stats.
+        required: true
+      tags:
+      - allocations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStats'
+          description: ''
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
@@ -7295,6 +8171,110 @@ components:
       - start_date
       - team
       - title
+    JobStats:
+      type: object
+      description: Object serializer for the `JobStats` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/Cluster'
+          readOnly: true
+          title: ' cluster'
+        account:
+          type: string
+          nullable: true
+          maxLength: 128
+        allocnodes:
+          type: string
+          nullable: true
+          maxLength: 128
+        alloctres:
+          type: string
+          nullable: true
+        derivedexitcode:
+          type: string
+          nullable: true
+          maxLength: 4
+        elapsed:
+          type: string
+          nullable: true
+        end:
+          type: string
+          format: date-time
+          nullable: true
+        group:
+          type: string
+          nullable: true
+          maxLength: 128
+        jobid:
+          type: string
+          maxLength: 64
+        jobname:
+          type: string
+          nullable: true
+          maxLength: 512
+        nodelist:
+          type: string
+          nullable: true
+        priority:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+        partition:
+          type: string
+          nullable: true
+          maxLength: 128
+        qos:
+          type: string
+          nullable: true
+          maxLength: 128
+        start:
+          type: string
+          format: date-time
+          nullable: true
+        state:
+          type: string
+          nullable: true
+          maxLength: 64
+        submit:
+          type: string
+          format: date-time
+          nullable: true
+        username:
+          type: string
+          nullable: true
+          maxLength: 128
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        team:
+          type: integer
+          nullable: true
+        cluster:
+          type: integer
+          nullable: true
+      required:
+      - _cluster
+      - _team
+      - created_at
+      - id
+      - jobid
+      - updated_at
     Login:
       type: object
       properties:

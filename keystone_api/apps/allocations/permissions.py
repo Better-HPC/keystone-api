@@ -126,7 +126,7 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
 
 
 class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
-    """Grant read access to users in to the same team as the requested object.
+    """Grant read access to users in the same team as the requested object and write access to staff.
 
     Permissions:
         - Grants read access to users in the same team as the requested object.
@@ -143,3 +143,21 @@ class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
         return self.user_is_staff(request) or (self.is_read_only(request) and self.user_in_team(request, obj))
+
+
+class MemberReadOnly(PermissionUtils, permissions.BasePermission):
+    """Grant read-only access to users in the same team as the requested object.
+
+    Permissions:
+        - Grants read access to users in the same team as the requested object.
+    """
+
+    def has_permission(self, request: Request, view: View) -> bool:
+        """Return whether the request has permissions to access the requested resource."""
+
+        return not self.is_create(view)
+
+    def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
+        return self.is_read_only(request) and (self.user_is_staff(request) or self.user_in_team(request, obj))

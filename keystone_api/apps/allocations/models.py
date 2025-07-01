@@ -29,6 +29,7 @@ __all__ = [
     'Attachment',
     'Cluster',
     'Comment',
+    'JobStats',
     'TeamModelInterface',
 ]
 
@@ -238,7 +239,7 @@ class Cluster(models.Model):
 
 
 @auditlog.register()
-class Comment(models.Model):
+class Comment(TeamModelInterface, models.Model):
     """Comment associated with an allocation review."""
 
     class Meta:
@@ -267,3 +268,46 @@ class Comment(models.Model):
         """Return a string representation of the comment."""
 
         return f'Comment by {self.user} made on request "{self.request.title[:50]}"'
+
+
+class JobStats(TeamModelInterface, models.Model):
+    """Slurm Job status and statistics."""
+
+    account = models.CharField(max_length=128, null=True, blank=True)
+    allocnodes = models.CharField(max_length=128, null=True, blank=True)
+    alloctres = models.TextField(null=True, blank=True)
+    derivedexitcode = models.CharField(max_length=4, null=True, blank=True)
+    elapsed = models.DurationField(null=True, blank=True)
+    end = models.DateTimeField(null=True, blank=True)
+    group = models.CharField(max_length=128, null=True, blank=True)
+    jobid = models.CharField(max_length=64, unique=True)
+    jobname = models.CharField(max_length=512, null=True, blank=True)
+    nodelist = models.TextField(null=True, blank=True)
+    priority = models.IntegerField(null=True, blank=True)
+    partition = models.CharField(max_length=128, null=True, blank=True)
+    qos = models.CharField(max_length=128, null=True, blank=True)
+    start = models.DateTimeField(null=True, blank=True)
+    state = models.CharField(max_length=64, null=True, blank=True)
+    submit = models.DateTimeField(null=True, blank=True)
+    username = models.CharField(max_length=128, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        """Database model settings."""
+
+        ordering = ["-submit"]
+        indexes = [
+            models.Index(fields=["jobid"]),
+            models.Index(fields=["team", "state"]),
+            models.Index(fields=["state"]),
+        ]
+
+    def get_team(self) -> Team:
+        """Return the user team tied to the current record."""
+
+        return self.team

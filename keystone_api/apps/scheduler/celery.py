@@ -39,4 +39,9 @@ celery_app.conf.beat_schedule = {
         'schedule': crontab(hour='0', minute='0'),
         'description': 'This task issues notifications informing users when their allocations have expired.'
     },
+    'apps.allocations.tasks.jobstats.slurm_update_job_stats': {
+        'task': 'apps.allocations.tasks.jobstats.slurm_update_job_stats',
+        'schedule': crontab(minute='*/10'),
+        'description': 'This task synchronizes slurm job information with the application database.'
+    },
 }
