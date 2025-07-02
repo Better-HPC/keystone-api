@@ -29,7 +29,7 @@ def send_notification_upcoming_expiration(user: User, request: AllocationRequest
     send_notification_template(
         user=user,
         subject=f'You have an allocation expiring on {request.expire}',
-        template='upcoming_expiration_email.html',
+        template='upcoming_expiration.html',
         context={
             'user': user,
             'request': request,
@@ -57,7 +57,7 @@ def send_notification_past_expiration(user: User, request: AllocationRequest, sa
     send_notification_template(
         user=user,
         subject='One of your allocations has expired',
-        template='past_expiration_email.html',
+        template='past_expiration.html',
         context={
             'user': user,
             'request': request
