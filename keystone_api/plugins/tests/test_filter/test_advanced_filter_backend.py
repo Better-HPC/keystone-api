@@ -1,4 +1,4 @@
-"""Tests for the `AdvancedFilterBackend` class."""
+"""Unit tests for the `AdvancedFilterBackend` class."""
 
 from unittest.mock import Mock
 

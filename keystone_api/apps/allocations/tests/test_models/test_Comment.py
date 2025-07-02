@@ -29,5 +29,4 @@ class GetTeamMethod(TestCase):
     def test_get_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""
 
-        team = self.comment.get_team()
-        self.assertEqual(team, self.team)
+        self.assertEqual(self.team, self.comment.get_team())
