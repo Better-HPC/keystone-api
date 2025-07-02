@@ -14,7 +14,7 @@ from rest_framework.serializers import Serializer
 
 from .models import Team
 
-__all__ = ['TeamScopedListMixin']
+__all__ = ['TeamScopedListMixin', 'UserScopedListMixin']
 
 
 class TeamScopedListMixin:

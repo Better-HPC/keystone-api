@@ -6,22 +6,22 @@ messaging.
 
 ## Overriding Templates
 
-Keystone generates notifications using HTML templates rendered using the Jinja2 templating engine.
-For security reasons, some Jinja features — such as access to application internals — are disabled.
+Keystone generates notifications using HTML templates and the Jinja2 templating engine.
+The location of custom templates is configurable via [application settings](settings.md).
 
-Custom templates are stored in a location defined in the [application settings](settings.md).
-When a notification is triggered, Keystone first checks the configured directory for a matching template.
-If a custom template is found, its rendered using the provided context variables (see below for details).
+When a notification is triggered, Keystone first checks for a custom template file. 
 If no custom template is available, Keystone falls back to an internal default.
+The selected template is then rendered using the context data outlined below.
 
-Summaries of available templates, along with their supported variables, are provided in the sections below.
+For security reasons, data is sanitized before being injected into the template.
+Certain Jinja features — such as access to application internals — are also disabled.
 
 ### Base Template
 
 **Template file:** `base.html`
 
 The base template serves as the parent layout for all notification content, providing top-level styling and structure.
-The template defines two content blocks that child templates can override to inject custom content.
+The template defines two content blocks that child templates override to inject content.
 
 | Block Name | Description                                            |
 |------------|--------------------------------------------------------|
@@ -30,14 +30,32 @@ The template defines two content blocks that child templates can override to inj
 
 ??? example "Default Template Content"
 
+    ```
+    {% include "../../keystone_api/templates/base.html" %}
+    ```
+
 ### Upcoming Resource Expiration
 
 **Template file:** `upcoming_expiration.html`
 
+The _upcoming expiration_ notification alerts users that one or more of their active resource allocations is nearing
+its expiration date.
+
 ??? example "Default Template Content"
+
+    ```
+    {% include "../../keystone_api/templates/upcoming_expiration.html" %}
+    ```
 
 ### Expired Resource Allocation
 
 **Template file:** `past_expiration.html`
 
+The _past expiration_ notification alerts users that one or more of their active resource allocations has expired
+and that the resources granted under that allocation are no longer availible for use.
+
 ??? example "Default Template Content"
+
+    ```
+    {% include "../../keystone_api/templates/past_expiration.html" %}
+    ```
