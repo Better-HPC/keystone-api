@@ -18,19 +18,20 @@ def update_limits() -> None:
     """Adjust TRES billing limits for all Slurm accounts on all enabled clusters."""
 
     for cluster in Cluster.objects.filter(enabled=True).all():
-        update_limits_for_cluster(cluster)
+        update_limits_for_cluster.delay(cluster.name)
 
 
 @shared_task()
-def update_limits_for_cluster(cluster: Cluster) -> None:
+def update_limits_for_cluster(cluster_name: str) -> None:
     """Adjust TRES billing limits for all Slurm accounts on a given Slurm cluster.
 
     The Slurm accounts for `root` and any that are missing from Keystone are automatically ignored.
 
     Args:
-        cluster: The name of the Slurm cluster.
+        cluster_name: The name of the Slurm cluster to update.
     """
 
+    cluster = Cluster.objects.get(name=cluster_name)
     for account_name in slurm.get_slurm_account_names(cluster.name):
         if account_name in ['root']:
             continue
@@ -45,7 +46,6 @@ def update_limits_for_cluster(cluster: Cluster) -> None:
         update_limit_for_account(account, cluster)
 
 
-@shared_task()
 def update_limit_for_account(account: Team, cluster: Cluster) -> None:
     """Update the allocation limits for an individual Slurm account and close out any expired allocations.
 
