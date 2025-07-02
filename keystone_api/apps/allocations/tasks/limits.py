@@ -31,23 +31,39 @@ def update_limits_for_cluster(cluster_name: str) -> None:
         cluster_name: The name of the Slurm cluster to update.
     """
 
-    cluster = Cluster.objects.get(name=cluster_name)
-    for account_name in slurm.get_slurm_account_names(cluster.name):
-        if account_name in ['root']:
+    try:
+        cluster = Cluster.objects.get(name=cluster_name)
+
+    except Cluster.DoesNotExist:
+        log.error(f"Cluster '{cluster_name}' does not exist.")
+        return
+
+    slurm_accounts = slurm.get_slurm_account_names(cluster.name)
+    teams_by_name = {
+        team.name: team for team in Team.objects.filter(name__in=slurm_accounts)
+    }
+
+    for account_name in slurm_accounts:
+        if account_name == 'root':
             continue
 
         try:
-            account = Team.objects.get(name=account_name)
+            team = teams_by_name[account_name]
 
-        except Team.DoesNotExist:
+        except KeyError:
             log.warning(f"No existing team for account '{account_name}' on cluster '{cluster.name}'.")
             continue
 
-        update_limit_for_account(account, cluster)
+        try:
+            update_limit_for_account(team, cluster)
+
+        except Exception as e:
+            log.exception(f"Failed to update limit for account '{account_name}' on cluster '{cluster.name}': {e}")
+            continue
 
 
 def update_limit_for_account(account: Team, cluster: Cluster) -> None:
-    """Update the allocation limits for an individual Slurm account and close out any expired allocations.
+    """Update resource limits for an individual Slurm account.
 
     Args:
         account: Team object for the account.
@@ -92,7 +108,7 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
     # Users shouldn't be able to use more than their allocated service units.
     # If it does happen, create a warning so an admin can debug
     if current_usage > active_sus:
-        log.warning(f"The system usage for account '{account.name}' exceeds its limit on cluster '{cluster.name}")
+        log.warning(f"The system usage for account '{account.name}' exceeds its limit on cluster '{cluster.name}'")
 
     # Set the new usage limit using the updated historical usage after closing any expired allocations
     updated_historical_usage = Allocation.objects.historical_usage(account, cluster)
