@@ -40,7 +40,7 @@ def update_limits_for_cluster(cluster_name: str) -> None:
             account = Team.objects.get(name=account_name)
 
         except Team.DoesNotExist:
-            log.warning(f"No existing team for account {account_name} on {cluster.name}, skipping for now")
+            log.warning(f"No existing team for account '{account_name}' on cluster '{cluster.name}'.")
             continue
 
         update_limit_for_account(account, cluster)
@@ -63,42 +63,43 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
     historical_usage = current_limit - active_sus - closing_sus
 
     if historical_usage < 0:
-        log.warning(f"Negative Historical usage found for {account.name} on {cluster.name}:\n"
-                    f"historical: {historical_usage}, current: {current_limit}, active: {active_sus}, closing: {closing_sus}\n"
-                    f"Assuming zero...")
         historical_usage = 0
+        log.warning(
+            f"Negative historical usage calculated for account '{account.name}' on cluster '{cluster.name}':\n"
+            f"  > current limit: {current_limit}\n"
+            f"  > active sus: {active_sus}\n"
+            f"  > expiring sus: {closing_sus}\n"
+            f"  > historical usage: {historical_usage}\n"
+            f"Assuming zero...")
 
-    # Close expired allocations and determine the current usage
+    # Determine SUs used under the current allocations
     total_usage = slurm.get_cluster_usage(account.name, cluster.name)
     current_usage = total_usage - historical_usage
     if current_usage < 0:
-        log.warning(f"Negative Current usage found for {account.name} on {cluster.name}:\n"
-                    f"current: {current_usage} = total: {total_usage} - historical: {historical_usage}\n"
-                    f"Setting to historical usage: {historical_usage}...")
         current_usage = historical_usage
+        log.warning(
+            f"Negative current usage calculated for account '{account.name}' on cluster '{cluster.name}':\n"
+            f"  > total usage: {total_usage}\n"
+            f"  > historical usage: {historical_usage}\n"
+            f"  > current usage: {current_usage}\n"
+            f"Defaulting to historical usage: {historical_usage}...")
 
-    closing_summary = (f"Summary of closing allocations:\n"
-                       f"> Current Usage before closing: {current_usage}\n")
     for allocation in Allocation.objects.expiring_allocations(account, cluster):
         allocation.final = min(current_usage, allocation.awarded)
-        closing_summary += f"> Allocation {allocation.id}: {current_usage} - {allocation.final} -> {current_usage - allocation.final}\n"
         current_usage -= allocation.final
         allocation.save()
-    closing_summary += f"> Current Usage after closing: {current_usage}"
 
-    # This shouldn't happen but if it does somehow, create a warning so an admin will notice
+    # Users shouldn't be able to use more than their allocated service units.
+    # If it does happen, create a warning so an admin can debug
     if current_usage > active_sus:
-        log.warning(f"The current usage is somehow higher than the limit for {account.name}!")
+        log.warning(f"The system usage for account '{account.name}' exceeds its limit on cluster '{cluster.name}")
 
-    # Set the new account usage limit using the updated historical usage after closing any expired allocations
+    # Set the new usage limit using the updated historical usage after closing any expired allocations
     updated_historical_usage = Allocation.objects.historical_usage(account, cluster)
     updated_limit = updated_historical_usage + active_sus
     slurm.set_cluster_limit(account.name, cluster.name, updated_limit)
 
     # Log summary of changes during limits update for this Slurm account on this cluster
-    log.debug(f"Summary of limits update for {account.name} on {cluster.name}:\n"
-              f"> Service units from active allocations: {active_sus}\n"
-              f"> Service units from closing allocations: {closing_sus}\n"
-              f"> {closing_summary}\n"
-              f"> historical usage change: {historical_usage} -> {updated_historical_usage}\n"
-              f"> limit change: {current_limit} -> {updated_limit}")
+    log.debug(
+        f"Setting new TRES limit for account '{account.name}' on cluster '{cluster.name}':\n"
+        f"  > limit change: {current_limit} -> {updated_limit}")
