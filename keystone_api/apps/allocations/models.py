@@ -6,8 +6,6 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
-from __future__ import annotations
-
 import abc
 import os
 from datetime import date
@@ -276,7 +274,7 @@ class JobStats(TeamModelInterface, models.Model):
     account = models.CharField(max_length=128, null=True, blank=True)
     allocnodes = models.CharField(max_length=128, null=True, blank=True)
     alloctres = models.TextField(null=True, blank=True)
-    derivedexitcode = models.CharField(max_length=4, null=True, blank=True)
+    derivedexitcode = models.CharField(max_length=10, null=True, blank=True)
     elapsed = models.DurationField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
     group = models.CharField(max_length=128, null=True, blank=True)
