@@ -150,7 +150,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "servestatic.middleware.ServeStaticMiddleware",
     'auditlog.middleware.AuditlogMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
