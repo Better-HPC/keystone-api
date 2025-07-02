@@ -157,21 +157,21 @@ keystone-api migrate
 keystone-api collectstatic
 ```
 
-Gunicorn is the recommended web server for running the Keystone-API.
-When launching the web server, use the WSGI entrypoint located under `keystone_api.main.wsgi:application`.
+Uvicorn is the recommended web server for running the Keystone-API.
+When launching the web server, use the ASGI entrypoint located under `keystone_api.main.asgi:application`.
 
 ```bash
-gunicorn --bind 0.0.0.0:8000 keystone_api.main.wsgi:application
+uvicorn --host 127.0.0.1 --port 8000 keystone_api.main.asgi:application
 ```
 
-The `gunicorn` command executes as a foreground process by default.
+The `uvicorn` command executes as a foreground process by default.
 The following unit files are provided as a starting point to daemonize the process via the systemd service manager.
 
 === "keystone-server.service"
 
     ```toml
     [Unit]
-    Description=Gunicorn server daemon for Keystone
+    Description=Uvicorn server daemon for Keystone
     Requires=keystone-server.socket
     After=network.target
     
@@ -179,10 +179,10 @@ The following unit files are provided as a starting point to daemonize the proce
     Type=notify
     User=keystone
     Group=keystone
-    RuntimeDirectory=gunicorn
+    RuntimeDirectory=uvicorn
     WorkingDirectory=/home/keystone
     EnvironmentFile=/home/keystone/keystone.env
-    ExecStart=/home/keystone/.local/bin/gunicorn keystone_api.main.wsgi
+    ExecStart=/home/keystone/.local/bin/uvicorn keystone_api.main.asgi
     ExecReload=/bin/kill -s HUP $MAINPID
     KillMode=mixed
     TimeoutStopSec=5
@@ -196,10 +196,10 @@ The following unit files are provided as a starting point to daemonize the proce
 
     ```toml
     [Unit]
-    Description=Gunicorn socket for Keystone
+    Description=Uvicorn socket for Keystone
     
     [Socket]
-    ListenStream=/run/gunicorn.sock
+    ListenStream=/run/uvicorn.sock
     SocketUser=nginx
     
     [Install]
@@ -229,7 +229,7 @@ server {
     ssl_certificate_key /etc/pki/tls/private/keystone.key;
 
     location / {
-        proxy_pass http://unix:/run/gunicorn.sock;
+        proxy_pass http://unix:/run/uvicorn.sock;
     }
 
     location /media/ { # (1)!

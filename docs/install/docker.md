@@ -63,7 +63,7 @@ services:
       -c '
         keystone-api migrate --no-input
         keystone-api collectstatic --no-input
-        gunicorn --bind 0.0.0.0:8000 keystone_api.main.wsgi:application'
+        uvicorn --host 0.0.0.0 --port 8000 keystone_api.main.asgi:application'
     restart: always
     depends_on:
       - cache

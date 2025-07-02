@@ -76,7 +76,7 @@ class Command(BaseCommand):
             self.run_smtp()
 
         if options['server'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Starting Gunicorn server...'))
+            self.stdout.write(self.style.SUCCESS('Starting Uvicorn server...'))
             self.run_server()
 
     def create_admin(self) -> None:
@@ -100,7 +100,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def run_server(host: str = '0.0.0.0', port: int = 8000) -> None:
-        """Start a Gunicorn server.
+        """Start a Uvicorn web server.
 
         Args:
             host: The host to bind to.
