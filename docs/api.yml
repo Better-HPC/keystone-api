@@ -5555,7 +5555,8 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve all research grants visible to the current user.
+      summary: List all research grants
       parameters:
       - name: _order
         required: false
@@ -5891,7 +5892,7 @@ paths:
         schema:
           type: string
       tags:
-      - research
+      - Research Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5906,9 +5907,10 @@ paths:
           description: ''
     post:
       operationId: research_grants_create
-      description: Track funding awards and grant information.
+      description: Create a new research grant for review.
+      summary: Create a research grant
       tags:
-      - research
+      - Research Grants
       requestBody:
         content:
           application/json:
@@ -5934,7 +5936,8 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Track funding awards and grant information.
+      description: Retrieve a single research grant by ID.
+      summary: Retrieve a research grant
       parameters:
       - in: path
         name: id
@@ -5943,7 +5946,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - research
+      - Research Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5956,7 +5959,8 @@ paths:
           description: ''
     put:
       operationId: research_grants_update
-      description: Track funding awards and grant information.
+      description: Replace an existing research grant with new values.
+      summary: Update a research grant
       parameters:
       - in: path
         name: id
@@ -5965,7 +5969,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - research
+      - Research Grants
       requestBody:
         content:
           application/json:
@@ -5990,7 +5994,8 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Track funding awards and grant information.
+      description: Apply a partial update to an existing research grant.
+      summary: Partially update a research grant
       parameters:
       - in: path
         name: id
@@ -5999,7 +6004,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - research
+      - Research Grants
       requestBody:
         content:
           application/json:
@@ -6023,7 +6028,8 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Track funding awards and grant information.
+      description: Delete a research grant by ID.
+      summary: Delete a research grant
       parameters:
       - in: path
         name: id
@@ -6032,7 +6038,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - research
+      - Research Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6042,7 +6048,8 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve all research publications visible to the current user.
+      summary: List all research publications
       parameters:
       - name: _order
         required: false
@@ -6416,7 +6423,7 @@ paths:
         schema:
           type: string
       tags:
-      - research
+      - Research Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6431,9 +6438,10 @@ paths:
           description: ''
     post:
       operationId: research_publications_create
-      description: Manage metadata for research publications.
+      description: Create a new research publication for review.
+      summary: Create a research publication
       tags:
-      - research
+      - Research Publications
       requestBody:
         content:
           application/json:
@@ -6459,7 +6467,8 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Manage metadata for research publications.
+      description: Retrieve a single research publication by ID.
+      summary: Retrieve a research publication
       parameters:
       - in: path
         name: id
@@ -6468,7 +6477,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - research
+      - Research Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6481,7 +6490,8 @@ paths:
           description: ''
     put:
       operationId: research_publications_update
-      description: Manage metadata for research publications.
+      description: Replace an existing research publication with new values.
+      summary: Update a research publication
       parameters:
       - in: path
         name: id
@@ -6490,7 +6500,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - research
+      - Research Publications
       requestBody:
         content:
           application/json:
@@ -6515,7 +6525,8 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Manage metadata for research publications.
+      description: Apply a partial update to an existing research publication.
+      summary: Partially update a research publication
       parameters:
       - in: path
         name: id
@@ -6524,7 +6535,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - research
+      - Research Publications
       requestBody:
         content:
           application/json:
@@ -6548,7 +6559,8 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Manage metadata for research publications.
+      description: Delete a research publication by ID.
+      summary: Delete a research publication
       parameters:
       - in: path
         name: id
@@ -6557,7 +6569,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - research
+      - Research Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
