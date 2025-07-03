@@ -6,7 +6,7 @@ appropriately rendered HTML template or other HTTP response.
 
 from django.http import HttpResponse
 from django_prometheus import exports
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
@@ -18,9 +18,7 @@ class MetricsView(GenericAPIView):
 
     permission_classes = []
 
-    @extend_schema(responses={
-        '200': inline_serializer('version', fields=dict()),
-    })
+    @extend_schema(exclude=True)
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return prometheus metrics for monitoring the application."""
 
