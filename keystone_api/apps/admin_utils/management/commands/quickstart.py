@@ -10,7 +10,7 @@ to handle database migrations, static file collection, and web server deployment
 | --all       | Launch all available services.                                   |
 | --celery    | Launch a Celery worker with a Redis backend.                     |
 | --demo-user | Create an admin user account if no other accounts exist.         |
-| --gunicorn  | Run a web server using Gunicorn.                                 |
+| --server    | Run the application using a Uvicorn web server.                  |
 | --migrate   | Run database migrations.                                         |
 | --smtp      | Run an SMTP server using AIOSMTPD.                               |
 | --static    | Collect static files.                                            |
@@ -42,7 +42,7 @@ class Command(BaseCommand):
         group.add_argument('--all', action='store_true', help='Launch all available services.')
         group.add_argument('--celery', action='store_true', help='Launch a background Celery worker.')
         group.add_argument('--demo-user', action='store_true', help='Create an admin user account if no other accounts exist.')
-        group.add_argument('--gunicorn', action='store_true', help='Run a web server using Gunicorn.')
+        group.add_argument('--server', action='store_true', help='Run the application using a Uvicorn web server.')
         group.add_argument('--migrate', action='store_true', help='Run database migrations.')
         group.add_argument('--smtp', action='store_true', help='Run an SMTP server.')
         group.add_argument('--static', action='store_true', help='Collect static files.')
@@ -72,9 +72,9 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Starting SMTP server...'))
             self.run_smtp()
 
-        if options['gunicorn'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Starting Gunicorn server...'))
-            self.run_gunicorn()
+        if options['server'] or options['all']:
+            self.stdout.write(self.style.SUCCESS('Starting Uvicorn server...'))
+            self.run_server()
 
     def create_admin(self) -> None:
         """Create an `admin` user account if no other accounts already exist."""
@@ -96,15 +96,15 @@ class Command(BaseCommand):
                           '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler'])
 
     @staticmethod
-    def run_gunicorn(host: str = '0.0.0.0', port: int = 8000) -> None:
-        """Start a Gunicorn server.
+    def run_server(host: str = '0.0.0.0', port: int = 8000) -> None:
+        """Start a Uvicorn web server.
 
         Args:
             host: The host to bind to.
             port: The port to bind to.
         """
 
-        command = ['gunicorn', '--bind', f'{host}:{port}', 'keystone_api.main.wsgi:application']
+        command = ['uvicorn', '--host', host, '--port', str(port), 'keystone_api.main.asgi:application']
         subprocess.run(command, check=True)
 
     @staticmethod
