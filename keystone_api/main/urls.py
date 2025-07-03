@@ -18,7 +18,7 @@ urlpatterns = [
     path('openapi/', include('apps.openapi.urls', namespace='openapi')),
     path('research/', include('apps.research_products.urls', namespace='research')),
     path('users/', include('apps.users.urls', namespace='users')),
-    path('version/', lambda *args: HttpResponse(settings.VERSION), name='version'),
+    path('version/', include('apps.version.urls', namespace='version')),
 ]
 
 if settings.DEBUG:
