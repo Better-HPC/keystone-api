@@ -3156,9 +3156,11 @@ paths:
   /health/:
     get:
       operationId: health_retrieve
-      description: Summarize health checks in Prometheus format.
+      description: Return a 200 status if all application health checks pass and a
+        500 status otherwise.
+      summary: Retrieve the current application health
       tags:
-      - health
+      - Application Health
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3170,9 +3172,10 @@ paths:
   /health/json/:
     get:
       operationId: health_json_retrieve
-      description: Summarize health checks in JSON format.
+      description: Retrieve results from individual health checks in JSON format.
+      summary: Retrieve JSON results for application health checks
       tags:
-      - health
+      - Application Health
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3186,9 +3189,10 @@ paths:
   /health/prom/:
     get:
       operationId: health_prom_retrieve
-      description: Summarize health checks in Prometheus format.
+      description: Retrieve results from individual health checks in Prometheus format.
+      summary: Retrieve Prometheus results for application health checks
       tags:
-      - health
+      - Application Health
       security:
       - tokenAuth: []
       - cookieAuth: []

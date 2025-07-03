@@ -56,10 +56,15 @@ class HealthCheckView(BaseHealthCheckView):
 
         return HttpResponse()
 
-    @extend_schema(responses={
-        '200': inline_serializer('health_ok', fields=dict()),
-        '500': inline_serializer('health_error', fields=dict()),
-    })
+    @extend_schema(
+        summary="Retrieve the current application health",
+        description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
+        tags=["Application Health"],
+        responses={
+            '200': inline_serializer('health_ok', fields=dict()),
+            '500': inline_serializer('health_error', fields=dict()),
+        }
+    )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in Prometheus format."""
 
@@ -92,17 +97,22 @@ class HealthCheckJsonView(BaseHealthCheckView):
 
         return JsonResponse(data=data, status=200)
 
-    @extend_schema(responses={
-        '200': inline_serializer('health_json_ok', fields={
-            'healthCheckName': inline_serializer(
-                name='NestedInlineOneOffSerializer',
-                fields={
-                    'status': serializers.IntegerField(default=200),
-                    'message': serializers.CharField(default='working'),
-                    'critical_service': serializers.BooleanField(default=True),
-                })
-        })
-    })
+    @extend_schema(
+        summary="Retrieve JSON results for application health checks",
+        description="Retrieve results from individual health checks in JSON format.",
+        tags=["Application Health"],
+        responses={
+            '200': inline_serializer('health_json_ok', fields={
+                'healthCheckName': inline_serializer(
+                    name='NestedInlineOneOffSerializer',
+                    fields={
+                        'status': serializers.IntegerField(default=200),
+                        'message': serializers.CharField(default='working'),
+                        'critical_service': serializers.BooleanField(default=True),
+                    })
+            })
+        }
+    )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in JSON format."""
 
@@ -145,9 +155,14 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
 
         return HttpResponse('\n\n'.join(status_data), status=200, content_type="text/plain")
 
-    @extend_schema(responses={
-        '200': inline_serializer('health_prom_ok', fields=dict()),
-    })
+    @extend_schema(
+        summary="Retrieve Prometheus results for application health checks",
+        description="Retrieve results from individual health checks in Prometheus format.",
+        tags=["Application Health"],
+        responses={
+            '200': inline_serializer('health_prom_ok', fields=dict()),
+        }
+    )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Summarize health checks in Prometheus format."""
 
