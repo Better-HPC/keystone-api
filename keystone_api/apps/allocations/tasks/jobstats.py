@@ -8,11 +8,15 @@ from plugins.slurm import get_cluster_jobs
 
 
 @shared_task
-def slurm_update_job_stats_for_cluster(cluster_id: int) -> None:
-    """Fetch job statistics for a single cluster and update the DB."""
+def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
+    """Fetch job statistics for a single cluster and update the DB.
+
+    Args:
+        cluster_name: The name of the slurm cluster to update.
+    """
 
     # Fetch job information from slurm
-    cluster = Cluster.objects.get(pk=cluster_id)
+    cluster = Cluster.objects.get(name=cluster_name)
     cluster_jobs = get_cluster_jobs(cluster.name)
 
     # Prefetch team objects
@@ -41,6 +45,6 @@ def slurm_update_job_stats() -> None:
     cluster in the application database.
     """
 
-    clusters = Cluster.objects.filter(enabled=True).values_list('id', flat=True)
-    for cluster_id in clusters:
-        slurm_update_job_stats_for_cluster.delay(cluster_id)
+    clusters = Cluster.objects.filter(enabled=True).values_list('name', flat=True)
+    for cluster_name in clusters:
+        slurm_update_job_stats_for_cluster.delay(cluster_name)
