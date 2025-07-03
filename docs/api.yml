@@ -4951,6 +4951,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskResult'
           description: ''
+  /metrics/:
+    get:
+      operationId: metrics_retrieve
+      description: Return prometheus metrics for monitoring the application.
+      tags:
+      - metrics
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
@@ -7643,6 +7655,18 @@ paths:
       - cookieAuth: []
       responses:
         '204':
+          description: No response body
+  /version/:
+    get:
+      operationId: version_retrieve
+      description: Return the API version number.
+      tags:
+      - version
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
           description: No response body
 components:
   schemas:

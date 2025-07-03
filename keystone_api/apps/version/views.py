@@ -6,6 +6,7 @@ appropriately rendered HTML template or other HTTP response.
 
 from django.conf import settings
 from django.http import HttpResponse
+from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
@@ -17,6 +18,9 @@ class VersionView(GenericAPIView):
 
     permission_classes = []
 
+    @extend_schema(responses={
+        '200': inline_serializer('version', fields=dict()),
+    })
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return the API version number."""
 
