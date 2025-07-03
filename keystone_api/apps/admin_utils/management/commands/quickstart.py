@@ -19,14 +19,11 @@ to handle database migrations, static file collection, and web server deployment
 import subprocess
 from argparse import ArgumentParser
 
-import uvicorn
 from aiosmtpd.controller import Controller
 from aiosmtpd.handlers import Message
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-
-from keystone_api.main.asgi import application
 
 
 class Command(BaseCommand):
@@ -107,7 +104,8 @@ class Command(BaseCommand):
             port: The port to bind to.
         """
 
-        uvicorn.run(application, host=host, port=port)
+        command = ['uvicorn', '--host', host, '--port', str(port), 'keystone_api.main.asgi:application']
+        subprocess.run(command, check=True)
 
     @staticmethod
     def run_smtp(host: str = '0.0.0.0', port: int = 25) -> None:
