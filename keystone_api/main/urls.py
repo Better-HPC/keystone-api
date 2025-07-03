@@ -14,7 +14,7 @@ urlpatterns = [
     path('health/', include('apps.health.urls', namespace='health')),
     path('logs/', include('apps.logging.urls', namespace='logs')),
     path("metrics/", include('apps.metrics.urls', namespace='logs')),
-    path("notifications/", include('apps.notifications.urls'), name="notifications"),
+    path("notifications/", include('apps.notifications.urls', namespace="notifications")),
     path('openapi/', include('apps.openapi.urls', namespace='openapi')),
     path('research/', include('apps.research_products.urls', namespace='research')),
     path('users/', include('apps.users.urls', namespace='users')),
@@ -23,4 +23,3 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
