@@ -26,7 +26,6 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
 
     endpoint = '/health/'
     fixtures = ['testing_common.yaml']
-    valid_responses = (status.HTTP_200_OK, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def setUp(self) -> None:
         """Load user accounts from testing fixtures."""
