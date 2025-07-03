@@ -132,6 +132,7 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.health',
     'apps.logging',
+    'apps.metrics',
     'apps.notifications',
     'apps.openapi',
     'apps.research_products',

@@ -7644,6 +7644,22 @@ paths:
       responses:
         '204':
           description: No response body
+  /version/:
+    get:
+      operationId: version_retrieve
+      description: Return the API version number.
+      tags:
+      - version
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                version: 0.0.0
+          description: ''
 components:
   schemas:
     Allocation:
