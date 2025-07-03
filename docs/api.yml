@@ -7,9 +7,11 @@ paths:
   /allocations/allocation-request/status-choices/:
     get:
       operationId: allocations_allocation_request_status_choices_retrieve
-      description: Return a dictionary mapping choice values to human-readable names.
+      description: Retrieve valid `status` options for allocation requests with human-readable
+        labels.
+      summary: Retrieve valid request status options
       tags:
-      - allocations
+      - Resource Allocation Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -23,9 +25,11 @@ paths:
   /allocations/allocation-review/status-choices/:
     get:
       operationId: allocations_allocation_review_status_choices_retrieve
-      description: Return a dictionary mapping choice values to human-readable names.
+      description: Retrieve valid `status` options for allocation reviews with human-readable
+        labels.
+      summary: Retrieve valid review status options
       tags:
-      - allocations
+      - Resource Allocation Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -39,7 +43,8 @@ paths:
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve all resource allocations visible to the current user.
+      summary: List all resource allocations
       parameters:
       - name: _order
         required: false
@@ -220,7 +225,7 @@ paths:
         schema:
           type: integer
       tags:
-      - allocations
+      - Resource Allocations
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -235,9 +240,10 @@ paths:
           description: ''
     post:
       operationId: allocations_allocations_create
-      description: Manage HPC resource allocations.
+      description: Create a new resource allocation.
+      summary: Create an resource allocation
       tags:
-      - allocations
+      - Resource Allocations
       requestBody:
         content:
           application/json:
@@ -263,7 +269,8 @@ paths:
   /allocations/allocations/{id}/:
     get:
       operationId: allocations_allocations_retrieve
-      description: Manage HPC resource allocations.
+      description: Retrieve a single resource allocation by ID.
+      summary: Retrieve an resource allocation
       parameters:
       - in: path
         name: id
@@ -272,7 +279,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - allocations
+      - Resource Allocations
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -285,7 +292,8 @@ paths:
           description: ''
     put:
       operationId: allocations_allocations_update
-      description: Manage HPC resource allocations.
+      description: Replace an existing resource allocation with new values.
+      summary: Update an resource allocation
       parameters:
       - in: path
         name: id
@@ -294,7 +302,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - allocations
+      - Resource Allocations
       requestBody:
         content:
           application/json:
@@ -319,7 +327,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_allocations_partial_update
-      description: Manage HPC resource allocations.
+      description: Apply a partial update to an existing resource allocation.
+      summary: Partially update an resource allocation
       parameters:
       - in: path
         name: id
@@ -328,7 +337,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - allocations
+      - Resource Allocations
       requestBody:
         content:
           application/json:
@@ -352,7 +361,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_allocations_destroy
-      description: Manage HPC resource allocations.
+      description: Delete an resource allocation by ID.
+      summary: Delete an resource allocation
       parameters:
       - in: path
         name: id
@@ -361,7 +371,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - allocations
+      - Resource Allocations
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -371,7 +381,9 @@ paths:
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve metadata for all file attachments visible to the current
+        user.
+      summary: List all file attachments
       parameters:
       - name: _order
         required: false
@@ -536,7 +548,7 @@ paths:
         schema:
           type: number
       tags:
-      - allocations
+      - Resource Request File Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -551,9 +563,10 @@ paths:
           description: ''
     post:
       operationId: allocations_attachments_create
-      description: Files submitted as attachments to allocation requests
+      description: Create a new file attachment.
+      summary: Create a file attachment
       tags:
-      - allocations
+      - Resource Request File Attachments
       requestBody:
         content:
           application/json:
@@ -579,7 +592,8 @@ paths:
   /allocations/attachments/{id}/:
     get:
       operationId: allocations_attachments_retrieve
-      description: Files submitted as attachments to allocation requests
+      description: Retrieve metadata for a single file attachment by ID.
+      summary: Retrieve a file attachment
       parameters:
       - in: path
         name: id
@@ -588,7 +602,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - allocations
+      - Resource Request File Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -601,7 +615,8 @@ paths:
           description: ''
     put:
       operationId: allocations_attachments_update
-      description: Files submitted as attachments to allocation requests
+      description: Replace metadata for an existing file attachment with new values.
+      summary: Update a file attachment
       parameters:
       - in: path
         name: id
@@ -610,7 +625,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - allocations
+      - Resource Request File Attachments
       requestBody:
         content:
           application/json:
@@ -635,7 +650,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_attachments_partial_update
-      description: Files submitted as attachments to allocation requests
+      description: Apply a partial update to metadata for an existing file attachment.
+      summary: Partially update a file attachment
       parameters:
       - in: path
         name: id
@@ -644,7 +660,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - allocations
+      - Resource Request File Attachments
       requestBody:
         content:
           application/json:
@@ -668,7 +684,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_attachments_destroy
-      description: Files submitted as attachments to allocation requests
+      description: Delete a file attachment and its metadata by ID.
+      summary: Delete a file attachment
       parameters:
       - in: path
         name: id
@@ -677,7 +694,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - allocations
+      - Resource Request File Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -687,7 +704,8 @@ paths:
   /allocations/clusters/:
     get:
       operationId: allocations_clusters_list
-      description: Configuration settings for managed Slurm clusters.
+      description: Retrieve all HPC clusters visible to the current user.
+      summary: List all HPC clusters
       parameters:
       - name: _order
         required: false
@@ -810,7 +828,7 @@ paths:
         schema:
           type: string
       tags:
-      - allocations
+      - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -825,9 +843,10 @@ paths:
           description: ''
     post:
       operationId: allocations_clusters_create
-      description: Configuration settings for managed Slurm clusters.
+      description: Create a new HPC cluster.
+      summary: Create an HPC cluster
       tags:
-      - allocations
+      - Clusters
       requestBody:
         content:
           application/json:
@@ -853,7 +872,8 @@ paths:
   /allocations/clusters/{id}/:
     get:
       operationId: allocations_clusters_retrieve
-      description: Configuration settings for managed Slurm clusters.
+      description: Retrieve a single HPC cluster by ID.
+      summary: Retrieve an HPC cluster
       parameters:
       - in: path
         name: id
@@ -862,7 +882,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - allocations
+      - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -875,7 +895,8 @@ paths:
           description: ''
     put:
       operationId: allocations_clusters_update
-      description: Configuration settings for managed Slurm clusters.
+      description: Replace an existing HPC cluster with new values.
+      summary: Update an HPC cluster
       parameters:
       - in: path
         name: id
@@ -884,7 +905,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - allocations
+      - Clusters
       requestBody:
         content:
           application/json:
@@ -909,7 +930,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_clusters_partial_update
-      description: Configuration settings for managed Slurm clusters.
+      description: Apply a partial update to an existing HPC cluster.
+      summary: Partially update an HPC cluster
       parameters:
       - in: path
         name: id
@@ -918,7 +940,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - allocations
+      - Clusters
       requestBody:
         content:
           application/json:
@@ -942,7 +964,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_clusters_destroy
-      description: Configuration settings for managed Slurm clusters.
+      description: Delete an HPC cluster by ID.
+      summary: Delete an HPC cluster
       parameters:
       - in: path
         name: id
@@ -951,7 +974,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - allocations
+      - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -961,7 +984,8 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve all comments visible to the current user.
+      summary: List all comments
       parameters:
       - name: _order
         required: false
@@ -1160,7 +1184,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - allocations
+      - Resource Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1175,9 +1199,10 @@ paths:
           description: ''
     post:
       operationId: allocations_comments_create
-      description: Comments on allocation requests.
+      description: Create a new comment.
+      summary: Create a comment
       tags:
-      - allocations
+      - Resource Request Comments
       requestBody:
         content:
           application/json:
@@ -1203,7 +1228,8 @@ paths:
   /allocations/comments/{id}/:
     get:
       operationId: allocations_comments_retrieve
-      description: Comments on allocation requests.
+      description: Retrieve a single comment by ID.
+      summary: Retrieve a comment
       parameters:
       - in: path
         name: id
@@ -1212,7 +1238,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - allocations
+      - Resource Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1225,7 +1251,8 @@ paths:
           description: ''
     put:
       operationId: allocations_comments_update
-      description: Comments on allocation requests.
+      description: Replace an existing comment with new values.
+      summary: Update a comment
       parameters:
       - in: path
         name: id
@@ -1234,7 +1261,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - allocations
+      - Resource Request Comments
       requestBody:
         content:
           application/json:
@@ -1259,7 +1286,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_comments_partial_update
-      description: Comments on allocation requests.
+      description: Apply a partial update to an existing comment.
+      summary: Partially update a comment
       parameters:
       - in: path
         name: id
@@ -1268,7 +1296,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - allocations
+      - Resource Request Comments
       requestBody:
         content:
           application/json:
@@ -1292,7 +1320,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_comments_destroy
-      description: Comments on allocation requests.
+      description: Delete a comment and its metadata by ID.
+      summary: Delete a comment
       parameters:
       - in: path
         name: id
@@ -1301,7 +1330,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - allocations
+      - Resource Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1311,7 +1340,9 @@ paths:
   /allocations/jobs/:
     get:
       operationId: allocations_jobs_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve status information for all Slurm jobs visible to the current
+        user.
+      summary: List all Slurm jobs
       parameters:
       - name: _order
         required: false
@@ -2148,7 +2179,7 @@ paths:
         schema:
           type: string
       tags:
-      - allocations
+      - Slurm Jobs
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2164,7 +2195,8 @@ paths:
   /allocations/jobs/{id}/:
     get:
       operationId: allocations_jobs_retrieve
-      description: Slurm Job status and statistics.
+      description: Retrieve status information for a single slurm job by ID.
+      summary: Retrieve a Slurm job
       parameters:
       - in: path
         name: id
@@ -2173,7 +2205,7 @@ paths:
         description: A unique integer value identifying this job stats.
         required: true
       tags:
-      - allocations
+      - Slurm Jobs
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2187,7 +2219,8 @@ paths:
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve all allocation requests visible to the current user.
+      summary: List all allocation requests
       parameters:
       - name: _order
         required: false
@@ -2543,7 +2576,7 @@ paths:
         schema:
           type: string
       tags:
-      - allocations
+      - Resource Allocation Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2558,9 +2591,10 @@ paths:
           description: ''
     post:
       operationId: allocations_requests_create
-      description: Manage allocation requests.
+      description: Create a new allocation request for review.
+      summary: Create an allocation request
       tags:
-      - allocations
+      - Resource Allocation Requests
       requestBody:
         content:
           application/json:
@@ -2586,7 +2620,8 @@ paths:
   /allocations/requests/{id}/:
     get:
       operationId: allocations_requests_retrieve
-      description: Manage allocation requests.
+      description: Retrieve a single allocation request by ID.
+      summary: Retrieve an allocation request
       parameters:
       - in: path
         name: id
@@ -2595,7 +2630,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2608,7 +2643,8 @@ paths:
           description: ''
     put:
       operationId: allocations_requests_update
-      description: Manage allocation requests.
+      description: Replace an existing allocation request with new values.
+      summary: Update an allocation request
       parameters:
       - in: path
         name: id
@@ -2617,7 +2653,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Requests
       requestBody:
         content:
           application/json:
@@ -2642,7 +2678,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_requests_partial_update
-      description: Manage allocation requests.
+      description: Apply a partial update to an existing allocation request.
+      summary: Partially update an allocation request
       parameters:
       - in: path
         name: id
@@ -2651,7 +2688,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Requests
       requestBody:
         content:
           application/json:
@@ -2675,7 +2712,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_requests_destroy
-      description: Manage allocation requests.
+      description: Delete an allocation request by ID.
+      summary: Delete an allocation request
       parameters:
       - in: path
         name: id
@@ -2684,7 +2722,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2694,7 +2732,8 @@ paths:
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Return a list of serialized records filtered by user team permissions.
+      description: Retrieve all allocation reviews visible to the current user.
+      summary: List all allocation reviews
       parameters:
       - name: _order
         required: false
@@ -2884,7 +2923,7 @@ paths:
         schema:
           type: string
       tags:
-      - allocations
+      - Resource Allocation Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2899,9 +2938,10 @@ paths:
           description: ''
     post:
       operationId: allocations_reviews_create
-      description: Create a new `AllocationReview` object.
+      description: Create a new allocation review.
+      summary: Create an allocation review
       tags:
-      - allocations
+      - Resource Allocation Reviews
       requestBody:
         content:
           application/json:
@@ -2927,7 +2967,8 @@ paths:
   /allocations/reviews/{id}/:
     get:
       operationId: allocations_reviews_retrieve
-      description: Manage administrator reviews of allocation requests.
+      description: Retrieve a single allocation review by ID.
+      summary: Retrieve an allocation review
       parameters:
       - in: path
         name: id
@@ -2936,7 +2977,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2949,7 +2990,8 @@ paths:
           description: ''
     put:
       operationId: allocations_reviews_update
-      description: Manage administrator reviews of allocation requests.
+      description: Replace an existing allocation review with new values.
+      summary: Update an allocation review
       parameters:
       - in: path
         name: id
@@ -2958,7 +3000,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Reviews
       requestBody:
         content:
           application/json:
@@ -2983,7 +3025,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_reviews_partial_update
-      description: Manage administrator reviews of allocation requests.
+      description: Apply a partial update to an existing allocation review.
+      summary: Partially update an allocation review
       parameters:
       - in: path
         name: id
@@ -2992,7 +3035,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Reviews
       requestBody:
         content:
           application/json:
@@ -3016,7 +3059,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_reviews_destroy
-      description: Manage administrator reviews of allocation requests.
+      description: Delete an allocation review by ID.
+      summary: Delete an allocation review
       parameters:
       - in: path
         name: id
@@ -3025,7 +3069,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - allocations
+      - Resource Allocation Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
