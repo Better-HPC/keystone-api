@@ -57,7 +57,7 @@ class HealthCheckView(BaseHealthCheckView):
         return HttpResponse()
 
     @extend_schema(
-        summary="Retrieve the current application health",
+        summary="Retrieve the current application health status",
         description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
         tags=["Application Health"],
         responses={

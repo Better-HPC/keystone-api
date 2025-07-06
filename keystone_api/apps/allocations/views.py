@@ -35,7 +35,7 @@ __all__ = [
 @extend_schema_view(  # pragma: nocover
     get=extend_schema(
         summary="Retrieve valid request status options",
-        description="Retrieve valid `status` options for allocation requests with human-readable labels.",
+        description="Retrieve valid allocation request `status` options with human-readable labels.",
         tags=["Resource Allocation Requests"],
         responses=inline_serializer(
             name="AllocationRequestStatusChoices",
@@ -53,7 +53,7 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
 @extend_schema_view(  # pragma: nocover
     get=extend_schema(
         summary="Retrieve valid review status options",
-        description="Retrieve valid `status` options for allocation reviews with human-readable labels.",
+        description="Retrieve valid allocation review `status` options with human-readable labels.",
         tags=["Resource Allocation Reviews"],
         responses=inline_serializer(
             name="AllocationReviewStatusChoices",
@@ -214,32 +214,32 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     list=extend_schema(
         summary="List all file attachments",
         description="Retrieve metadata for all file attachments visible to the current user.",
-        tags=["Resource Request File Attachments"],
+        tags=["Resource Allocation Attachments"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a file attachment",
         description="Retrieve metadata for a single file attachment by ID.",
-        tags=["Resource Request File Attachments"],
+        tags=["Resource Allocation Attachments"],
     ),
     create=extend_schema(
         summary="Create a file attachment",
         description="Create a new file attachment.",
-        tags=["Resource Request File Attachments"],
+        tags=["Resource Allocation Attachments"],
     ),
     update=extend_schema(
         summary="Update a file attachment",
         description="Replace metadata for an existing file attachment with new values.",
-        tags=["Resource Request File Attachments"],
+        tags=["Resource Allocation Attachments"],
     ),
     partial_update=extend_schema(
         summary="Partially update a file attachment",
         description="Apply a partial update to metadata for an existing file attachment.",
-        tags=["Resource Request File Attachments"],
+        tags=["Resource Allocation Attachments"],
     ),
     destroy=extend_schema(
         summary="Delete a file attachment",
         description="Delete a file attachment and its metadata by ID.",
-        tags=["Resource Request File Attachments"],
+        tags=["Resource Allocation Attachments"],
     ),
 )
 class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -298,32 +298,32 @@ class ClusterViewSet(viewsets.ModelViewSet):
     list=extend_schema(
         summary="List all comments",
         description="Retrieve all comments visible to the current user.",
-        tags=["Resource Request Comments"],
+        tags=["Resource Allocation Comments"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a comment",
         description="Retrieve a single comment by ID.",
-        tags=["Resource Request Comments"],
+        tags=["Resource Allocation Comments"],
     ),
     create=extend_schema(
         summary="Create a comment",
         description="Create a new comment.",
-        tags=["Resource Request Comments"],
+        tags=["Resource Allocation Comments"],
     ),
     update=extend_schema(
         summary="Update a comment",
         description="Replace an existing comment with new values.",
-        tags=["Resource Request Comments"],
+        tags=["Resource Allocation Comments"],
     ),
     partial_update=extend_schema(
         summary="Partially update a comment",
         description="Apply a partial update to an existing comment.",
-        tags=["Resource Request Comments"],
+        tags=["Resource Allocation Comments"],
     ),
     destroy=extend_schema(
         summary="Delete a comment",
         description="Delete a comment and its metadata by ID.",
-        tags=["Resource Request Comments"],
+        tags=["Resource Allocation Comments"],
     ),
 )
 class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):

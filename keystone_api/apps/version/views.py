@@ -19,7 +19,12 @@ class VersionView(GenericAPIView):
     _resp_body = {'version': settings.VERSION}
     permission_classes = []
 
-    @extend_schema(responses={'200': _resp_body})
+    @extend_schema(
+        summary="Retrieve the application version number",
+        description="Retrieve the application version number.",
+        responses={'200': _resp_body},
+        tags=["Application Version"],
+    )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return the API version number."""
 
