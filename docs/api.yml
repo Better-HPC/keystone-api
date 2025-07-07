@@ -5053,8 +5053,8 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Return a list of serialized records filtered for the requesting
-        user.
+      description: Retrieve all notifications visible to the current user.
+      summary: List all notifications
       parameters:
       - name: _order
         required: false
@@ -5302,7 +5302,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - notifications
+      - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5318,7 +5318,8 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Returns user notifications.
+      description: Retrieve a single notification by ID.
+      summary: Retrieve a notification
       parameters:
       - in: path
         name: id
@@ -5327,7 +5328,7 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - notifications
+      - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5340,7 +5341,9 @@ paths:
           description: ''
     patch:
       operationId: notifications_notifications_partial_update
-      description: Returns user notifications.
+      description: Update a notifications `read` status. All other fields are read
+        only.
+      summary: Update a notification's read status
       parameters:
       - in: path
         name: id
@@ -5349,7 +5352,7 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - notifications
+      - Notifications
       requestBody:
         content:
           application/json:
@@ -5374,8 +5377,8 @@ paths:
   /notifications/preferences/:
     get:
       operationId: notifications_preferences_list
-      description: Return a list of serialized records filtered for the requesting
-        user.
+      description: Retrieve all notification preferences visible to the current user.
+      summary: List all notification preferences
       parameters:
       - name: _order
         required: false
@@ -5440,7 +5443,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - notifications
+      - Notification Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5455,9 +5458,10 @@ paths:
           description: ''
     post:
       operationId: notifications_preferences_create
-      description: Create a new `Preference` object.
+      description: Create a new notification preference.
+      summary: Create a notification preference
       tags:
-      - notifications
+      - Notification Preferences
       requestBody:
         content:
           application/json:
@@ -5482,7 +5486,8 @@ paths:
   /notifications/preferences/{id}/:
     get:
       operationId: notifications_preferences_retrieve
-      description: Returns user notification preferences.
+      description: Retrieve a user's notification preference by ID.
+      summary: Retrieve a user's notification preferences
       parameters:
       - in: path
         name: id
@@ -5491,7 +5496,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - notifications
+      - Notification Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5504,7 +5509,8 @@ paths:
           description: ''
     put:
       operationId: notifications_preferences_update
-      description: Returns user notification preferences.
+      description: Replace a user's existing notification preference with new values.
+      summary: Update a user's notification preferences
       parameters:
       - in: path
         name: id
@@ -5513,7 +5519,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - notifications
+      - Notification Preferences
       requestBody:
         content:
           application/json:
@@ -5537,7 +5543,8 @@ paths:
           description: ''
     patch:
       operationId: notifications_preferences_partial_update
-      description: Returns user notification preferences.
+      description: Apply a partial update to a user's notification preference.
+      summary: Partially update a user's notification preferences
       parameters:
       - in: path
         name: id
@@ -5546,7 +5553,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - notifications
+      - Notification Preferences
       requestBody:
         content:
           application/json:
@@ -5570,7 +5577,9 @@ paths:
           description: ''
     delete:
       operationId: notifications_preferences_destroy
-      description: Returns user notification preferences.
+      description: Delete a user's notification preference, and resort to default
+        notification preferences.
+      summary: Delete a user's notification preferences
       parameters:
       - in: path
         name: id
@@ -5579,7 +5588,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - notifications
+      - Notification Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
