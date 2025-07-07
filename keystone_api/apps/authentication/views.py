@@ -10,6 +10,7 @@ from django.contrib.auth import login, logout
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -20,7 +21,7 @@ __all__ = ['LoginView', 'LogoutView', 'WhoAmIView']
 
 
 class LoginView(GenericAPIView):
-    """Authenticate a user and start a new session."""
+    """Authenticate a user and start a new auth session."""
 
     permission_classes = []
     serializer_class = LoginSerializer
@@ -30,13 +31,14 @@ class LoginView(GenericAPIView):
         description="Authenticate and login user using session-based authentication.",
         tags=["Authentication"],
     )
-    def post(self, request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs) -> Response:
         """Authenticate the user and establish a session.
 
         Returns:
             A 200 response with metadata for the authenticated user.
         """
 
+        # Parse and validate the provided credentials
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -46,11 +48,11 @@ class LoginView(GenericAPIView):
 
 
 class LogoutView(APIView):
-    """Logout an authenticated user."""
+    """Logout an authenticated user and terminate their session."""
 
     permission_classes = []
 
-    def post(self, request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs) -> Response:
         """Logout an authenticated user.
 
         Returns:
@@ -72,7 +74,7 @@ class WhoAmIView(GenericAPIView):
         description="Retrieve metadata for the currently authenticated user, including personal data and team memberships.",
         tags=["Authentication"],
     )
-    def get(self, request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs) -> Response:
         """Return metadata for the currently authenticated user.
 
         Returns:

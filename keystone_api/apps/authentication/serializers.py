@@ -7,27 +7,37 @@ creation.
 """
 
 from django.contrib.auth import authenticate
-from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 __all__ = ['LoginSerializer']
 
 
 class LoginSerializer(serializers.Serializer):
+    """Data serializer for user credentials."""
 
     username = serializers.CharField(required=True, write_only=True)
     password = serializers.CharField(required=True, write_only=True, trim_whitespace=False)
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict) -> dict:
+        """Validate the provided user credentials.
+
+        Args:
+            attrs: User credentials to validate.
+
+        Returns:
+            A dictionary of validated values.
+        """
+
+        request = self.context.get('request')
         username = attrs.get('username')
         password = attrs.get('password')
-        user = authenticate(request=self.context.get('request'), username=username, password=password)
 
+        user = authenticate(request=request, username=username, password=password)
         if not user:
-            raise serializers.ValidationError(_("Invalid username or password."), code='authorization')
+            raise serializers.ValidationError("Invalid username or password.", code='authorization')
 
         if not user.is_active:
-            raise serializers.ValidationError(_("User account is disabled."), code='authorization')
+            raise serializers.ValidationError("User account is disabled.", code='authorization')
 
         attrs['user'] = user
         return attrs

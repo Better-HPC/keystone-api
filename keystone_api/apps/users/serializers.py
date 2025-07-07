@@ -96,11 +96,14 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         read_only_fields = ['date_joined', 'last_login']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate(self, attrs: dict) -> None:
+    def validate(self, attrs: dict) -> dict:
         """Validate user attributes match the ORM data model.
 
         Args:
-            attrs: Dictionary of user attributes.
+            attrs: User attributes to validate.
+
+        Returns:
+            A dictionary of validated values.
         """
 
         # Hash the password value
