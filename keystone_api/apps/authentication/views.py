@@ -6,7 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.contrib.auth import logout
+from django.contrib.auth import login, logout
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -14,8 +14,35 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.users.serializers import RestrictedUserSerializer
+from .serializers import *
 
-__all__ = ['LogoutView', 'WhoAmIView']
+__all__ = ['LoginView', 'LogoutView', 'WhoAmIView']
+
+
+class LoginView(GenericAPIView):
+    """Authenticate a user and start a new session."""
+
+    permission_classes = []
+    serializer_class = LoginSerializer
+
+    @extend_schema(
+        summary="Login user via session",
+        description="Authenticate and login user using session-based authentication.",
+        tags=["Authentication"],
+    )
+    def post(self, request, *args, **kwargs) -> Response:
+        """Authenticate the user and establish a session.
+
+        Returns:
+            A 200 response with metadata for the authenticated user.
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        login(request, user)
+        return Response(RestrictedUserSerializer(user).data)
 
 
 class LogoutView(APIView):
@@ -49,7 +76,7 @@ class WhoAmIView(GenericAPIView):
         """Return metadata for the currently authenticated user.
 
         Returns:
-            A 200 response with user data if authenticated
+            A 200 response with metadata for the authenticated user.
         """
 
         serializer = self.serializer_class(request.user)
