@@ -27,8 +27,8 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
-        summary="Login user via session",
-        description="Authenticate and login user using session-based authentication.",
+        summary="Authenticate a user and start a new session",
+        description="Validate the provided credentials and start a new user session.",
         tags=["Authentication"],
     )
     def post(self, request: Request, *args, **kwargs) -> Response:
@@ -47,6 +47,11 @@ class LoginView(GenericAPIView):
         return Response(RestrictedUserSerializer(user).data)
 
 
+@extend_schema(
+    summary="Logout an authenticated user",
+    description="Logout an authenticated user and terminate their active session.",
+    tags=["Authentication"],
+)
 class LogoutView(APIView):
     """Logout an authenticated user and terminate their session."""
 
