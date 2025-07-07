@@ -16,8 +16,9 @@ from .models import *
 __all__ = [
     'AllocationRequestPermissions',
     'ClusterPermissions',
-    'StaffWriteMemberRead',
     'CommentPermissions',
+    'MemberReadOnly',
+    'StaffWriteMemberRead',
 ]
 
 

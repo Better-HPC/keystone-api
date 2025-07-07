@@ -6,8 +6,8 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from drf_spectacular.utils import extend_schema
-from rest_framework import status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -26,6 +26,38 @@ __all__ = [
 ]
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all teams",
+        description="Retrieve all teams visible to the current user.",
+        tags=["Teams"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a team",
+        description="Retrieve a single team by ID.",
+        tags=["Teams"],
+    ),
+    create=extend_schema(
+        summary="Create a team",
+        description="Create a new team.",
+        tags=["Teams"],
+    ),
+    update=extend_schema(
+        summary="Update a team",
+        description="Replace an existing team with new values.",
+        tags=["Teams"],
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a team",
+        description="Apply a partial update to an existing team.",
+        tags=["Teams"],
+    ),
+    destroy=extend_schema(
+        summary="Delete a team",
+        description="Delete a team by ID.",
+        tags=["Teams"],
+    ),
+)
 class TeamViewSet(viewsets.ModelViewSet):
     """Manage user teams."""
 
@@ -35,6 +67,17 @@ class TeamViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
 
 
+@extend_schema_view(  # pragma: nocover
+    get=extend_schema(
+        summary="Retrieve valid team role options",
+        description="Retrieve valid team `role` options with human-readable labels.",
+        tags=["Team Membership"],
+        responses=inline_serializer(
+            name="MembershipRoleChoices",
+            fields={k: serializers.CharField(default=v) for k, v in Membership.Role.choices}
+        )
+    )
+)
 class MembershipRoleChoicesView(APIView):
     """Exposes valid values for the team membership `role` field."""
 
@@ -48,6 +91,38 @@ class MembershipRoleChoicesView(APIView):
         return Response(self._resp_body, status=status.HTTP_200_OK)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all team memberships",
+        description="Retrieve all team membership accounts.",
+        tags=["Team Membership"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a team membership",
+        description="Retrieve a single team membership account by ID.",
+        tags=["Team Membership"],
+    ),
+    create=extend_schema(
+        summary="Create a team membership",
+        description="Create a new team membership account.",
+        tags=["Team Membership"],
+    ),
+    update=extend_schema(
+        summary="Update a team membership",
+        description="Replace an existing team membership account with new values.",
+        tags=["Team Membership"],
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a team membership",
+        description="Apply a partial update to an existing team membership account.",
+        tags=["Team Membership"],
+    ),
+    destroy=extend_schema(
+        summary="Delete a team membership",
+        description="Delete a team membership account by ID.",
+        tags=["Team Membership"],
+    ),
+)
 class MembershipViewSet(viewsets.ModelViewSet):
     """Manage team membership."""
 
@@ -56,6 +131,38 @@ class MembershipViewSet(viewsets.ModelViewSet):
     serializer_class = MembershipSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all users",
+        description="Retrieve all user accounts.",
+        tags=["Users"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a user",
+        description="Retrieve a single user account by ID.",
+        tags=["Users"],
+    ),
+    create=extend_schema(
+        summary="Create a user",
+        description="Create a new user account.",
+        tags=["Users"],
+    ),
+    update=extend_schema(
+        summary="Update a user",
+        description="Replace an existing user account with new values.",
+        tags=["Users"],
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a user",
+        description="Apply a partial update to an existing user account.",
+        tags=["Users"],
+    ),
+    destroy=extend_schema(
+        summary="Delete a user",
+        description="Delete a user account by ID.",
+        tags=["Users"],
+    ),
+)
 class UserViewSet(viewsets.ModelViewSet):
     """Manage user account data."""
 

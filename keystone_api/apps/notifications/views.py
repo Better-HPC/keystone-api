@@ -6,6 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -22,6 +23,23 @@ __all__ = [
 ]
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all notifications",
+        description="Retrieve all notifications visible to the current user.",
+        tags=["Notifications"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a notification",
+        description="Retrieve a single notification by ID.",
+        tags=["Notifications"],
+    ),
+    partial_update=extend_schema(
+        summary="Update a notification's read status",
+        description="Update a notifications `read` status. All other fields are read only.",
+        tags=["Notifications"],
+    ),
+)
 class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """Returns user notifications."""
 
@@ -32,6 +50,38 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     http_method_names = ['get', 'head', 'options', 'patch']
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all notification preferences",
+        description="Retrieve all notification preferences visible to the current user.",
+        tags=["Notification Preferences"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a user's notification preferences",
+        description="Retrieve a user's notification preference by ID.",
+        tags=["Notification Preferences"],
+    ),
+    create=extend_schema(
+        summary="Create a notification preference",
+        description="Create a new notification preference.",
+        tags=["Notification Preferences"],
+    ),
+    update=extend_schema(
+        summary="Update a user's notification preferences",
+        description="Replace a user's existing notification preference with new values.",
+        tags=["Notification Preferences"],
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a user's notification preferences",
+        description="Apply a partial update to a user's notification preference.",
+        tags=["Notification Preferences"],
+    ),
+    destroy=extend_schema(
+        summary="Delete a user's notification preferences",
+        description="Delete a user's notification preference, and resort to default notification preferences.",
+        tags=["Notification Preferences"],
+    ),
+)
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """Returns user notification preferences."""
 

@@ -6,6 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -21,6 +22,11 @@ class WhoAmIView(GenericAPIView):
     serializer_class = RestrictedUserSerializer
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary="Retrieve metadata for the currently authenticated user",
+        description="Retrieve metadata for the currently authenticated user, including personal data and team memberships.",
+        tags=["Authentication"],
+    )
     def get(self, request, *args, **kwargs) -> Response:
         """Return user metadata for the currently authenticated user.
 
