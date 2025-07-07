@@ -5,6 +5,7 @@ models or services, and generating the appropriate HTTP response(s). Views
 serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
+
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -47,7 +48,6 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['message', 'user__username']
     permission_classes = [IsAuthenticated, NotificationPermissions]
     http_method_names = ['get', 'head', 'options', 'patch']
-
 
 
 @extend_schema_view(
