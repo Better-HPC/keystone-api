@@ -3181,8 +3181,10 @@ paths:
   /health/json/:
     get:
       operationId: health_json_retrieve
-      description: Retrieve results from individual health checks in JSON format.
-      summary: Retrieve JSON results for application health checks
+      description: Retrieve results from individual application health checks in JSON
+        format. This endpoint returns a `200` status code regardless of whether individual
+        health checks are passing.
+      summary: Retrieve application health checks in JSON format
       tags:
       - Application Health
       security:
@@ -3194,12 +3196,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/health_json_ok'
+              examples:
+                PassingJSONHealthCheck:
+                  value:
+                    DatabaseBackend:
+                      status: 200
+                      message: working
+                      critical_service: true
+                  summary: Passing JSON Health Check
+                FailingJSONHealthCheck:
+                  value:
+                    DatabaseBackend:
+                      status: 500
+                      message: database unreachable
+                      critical_service: true
+                  summary: Failing JSON Health Check
           description: ''
   /health/prom/:
     get:
       operationId: health_prom_retrieve
-      description: Retrieve results from individual health checks in Prometheus format.
-      summary: Retrieve Prometheus results for application health checks
+      description: Retrieve results from individual application health checks in Prometheus
+        format. This endpoint returns a `200` status code regardless of whether individual
+        health checks are passing.
+      summary: Retrieve application health checks in Prometheus format
       tags:
       - Application Health
       security:
@@ -3207,7 +3226,24 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                PassingPrometheusHealthCheck:
+                  value: |-
+                    # HELP DatabaseBackend health_check.db.backendsDatabaseBackend
+                    # TYPE DatabaseBackend gauge
+                    DatabaseBackend{critical_service="True",message="working"} 200.0
+                  summary: Passing Prometheus Health Check
+                FailingPrometheusHealthCheck:
+                  value: |-
+                    # HELP DatabaseBackend health_check.db.backendsDatabaseBackend
+                    # TYPE DatabaseBackend gauge
+                    DatabaseBackend{critical_service="True",message="database unreachable"} 500.0
+                  summary: Failing Prometheus Health Check
+          description: ''
   /logs/apps/:
     get:
       operationId: logs_apps_list
@@ -6876,7 +6912,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocationRequestStatusChoices'
+                $ref: '#/components/schemas/MembershipRoleChoices'
           description: ''
   /users/teams/:
     get:
@@ -7750,7 +7786,8 @@ paths:
   /version/:
     get:
       operationId: version_retrieve
-      description: Retrieve the application version number.
+      description: Retrieve the application version number as a plain text response.
+        Returned values follow the official PEP 440 standard.
       summary: Retrieve the application version number
       tags:
       - Application Version
@@ -7760,9 +7797,13 @@ paths:
       responses:
         '200':
           content:
-            application/json:
+            text/plain:
               schema:
-                version: 0.0.0
+                type: string
+              examples:
+                VersionNumber:
+                  value: 1.2.3
+                  summary: Version Number
           description: ''
 components:
   schemas:
@@ -8444,6 +8485,18 @@ components:
       - role
       - team
       - user
+    MembershipRoleChoices:
+      type: object
+      properties:
+        OW:
+          type: string
+          default: Owner
+        AD:
+          type: string
+          default: Admin
+        MB:
+          type: string
+          default: Member
     NestedInlineOneOff:
       type: object
       properties:
