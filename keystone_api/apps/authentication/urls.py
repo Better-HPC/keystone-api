@@ -9,6 +9,6 @@ app_name = 'authentication'
 
 urlpatterns = [
     path(r'login/', djra_views.LoginView.as_view(), name='login'),
-    path(r'logout/', djra_views.LogoutView.as_view(), name='logout'),
+    path(r'logout/', LogoutView.as_view(), name='logout'),
     path(r'whoami/', WhoAmIView.as_view(), name='whoami'),
 ]

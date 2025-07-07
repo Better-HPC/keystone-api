@@ -6,14 +6,32 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from django.contrib.auth import logout
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.users.serializers import RestrictedUserSerializer
 
-__all__ = ['WhoAmIView']
+__all__ = ['LogoutView', 'WhoAmIView']
+
+
+class LogoutView(APIView):
+    """Logout an authenticated user."""
+
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs) -> Response:
+        """Logout an authenticated user.
+
+        Returns:
+            A message confirming the logout result.
+        """
+
+        logout(request)
+        return Response({'detail': 'Successfully logged out.'})
 
 
 class WhoAmIView(GenericAPIView):
@@ -28,10 +46,10 @@ class WhoAmIView(GenericAPIView):
         tags=["Authentication"],
     )
     def get(self, request, *args, **kwargs) -> Response:
-        """Return user metadata for the currently authenticated user.
+        """Return metadata for the currently authenticated user.
 
         Returns:
-            A 200 response with user data if authenticated, and a 401 response otherwise
+            A 200 response with user data if authenticated
         """
 
         serializer = self.serializer_class(request.user)
