@@ -704,7 +704,7 @@ paths:
   /allocations/clusters/:
     get:
       operationId: allocations_clusters_list
-      description: Retrieve all HPC clusters visible to the current user.
+      description: Retrieve all HPC clusters.
       summary: List all HPC clusters
       parameters:
       - name: _order
@@ -3110,25 +3110,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Login'
+                $ref: '#/components/schemas/Token'
           description: ''
   /authentication/logout/:
-    get:
-      operationId: authentication_logout_retrieve
-      description: |-
-        Calls Django logout method and delete the Token object
-        assigned to the current User object.
-
-        Accepts/Returns nothing.
-      tags:
-      - authentication
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
     post:
       operationId: authentication_logout_create
       description: |-
@@ -3144,11 +3128,16 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
-      description: Retrieve metadata for the currently authenticated user.
+      description: Retrieve metadata for the currently authenticated user, including
+        personal data and team memberships.
       summary: Retrieve metadata for the currently authenticated user
       tags:
       - Authentication
@@ -9231,6 +9220,14 @@ components:
         * `AP` - Approved
         * `DC` - Declined
         * `CR` - Changes Requested
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
     RestrictedUser:
       type: object
       description: Object serializer for the `User` class with sensitive fields marked
@@ -9514,6 +9511,15 @@ components:
           type: boolean
       required:
       - name
+    Token:
+      type: object
+      description: Serializer for Token model.
+      properties:
+        key:
+          type: string
+          maxLength: 40
+      required:
+      - key
     UserRole:
       type: object
       description: Serializer for summarizing team member usernames and roles in nested

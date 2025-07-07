@@ -24,7 +24,7 @@ class WhoAmIView(GenericAPIView):
 
     @extend_schema(
         summary="Retrieve metadata for the currently authenticated user",
-        description="Retrieve metadata for the currently authenticated user.",
+        description="Retrieve metadata for the currently authenticated user, including personal data and team memberships.",
         tags=["Authentication"],
     )
     def get(self, request, *args, **kwargs) -> Response:

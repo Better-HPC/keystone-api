@@ -256,7 +256,7 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(
         summary="List all HPC clusters",
-        description="Retrieve all HPC clusters visible to the current user.",
+        description="Retrieve all HPC clusters.",
         tags=["Clusters"],
     ),
     retrieve=extend_schema(
