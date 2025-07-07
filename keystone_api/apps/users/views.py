@@ -73,7 +73,7 @@ class TeamViewSet(viewsets.ModelViewSet):
         description="Retrieve valid team `role` options with human-readable labels.",
         tags=["Team Membership"],
         responses=inline_serializer(
-            name="AllocationRequestStatusChoices",
+            name="MembershipRoleChoices",
             fields={k: serializers.CharField(default=v) for k, v in Membership.Role.choices}
         )
     )
