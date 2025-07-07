@@ -9,7 +9,8 @@ from abc import ABC, abstractmethod
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiExample
 from health_check.mixins import CheckMixin
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView
@@ -19,7 +20,11 @@ __all__ = ['HealthCheckView', 'HealthCheckJsonView', 'HealthCheckPrometheusView'
 
 
 class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
-    """Abstract base view for rendering health checks."""
+    """Abstract base view for rendering health checks.
+
+    Subclasses must implement the `render_response` method to define the
+    desired format of rendered health check results.
+    """
 
     @staticmethod
     @abstractmethod
@@ -34,6 +39,17 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
         return self.render_response(self.plugins)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve the current application health status",
+        description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
+        tags=["Application Health"],
+        responses={
+            '200': inline_serializer('health_ok', fields=dict()),
+            '500': inline_serializer('health_error', fields=dict()),
+        }
+    )
+)
 class HealthCheckView(BaseHealthCheckView):
     """Return a 200 status code if all health checks pass and 500 otherwise."""
 
@@ -56,21 +72,50 @@ class HealthCheckView(BaseHealthCheckView):
 
         return HttpResponse()
 
-    @extend_schema(
-        summary="Retrieve the current application health status",
-        description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve application health checks in JSON format",
+        description=(
+            "Retrieve results from individual application health checks in JSON format. "
+            "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
+        ),
         tags=["Application Health"],
         responses={
-            '200': inline_serializer('health_ok', fields=dict()),
-            '500': inline_serializer('health_error', fields=dict()),
-        }
+            '200': inline_serializer('health_json_ok', fields={
+                'healthCheckName': inline_serializer(
+                    name='NestedInlineOneOffSerializer',
+                    fields={
+                        'status': serializers.IntegerField(default=200),
+                        'message': serializers.CharField(default='working'),
+                        'critical_service': serializers.BooleanField(default=True),
+                    })
+            })
+        },
+        examples=[
+            OpenApiExample(
+                name='Passing JSON Health Check',
+                value={
+                    "DatabaseBackend": {
+                        "status": 200,
+                        "message": "working",
+                        "critical_service": True
+                    }
+                }
+            ),
+            OpenApiExample(
+                name='Failing JSON Health Check',
+                value={
+                    "DatabaseBackend": {
+                        "status": 500,
+                        "message": "database unreachable",
+                        "critical_service": True
+                    }
+                },
+            )
+        ]
     )
-    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
-        """Summarize health checks in Prometheus format."""
-
-        return super().get(request, *args, **kwargs)  # pragma: nocover
-
-
+)
 class HealthCheckJsonView(BaseHealthCheckView):
     """Return system health checks in JSON format."""
 
@@ -95,30 +140,42 @@ class HealthCheckJsonView(BaseHealthCheckView):
                 'critical_service': plugin.critical_service
             }
 
-        return JsonResponse(data=data, status=200)
+        return JsonResponse(data=data)
 
-    @extend_schema(
-        summary="Retrieve JSON results for application health checks",
-        description="Retrieve results from individual health checks in JSON format.",
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve application health checks in Prometheus format",
+        description=(
+            "Retrieve results from individual application health checks in Prometheus format. "
+            "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
+        ),
         tags=["Application Health"],
         responses={
-            '200': inline_serializer('health_json_ok', fields={
-                'healthCheckName': inline_serializer(
-                    name='NestedInlineOneOffSerializer',
-                    fields={
-                        'status': serializers.IntegerField(default=200),
-                        'message': serializers.CharField(default='working'),
-                        'critical_service': serializers.BooleanField(default=True),
-                    })
-            })
-        }
+            (200, 'text/plain'): OpenApiTypes.STR
+        },
+        examples=[
+            OpenApiExample(
+                name="Passing Prometheus Health Check",
+                media_type="text/plain",
+                value=(
+                    "# HELP DatabaseBackend health_check.db.backendsDatabaseBackend\n"
+                    "# TYPE DatabaseBackend gauge\n"
+                    "DatabaseBackend{critical_service=\"True\",message=\"working\"} 200.0"
+                )
+            ),
+            OpenApiExample(
+                name="Failing Prometheus Health Check",
+                media_type="text/plain",
+                value=(
+                    "# HELP DatabaseBackend health_check.db.backendsDatabaseBackend\n"
+                    "# TYPE DatabaseBackend gauge\n"
+                    "DatabaseBackend{critical_service=\"True\",message=\"database unreachable\"} 500.0"
+                )
+            )
+        ]
     )
-    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
-        """Summarize health checks in JSON format."""
-
-        return super().get(request, *args, **kwargs)  # pragma: nocover
-
-
+)
 class HealthCheckPrometheusView(BaseHealthCheckView):
     """Return system health checks in Prometheus format."""
 
@@ -153,17 +210,4 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
                 )
             )
 
-        return HttpResponse('\n\n'.join(status_data), status=200, content_type="text/plain")
-
-    @extend_schema(
-        summary="Retrieve Prometheus results for application health checks",
-        description="Retrieve results from individual health checks in Prometheus format.",
-        tags=["Application Health"],
-        responses={
-            '200': inline_serializer('health_prom_ok', fields=dict()),
-        }
-    )
-    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
-        """Summarize health checks in Prometheus format."""
-
-        return super().get(request, *args, **kwargs)  # pragma: nocover
+        return HttpResponse('\n\n'.join(status_data), content_type="text/plain")
