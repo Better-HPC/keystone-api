@@ -41,6 +41,7 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
 
 @extend_schema_view(
     get=extend_schema(
+        auth=[],
         summary="Retrieve the current application health status",
         description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
         tags=["Application Health"],
@@ -75,6 +76,7 @@ class HealthCheckView(BaseHealthCheckView):
 
 @extend_schema_view(
     get=extend_schema(
+        auth=[],
         summary="Retrieve application health checks in JSON format",
         description=(
             "Retrieve results from individual application health checks in JSON format. "
@@ -145,6 +147,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
 
 @extend_schema_view(
     get=extend_schema(
+        auth=[],
         summary="Retrieve application health checks in Prometheus format",
         description=(
             "Retrieve results from individual application health checks in Prometheus format. "

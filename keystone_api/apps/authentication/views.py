@@ -28,6 +28,7 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
+        auth=[],
         summary="Authenticate a user and start a new session",
         description="Validate the provided credentials and start a new user session.",
         tags=["Authentication"],
