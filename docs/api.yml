@@ -46,6 +46,18 @@ paths:
       description: Retrieve all resource allocations visible to the current user.
       summary: List all resource allocations
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -234,9 +246,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Allocation'
+                $ref: '#/components/schemas/PaginatedAllocationList'
           description: ''
     post:
       operationId: allocations_allocations_create
@@ -385,6 +395,18 @@ paths:
         user.
       summary: List all file attachments
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -557,9 +579,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Attachment'
+                $ref: '#/components/schemas/PaginatedAttachmentList'
           description: ''
     post:
       operationId: allocations_attachments_create
@@ -707,6 +727,18 @@ paths:
       description: Retrieve all HPC clusters.
       summary: List all HPC clusters
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -837,9 +869,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Cluster'
+                $ref: '#/components/schemas/PaginatedClusterList'
           description: ''
     post:
       operationId: allocations_clusters_create
@@ -987,6 +1017,18 @@ paths:
       description: Retrieve all comments visible to the current user.
       summary: List all comments
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -1193,9 +1235,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Comment'
+                $ref: '#/components/schemas/PaginatedCommentList'
           description: ''
     post:
       operationId: allocations_comments_create
@@ -1344,6 +1384,18 @@ paths:
         user.
       summary: List all Slurm jobs
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -2188,9 +2240,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/JobStats'
+                $ref: '#/components/schemas/PaginatedJobStatsList'
           description: ''
   /allocations/jobs/{id}/:
     get:
@@ -2222,6 +2272,18 @@ paths:
       description: Retrieve all allocation requests visible to the current user.
       summary: List all allocation requests
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -2585,9 +2647,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AllocationRequest'
+                $ref: '#/components/schemas/PaginatedAllocationRequestList'
           description: ''
     post:
       operationId: allocations_requests_create
@@ -2735,6 +2795,18 @@ paths:
       description: Retrieve all allocation reviews visible to the current user.
       summary: List all allocation reviews
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -2932,9 +3004,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AllocationReview'
+                $ref: '#/components/schemas/PaginatedAllocationReviewList'
           description: ''
     post:
       operationId: allocations_reviews_create
@@ -3241,6 +3311,18 @@ paths:
         system behavior.
       summary: List all application logs
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -3574,9 +3656,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AppLog'
+                $ref: '#/components/schemas/PaginatedAppLogList'
           description: ''
   /logs/apps/{id}/:
     get:
@@ -3610,6 +3690,18 @@ paths:
         to database records and are used for compliance and security auditing.
       summary: List all audit logs
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -4041,9 +4133,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AuditLog'
+                $ref: '#/components/schemas/PaginatedAuditLogList'
           description: ''
   /logs/audit/{id}/:
     get:
@@ -4077,6 +4167,18 @@ paths:
         API requests and their resulting HTTP responses.
       summary: List all HTTP request logs
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -4369,9 +4471,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RequestLog'
+                $ref: '#/components/schemas/PaginatedRequestLogList'
           description: ''
   /logs/requests/{id}/:
     get:
@@ -4405,6 +4505,18 @@ paths:
         from the Celery backend to track background task outcomes and failures.
       summary: List all background task results
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -5021,9 +5133,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TaskResult'
+                $ref: '#/components/schemas/PaginatedTaskResultList'
           description: ''
   /logs/tasks/{id}/:
     get:
@@ -5056,6 +5166,18 @@ paths:
       description: Retrieve all notifications visible to the current user.
       summary: List all notifications
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -5311,9 +5433,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Notification'
+                $ref: '#/components/schemas/PaginatedNotificationList'
           description: ''
   /notifications/notifications/{id}/:
     get:
@@ -5380,6 +5500,18 @@ paths:
       description: Retrieve all notification preferences visible to the current user.
       summary: List all notification preferences
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -5452,9 +5584,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Preference'
+                $ref: '#/components/schemas/PaginatedPreferenceList'
           description: ''
     post:
       operationId: notifications_preferences_create
@@ -5601,6 +5731,18 @@ paths:
       description: Retrieve all research grants visible to the current user.
       summary: List all research grants
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -5944,9 +6086,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Grant'
+                $ref: '#/components/schemas/PaginatedGrantList'
           description: ''
     post:
       operationId: research_grants_create
@@ -6094,6 +6234,18 @@ paths:
       description: Retrieve all research publications visible to the current user.
       summary: List all research publications
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -6475,9 +6627,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Publication'
+                $ref: '#/components/schemas/PaginatedPublicationList'
           description: ''
     post:
       operationId: research_publications_create
@@ -6625,6 +6775,18 @@ paths:
       description: Retrieve all team membership accounts.
       summary: List all team memberships
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -6751,9 +6913,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Membership'
+                $ref: '#/components/schemas/PaginatedMembershipList'
           description: ''
     post:
       operationId: users_membership_create
@@ -6918,6 +7078,18 @@ paths:
       description: Retrieve all teams visible to the current user.
       summary: List all teams
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -7019,9 +7191,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Team'
+                $ref: '#/components/schemas/PaginatedTeamList'
           description: ''
     post:
       operationId: users_teams_create
@@ -7169,6 +7339,18 @@ paths:
       description: Retrieve all user accounts.
       summary: List all users
       parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
       - name: _order
         required: false
         in: query
@@ -7637,9 +7819,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RestrictedUser'
+                $ref: '#/components/schemas/PaginatedRestrictedUserList'
           description: ''
     post:
       operationId: users_users_create
@@ -8560,6 +8740,420 @@ components:
         * `GM` - General Message
         * `RE` - Upcoming Request Expiration
         * `RD` - Request Past Expiration
+    PaginatedAllocationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Allocation'
+    PaginatedAllocationRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationRequest'
+    PaginatedAllocationReviewList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationReview'
+    PaginatedAppLogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppLog'
+    PaginatedAttachmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+    PaginatedAuditLogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLog'
+    PaginatedClusterList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cluster'
+    PaginatedCommentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    PaginatedGrantList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Grant'
+    PaginatedJobStatsList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStats'
+    PaginatedMembershipList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Membership'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedPreferenceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Preference'
+    PaginatedPublicationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Publication'
+    PaginatedRequestLogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestLog'
+    PaginatedRestrictedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestrictedUser'
+    PaginatedTaskResultList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResult'
+    PaginatedTeamList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
     PatchedAllocation:
       type: object
       description: Object serializer for the `Allocation` class.
