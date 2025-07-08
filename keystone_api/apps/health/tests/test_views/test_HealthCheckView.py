@@ -17,7 +17,7 @@ class RenderResponseMethod(TestCase):
             'plugin2': create_mock_plugin(0, 'Error', False)
         }
 
-        response = HealthCheckView.render_response(health_checks)
+        response = HealthCheckView().render_response(health_checks)
         self.assertEqual(response.status_code, 500)
 
     def test_passing_health_checks(self) -> None:
@@ -28,5 +28,5 @@ class RenderResponseMethod(TestCase):
             'plugin2': create_mock_plugin(1, 'OK', False)
         }
 
-        response = HealthCheckView.render_response(health_checks)
+        response = HealthCheckView().render_response(health_checks)
         self.assertEqual(response.status_code, 200)

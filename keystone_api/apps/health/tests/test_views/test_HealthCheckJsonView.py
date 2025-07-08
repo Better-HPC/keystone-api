@@ -33,7 +33,7 @@ class RenderResponseMethod(TestCase):
             }
         }
 
-        response = HealthCheckJsonView.render_response(health_checks)
+        response = HealthCheckJsonView().render_response(health_checks)
         self.assertIsInstance(response, JsonResponse)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.dumps(health_check_json), response.content.decode())
