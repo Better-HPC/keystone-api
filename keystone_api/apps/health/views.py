@@ -4,6 +4,7 @@ View objects handle the processing of incoming HTTP requests and return the
 appropriately rendered HTML template or other HTTP response.
 """
 
+import re
 from abc import ABC, abstractmethod
 
 from django.http import HttpResponse, JsonResponse
@@ -182,7 +183,28 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
     permission_classes = []
 
     @staticmethod
-    def render_response(plugins: dict) -> HttpResponse:
+    def sanitize_metric_name(name: str) -> str:
+        """Sanitize a Prometheus metric name.
+
+        Replaces invalid characters with underscores.
+
+        Args:
+            name: The metric name to sanitize.
+
+        Returns:
+            The sanitized metric name.
+        """
+
+        # Replace invalid characters with '_'
+        name = re.sub(r'[^a-zA-Z0-9_:]', '_', name)
+
+        # Ensure the first character is valid (letter, '_' or ':')
+        if not re.match(r'^[a-zA-Z_:]', name):
+            name = '_' + name
+
+        return name
+
+    def render_response(self, plugins: dict) -> HttpResponse:
         """Return an HTTP response summarizing a collection of health checks.
 
         Args:
@@ -202,7 +224,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
         for plugin_name, plugin in plugins.items():
             status_data.append(
                 prom_format.format(
-                    name=plugin_name,
+                    name=self.sanitize_metric_name(plugin_name),
                     critical_service=plugin.critical_service,
                     message=plugin.pretty_status(),
                     status=200 if plugin.status else 500,
