@@ -120,7 +120,7 @@ class HealthCheckView(BaseHealthCheckView):
     )
 )
 class HealthCheckJsonView(BaseHealthCheckView):
-    """Return system health checks in JSON format."""
+    """API endpoints for fetching application health checks in JSON format."""
 
     permission_classes = []
 
@@ -181,7 +181,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):
-    """Return system health checks in Prometheus format."""
+    """API endpoints for fetching application health checks in Prometheus format."""
 
     permission_classes = []
 

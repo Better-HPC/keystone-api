@@ -40,7 +40,7 @@ __all__ = [
     )
 )
 class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """Returns application log data."""
+    """API endpoints for fetching application logs."""
 
     queryset = AppLog.objects.all()
     serializer_class = AppLogSerializer
@@ -67,7 +67,7 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
     )
 )
 class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """Returns HTTP request log data."""
+    """API endpoints for fetching HTTP request logs."""
 
     queryset = RequestLog.objects.all()
     serializer_class = RequestLogSerializer
@@ -94,7 +94,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     )
 )
 class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
-    """Returns results from scheduled background tasks."""
+    """API endpoints for fetching background task results."""
 
     queryset = TaskResult.objects.all()
     serializer_class = TaskResultSerializer
@@ -121,7 +121,7 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     )
 )
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """Returns results from the application audit log."""
+    """API endpoints for fetching audit logs."""
 
     queryset = AuditLog.objects.all()
     serializer_class = AuditLogSerializer

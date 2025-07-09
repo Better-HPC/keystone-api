@@ -15,17 +15,14 @@ __all__ = ['VersionView']
 
 
 class VersionView(GenericAPIView):
-    """Endpoints for exposing the API version."""
+    """API endpoints for exposing the API version."""
 
     permission_classes = []
 
     @extend_schema(
         auth=[],
         summary="Retrieve the application version number",
-        description=(
-            "Retrieve the application version number as a plain text response. "
-            "Returned values follow the official PEP 440 standard."
-        ),
+        description="Retrieve the application version number as a plain text response.",
         tags=["Application Version"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
