@@ -1,4 +1,4 @@
-"""Unit tests for the `WhoAmIView` class."""
+"""Function tests for the `/authentication/whoami/` endpoint."""
 
 from rest_framework import status
 from rest_framework.test import APITestCase
