@@ -36,7 +36,7 @@ def get_template(template_name: str) -> Template:
         PermissionError: When attempting to load a template with insecure file permissions.
     """
 
-    loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
+    loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR])
     environment = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
     # Get resolved path from the loader
