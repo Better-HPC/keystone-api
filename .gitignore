@@ -6,6 +6,9 @@ keystone_api/email/
 *.log
 *.eml
 
+# Redis
+dump.rdb
+
 # Distribution and packaging
 __pycache__/
 dist/

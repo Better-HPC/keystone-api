@@ -51,7 +51,7 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
     ),
 )
 class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Track funding awards and grant information."""
+    """API endpoints for managing funding awards and grant information."""
 
     model = Grant
     team_field = 'team'
@@ -94,7 +94,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
 )
 class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Manage metadata for research publications."""
+    """API endpoints for managing research publications."""
 
     model = Publication
     team_field = 'team'

@@ -19,7 +19,7 @@ __all__ = [
 
 
 class UserSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing user information in nested responses."""
+    """Serializer for summarizing user records in nested responses."""
 
     class Meta:
         """Serializer settings."""
@@ -41,7 +41,7 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
 
 class TeamSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing team information in nested responses."""
+    """Serializer for summarizing team records in nested responses."""
 
     class Meta:
         """Serializer settings."""

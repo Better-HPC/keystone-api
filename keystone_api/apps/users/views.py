@@ -59,7 +59,7 @@ __all__ = [
     ),
 )
 class TeamViewSet(viewsets.ModelViewSet):
-    """Manage user teams."""
+    """API endpoints for managing user teams."""
 
     queryset = Team.objects.all()
     permission_classes = [IsAuthenticated, TeamPermissions]
@@ -79,7 +79,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     )
 )
 class MembershipRoleChoicesView(APIView):
-    """Exposes valid values for the team membership `role` field."""
+    """API endpoints for exposing valid team `role` values."""
 
     _resp_body = dict(Membership.Role.choices)
     permission_classes = [IsAuthenticated]
@@ -124,7 +124,7 @@ class MembershipRoleChoicesView(APIView):
     ),
 )
 class MembershipViewSet(viewsets.ModelViewSet):
-    """Manage team membership."""
+    """API endpoints for managing team membership."""
 
     queryset = Membership.objects.all()
     permission_classes = [IsAuthenticated, MembershipPermissions]
@@ -164,7 +164,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     ),
 )
 class UserViewSet(viewsets.ModelViewSet):
-    """Manage user account data."""
+    """API endpoints for managing user account data."""
 
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, UserPermissions]

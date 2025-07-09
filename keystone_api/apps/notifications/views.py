@@ -41,7 +41,7 @@ __all__ = [
     ),
 )
 class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
-    """Returns user notifications."""
+    """API endpoints for retrieving user notifications."""
 
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
@@ -83,7 +83,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     ),
 )
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
-    """Returns user notification preferences."""
+    """API endpoints for managing user notification preferences."""
 
     queryset = Preference.objects.all()
     serializer_class = PreferenceSerializer

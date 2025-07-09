@@ -44,7 +44,7 @@ __all__ = [
     )
 )
 class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
-    """Exposes valid values for the allocation request `status` field."""
+    """API endpoints for exposing valid allocation request `status` values."""
 
     response_content = dict(AllocationRequest.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
@@ -62,7 +62,7 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     )
 )
 class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
-    """Exposes valid values for the allocation review `status` field."""
+    """API endpoints for exposing valid allocation review `status` values."""
 
     response_content = dict(AllocationReview.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
@@ -101,7 +101,7 @@ class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
     ),
 )
 class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Manage allocation requests."""
+    """API endpoints for managing allocation requests."""
 
     model = AllocationRequest
     team_field = 'team'
@@ -144,7 +144,7 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
 )
 class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Manage administrator reviews of allocation requests."""
+    """API endpoints for managing administrator reviews of allocation requests."""
 
     model = AllocationReview
     team_field = 'request__team'
@@ -200,7 +200,7 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
 )
 class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Manage HPC resource allocations."""
+    """API endpoints for managing HPC resource allocations."""
 
     model = Allocation
     team_field = 'request__team'
@@ -243,7 +243,7 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
 )
 class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Files submitted as attachments to allocation requests"""
+    """API endpoints for managing file attachments to allocation requests"""
 
     model = Attachment
     team_field = 'request__team'
@@ -286,7 +286,7 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
 )
 class ClusterViewSet(viewsets.ModelViewSet):
-    """Configuration settings for managed Slurm clusters."""
+    """API endpoints for managing Slurm clusters."""
 
     queryset = Cluster.objects.all()
     serializer_class = ClusterSerializer
@@ -327,7 +327,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     ),
 )
 class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
-    """Comments on allocation requests."""
+    """API endpoints for managing comments on allocation requests."""
 
     model = Comment
     team_field = 'request__team'
@@ -350,7 +350,7 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     )
 )
 class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
-    """Slurm Job status and statistics."""
+    """API endpoints for fetching Slurm job statistics."""
 
     model = JobStats
     queryset = JobStats.objects.all()

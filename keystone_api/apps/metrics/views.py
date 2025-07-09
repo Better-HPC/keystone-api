@@ -14,7 +14,7 @@ __all__ = ['MetricsView']
 
 
 class MetricsView(GenericAPIView):
-    """Endpoints for scraping application metrics."""
+    """API endpoints for scraping application metrics."""
 
     permission_classes = []
 

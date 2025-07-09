@@ -7785,7 +7785,6 @@ paths:
     get:
       operationId: version_retrieve
       description: Retrieve the application version number as a plain text response.
-        Returned values follow the official PEP 440 standard.
       summary: Retrieve the application version number
       tags:
       - Application Version
@@ -9511,7 +9510,7 @@ components:
       - team
     TeamSummary:
       type: object
-      description: Serializer for summarizing team information in nested responses.
+      description: Serializer for summarizing team records in nested responses.
       properties:
         name:
           type: string
@@ -9553,7 +9552,7 @@ components:
       - user
     UserSummary:
       type: object
-      description: Serializer for summarizing user information in nested responses.
+      description: Serializer for summarizing user records in nested responses.
       properties:
         username:
           type: string
