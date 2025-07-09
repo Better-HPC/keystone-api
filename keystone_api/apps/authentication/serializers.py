@@ -34,10 +34,7 @@ class LoginSerializer(serializers.Serializer):
 
         user = authenticate(request=request, username=username, password=password)
         if not user:
-            raise serializers.ValidationError("Invalid username or password.", code='authorization')
-
-        if not user.is_active:
-            raise serializers.ValidationError("User account is disabled.", code='authorization')
+            raise serializers.ValidationError("Invalid username or password.")
 
         attrs['user'] = user
         return attrs
