@@ -38,7 +38,7 @@ class AllocationRequestSummarySerializer(serializers.ModelSerializer):
 
 
 class AllocationSummarySerializer(serializers.ModelSerializer):
-    """Summary serializer for the Allocation model."""
+    """Serializer for summarizing allocated service units in nested responses."""
 
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
 
