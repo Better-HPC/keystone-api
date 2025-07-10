@@ -79,7 +79,7 @@ class FormatTemplateMethod(TestCase):
     def test_respects_strict_mode(self) -> None:
         """Verify an error is raised when rendering a StrictUndefined template with missing variables."""
 
-        env = Environment(undefined=StrictUndefined)
+        env = Environment(undefined=StrictUndefined, autoescape=True)
         template = env.from_string("Hello {{ name }}")
         with self.assertRaises(UndefinedError):
             format_template(template, {})

@@ -14,7 +14,7 @@ from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
 from apps.research_products.serializers import GrantSerializer, PublicationSerializer
-from apps.users.models import (User)
+from apps.users.models import User
 from apps.users.nested import TeamSummarySerializer, UserSummarySerializer
 from .models import *
 from .nested import *
