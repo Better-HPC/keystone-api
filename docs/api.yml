@@ -7897,6 +7897,12 @@ components:
             $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
+        _allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationSummary'
+          readOnly: true
+          title: ' allocations'
         title:
           type: string
           maxLength: 250
@@ -7935,6 +7941,7 @@ components:
           items:
             type: integer
       required:
+      - _allocations
       - _assignees
       - _grants
       - _history
@@ -8034,6 +8041,42 @@ components:
         CR:
           type: string
           default: Changes Requested
+    AllocationSummary:
+      type: object
+      description: Summary serializer for the Allocation model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+      required:
+      - _cluster
+      - cluster
+      - id
+      - requested
     AppLog:
       type: object
       description: Object serializer for the `AppLog` class.
@@ -8644,6 +8687,12 @@ components:
             $ref: '#/components/schemas/AuditLogSummary'
           readOnly: true
           title: ' history'
+        _allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationSummary'
+          readOnly: true
+          title: ' allocations'
         title:
           type: string
           maxLength: 250
