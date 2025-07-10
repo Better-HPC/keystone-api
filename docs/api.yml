@@ -8043,7 +8043,7 @@ components:
           default: Changes Requested
     AllocationSummary:
       type: object
-      description: Summary serializer for the Allocation model.
+      description: Serializer for summarizing allocated service units in nested responses.
       properties:
         id:
           type: integer
