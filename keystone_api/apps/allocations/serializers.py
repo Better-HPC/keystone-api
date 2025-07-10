@@ -53,6 +53,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _publications = PublicationSerializer(source='publications', many=True, read_only=True)
     _grants = GrantSerializer(source='grants', many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
