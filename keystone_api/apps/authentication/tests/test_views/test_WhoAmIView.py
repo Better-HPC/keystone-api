@@ -25,8 +25,9 @@ class GetMethod(TestCase):
 
         request = self.factory.get('/whoami/')
         request.user = self.user
-        expected_data = RestrictedUserSerializer(request.user).data
 
+        expected_data = RestrictedUserSerializer(request.user).data
         response = self.view.get(request)
+
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(expected_data, response.data)
