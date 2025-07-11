@@ -60,7 +60,7 @@ class CustomAsserts:
             kwargs: A dictionary of arguments.
 
         Returns:
-            A dictionary with formatted arguments.
+            A dictionary containing formatted arguments.
         """
 
         arg_names = ('data', 'headers')

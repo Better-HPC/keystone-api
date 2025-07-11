@@ -3079,16 +3079,10 @@ paths:
   /authentication/login/:
     post:
       operationId: authentication_login_create
-      description: |-
-        Check the credentials and return the REST Token
-        if the credentials are valid and authenticated.
-        Calls Django Auth login method to register User ID
-        in Django session framework
-
-        Accept the following POST parameters: username, password
-        Return the REST Framework Token Object's key.
+      description: Validate the provided credentials and start a new user session.
+      summary: Authenticate a user and start a new session
       tags:
-      - authentication
+      - Authentication
       requestBody:
         content:
           application/json:
@@ -3104,35 +3098,26 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/RestrictedUser'
           description: ''
   /authentication/logout/:
     post:
       operationId: authentication_logout_create
-      description: |-
-        Calls Django logout method and delete the Token object
-        assigned to the current User object.
-
-        Accepts/Returns nothing.
+      description: Logout an authenticated user and terminate their active session.
+      summary: Logout an authenticated user
       tags:
-      - authentication
+      - Authentication
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - {}
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RestAuthDetail'
-          description: ''
+          description: No response body
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
@@ -8478,16 +8463,17 @@ components:
       - updated_at
     Login:
       type: object
+      description: Data serializer for validating user credentials.
       properties:
         username:
           type: string
-        email:
-          type: string
-          format: email
+          writeOnly: true
         password:
           type: string
+          writeOnly: true
       required:
       - password
+      - username
     Membership:
       type: object
       description: Object serializer for the `Membership` model.
@@ -9277,14 +9263,6 @@ components:
         * `AP` - Approved
         * `DC` - Declined
         * `CR` - Changes Requested
-    RestAuthDetail:
-      type: object
-      properties:
-        detail:
-          type: string
-          readOnly: true
-      required:
-      - detail
     RestrictedUser:
       type: object
       description: Object serializer for the `User` class with sensitive fields marked
@@ -9568,15 +9546,6 @@ components:
           type: boolean
       required:
       - name
-    Token:
-      type: object
-      description: Serializer for Token model.
-      properties:
-        key:
-          type: string
-          maxLength: 40
-      required:
-      - key
     UserRole:
       type: object
       description: Serializer for summarizing team member usernames and roles in nested
