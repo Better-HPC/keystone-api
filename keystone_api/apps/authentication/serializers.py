@@ -25,7 +25,7 @@ class LoginSerializer(serializers.Serializer):
             attrs: The user credentials to validate.
 
         Returns:
-            A dictionary containing the validated values.
+            A dictionary containing the validated user instance.
         """
 
         request = self.context.get('request')
