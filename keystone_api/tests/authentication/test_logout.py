@@ -1,8 +1,7 @@
 """Function tests for the `/authentication/logout/` endpoint."""
 
-from django.contrib.auth import login
 from rest_framework import status
-from rest_framework.test import APIRequestFactory, APITestCase
+from rest_framework.test import APITestCase
 
 from apps.users.models import User
 from tests.utils import CustomAsserts
@@ -53,3 +52,52 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+
+class UserAuthentication(APITestCase):
+    """Test the process of logging out users."""
+
+    login_endpoint = '/authentication/login/'
+    logout_endpoint = '/authentication/logout/'
+    whoami_endpoint = '/authentication/whoami/'
+
+    def setUp(self) -> None:
+        """Create a user account to use when testing authentication."""
+
+        self.password = 'foobar123'
+        self.user = User.objects.create_user(username='user', password=self.password)
+
+    def assert_authentication(self, auth_status: bool) -> None:
+        """Assert whether the current client session is authenticated.
+
+        If auth_status is True, test the current client session is authenticated.
+        If auth_status is False, test the current client session is not authenticated.
+
+        Args:
+            auth_status: The  authenticated state to test for.
+        """
+
+        auth_status_code = {
+            True: status.HTTP_200_OK,
+            False: status.HTTP_401_UNAUTHORIZED,
+        }[auth_status]
+
+        # Query the current user authentication state from the API
+        whoami_response = self.client.get(self.whoami_endpoint)
+        self.assertEqual(auth_status_code, whoami_response.status_code)
+
+    def test_authenticated_session(self) -> None:
+        """Test currently authenticated users are successfully logged out."""
+
+        self.client.post(self.login_endpoint, {'username': self.user.username, 'password': self.password})
+        self.assert_authentication(True)
+
+        self.client.post(self.logout_endpoint)
+        self.assert_authentication(False)
+
+    def test_unauthenticated_session(self) -> None:
+        """Test unauthenticated users are returned a 401 Status."""
+
+        logout_request = self.client.post(self.logout_endpoint)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, logout_request.status_code)
+        self.assert_authentication(auth_status=False)
