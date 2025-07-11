@@ -13,7 +13,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.users.serializers import RestrictedUserSerializer
 from .serializers import *
@@ -50,7 +49,7 @@ class LoginView(GenericAPIView):
         return Response(RestrictedUserSerializer(user).data)
 
 
-class LogoutView(APIView):
+class LogoutView(GenericAPIView):
     """Logout an authenticated user and terminate their session."""
 
     permission_classes = [IsAuthenticated]
