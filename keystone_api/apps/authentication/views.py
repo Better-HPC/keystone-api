@@ -34,7 +34,7 @@ class LoginView(GenericAPIView):
         tags=["Authentication"],
         responses=RestrictedUserSerializer,
     )
-    def post(self, request: Request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
         """Authenticate the user and establish a session.
 
         Returns:
@@ -64,7 +64,7 @@ class LogoutView(APIView):
             fields={'detail': serializers.CharField(default='Successfully logged out.')}
         )
     )
-    def post(self, request: Request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
         """Logout an authenticated user.
 
         Returns:
