@@ -37,7 +37,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Verify authenticated users post logout requests."""
+        """Verify authenticated users can submit post requests."""
 
         user = User.objects.get(username='generic_user')
         self.client.force_authenticate(user=user)
@@ -70,8 +70,8 @@ class UserAuthentication(APITestCase):
     def assert_authentication(self, auth_status: bool) -> None:
         """Assert whether the current client session is authenticated.
 
-        If auth_status is True, test the current client session is authenticated.
-        If auth_status is False, test the current client session is not authenticated.
+        If auth_status is True, assert the current client session is authenticated.
+        If auth_status is False, assert the current client session is not authenticated.
 
         Args:
             auth_status: The  authenticated state to test for.
@@ -87,7 +87,7 @@ class UserAuthentication(APITestCase):
         self.assertEqual(auth_status_code, whoami_response.status_code)
 
     def test_authenticated_session(self) -> None:
-        """Test currently authenticated users are successfully logged out."""
+        """Verify currently authenticated users are successfully logged out."""
 
         self.client.post(self.login_endpoint, {'username': self.user.username, 'password': self.password})
         self.assert_authentication(True)
@@ -96,7 +96,7 @@ class UserAuthentication(APITestCase):
         self.assert_authentication(False)
 
     def test_unauthenticated_session(self) -> None:
-        """Test unauthenticated users are returned a 401 Status."""
+        """Verify unauthenticated users are returned a 401 Status."""
 
         logout_request = self.client.post(self.logout_endpoint)
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, logout_request.status_code)

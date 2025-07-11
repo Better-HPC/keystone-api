@@ -100,10 +100,10 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         """Validate user attributes match the ORM data model.
 
         Args:
-            attrs: User attributes to validate.
+            attrs: The user attributes to validate.
 
         Returns:
-            A dictionary of validated values.
+            A dictionary with the validated values.
         """
 
         # Hash the password value

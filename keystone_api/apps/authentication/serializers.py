@@ -13,7 +13,7 @@ __all__ = ['LoginSerializer', 'LogoutSerializer']
 
 
 class LoginSerializer(serializers.Serializer):
-    """Data serializer for user credentials."""
+    """Data serializer for validating user credentials."""
 
     username = serializers.CharField(required=True, write_only=True)
     password = serializers.CharField(required=True, write_only=True, trim_whitespace=False)
@@ -22,10 +22,10 @@ class LoginSerializer(serializers.Serializer):
         """Validate the provided user credentials.
 
         Args:
-            attrs: User credentials to validate.
+            attrs: The user credentials to validate.
 
         Returns:
-            A dictionary of validated values.
+            A dictionary with the validated values.
         """
 
         request = self.context.get('request')
@@ -36,9 +36,8 @@ class LoginSerializer(serializers.Serializer):
         if not user:
             raise serializers.ValidationError("Invalid username or password.")
 
-        attrs['user'] = user
-        return attrs
+        return {'user': user}
 
 
 class LogoutSerializer(serializers.Serializer):
-    """Empty serializer class used when generating API documentation for logout requests."""
+    """Empty serializer provided for compatibility with the `drf_spectacular` documentation tool."""

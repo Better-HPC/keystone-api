@@ -26,7 +26,6 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
-        auth=[],
         summary="Authenticate a user and start a new session",
         description="Validate the provided credentials and start a new user session.",
         tags=["Authentication"],
@@ -63,7 +62,7 @@ class LogoutView(GenericAPIView):
         """Logout an authenticated user.
 
         Returns:
-            A message confirming the logout result.
+            An empty 200 response.
         """
 
         logout(request)

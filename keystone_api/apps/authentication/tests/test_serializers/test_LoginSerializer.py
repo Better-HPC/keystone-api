@@ -1,4 +1,4 @@
-"""Unit tests for the `LoginSerializer` class using real user accounts."""
+"""Unit tests for the `LoginSerializer` class."""
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -44,5 +44,24 @@ class Validation(TestCase):
 
         data = {'username': self.user.username, 'password': self.password}
         serializer = LoginSerializer(data=data, context={'request': self.request})
+        with self.assertRaisesRegex(ValidationError, 'Invalid username or password.'):
+            serializer.is_valid(raise_exception=True)
+
+    def test_password_whitespace_preserved(self) -> None:
+        """Ensure passwords with whitespace are not stripped during validation."""
+
+        # Create a user with whitespace in the password
+        password_with_spaces = '  spacedpass  '
+        user_with_spaces = User.objects.create_user(username='whitespaceuser', password=password_with_spaces)
+
+        # Attempt login with exact password (should succeed)
+        data = {'username': user_with_spaces.username, 'password': password_with_spaces}
+        serializer = LoginSerializer(data=data, context={'request': self.request})
+        self.assertEqual(serializer.validated_data['user'], user_with_spaces)
+        self.assertTrue(serializer.is_valid())
+
+        # Attempt login with stripped password (should fail)
+        data_stripped = {'username': user_with_spaces.username, 'password': password_with_spaces.strip()}
+        serializer = LoginSerializer(data=data_stripped, context={'request': self.request})
         with self.assertRaisesRegex(ValidationError, 'Invalid username or password.'):
             serializer.is_valid(raise_exception=True)

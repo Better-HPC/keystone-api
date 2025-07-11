@@ -20,7 +20,6 @@ class VersionView(GenericAPIView):
     permission_classes = []
 
     @extend_schema(
-        auth=[],
         summary="Retrieve the application version number",
         description="Retrieve the application version number as a plain text response.",
         tags=["Application Version"],

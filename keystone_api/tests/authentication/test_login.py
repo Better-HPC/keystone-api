@@ -26,7 +26,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.user = User.objects.create_user(username='user', password='foobar123')
 
     def test_unauthenticated_user_permissions(self) -> None:
-        """Verify unauthenticated users cannot access the endpoint."""
+        """Verify unauthenticated users can submit post requests."""
 
         self.assert_http_responses(
             self.endpoint,
@@ -42,7 +42,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_authenticated_user_permissions(self) -> None:
-        """Verify authenticated users post logout requests."""
+        """Verify authenticated users can submit post requests."""
 
         self.client.force_authenticate(user=self.user)
         self.assert_http_responses(
