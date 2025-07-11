@@ -11,7 +11,7 @@ User = get_user_model()
 
 
 class GetMethod(TestCase):
-    """Test HTTP GET handling by the `get` method."""
+    """Test HTTP request handling by the `get` method."""
 
     def setUp(self) -> None:
         """Create a new view instance."""

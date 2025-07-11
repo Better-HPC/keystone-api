@@ -2,16 +2,13 @@
 
 from unittest.mock import Mock, patch
 
-from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 
 from apps.authentication.views import LogoutView
 
-User = get_user_model()
-
 
 class PostMethod(TestCase):
-    """Test HTTP POST handling by the `post` method."""
+    """Test HTTP request handling by the `post` method."""
 
     def setUp(self) -> None:
         """Create a new view instance."""
