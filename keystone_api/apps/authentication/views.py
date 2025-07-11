@@ -7,8 +7,7 @@ URLs to business logic.
 """
 
 from django.contrib.auth import login, logout
-from drf_spectacular.utils import extend_schema, inline_serializer
-from rest_framework import serializers
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -53,15 +52,12 @@ class LogoutView(GenericAPIView):
     """Logout an authenticated user and terminate their session."""
 
     permission_classes = [IsAuthenticated]
+    serializer_class = LogoutSerializer
 
     @extend_schema(
         summary="Logout an authenticated user",
         description="Logout an authenticated user and terminate their active session.",
-        tags=["Authentication"],
-        responses=inline_serializer(
-            name='LogoutResult',
-            fields={'detail': serializers.CharField(default='Successfully logged out.')}
-        )
+        tags=["Authentication"]
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
         """Logout an authenticated user.
@@ -71,7 +67,7 @@ class LogoutView(GenericAPIView):
         """
 
         logout(request)
-        return Response({'detail': 'Successfully logged out.'})
+        return Response()
 
 
 class WhoAmIView(GenericAPIView):

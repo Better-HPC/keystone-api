@@ -3114,11 +3114,7 @@ paths:
       - cookieAuth: []
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LogoutResult'
-          description: ''
+          description: No response body
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
@@ -8420,12 +8416,6 @@ components:
       required:
       - password
       - username
-    LogoutResult:
-      type: object
-      properties:
-        detail:
-          type: string
-          default: Successfully logged out.
     Membership:
       type: object
       description: Object serializer for the `Membership` model.

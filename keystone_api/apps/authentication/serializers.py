@@ -9,7 +9,7 @@ creation.
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-__all__ = ['LoginSerializer']
+__all__ = ['LoginSerializer', 'LogoutSerializer']
 
 
 class LoginSerializer(serializers.Serializer):
@@ -38,3 +38,7 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class LogoutSerializer(serializers.Serializer):
+    """Empty serializer class used when generating API documentation for logout requests."""
