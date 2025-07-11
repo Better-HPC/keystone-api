@@ -1,11 +1,10 @@
 """URL routing for the parent application."""
 
 from django.urls import path
-
-from .views import *
+from django_prometheus import exports
 
 app_name = 'metrics'
 
 urlpatterns = [
-    path('', MetricsView.as_view(), name='metrics'),
+    path("metrics", exports.ExportToDjangoView, name="prometheus-django-metrics")
 ]
