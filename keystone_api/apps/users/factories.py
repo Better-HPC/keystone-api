@@ -1,24 +1,22 @@
-"""Factory classes for creating test data for User, Team, and Membership models.
+"""Factories for creating mock database records.
 
-These factories use the factory library to generate realistic data for testing purposes.
-The UserFactory creates users with random usernames, emails, and other attributes.
-The TeamFactory creates teams with random names and can associate users with teams.
-The MembershipFactory creates membership records linking users to teams with specified roles.
+Factory classes are used to generate realistic mock data for use in
+testing and development. Each class encapsulates logic for constructing
+a specific model instance with sensible default values. This streamlines
+the creation of mock data, avoiding the need for hardcoded or repetitive
+setup logic.
 """
 
-import random
 import factory
 from django.utils import timezone
 from factory.django import DjangoModelFactory
 from factory import fuzzy
-from faker import Faker
 
-from .models import User, Team, Membership
-
-fake = Faker()
+from apps.factories.providers import global_provider
+from .models import *
 
 class UserFactory(DjangoModelFactory):
-    """Factory for creating test instances of a User model."""
+    """Factory for creating test instances of a `User` model."""
 
     class Meta:
         model = User
@@ -26,20 +24,20 @@ class UserFactory(DjangoModelFactory):
 
     username = factory.Sequence(lambda n: f"user{n}")
     password = factory.PostGenerationMethodCall('set_password', 'password123')
-    first_name = factory.LazyAttribute(lambda _: fake.first_name())
-    last_name = factory.LazyAttribute(lambda _: fake.last_name())
+    first_name = factory.LazyAttribute(lambda _: global_provider.fake.first_name())
+    last_name = factory.LazyAttribute(lambda _: global_provider.fake.last_name())
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")
-    department = factory.LazyAttribute(lambda _: fake.bs())
-    role = factory.LazyAttribute(lambda _: fake.job())
+    department = factory.LazyAttribute(lambda _: global_provider.fake.bs())
+    role = factory.LazyAttribute(lambda _: global_provider.fake.job())
     is_active = True
-    is_staff = factory.LazyFunction(lambda: random.choice([True, False]))
+    is_staff = factory.LazyFunction(lambda: global_provider.random.choice([True, False]))
     is_ldap_user = False
     date_joined = factory.LazyFunction(timezone.now)
     last_login = factory.LazyFunction(timezone.now)
 
 
 class TeamFactory(DjangoModelFactory):
-    """Factory for creating test instances of a Team model."""
+    """Factory for creating test instances of a `Team` model."""
 
     class Meta:
         model = Team
@@ -58,7 +56,7 @@ class TeamFactory(DjangoModelFactory):
 
 
 class MembershipFactory(DjangoModelFactory):
-    """Factory for creating test instances of a Membership model."""
+    """Factory for creating test instances of a `Membership` model."""
 
     class Meta:
         model = Membership

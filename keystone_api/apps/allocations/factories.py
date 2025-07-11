@@ -1,46 +1,42 @@
-"""Factories for the allocations app, used for generating test data.
-These factories create instances of models related to allocation requests, allocations, reviews, attachments, comments, and job statistics.
+"""Factories for creating mock database records.
+
+Factory classes are used to generate realistic mock data for use in
+testing and development. Each class encapsulates logic for constructing
+a specific model instance with sensible default values. This streamlines
+the creation of mock data, avoiding the need for hardcoded or repetitive
+setup logic.
 """
 
-import random
 from datetime import timedelta
 from django.utils import timezone
 import factory
 from factory import fuzzy
 from factory.django import DjangoModelFactory
 
-from apps.allocations.models import (
-    Allocation,
-    AllocationRequest,
-    AllocationReview,
-    Attachment,
-    Cluster,
-    Comment,
-    JobStats,
-)
+from .models import *
 from apps.research_products.models import Grant, Publication
-
+from apps.factories.providers import global_provider
 from apps.users.factories import UserFactory, TeamFactory
 from apps.research_products.factories import GrantFactory, PublicationFactory
 
 class ClusterFactory(DjangoModelFactory):
-    """Factory for creating test instances of a Cluster model."""
+    """Factory for creating test instances of a `Cluster` model."""
 
     class Meta:
         model = Cluster
 
     name = factory.Sequence(lambda n: f"cluster{n}")
-    description = factory.Faker("sentence")
+    description = global_provider.fake.sentence()
     enabled = True
 
 class AllocationRequestFactory(DjangoModelFactory):
-    """Factory for creating test instances of an AllocationRequest model."""
+    """Factory for creating test instances of an `AllocationRequest` model."""
 
     class Meta:
         model = AllocationRequest
 
-    title = factory.Faker("sentence", nb_words=4)
-    description = factory.Faker("text", max_nb_chars=2000)
+    title = factory.LazyFunction(lambda: global_provider.fake.sentence(nb_words=4))
+    description = factory.LazyFunction(lambda: global_provider.fake.text(max_nb_chars=2000))
     submitted = factory.LazyFunction(timezone.now)
     active = factory.LazyFunction(lambda: timezone.now().date())
     expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
@@ -65,20 +61,20 @@ class AllocationRequestFactory(DjangoModelFactory):
 
 
 class AllocationFactory(DjangoModelFactory):
-    """Factory for creating test instances of an Allocation model."""
+    """Factory for creating test instances of an `Allocation` model."""
 
     class Meta:
         model = Allocation
 
-    requested = factory.Faker("pyint", min_value=1000, max_value=100000)
-    awarded = factory.Faker("pyint", min_value=500, max_value=100000)
-    final = factory.Faker("pyint", min_value=500, max_value=100000)
+    requested = factory.LazyFunction(lambda: global_provider.fake.pyint(min_value=1000, max_value=100000))
+    awarded = factory.LazyFunction(lambda: global_provider.fake.pyint(min_value=500, max_value=100000))
+    final = factory.LazyFunction(lambda: global_provider.fake.pyint(min_value=500, max_value=100000))
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
 
 class AllocationReviewFactory(DjangoModelFactory):
-    """Factory for creating test instances of an AllocationReview model."""
+    """Factory for creating test instances of an `AllocationReview` model."""
 
     class Meta:
         model = AllocationReview
@@ -89,7 +85,7 @@ class AllocationReviewFactory(DjangoModelFactory):
 
 
 class AttachmentFactory(DjangoModelFactory):
-    """Factory for creating test instances of an Attachment model."""
+    """Factory for creating test instances of an `Attachment` model."""
 
     class Meta:
         model = Attachment
@@ -100,24 +96,24 @@ class AttachmentFactory(DjangoModelFactory):
 
 
 class CommentFactory(DjangoModelFactory):
-    """Factory for creating test instances of a Comment model."""
+    """Factory for creating test instances of a `Comment` model."""
 
     class Meta:
         model = Comment
 
-    content = factory.Faker("sentence")
-    private = factory.Faker("boolean", chance_of_getting_true=30)
+    content = factory.LazyFunction(lambda: global_provider.fake.sentence(nb_words=10))
+    private = factory.LazyFunction(lambda: global_provider.fake.boolean(chance_of_getting_true=30))
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
 
 class JobStatsFactory(DjangoModelFactory):
-    """Factory for creating test instances of a JobStats model."""
+    """Factory for creating test instances of a `JobStats` model."""
     class Meta:
         model = JobStats
 
     jobid = factory.Sequence(lambda n: f"job{n}")
-    jobname = factory.Faker("word")
+    jobname =factory.LazyFunction(lambda:  global_provider.fake.word())
     state = fuzzy.FuzzyChoice(["RUNNING", "COMPLETED", "FAILED"])
     submit = factory.LazyFunction(timezone.now)
     start = factory.LazyFunction(lambda: timezone.now() + timedelta(minutes=1))
