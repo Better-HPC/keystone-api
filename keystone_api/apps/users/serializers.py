@@ -103,7 +103,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
             attrs: The user attributes to validate.
 
         Returns:
-            A dictionary with the validated values.
+            A dictionary containing the validated values.
         """
 
         # Hash the password value

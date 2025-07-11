@@ -15,7 +15,7 @@ class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
     endpoint = '/research/grants/'
 
     def build_valid_record_data(self) -> dict:
-        """Return a dictionary with valid Grant data."""
+        """Return a dictionary containing valid Grant data."""
 
         return {
             'title': f"Grant ({self.team.name})",
