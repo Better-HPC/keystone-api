@@ -14,7 +14,7 @@ class GetMethod(TestCase):
     """Test HTTP GET handling by the `get` method."""
 
     def setUp(self) -> None:
-        """Create a view instance and HTTP request factory."""
+        """Create a new view instance."""
 
         self.view = WhoAmIView()
         self.factory = RequestFactory()

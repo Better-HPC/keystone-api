@@ -1,0 +1,29 @@
+"""Unit tests for the `Logout` class."""
+
+from unittest.mock import Mock, patch
+
+from django.contrib.auth import get_user_model
+from django.test import RequestFactory, TestCase
+
+from apps.authentication.views import LogoutView
+
+User = get_user_model()
+
+
+class PostMethod(TestCase):
+    """Test HTTP POST handling by the `post` method."""
+
+    def setUp(self) -> None:
+        """Create a new view instance."""
+
+        self.view = LogoutView()
+        self.factory = RequestFactory()
+
+    @patch('apps.authentication.views.logout')
+    def test_logout_triggered(self, mock_logout: Mock) -> None:
+        """Verify the system logout method is called."""
+
+        request = self.factory.post('/logout/')
+
+        self.view.post(request)
+        mock_logout.assert_called_with(request)
