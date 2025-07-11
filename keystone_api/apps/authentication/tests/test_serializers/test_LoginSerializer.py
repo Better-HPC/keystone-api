@@ -57,6 +57,8 @@ class Validation(TestCase):
         # Attempt login with exact password (should succeed)
         data = {'username': user_with_spaces.username, 'password': password_with_spaces}
         serializer = LoginSerializer(data=data, context={'request': self.request})
+        serializer.is_valid()
+
         self.assertEqual(serializer.validated_data['user'], user_with_spaces)
         self.assertTrue(serializer.is_valid())
 
