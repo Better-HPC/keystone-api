@@ -14,20 +14,20 @@ class GetMethod(TestCase):
     """Test HTTP request handling by the `get` method."""
 
     def setUp(self) -> None:
-        """Create a view instance and HTTP request factory."""
+        """Create a new view instance."""
 
+        self.view = WhoAmIView()
         self.factory = RequestFactory()
-        self.view = WhoAmIView.as_view()
         self.user = User.objects.create(username='testuser', password='password')
 
-    def test_get_authenticated_user(self) -> None:
-        """Verify user data is returned for an authenticated user."""
+    def test_authenticated_user(self) -> None:
+        """Verify authenticated users are returned their own metadata."""
 
         request = self.factory.get('/whoami/')
         request.user = self.user
 
-        response = self.view(request)
-        expected_data = RestrictedUserSerializer(self.user).data
+        expected_data = RestrictedUserSerializer(request.user).data
+        response = self.view.get(request)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(expected_data, response.data)

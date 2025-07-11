@@ -15,7 +15,7 @@ class EndpointPermissions(RecordEndpointPermissionsTests, APITestCase):
     endpoint_pattern = '/research/publications/{pk}/'
 
     def build_valid_record_data(self) -> dict:
-        """Return a dictionary with valid Publication data."""
+        """Return a dictionary containing valid Publication data."""
 
         return {
             'title': 'foo',
