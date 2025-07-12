@@ -3095,9 +3095,6 @@ paths:
             schema:
               $ref: '#/components/schemas/Login'
         required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -3144,9 +3141,6 @@ paths:
       summary: Retrieve the current application health status
       tags:
       - Application Health
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           description: No response body
@@ -3161,9 +3155,6 @@ paths:
       summary: Retrieve application health checks in JSON format
       tags:
       - Application Health
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -3195,9 +3186,6 @@ paths:
       summary: Retrieve application health checks in Prometheus format
       tags:
       - Application Health
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
@@ -7773,9 +7761,6 @@ paths:
       summary: Retrieve the application version number
       tags:
       - Application Version
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
       responses:
         '200':
           content:
