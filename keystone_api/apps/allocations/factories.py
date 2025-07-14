@@ -8,16 +8,18 @@ setup logic.
 """
 
 from datetime import timedelta
-from django.utils import timezone
+
 import factory
+from django.utils import timezone
 from factory import fuzzy
 from factory.django import DjangoModelFactory
+from faker import Faker
 
+from apps.users.factories import TeamFactory, UserFactory
 from .models import *
-from apps.research_products.models import Grant, Publication
-from apps.factories.providers import global_provider
-from apps.users.factories import UserFactory, TeamFactory
-from apps.research_products.factories import GrantFactory, PublicationFactory
+
+fake = Faker()
+
 
 class ClusterFactory(DjangoModelFactory):
     """Factory for creating test instances of a `Cluster` model."""
@@ -26,8 +28,9 @@ class ClusterFactory(DjangoModelFactory):
         model = Cluster
 
     name = factory.Sequence(lambda n: f"cluster{n}")
-    description = global_provider.fake.sentence()
+    description = fake.sentence()
     enabled = True
+
 
 class AllocationRequestFactory(DjangoModelFactory):
     """Factory for creating test instances of an `AllocationRequest` model."""
@@ -35,8 +38,8 @@ class AllocationRequestFactory(DjangoModelFactory):
     class Meta:
         model = AllocationRequest
 
-    title = factory.LazyFunction(lambda: global_provider.fake.sentence(nb_words=4))
-    description = factory.LazyFunction(lambda: global_provider.fake.text(max_nb_chars=2000))
+    title = factory.LazyFunction(lambda: fake.sentence(nb_words=4))
+    description = factory.LazyFunction(lambda: fake.text(max_nb_chars=2000))
     submitted = factory.LazyFunction(timezone.now)
     active = factory.LazyFunction(lambda: timezone.now().date())
     expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
@@ -66,9 +69,9 @@ class AllocationFactory(DjangoModelFactory):
     class Meta:
         model = Allocation
 
-    requested = factory.LazyFunction(lambda: global_provider.fake.pyint(min_value=1000, max_value=100000))
-    awarded = factory.LazyFunction(lambda: global_provider.fake.pyint(min_value=500, max_value=100000))
-    final = factory.LazyFunction(lambda: global_provider.fake.pyint(min_value=500, max_value=100000))
+    requested = factory.LazyFunction(lambda: fake.pyint(min_value=1000, max_value=100000))
+    awarded = factory.LazyFunction(lambda: fake.pyint(min_value=500, max_value=100000))
+    final = factory.LazyFunction(lambda: fake.pyint(min_value=500, max_value=100000))
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
@@ -101,19 +104,20 @@ class CommentFactory(DjangoModelFactory):
     class Meta:
         model = Comment
 
-    content = factory.LazyFunction(lambda: global_provider.fake.sentence(nb_words=10))
-    private = factory.LazyFunction(lambda: global_provider.fake.boolean(chance_of_getting_true=30))
+    content = factory.LazyFunction(lambda: fake.sentence(nb_words=10))
+    private = factory.LazyFunction(lambda: fake.boolean(chance_of_getting_true=30))
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
 
 class JobStatsFactory(DjangoModelFactory):
     """Factory for creating test instances of a `JobStats` model."""
+
     class Meta:
         model = JobStats
 
     jobid = factory.Sequence(lambda n: f"job{n}")
-    jobname =factory.LazyFunction(lambda:  global_provider.fake.word())
+    jobname = factory.LazyFunction(lambda: fake.word())
     state = fuzzy.FuzzyChoice(["RUNNING", "COMPLETED", "FAILED"])
     submit = factory.LazyFunction(timezone.now)
     start = factory.LazyFunction(lambda: timezone.now() + timedelta(minutes=1))

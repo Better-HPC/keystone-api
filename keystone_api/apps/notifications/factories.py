@@ -8,12 +8,14 @@ setup logic.
 """
 
 import factory
-from factory.django import DjangoModelFactory
 from factory import fuzzy
+from factory.django import DjangoModelFactory
+from faker import Faker
 
-from .models import *
 from apps.users.factories import UserFactory
-from apps.factories.providers import global_provider
+from .models import *
+
+fake = Faker()
 
 
 class NotificationFactory(DjangoModelFactory):
@@ -22,10 +24,10 @@ class NotificationFactory(DjangoModelFactory):
     class Meta:
         model = Notification
 
-    time = factory.LazyFunction(lambda: global_provider.fake.date_time_this_year())
-    read = factory.LazyFunction(lambda: global_provider.fake.boolean(chance_of_getting_true=30))
-    subject = factory.LazyFunction(lambda: global_provider.fake.sentence(nb_words=6))
-    message = factory.LazyFunction(lambda: global_provider.fake.paragraph(nb_sentences=3))
+    time = factory.LazyFunction(lambda: fake.date_time_this_year())
+    read = factory.LazyFunction(lambda: fake.boolean(chance_of_getting_true=30))
+    subject = factory.LazyFunction(lambda: fake.sentence(nb_words=6))
+    message = factory.LazyFunction(lambda: fake.paragraph(nb_sentences=3))
     metadata = factory.LazyFunction(lambda: {"key": "value"})
     notification_type = fuzzy.FuzzyChoice(Notification.NotificationType.values)
     user = factory.SubFactory(UserFactory)
@@ -38,5 +40,5 @@ class PreferenceFactory(DjangoModelFactory):
         model = Preference
 
     request_expiry_thresholds = factory.LazyFunction(lambda: [30, 14])
-    notify_on_expiration = factory.LazyFunction(lambda: global_provider.fake.boolean(chance_of_getting_true=75))
+    notify_on_expiration = factory.LazyFunction(lambda: fake.boolean(chance_of_getting_true=75))
     user = factory.SubFactory(UserFactory)
