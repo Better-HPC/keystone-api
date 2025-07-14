@@ -10,13 +10,10 @@ setup logic.
 import factory
 from factory.django import DjangoModelFactory
 from factory.random import randgen
-from faker import Faker
 
 from .models import *
 
 __all__ = ['MembershipFactory', 'TeamFactory', 'UserFactory']
-
-fake = Faker()
 
 
 class UserFactory(DjangoModelFactory):
@@ -30,14 +27,14 @@ class UserFactory(DjangoModelFactory):
 
     username = factory.Sequence(lambda n: f"user{n}")
     password = factory.PostGenerationMethodCall('set_password', 'password123!')
-    first_name = factory.LazyAttribute(lambda _: fake.first_name())
-    last_name = factory.LazyAttribute(lambda _: fake.last_name())
+    first_name = factory.Faker('first_name')
+    last_name = factory.Faker('last_name')
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")
-    department = factory.LazyAttribute(lambda _: fake.bs())
-    role = factory.LazyAttribute(lambda _: fake.job())
+    department = factory.Faker('bs')
+    role = factory.Faker('job')
 
-    is_active = True
-    is_staff = factory.LazyFunction(lambda: randgen.choice([True, False]))
+    is_active = factory.Faker('pybool', truth_probability=0.98)
+    is_staff = factory.Faker('pybool')
     is_ldap_user = False
 
 
@@ -54,7 +51,7 @@ class TeamFactory(DjangoModelFactory):
 
     @factory.post_generation
     def users(self, create: bool, extracted: list[User] | None, **kwargs):
-        """Populate the many-to-many relationship with `User` instances."""
+        """Populate the many-to-many `users` relationship."""
 
         if extracted and not create:
             for user in extracted:
@@ -69,6 +66,7 @@ class MembershipFactory(DjangoModelFactory):
 
         model = Membership
 
+    role = randgen.choice(Membership.Role.values)
+
     user = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
-    role = randgen.choice([choice[0] for choice in Membership.Role.choices])

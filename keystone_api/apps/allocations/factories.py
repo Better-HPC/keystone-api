@@ -11,11 +11,11 @@ from datetime import timedelta
 
 import factory
 from django.utils import timezone
-from factory import fuzzy
 from factory.django import DjangoModelFactory
-from faker import Faker
+from factory.random import randgen
 
 from apps.users.factories import TeamFactory, UserFactory
+from apps.users.models import User
 from .models import *
 
 __all__ = [
@@ -28,60 +28,72 @@ __all__ = [
     'JobStatsFactory'
 ]
 
-fake = Faker()
-
 
 class ClusterFactory(DjangoModelFactory):
-    """Factory for creating test instances of a `Cluster` model."""
+    """Factory for creating mock `Cluster` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Cluster
 
-    name = factory.Sequence(lambda n: f"cluster{n}")
-    description = fake.sentence()
+    name = factory.Sequence(lambda n: f"Cluster {n}")
+    description = factory.Faker('sentence')
     enabled = True
 
 
 class AllocationRequestFactory(DjangoModelFactory):
-    """Factory for creating test instances of an `AllocationRequest` model."""
+    """Factory for creating mock `AllocationRequest` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = AllocationRequest
 
-    title = factory.LazyFunction(lambda: fake.sentence(nb_words=4))
-    description = factory.LazyFunction(lambda: fake.text(max_nb_chars=2000))
+    title = factory.Faker('sentence', nb_words=4)
+    description = factory.Faker('text', max_nb_chars=2000)
     submitted = factory.LazyFunction(timezone.now)
     active = factory.LazyFunction(lambda: timezone.now().date())
     expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
-    status = fuzzy.FuzzyChoice(AllocationRequest.StatusChoices.values)
+    status = randgen.choice(AllocationRequest.StatusChoices.values)
+
     submitter = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
 
     @factory.post_generation
-    def assignees(self, create, extracted, **kwargs):
+    def assignees(self, create: bool, extracted: list[User] | None, **kwargs):
+        """Populate the many-to-many `assignees` relationship."""
+
         if create and extracted:
             self.assignees.set(extracted)
 
     @factory.post_generation
-    def publications(self, create, extracted, **kwargs):
+    def publications(self, create: bool, extracted: list[User] | None, **kwargs):
+        """Populate the many-to-many `publications` relationship."""
+
         if create and extracted:
             self.publications.set(extracted)
 
     @factory.post_generation
-    def grants(self, create, extracted, **kwargs):
+    def grants(self, create: bool, extracted: list[User] | None, **kwargs):
+        """Populate the many-to-many `grants` relationship."""
+
         if create and extracted:
             self.grants.set(extracted)
 
 
 class AllocationFactory(DjangoModelFactory):
-    """Factory for creating test instances of an `Allocation` model."""
+    """Factory for creating mock `Allocation` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Allocation
 
-    requested = factory.LazyFunction(lambda: fake.pyint(min_value=1000, max_value=100000))
-    awarded = factory.LazyFunction(lambda: fake.pyint(min_value=500, max_value=100000))
-    final = factory.LazyFunction(lambda: fake.pyint(min_value=500, max_value=100000))
+    requested = factory.Faker('pyint', min_value=1000, max_value=100000)
+    awarded = factory.Faker('pyint', min_value=500, max_value=100000)
+    final = factory.Faker('pyint', min_value=500, max_value=100000)
+
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
@@ -90,17 +102,22 @@ class AllocationReviewFactory(DjangoModelFactory):
     """Factory for creating test instances of an `AllocationReview` model."""
 
     class Meta:
+        """Factory settings."""
+
         model = AllocationReview
 
-    status = fuzzy.FuzzyChoice(AllocationReview.StatusChoices.values)
+    status = randgen.choice(AllocationReview.StatusChoices.values)
+
     request = factory.SubFactory(AllocationRequestFactory)
     reviewer = factory.SubFactory(UserFactory)
 
 
 class AttachmentFactory(DjangoModelFactory):
-    """Factory for creating test instances of an `Attachment` model."""
+    """Factory for creating mock `Attachment` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Attachment
 
     file = factory.django.FileField(filename="document.pdf")
@@ -109,28 +126,34 @@ class AttachmentFactory(DjangoModelFactory):
 
 
 class CommentFactory(DjangoModelFactory):
-    """Factory for creating test instances of a `Comment` model."""
+    """Factory for creating mock `Comment` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Comment
 
-    content = factory.LazyFunction(lambda: fake.sentence(nb_words=10))
-    private = factory.LazyFunction(lambda: fake.boolean(chance_of_getting_true=30))
+    content = factory.Faker('sentence', nb_words=10)
+    private = factory.Faker('pybool', truth_probability=0.1)
+
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
 
 class JobStatsFactory(DjangoModelFactory):
-    """Factory for creating test instances of a `JobStats` model."""
+    """Factory for creating mock `JobStats` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = JobStats
 
-    jobid = factory.Sequence(lambda n: f"job{n}")
-    jobname = factory.LazyFunction(lambda: fake.word())
-    state = fuzzy.FuzzyChoice(["RUNNING", "COMPLETED", "FAILED"])
-    submit = factory.LazyFunction(timezone.now)
-    start = factory.LazyFunction(lambda: timezone.now() + timedelta(minutes=1))
-    end = factory.LazyFunction(lambda: timezone.now() + timedelta(minutes=10))
+    jobid = factory.Sequence(lambda n: f"{n}")
+    jobname = factory.Faker('word')
+    state = randgen.choice(["RUNNING", "COMPLETED", "FAILED"])
+    submit = factory.Faker('date_time_between', start_date='-1y', end_date='-1d')
+    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(min=1, max=60)))
+    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(min=5, max=240)))
+
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)
