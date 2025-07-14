@@ -8,59 +8,65 @@ setup logic.
 """
 
 import factory
-from django.utils import timezone
 from factory.django import DjangoModelFactory
-from factory import fuzzy
+from factory.random import randgen
 
-from apps.factories.providers import global_provider
 from .models import *
 
+__all__ = ['MembershipFactory', 'TeamFactory', 'UserFactory']
+
+
 class UserFactory(DjangoModelFactory):
-    """Factory for creating test instances of a `User` model."""
+    """Factory for creating mock `User` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = User
         django_get_or_create = ('username',)
 
     username = factory.Sequence(lambda n: f"user{n}")
-    password = factory.PostGenerationMethodCall('set_password', 'password123')
-    first_name = factory.LazyAttribute(lambda _: global_provider.fake.first_name())
-    last_name = factory.LazyAttribute(lambda _: global_provider.fake.last_name())
+    password = factory.PostGenerationMethodCall('set_password', 'password123!')
+    first_name = factory.Faker('first_name')
+    last_name = factory.Faker('last_name')
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")
-    department = factory.LazyAttribute(lambda _: global_provider.fake.bs())
-    role = factory.LazyAttribute(lambda _: global_provider.fake.job())
-    is_active = True
-    is_staff = factory.LazyFunction(lambda: global_provider.random.choice([True, False]))
+    department = factory.Faker('bs')
+    role = factory.Faker('job')
+
+    is_active = factory.Faker('pybool', truth_probability=0.98)
+    is_staff = factory.Faker('pybool')
     is_ldap_user = False
-    date_joined = factory.LazyFunction(timezone.now)
-    last_login = factory.LazyFunction(timezone.now)
 
 
 class TeamFactory(DjangoModelFactory):
-    """Factory for creating test instances of a `Team` model."""
+    """Factory for creating mock `Team` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Team
 
     name = factory.Sequence(lambda n: f"Team {n}")
     is_active = True
 
     @factory.post_generation
-    def users(self, create, extracted, **kwargs):
-        if not create:
-            return
+    def users(self, create: bool, extracted: list[User] | None, **kwargs):
+        """Populate the many-to-many `users` relationship."""
 
-        if extracted:
+        if extracted and not create:
             for user in extracted:
                 self.users.add(user)
 
 
 class MembershipFactory(DjangoModelFactory):
-    """Factory for creating test instances of a `Membership` model."""
+    """Factory for creating mock `Membership` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Membership
+
+    role = randgen.choice(Membership.Role.values)
 
     user = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
-    role = fuzzy.FuzzyChoice([choice[0] for choice in Membership.Role.choices])
