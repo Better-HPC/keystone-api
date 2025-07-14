@@ -21,7 +21,6 @@ from argparse import ArgumentParser
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from factory.random import randgen, reseed_random
-from tqdm import tqdm
 
 from apps.allocations.factories import *
 from apps.allocations.models import AllocationRequest
@@ -44,7 +43,7 @@ class Command(BaseCommand):
             parser: The parser instance to add arguments to.
         """
 
-        parser.add_argument('--seed', type=int, help='Optional seed for the random generator.', default=42)
+        parser.add_argument('--seed', type=int, help='Optional seed for the random generator.')
         parser.add_argument('--n_users', type=int, help='Number of non-admin users to create', default=400)
         parser.add_argument('--n_staff', type=int, help='Number of admin users to create', default=100)
         parser.add_argument('--n_teams', type=int, help='Number of teams to create', default=200)
@@ -58,8 +57,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
+        self.stdout.write("Generating mock data:", self.style.MIGRATE_HEADING)
+
         if seed := options['seed']:
-            self.stdout.write(self.style.WARNING(f"Using seed: {seed}"))
+            self.stdout.write(f"  Using seed: {seed}", self.style.WARNING)
             reseed_random(seed)
 
         self.gen_data(
@@ -77,63 +78,77 @@ class Command(BaseCommand):
     @transaction.atomic
     def gen_data(self, n_clusters, n_reqs_comments, n_staff, n_team_grants, n_team_pubs, n_team_reqs, n_teams, n_user_notifications, n_users):
 
-        self.stdout.write(self.style.SUCCESS("Seeding data..."))
-
+        self.stdout.write("  Generating user accounts...", ending=' ')
+        self.stdout.flush()
         users = list(UserFactory.create_batch(n_users, is_staff=False))
-        staff_users = list(UserFactory.create_batch(n_staff, is_staff=True))
-        all_users = users + staff_users
+        self.stdout.write("OK", self.style.SUCCESS)
 
-        self.stdout.write(f"✓ Created {n_users} users and {n_staff} staff users")
+        self.stdout.write("  Generating staff accounts... ", ending=' ')
+        self.stdout.flush()
+        staff_users = list(UserFactory.create_batch(n_staff, is_staff=True))
+        self.stdout.write("OK", self.style.SUCCESS)
 
         teams = []
-        for _ in tqdm(range(n_teams), desc="Creating teams and assigning members"):
+        all_users = users + staff_users
+
+        self.stdout.write("  Generating teams...", ending=' ')
+        self.stdout.flush()
+        for _ in range(n_teams):
             team, member_users = self._gen_team(all_users)
             teams.append((team, member_users))
 
-        self.stdout.write(f"✓ Created {n_teams} teams and assigned members")
+        self.stdout.write("OK", self.style.SUCCESS)
+        self.stdout.write("  Generating publications...", ending=' ')
+        self.stdout.flush()
+        for team, _ in teams:
+            PublicationFactory.create_batch(n_team_pubs, team=team)
 
-        for team, _ in tqdm(teams, desc="Creating publications and grants"):
-            with transaction.atomic():
-                PublicationFactory.create_batch(n_team_pubs, team=team)
-                GrantFactory.create_batch(n_team_grants, team=team)
+        self.stdout.write("OK", self.style.SUCCESS)
+        self.stdout.write("  Generating grants...", ending=' ')
+        self.stdout.flush()
+        for team, _ in teams:
+            GrantFactory.create_batch(n_team_grants, team=team)
 
-        self.stdout.write("✓ Created publications and grants")
+        self.stdout.write("OK", self.style.SUCCESS)
 
+        self.stdout.write("  Generating clusters...", ending=' ')
+        self.stdout.flush()
         clusters = ClusterFactory.create_batch(n_clusters)
-        self.stdout.write(f"✓ Created {n_clusters} clusters")
+        self.stdout.write("OK", self.style.SUCCESS)
 
-        for team, members in tqdm(teams, desc="Creating allocation requests and allocations"):
+        self.stdout.write("  Generating allocation requests...", ending=' ')
+        for team, members in teams:
             self._gen_alloc_req_for_team(team, members, staff_users, clusters, n_team_reqs)
 
-        self.stdout.write("✓ Created allocation requests and allocations")
-
-        for team, members in tqdm(teams, desc="Creating comments"):
+        self.stdout.write("OK", self.style.SUCCESS)
+        self.stdout.write("  Generating comments...", ending=' ')
+        for team, members in teams:
             for request in AllocationRequest.objects.filter(team=team):
                 self._gen_comments_for_request(request, members, staff_users, n_reqs_comments)
 
-        self.stdout.write(f"✓ Created {n_reqs_comments} comments per allocation request")
-
-        for user in tqdm(all_users, desc="Creating notification preferences"):
+        self.stdout.write("OK", self.style.SUCCESS)
+        self.stdout.write("  Generating notification preferences...", ending=' ')
+        for user in all_users:
             PreferenceFactory.create(user=user)
 
-        self.stdout.write("✓ Created notification preferences")
-
-        for user in tqdm(all_users, desc="Creating notifications"):
+        self.stdout.write("OK", self.style.SUCCESS)
+        self.stdout.write("  Generating notifications...", ending=' ')
+        for user in all_users:
             NotificationFactory.create_batch(n_user_notifications, user=user)
 
-        self.stdout.write(self.style.SUCCESS("✓ Seeded all data successfully!"))
+        self.stdout.write("OK", self.style.SUCCESS)
 
     @staticmethod
     def _gen_team(all_users):
         """Generate a team with random members."""
 
         team = TeamFactory()
-        member_users = randgen.sample(all_users, randgen.randint(3, 4))
-        for user in member_users:
+        members = randgen.sample(all_users, randgen.randint(3, 4))
+        for user in members:
             role = randgen.choice([r[0] for r in Membership.Role.choices])
             MembershipFactory(user=user, team=team, role=role)
 
-        return team, member_users
+        return team, members
 
     @staticmethod
     def _gen_alloc_req_for_team(team, members, staff_users, clusters, n_requests=10):
