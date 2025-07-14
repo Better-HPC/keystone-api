@@ -1,0 +1,12 @@
+class PatchStdOut:
+    def _write(self, message: str, style=None, ending: str = '\n') -> None:
+        """Write a message to stdout and immediately flush.
+
+        Args:
+            message: The message to write.
+            style: Optional style to apply.
+            ending: Optional line ending (default is newline).
+        """
+
+        self.stdout.write(message, style, ending=ending)
+        self.stdout.flush()

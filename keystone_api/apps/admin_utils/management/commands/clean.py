@@ -17,8 +17,10 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
+from . import PatchStdOut
 
-class Command(BaseCommand):
+
+class Command(PatchStdOut, BaseCommand):
     """Clean up files generated when launching a new application instance."""
 
     help = __doc__
@@ -42,7 +44,7 @@ class Command(BaseCommand):
         if not any([options['static'], options['uploads'], options['sqlite'], options['all']]):
             self.stderr.write('At least one deletion target is required. See `clean --help` for details.')
 
-        self.stdout.write('Cleaning application files:', self.style.MIGRATE_HEADING)
+        self.stdout.write('Cleaning application data:', self.style.MIGRATE_HEADING)
         if options['static'] or options['all']:
             self._clean_static()
 
@@ -55,27 +57,21 @@ class Command(BaseCommand):
     def _clean_static(self) -> None:
         """Remove static application files."""
 
-        self.stdout.write('  Removing static files...', ending=' ')
-        self.stdout.flush()
-
+        self._write('  Removing static files...', ending=' ')
         shutil.rmtree(settings.STATIC_ROOT, ignore_errors=True)
-        self.stdout.write('OK', self.style.SUCCESS)
+        self._write('OK', self.style.SUCCESS)
 
     def _clean_uploads(self) -> None:
         """Delete uploaded user files."""
 
-        self.stdout.write('  Removing user uploads...', ending=' ')
-        self.stdout.flush()
-
+        self._write('  Removing user uploads...', ending=' ')
         shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
-        self.stdout.write('OK', self.style.SUCCESS)
+        self._write('OK', self.style.SUCCESS)
 
     def _clean_sqlite(self) -> None:
         """Delete the application's development SQLite database."""
 
-        self.stdout.write('  Removing SQLite files...', ending=' ')
-        self.stdout.flush()
-
+        self._write('  Removing SQLite files...', ending=' ')
         for db_settings in settings.DATABASES.values():
             if 'sqlite' in db_settings['ENGINE']:
                 db_path = Path(db_settings['NAME'])
@@ -84,4 +80,4 @@ class Command(BaseCommand):
                 db_path.unlink(missing_ok=True)
                 journal_path.unlink(missing_ok=True)
 
-        self.stdout.write('OK', self.style.SUCCESS)
+        self._write('OK', self.style.SUCCESS)

@@ -29,9 +29,10 @@ from apps.research_products.factories import *
 from apps.research_products.models import Grant, Publication
 from apps.users.factories import *
 from apps.users.models import Membership
+from . import PatchStdOut
 
 
-class Command(BaseCommand):
+class Command(PatchStdOut, BaseCommand):
     """Populate the database with randomized mock data."""
 
     help = __doc__
@@ -57,10 +58,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
-        self.stdout.write("Generating mock data:", self.style.MIGRATE_HEADING)
+        self._write("Generating mock data:", self.style.MIGRATE_HEADING)
 
         if seed := options['seed']:
-            self.stdout.write(f"  Using seed: {seed}", self.style.WARNING)
+            self._write(f"  Using seed: {seed}", self.style.WARNING)
             reseed_random(seed)
 
         self.gen_data(
@@ -78,65 +79,58 @@ class Command(BaseCommand):
     @transaction.atomic
     def gen_data(self, n_clusters, n_reqs_comments, n_staff, n_team_grants, n_team_pubs, n_team_reqs, n_teams, n_user_notifications, n_users):
 
-        self.stdout.write("  Generating user accounts...", ending=' ')
-        self.stdout.flush()
+        self._write("  Generating user accounts...", ending=' ')
         users = list(UserFactory.create_batch(n_users, is_staff=False))
-        self.stdout.write("OK", self.style.SUCCESS)
+        self._write("OK", self.style.SUCCESS)
 
-        self.stdout.write("  Generating staff accounts... ", ending=' ')
-        self.stdout.flush()
+        self._write("  Generating staff accounts... ", ending=' ')
         staff_users = list(UserFactory.create_batch(n_staff, is_staff=True))
-        self.stdout.write("OK", self.style.SUCCESS)
+        self._write("OK", self.style.SUCCESS)
 
         teams = []
         all_users = users + staff_users
 
-        self.stdout.write("  Generating teams...", ending=' ')
-        self.stdout.flush()
+        self._write("  Generating teams...", ending=' ')
         for _ in range(n_teams):
             team, member_users = self._gen_team(all_users)
             teams.append((team, member_users))
 
-        self.stdout.write("OK", self.style.SUCCESS)
-        self.stdout.write("  Generating publications...", ending=' ')
-        self.stdout.flush()
+        self._write("OK", self.style.SUCCESS)
+        self._write("  Generating publications...", ending=' ')
         for team, _ in teams:
             PublicationFactory.create_batch(n_team_pubs, team=team)
 
-        self.stdout.write("OK", self.style.SUCCESS)
-        self.stdout.write("  Generating grants...", ending=' ')
-        self.stdout.flush()
+        self._write("OK", self.style.SUCCESS)
+        self._write("  Generating grants...", ending=' ')
         for team, _ in teams:
             GrantFactory.create_batch(n_team_grants, team=team)
 
-        self.stdout.write("OK", self.style.SUCCESS)
-
-        self.stdout.write("  Generating clusters...", ending=' ')
-        self.stdout.flush()
+        self._write("OK", self.style.SUCCESS)
+        self._write("  Generating clusters...", ending=' ')
         clusters = ClusterFactory.create_batch(n_clusters)
-        self.stdout.write("OK", self.style.SUCCESS)
+        self._write("OK", self.style.SUCCESS)
 
-        self.stdout.write("  Generating allocation requests...", ending=' ')
+        self._write("  Generating allocation requests...", ending=' ')
         for team, members in teams:
             self._gen_alloc_req_for_team(team, members, staff_users, clusters, n_team_reqs)
 
-        self.stdout.write("OK", self.style.SUCCESS)
-        self.stdout.write("  Generating comments...", ending=' ')
+        self._write("OK", self.style.SUCCESS)
+        self._write("  Generating comments...", ending=' ')
         for team, members in teams:
             for request in AllocationRequest.objects.filter(team=team):
                 self._gen_comments_for_request(request, members, staff_users, n_reqs_comments)
 
-        self.stdout.write("OK", self.style.SUCCESS)
-        self.stdout.write("  Generating notification preferences...", ending=' ')
+        self._write("OK", self.style.SUCCESS)
+        self._write("  Generating notification preferences...", ending=' ')
         for user in all_users:
             PreferenceFactory.create(user=user)
 
-        self.stdout.write("OK", self.style.SUCCESS)
-        self.stdout.write("  Generating notifications...", ending=' ')
+        self._write("OK", self.style.SUCCESS)
+        self._write("  Generating notifications...", ending=' ')
         for user in all_users:
             NotificationFactory.create_batch(n_user_notifications, user=user)
 
-        self.stdout.write("OK", self.style.SUCCESS)
+        self._write("OK", self.style.SUCCESS)
 
     @staticmethod
     def _gen_team(all_users):
