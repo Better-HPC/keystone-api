@@ -14,6 +14,8 @@ from faker import Faker
 from apps.users.factories import TeamFactory
 from .models import *
 
+__all__ = ['GrantFactory', 'PublicationFactory']
+
 fake = Faker()
 
 

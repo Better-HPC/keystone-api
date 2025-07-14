@@ -15,6 +15,8 @@ from faker import Faker
 from apps.users.factories import UserFactory
 from .models import *
 
+__all__ = ['NotificationFactory', 'PreferenceFactory']
+
 fake = Faker()
 
 

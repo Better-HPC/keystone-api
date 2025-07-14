@@ -21,12 +21,12 @@ from django.db import transaction
 from factory.random import randgen, reseed_random
 from tqdm import tqdm
 
-from apps.allocations.factories import AllocationFactory, AllocationRequestFactory, ClusterFactory, CommentFactory
+from apps.allocations.factories import *
 from apps.allocations.models import AllocationRequest
-from apps.notifications.factories import NotificationFactory, PreferenceFactory
-from apps.research_products.factories import GrantFactory, PublicationFactory
+from apps.notifications.factories import *
+from apps.research_products.factories import *
 from apps.research_products.models import Grant, Publication
-from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.factories import *
 from apps.users.models import Membership
 
 

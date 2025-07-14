@@ -18,6 +18,16 @@ from faker import Faker
 from apps.users.factories import TeamFactory, UserFactory
 from .models import *
 
+__all__ = [
+    'AllocationFactory',
+    'AllocationRequestFactory',
+    'AllocationReviewFactory',
+    'AttachmentFactory',
+    'ClusterFactory',
+    'CommentFactory',
+    'JobStatsFactory'
+]
+
 fake = Faker()
 
 
