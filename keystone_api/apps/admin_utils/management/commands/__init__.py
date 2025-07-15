@@ -1,4 +1,6 @@
-class PatchStdOut:
+class StdOutUtils:
+    """Convenience utilities for consistant behavior when writing to STDOUT."""
+
     def _write(self, message: str, style=None, ending: str = '\n') -> None:
         """Write a message to stdout and immediately flush.
 

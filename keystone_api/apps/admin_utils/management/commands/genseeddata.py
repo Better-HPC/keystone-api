@@ -29,10 +29,10 @@ from apps.research_products.factories import *
 from apps.research_products.models import Grant, Publication
 from apps.users.factories import *
 from apps.users.models import Membership
-from . import PatchStdOut
+from . import StdOutUtils
 
 
-class Command(PatchStdOut, BaseCommand):
+class Command(StdOutUtils, BaseCommand):
     """Populate the database with randomized mock data."""
 
     help = __doc__

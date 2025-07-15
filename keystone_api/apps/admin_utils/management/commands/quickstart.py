@@ -26,10 +26,10 @@ from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from . import PatchStdOut
+from . import StdOutUtils
 
 
-class Command(PatchStdOut, BaseCommand):
+class Command(StdOutUtils, BaseCommand):
     """A helper utility for quickly migrating/deploying an application instance."""
 
     help = __doc__

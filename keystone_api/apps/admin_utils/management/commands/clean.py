@@ -17,10 +17,10 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from . import PatchStdOut
+from . import StdOutUtils
 
 
-class Command(PatchStdOut, BaseCommand):
+class Command(StdOutUtils, BaseCommand):
     """Clean up files generated when launching a new application instance."""
 
     help = __doc__
@@ -44,7 +44,7 @@ class Command(PatchStdOut, BaseCommand):
         if not any([options['static'], options['uploads'], options['sqlite'], options['all']]):
             self.stderr.write('At least one deletion target is required. See `clean --help` for details.')
 
-        self.stdout.write('Cleaning application data:', self.style.MIGRATE_HEADING)
+        self._write('Cleaning application data:', self.style.MIGRATE_HEADING)
         if options['static'] or options['all']:
             self._clean_static()
 
