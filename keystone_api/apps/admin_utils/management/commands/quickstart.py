@@ -18,6 +18,7 @@ to handle database migrations, static file collection, and web server deployment
 
 import subprocess
 from argparse import ArgumentParser
+from email.message import EmailMessage
 
 from aiosmtpd.controller import Controller
 from aiosmtpd.handlers import Message
@@ -25,8 +26,10 @@ from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
+from . import StdOutUtils
 
-class Command(BaseCommand):
+
+class Command(StdOutUtils, BaseCommand):
     """A helper utility for quickly migrating/deploying an application instance."""
 
     help = __doc__
@@ -50,53 +53,83 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
-        # Note: `no_input=False` indicates the user should not be prompted for input
+        if not any([
+            options['all'],
+            options['celery'],
+            options['demo_user'],
+            options['server'],
+            options['migrate'],
+            options['smtp'],
+            options['static'],
+        ]):
+            self.stderr.write('At least one action is required. See `quickstart --help` for details.')
+            return
 
+        # Note: `no_input=False` indicates the user should not be prompted for input
         if options['static'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Collecting static files...'))
-            call_command('collectstatic', no_input=False)
+            self._collect_static()
 
         if options['migrate'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Running database migrations...'))
-            call_command('migrate', no_input=False)
+            call_command('migrate', interactive=False)
 
         if options['demo_user'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Checking for admin account...'))
-            self.create_admin()
+            self._create_admin()
 
         if options['celery'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Starting Celery worker...'))
-            self.run_celery()
+            self._run_celery()
 
         if options['smtp'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Starting SMTP server...'))
-            self.run_smtp()
+            self._run_smtp()
 
         if options['server'] or options['all']:
-            self.stdout.write(self.style.SUCCESS('Starting Uvicorn server...'))
-            self.run_server()
+            self._run_server()
 
-    def create_admin(self) -> None:
+    def _collect_static(self) -> None:
+        """Collect static application files."""
+
+        self._write("Collecting static files: ", self.style.MIGRATE_HEADING)
+        call_command('collectstatic', interactive=False, verbosity=0)
+        self._write("  Static files collected.")
+
+    def _create_admin(self) -> None:
         """Create an `admin` user account if no other accounts already exist."""
 
+        self._write("Creating admin user: ", self.style.MIGRATE_HEADING)
+
+        self._write('  Checking for existing users...', ending=' ')
         user = get_user_model()
         if user.objects.exists():
-            self.stdout.write(self.style.WARNING('User accounts already exist - skipping.'))
+            self._write('User accounts already exist - skipping.', self.style.WARNING)
+            return
 
-        else:
-            user.objects.create_superuser(username='admin', password='quickstart')
+        self._write('OK', self.style.SUCCESS)
 
-    @staticmethod
-    def run_celery() -> None:
+        self._write('  Creating user `admin`...', ending=' ')
+        user.objects.create_superuser(username='admin', password='quickstart')
+        self._write('OK', self.style.SUCCESS)
+
+    def _run_celery(self) -> None:
         """Start a Celery worker."""
 
-        subprocess.Popen(['redis-server'])
-        subprocess.Popen(['celery', '-A', 'keystone_api.apps.scheduler', 'worker'])
-        subprocess.Popen(['celery', '-A', 'keystone_api.apps.scheduler', 'beat',
-                          '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler'])
+        self._write('Starting Celery services:', self.style.MIGRATE_HEADING)
 
-    @staticmethod
-    def run_server(host: str = '0.0.0.0', port: int = 8000) -> None:
+        self._write('  Launching redis...', ending=' ')
+        subprocess.Popen(['redis-server'], stdout=subprocess.DEVNULL)
+        self._write('done')
+
+        self._write('  Launching scheduler...', ending=' ')
+        subprocess.Popen(['celery', '-A', 'keystone_api.apps.scheduler', 'worker'], stdout=subprocess.DEVNULL)
+        self._write('done')
+
+        self._write('  Launching workers...', ending=' ')
+        subprocess.Popen(
+            ['celery', '-A', 'keystone_api.apps.scheduler', 'beat', '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler'],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        self._write('done')
+
+    def _run_server(self, host: str = '0.0.0.0', port: int = 8000) -> None:
         """Start a Uvicorn web server.
 
         Args:
@@ -104,11 +137,11 @@ class Command(BaseCommand):
             port: The port to bind to.
         """
 
+        self._write("Starting ASGI server: ", self.style.MIGRATE_HEADING)
         command = ['uvicorn', '--host', host, '--port', str(port), 'keystone_api.main.asgi:application']
         subprocess.run(command, check=True)
 
-    @staticmethod
-    def run_smtp(host: str = '0.0.0.0', port: int = 25) -> None:
+    def _run_smtp(self, host: str = '0.0.0.0', port: int = 25) -> None:
         """Start an SMTP server.
 
         Args:
@@ -116,13 +149,18 @@ class Command(BaseCommand):
             port: The port to bind to.
         """
 
+        self._write("Starting SMTP server: ", self.style.MIGRATE_HEADING)
+
         class CustomMessageHandler(Message):
-            def handle_message(self, message: str) -> None:
-                print(f"Received message from: {message['from']}")
-                print(f"To: {message['to']}")
-                print(f"Subject: {message['subject']}")
-                print("Body:", message.get_payload())
+            def handle_message(self, message: EmailMessage) -> None:
+                print(
+                    f"  Received message from: {message['from']}\n"
+                    f"  To: {message['to']}\n"
+                    f"  Subject: {message['subject']}\n"
+                    f"  Body:", message.get_payload()
+                )
 
         controller = Controller(CustomMessageHandler(), hostname=host, port=port)
         controller.start()
-        print(f"SMTP server running on {host}:{port}")
+
+        print(f"  SMTP server running on {host}:{port}")

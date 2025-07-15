@@ -1,5 +1,6 @@
 # Application files
 keystone_api/keystone.db
+keystone_api/keystone.db-journal
 keystone_api/static_files/
 keystone_api/media/
 keystone_api/email/
