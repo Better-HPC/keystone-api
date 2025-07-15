@@ -50,6 +50,33 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
+        summary="List all audit logs",
+        description=(
+            "Retrieve all application audit logs. "
+            "These log entries track changes to database records and are used for compliance and security auditing."
+        ),
+        tags=["Logging"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve an audit log record",
+        description=(
+            "Retrieve an audit log by ID. "
+            "These log entries track changes to database records and are used for compliance and security auditing."
+        ),
+        tags=["Logging"],
+    )
+)
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """API endpoints for fetching audit logs."""
+
+    queryset = AuditLog.objects.all()
+    serializer_class = AuditLogSerializer
+    search_fields = ['resource', 'action', 'user_username']
+    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+
+
+@extend_schema_view(
+    list=extend_schema(
         summary="List all HTTP request logs",
         description=(
             "Retrieve a list of HTTP request logs. "
@@ -99,31 +126,4 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TaskResult.objects.all()
     serializer_class = TaskResultSerializer
     search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
-    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-
-
-@extend_schema_view(
-    list=extend_schema(
-        summary="List all audit logs",
-        description=(
-            "Retrieve all application audit logs. "
-            "These log entries track changes to database records and are used for compliance and security auditing."
-        ),
-        tags=["Logging"],
-    ),
-    retrieve=extend_schema(
-        summary="Retrieve an audit log record",
-        description=(
-            "Retrieve an audit log by ID. "
-            "These log entries track changes to database records and are used for compliance and security auditing."
-        ),
-        tags=["Logging"],
-    )
-)
-class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """API endpoints for fetching audit logs."""
-
-    queryset = AuditLog.objects.all()
-    serializer_class = AuditLogSerializer
-    search_fields = ['resource', 'action', 'user_username']
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]

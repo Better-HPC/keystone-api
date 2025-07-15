@@ -20,7 +20,8 @@ class LdapUpdateUsersMethod(TestCase):
     @override_settings(
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
-        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'}
+        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'},
+        AUTH_LDAP_PURGE_REMOVED=False
     )
     @patch('apps.users.tasks.get_ldap_connection')
     @patch('apps.users.tasks.LDAPBackend')
@@ -39,7 +40,7 @@ class LdapUpdateUsersMethod(TestCase):
         mock_backend.populate_user.side_effect = lambda username: User(username=username)
 
         # Test users are created
-        ldap_update_users(prune=False)
+        ldap_update_users()
         user1 = User.objects.get(username='user1')
         user2 = User.objects.get(username='user2')
 
@@ -50,7 +51,8 @@ class LdapUpdateUsersMethod(TestCase):
     @override_settings(
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
-        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'}
+        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'},
+        AUTH_LDAP_PURGE_REMOVED=False
     )
     @patch('apps.users.tasks.get_ldap_connection')
     def test_no_users_account_found(self, mock_get_ldap_connection: Mock) -> None:
@@ -58,12 +60,13 @@ class LdapUpdateUsersMethod(TestCase):
 
         mock_conn = mock_get_ldap_connection.return_value
         mock_conn.search_s.return_value = []
-        ldap_update_users(prune=False)
+        ldap_update_users()
 
     @override_settings(
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
-        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'}
+        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'},
+        AUTH_LDAP_PURGE_REMOVED=True,
     )
     @patch('apps.users.tasks.get_ldap_connection')
     def test_users_are_pruned(self, mock_get_ldap_connection: Mock) -> None:
@@ -79,14 +82,15 @@ class LdapUpdateUsersMethod(TestCase):
         User.objects.create(username='non_ldap_user', is_ldap_user=False)
 
         # Test missing LDAP users are deleted
-        ldap_update_users(prune=True)
+        ldap_update_users()
         self.assertFalse(User.objects.filter(username='user_to_prune').exists())
         self.assertTrue(User.objects.filter(username='non_ldap_user').exists())
 
     @override_settings(
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
-        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'}
+        AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'},
+        AUTH_LDAP_PURGE_REMOVED=False
     )
     @patch('apps.users.tasks.get_ldap_connection')
     def test_users_are_deactivated(self, mock_get_ldap_connection: Mock) -> None:

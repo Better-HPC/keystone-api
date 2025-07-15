@@ -2,7 +2,6 @@
 
 import jinja2
 from django.core import mail
-from django.template.exceptions import TemplateDoesNotExist
 from django.test import override_settings, TestCase
 
 from apps.notifications.models import Notification

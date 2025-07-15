@@ -19,7 +19,7 @@ class MetricsView(GenericAPIView):
     permission_classes = []
 
     @extend_schema(exclude=True)
-    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:  # pragma: no cover
         """Return prometheus metrics for monitoring the application."""
 
         return exports.ExportToDjangoView(request)

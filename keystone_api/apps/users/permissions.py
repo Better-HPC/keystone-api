@@ -12,7 +12,7 @@ from rest_framework.views import View
 
 from .models import *
 
-__all__ = ['TeamPermissions', 'MembershipPermissions', 'UserPermissions']
+__all__ = ['MembershipPermissions', 'TeamPermissions', 'UserPermissions']
 
 
 class TeamPermissions(permissions.BasePermission):

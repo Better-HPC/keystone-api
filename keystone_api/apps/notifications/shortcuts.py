@@ -18,6 +18,13 @@ from apps.notifications.models import Notification
 from apps.users.models import User
 from plugins.email import SecureSandboxedEnvironment
 
+__all__ = [
+    'get_template',
+    'format_template',
+    'send_notification',
+    'send_notification_template'
+]
+
 
 def get_template(template_name: str) -> Template:
     """Retrieve a Jinja2 email template by name.

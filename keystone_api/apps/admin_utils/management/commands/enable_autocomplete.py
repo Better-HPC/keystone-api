@@ -25,7 +25,8 @@ class Command(BaseCommand):
         """Execute the application logic."""
 
         # Find the user's shell config files
-        if not (profile_paths := self.get_profile_paths()):
+        profile_paths = self.get_profile_paths()
+        if not profile_paths:
             self.stderr.write('No .bash_profile or .bashrc file found.')
             exit(1)
 

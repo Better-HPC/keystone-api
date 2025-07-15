@@ -19,52 +19,11 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
-    'TeamViewSet',
     'MembershipRoleChoicesView',
     'MembershipViewSet',
+    'TeamViewSet',
     'UserViewSet',
 ]
-
-
-@extend_schema_view(
-    list=extend_schema(
-        summary="List all teams",
-        description="Retrieve all teams visible to the current user.",
-        tags=["Teams"],
-    ),
-    retrieve=extend_schema(
-        summary="Retrieve a team",
-        description="Retrieve a single team by ID.",
-        tags=["Teams"],
-    ),
-    create=extend_schema(
-        summary="Create a team",
-        description="Create a new team.",
-        tags=["Teams"],
-    ),
-    update=extend_schema(
-        summary="Update a team",
-        description="Replace an existing team with new values.",
-        tags=["Teams"],
-    ),
-    partial_update=extend_schema(
-        summary="Partially update a team",
-        description="Apply a partial update to an existing team.",
-        tags=["Teams"],
-    ),
-    destroy=extend_schema(
-        summary="Delete a team",
-        description="Delete a team by ID.",
-        tags=["Teams"],
-    ),
-)
-class TeamViewSet(viewsets.ModelViewSet):
-    """API endpoints for managing user teams."""
-
-    queryset = Team.objects.all()
-    permission_classes = [IsAuthenticated, TeamPermissions]
-    serializer_class = TeamSerializer
-    search_fields = ['name']
 
 
 @extend_schema_view(  # pragma: nocover
@@ -121,7 +80,7 @@ class MembershipRoleChoicesView(APIView):
         summary="Delete a team membership",
         description="Delete a team membership account by ID.",
         tags=["Team Membership"],
-    ),
+    )
 )
 class MembershipViewSet(viewsets.ModelViewSet):
     """API endpoints for managing team membership."""
@@ -129,6 +88,47 @@ class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.all()
     permission_classes = [IsAuthenticated, MembershipPermissions]
     serializer_class = MembershipSerializer
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all teams",
+        description="Retrieve all teams visible to the current user.",
+        tags=["Teams"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a team",
+        description="Retrieve a single team by ID.",
+        tags=["Teams"],
+    ),
+    create=extend_schema(
+        summary="Create a team",
+        description="Create a new team.",
+        tags=["Teams"],
+    ),
+    update=extend_schema(
+        summary="Update a team",
+        description="Replace an existing team with new values.",
+        tags=["Teams"],
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a team",
+        description="Apply a partial update to an existing team.",
+        tags=["Teams"],
+    ),
+    destroy=extend_schema(
+        summary="Delete a team",
+        description="Delete a team by ID.",
+        tags=["Teams"],
+    ),
+)
+class TeamViewSet(viewsets.ModelViewSet):
+    """API endpoints for managing user teams."""
+
+    queryset = Team.objects.all()
+    permission_classes = [IsAuthenticated, TeamPermissions]
+    serializer_class = TeamSerializer
+    search_fields = ['name']
 
 
 @extend_schema_view(
@@ -161,10 +161,10 @@ class MembershipViewSet(viewsets.ModelViewSet):
         summary="Delete a user",
         description="Delete a user account by ID.",
         tags=["Users"],
-    ),
+    )
 )
 class UserViewSet(viewsets.ModelViewSet):
-    """API endpoints for managing user account data."""
+    """API endpoints for managing user accounts."""
 
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, UserPermissions]

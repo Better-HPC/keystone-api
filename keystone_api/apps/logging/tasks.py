@@ -11,6 +11,8 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 
+__all__ = ['clear_log_files']
+
 
 @shared_task()
 def clear_log_files() -> None:

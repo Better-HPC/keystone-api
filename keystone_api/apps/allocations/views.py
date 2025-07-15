@@ -51,24 +51,6 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
 
 
 @extend_schema_view(
-    get=extend_schema(
-        summary="Retrieve valid review status options",
-        description="Retrieve valid allocation review `status` options with human-readable labels.",
-        tags=["Resource Allocation Reviews"],
-        responses=inline_serializer(
-            name="AllocationReviewStatusChoices",
-            fields={k: serializers.CharField(default=v) for k, v in AllocationReview.StatusChoices.choices}
-        )
-    )
-)
-class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
-    """API endpoints for exposing valid allocation review `status` values."""
-
-    response_content = dict(AllocationReview.StatusChoices.choices)
-    permission_classes = [IsAuthenticated]
-
-
-@extend_schema_view(
     list=extend_schema(
         summary="List all allocation requests",
         description="Retrieve all allocation requests visible to the current user.",
@@ -109,6 +91,24 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = AllocationRequestSerializer
     permission_classes = [IsAuthenticated, AllocationRequestPermissions]
     search_fields = ['title', 'description', 'team__name']
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve valid review status options",
+        description="Retrieve valid allocation review `status` options with human-readable labels.",
+        tags=["Resource Allocation Reviews"],
+        responses=inline_serializer(
+            name="AllocationReviewStatusChoices",
+            fields={k: serializers.CharField(default=v) for k, v in AllocationReview.StatusChoices.choices}
+        )
+    )
+)
+class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
+    """API endpoints for exposing valid allocation review `status` values."""
+
+    response_content = dict(AllocationReview.StatusChoices.choices)
+    permission_classes = [IsAuthenticated]
 
 
 @extend_schema_view(
