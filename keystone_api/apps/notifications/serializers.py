@@ -27,8 +27,8 @@ class NotificationSerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Notification
-        fields = '__all__'
-        read_only_fields = [f.name for f in Notification._meta.fields if f.name != 'read']
+        fields = ['time', 'read', 'subject', 'message', 'notification_type']
+        read_only_fields = [f for f in fields if f != 'read']
 
 
 class PreferenceSerializer(serializers.ModelSerializer):
