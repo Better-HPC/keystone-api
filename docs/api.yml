@@ -5588,10 +5588,8 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Returns a list of research grants accessible to the authenticated
-        user. Users are only returned records associated with teams they belong to.
-        Staff users are authorized to access all grant records.
-      summary: List all accessible research grants
+      description: Retrieve all research grants visible to the current user.
+      summary: List all research grants
       parameters:
       - name: _order
         required: false
@@ -6083,10 +6081,8 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Returns a list of research publications accessible to the authenticated
-        user. Users are only returned records associated with teams they belong to.
-        Staff users are authorized to access all publication records.
-      summary: List all accessible research publications
+      description: Retrieve all research publications visible to the current user.
+      summary: List all research publications
       parameters:
       - name: _order
         required: false
