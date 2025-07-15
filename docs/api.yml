@@ -7959,6 +7959,9 @@ components:
       type: object
       description: Serializer for summarizing allocation requests in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         title:
           type: string
           maxLength: 250
@@ -7973,6 +7976,7 @@ components:
           format: date
           nullable: true
       required:
+      - id
       - title
     AllocationReview:
       type: object
@@ -8252,12 +8256,16 @@ components:
       type: object
       description: Serializer for summarizing cluster names in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         name:
           type: string
           maxLength: 50
         enabled:
           type: boolean
       required:
+      - id
       - name
     Comment:
       type: object
@@ -9546,12 +9554,16 @@ components:
       type: object
       description: Serializer for summarizing team records in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         name:
           type: string
           maxLength: 255
         is_active:
           type: boolean
       required:
+      - id
       - name
     UserRole:
       type: object
@@ -9579,6 +9591,9 @@ components:
       type: object
       description: Serializer for summarizing user records in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         username:
           type: string
           pattern: ^[\w.@+-]+$
@@ -9597,6 +9612,7 @@ components:
           nullable: true
           maxLength: 254
       required:
+      - id
       - username
     health_json_ok:
       type: object
