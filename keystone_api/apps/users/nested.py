@@ -25,7 +25,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = User
-        fields = ["username", "first_name", "last_name", "email"]
+        fields = ["id", "username", "first_name", "last_name", "email"]
 
 
 class UserRoleSerializer(serializers.ModelSerializer):
@@ -47,7 +47,7 @@ class TeamSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Team
-        fields = ["name", "is_active"]
+        fields = ["id", "name", "is_active"]
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):

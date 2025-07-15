@@ -33,7 +33,7 @@ class UserFactory(DjangoModelFactory):
     department = factory.Faker('bs')
     role = factory.Faker('job')
 
-    is_active = factory.Faker('pybool', truth_probability=0.98)
+    is_active = factory.Faker('pybool', truth_probability=98)
     is_staff = factory.Faker('pybool')
     is_ldap_user = False
 

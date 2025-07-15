@@ -5023,6 +5023,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskResult'
           description: ''
+  /notifications/allocation-request/status-choices/:
+    get:
+      operationId: notifications_allocation_request_status_choices_retrieve
+      description: Retrieve valid notification types with human-readable labels.
+      summary: Retrieve valid notification types
+      tags:
+      - Notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTypeChoices'
+          description: ''
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
@@ -7942,6 +7959,9 @@ components:
       type: object
       description: Serializer for summarizing allocation requests in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         title:
           type: string
           maxLength: 250
@@ -7956,6 +7976,7 @@ components:
           format: date
           nullable: true
       required:
+      - id
       - title
     AllocationReview:
       type: object
@@ -8235,12 +8256,16 @@ components:
       type: object
       description: Serializer for summarizing cluster names in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         name:
           type: string
           maxLength: 50
         enabled:
           type: boolean
       required:
+      - id
       - name
     Comment:
       type: object
@@ -8527,11 +8552,6 @@ components:
         id:
           type: integer
           readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
         time:
           type: string
           format: date-time
@@ -8544,9 +8564,6 @@ components:
         message:
           type: string
           readOnly: true
-        metadata:
-          readOnly: true
-          nullable: true
         notification_type:
           allOf:
           - $ref: '#/components/schemas/NotificationTypeEnum'
@@ -8554,15 +8571,31 @@ components:
         user:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
       required:
       - _user
       - id
       - message
-      - metadata
       - notification_type
       - subject
       - time
       - user
+    NotificationTypeChoices:
+      type: object
+      properties:
+        GM:
+          type: string
+          default: General Message
+        RE:
+          type: string
+          default: Upcoming Request Expiration
+        RD:
+          type: string
+          default: Request Past Expiration
     NotificationTypeEnum:
       enum:
       - GM
@@ -8901,11 +8934,6 @@ components:
         id:
           type: integer
           readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
         time:
           type: string
           format: date-time
@@ -8918,9 +8946,6 @@ components:
         message:
           type: string
           readOnly: true
-        metadata:
-          readOnly: true
-          nullable: true
         notification_type:
           allOf:
           - $ref: '#/components/schemas/NotificationTypeEnum'
@@ -8928,6 +8953,11 @@ components:
         user:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
     PatchedPreference:
       type: object
       description: Object serializer for the `Preference` class.
@@ -9524,12 +9554,16 @@ components:
       type: object
       description: Serializer for summarizing team records in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         name:
           type: string
           maxLength: 255
         is_active:
           type: boolean
       required:
+      - id
       - name
     UserRole:
       type: object
@@ -9557,6 +9591,9 @@ components:
       type: object
       description: Serializer for summarizing user records in nested responses.
       properties:
+        id:
+          type: integer
+          readOnly: true
         username:
           type: string
           pattern: ^[\w.@+-]+$
@@ -9575,6 +9612,7 @@ components:
           nullable: true
           maxLength: 254
       required:
+      - id
       - username
     health_json_ok:
       type: object

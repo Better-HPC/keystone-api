@@ -51,7 +51,7 @@ class PublicationFactory(DjangoModelFactory):
     abstract = factory.Faker("paragraph", nb_sentences=5)
     journal = factory.Faker("catch_phrase")
     doi = factory.Faker('doi')
-    preparation = factory.Faker("pybool", truth_probability=0.2)
+    preparation = factory.Faker("pybool", truth_probability=20)
     volume = factory.Faker("numerify", text="##")
     issue = factory.Faker("numerify", text="#")
 

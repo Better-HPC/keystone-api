@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 
-@extend_schema_view(  # pragma: nocover
+@extend_schema_view(
     get=extend_schema(
         summary="Retrieve valid request status options",
         description="Retrieve valid allocation request `status` options with human-readable labels.",
@@ -50,7 +50,7 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     permission_classes = [IsAuthenticated]
 
 
-@extend_schema_view(  # pragma: nocover
+@extend_schema_view(
     get=extend_schema(
         summary="Retrieve valid review status options",
         description="Retrieve valid allocation review `status` options with human-readable labels.",
