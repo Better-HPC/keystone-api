@@ -53,6 +53,17 @@ class Command(StdOutUtils, BaseCommand):
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
+        if not any([
+            options['all'],
+            options['celery'],
+            options['demo_user'],
+            options['server'],
+            options['migrate'],
+            options['smtp'],
+            options['static'],
+        ]):
+            self.stderr.write('At least one action is required. See `quickstart --help` for details.')
+
         # Note: `no_input=False` indicates the user should not be prompted for input
         if options['static'] or options['all']:
             self._collect_static()
@@ -138,6 +149,7 @@ class Command(StdOutUtils, BaseCommand):
         """
 
         self._write("Starting SMTP server: ", self.style.MIGRATE_HEADING)
+
         class CustomMessageHandler(Message):
             def handle_message(self, message: EmailMessage) -> None:
                 print(
