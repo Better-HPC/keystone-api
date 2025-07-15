@@ -65,8 +65,9 @@ class UserScopedListMixin:
         """Return a list of serialized records filtered for the requesting user."""
 
         queryset = self.filter_queryset(self.get_queryset())
+
         if not request.user.is_staff:
-            queryset = self.queryset.filter(**{self.user_field: request.user})
+            queryset = queryset.filter(**{self.user_field: request.user})
 
         page = self.paginate_queryset(queryset)
         if page is not None:
