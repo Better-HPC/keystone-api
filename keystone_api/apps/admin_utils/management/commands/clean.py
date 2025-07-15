@@ -43,6 +43,7 @@ class Command(StdOutUtils, BaseCommand):
 
         if not any([options['static'], options['uploads'], options['sqlite'], options['all']]):
             self.stderr.write('At least one deletion target is required. See `clean --help` for details.')
+            return
 
         self._write('Cleaning application data:', self.style.MIGRATE_HEADING)
         if options['static'] or options['all']:

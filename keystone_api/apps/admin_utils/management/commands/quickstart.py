@@ -63,6 +63,7 @@ class Command(StdOutUtils, BaseCommand):
             options['static'],
         ]):
             self.stderr.write('At least one action is required. See `quickstart --help` for details.')
+            return
 
         # Note: `no_input=False` indicates the user should not be prompted for input
         if options['static'] or options['all']:
