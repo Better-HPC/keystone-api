@@ -27,7 +27,7 @@ class NotificationFactory(DjangoModelFactory):
     read = factory.Faker("pybool", truth_probability=0.3)
     subject = factory.Faker('sentence', nb_words=6)
     message = factory.Faker('paragraph', nb_sentences=3)
-    notification_type = randgen.choices(Notification.NotificationType.values)
+    notification_type = randgen.choice(Notification.NotificationType.values)
 
     user = factory.SubFactory(UserFactory)
 
