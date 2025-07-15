@@ -134,7 +134,7 @@ class CommentFactory(DjangoModelFactory):
         model = Comment
 
     content = factory.Faker('sentence', nb_words=10)
-    private = factory.Faker('pybool', truth_probability=0.1)
+    private = factory.Faker('pybool', truth_probability=10)
 
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
