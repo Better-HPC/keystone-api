@@ -16,6 +16,8 @@ from django.core.mail.backends.base import BaseEmailBackend
 from django.utils.text import slugify
 from jinja2.sandbox import SandboxedEnvironment
 
+__all__ = ['EmlFileEmailBackend', 'SecureSandboxedEnvironment']
+
 
 class EmlFileEmailBackend(BaseEmailBackend):
     """A Django email backend that writes email messages to .eml files on disk.

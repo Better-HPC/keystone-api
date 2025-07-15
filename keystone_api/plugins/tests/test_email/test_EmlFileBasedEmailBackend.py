@@ -80,6 +80,40 @@ class GenerateFilePathMethod(TestCase):
                 EmlFileEmailBackend()
 
 
+class SendMessagesMethod(TestCase):
+    """Test sending multiple messages via the `send_messages` method."""
+
+    def setUp(self) -> None:
+        """Set up a temporary output directory for the backend."""
+
+        self._tempdir = tempfile.TemporaryDirectory()
+        self.test_dir = Path(self._tempdir.name)
+        with override_settings(EMAIL_FILE_PATH=self.test_dir):
+            self.backend = EmlFileEmailBackend()
+
+    def tearDown(self) -> None:
+        """Clean up temporary files."""
+
+        self._tempdir.cleanup()
+
+    def test_calls_write_message_for_each_email(self) -> None:
+        """Verify the `write_message` method is called for each message."""
+
+        messages = [
+            EmailMessage(subject="one", body="Body 1", from_email="a@x.com", to=["b@x.com"]),
+            EmailMessage(subject="two", body="Body 2", from_email="a@x.com", to=["c@x.com"]),
+            EmailMessage(subject="three", body="Body 3", from_email="a@x.com", to=["d@x.com"]),
+        ]
+
+        with patch.object(self.backend, "write_message") as mock_write:
+            self.backend.send_messages(messages)
+
+        self.assertEqual(len(messages), mock_write.call_count)
+        mock_write.assert_any_call(messages[0])
+        mock_write.assert_any_call(messages[1])
+        mock_write.assert_any_call(messages[2])
+
+
 class WriteMessageMethod(TestCase):
     """Test writing messages to disk via the `write_message` method."""
 
@@ -130,37 +164,3 @@ class WriteMessageMethod(TestCase):
         # Verify the file content was overwritten
         self.assertIn("New content.", content)
         self.assertNotIn("Old content that should be replaced.", content)
-
-
-class SendMessagesMethod(TestCase):
-    """Test sending multiple messages via the `send_messages` method."""
-
-    def setUp(self) -> None:
-        """Set up a temporary output directory for the backend."""
-
-        self._tempdir = tempfile.TemporaryDirectory()
-        self.test_dir = Path(self._tempdir.name)
-        with override_settings(EMAIL_FILE_PATH=self.test_dir):
-            self.backend = EmlFileEmailBackend()
-
-    def tearDown(self) -> None:
-        """Clean up temporary files."""
-
-        self._tempdir.cleanup()
-
-    def test_calls_write_message_for_each_email(self) -> None:
-        """Verify the `write_message` method is called for each message."""
-
-        messages = [
-            EmailMessage(subject="one", body="Body 1", from_email="a@x.com", to=["b@x.com"]),
-            EmailMessage(subject="two", body="Body 2", from_email="a@x.com", to=["c@x.com"]),
-            EmailMessage(subject="three", body="Body 3", from_email="a@x.com", to=["d@x.com"]),
-        ]
-
-        with patch.object(self.backend, "write_message") as mock_write:
-            self.backend.send_messages(messages)
-
-        self.assertEqual(len(messages), mock_write.call_count)
-        mock_write.assert_any_call(messages[0])
-        mock_write.assert_any_call(messages[1])
-        mock_write.assert_any_call(messages[2])
