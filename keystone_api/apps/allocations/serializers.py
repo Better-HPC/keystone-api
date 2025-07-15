@@ -30,20 +30,6 @@ __all__ = [
 ]
 
 
-class AllocationSerializer(serializers.ModelSerializer):
-    """Object serializer for the `Allocation` class."""
-
-    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Allocation
-        fields = '__all__'
-
-
 class AllocationRequestSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationRequest` class."""
 
@@ -83,6 +69,20 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
 
         return value
+
+
+class AllocationSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Allocation` class."""
+
+    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
+    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Allocation
+        fields = '__all__'
 
 
 class AttachmentSerializer(serializers.ModelSerializer):

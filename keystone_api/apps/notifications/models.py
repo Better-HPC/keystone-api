@@ -9,7 +9,7 @@ the associated table/fields/records are presented by parent interfaces.
 from django.conf import settings
 from django.db import models
 
-__all__ = ['Notification', 'Preference']
+__all__ = ['Notification', 'Preference', 'default_expiry_thresholds']
 
 
 def default_expiry_thresholds() -> list[int]:  # pragma: nocover

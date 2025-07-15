@@ -59,7 +59,7 @@ class SendNotificationMethod(TestCase):
         self.assertEqual(self.notification_metadata, notification.metadata)
 
     def test_save_disabled(self) -> None:
-        """Test notifications are not saved to the database when `save=False`."""
+        """Verify notifications are not saved to the database when `save=False`."""
 
         subject = 'This message should not be saved.'
         send_notification(

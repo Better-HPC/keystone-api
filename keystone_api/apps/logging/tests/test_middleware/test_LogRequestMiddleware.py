@@ -12,34 +12,38 @@ from apps.logging.middleware import LogRequestMiddleware
 from apps.logging.models import RequestLog
 
 
-class LoggingToDatabase(TestCase):
-    """Test the logging of requests to the database."""
+class CidLogging(TestCase):
+    """Test the extraction and logging of CID values from request headers."""
 
-    def test_authenticated_user(self) -> None:
-        """Verify requests are logged for authenticated users."""
+    def setUp(self) -> None:
+        """Instantiate testing fixtures."""
 
-        rf = RequestFactory()
-        request = rf.get('/hello/')
-        request.user = get_user_model().objects.create()
+        self.rf = RequestFactory()
+        self.middleware = LogRequestMiddleware(lambda x: HttpResponse())
 
-        middleware = LogRequestMiddleware(lambda x: HttpResponse())
-        middleware(request)
+    @override_settings(AUDITLOG_CID_HEADER='X-CUSTOM-CID')
+    def test_cid_header_logged(self) -> None:
+        """Verify the CID value is correctly extracted and saved."""
 
-        self.assertEqual(1, RequestLog.objects.count())
-        self.assertEqual(RequestLog.objects.first().user, request.user)
+        cid_value = str(uuid.uuid4())
+        request = self.rf.get('/example/')
+        request.META['HTTP_X_CUSTOM_CID'] = cid_value
 
-    def test_anonymous_user(self) -> None:
-        """Verify requests are logged for anonymous users."""
-
-        rf = RequestFactory()
-        request = rf.get('/hello/')
         request.user = AnonymousUser()
 
-        middleware = LogRequestMiddleware(lambda x: HttpResponse())
-        middleware(request)
+        self.middleware(request)
+        log = RequestLog.objects.first()
+        self.assertEqual(cid_value, log.cid)
 
-        self.assertEqual(1, RequestLog.objects.count())
-        self.assertIsNone(RequestLog.objects.first().user)
+    def test_missing_cid_header(self) -> None:
+        """Verify a valid CID value is automatically generated when the CID header is not present."""
+
+        request = self.rf.get('/example/')
+        request.user = AnonymousUser()
+        self.middleware(request)
+
+        log = RequestLog.objects.first()
+        self.assertTrue(uuid.UUID(log.cid))
 
 
 class ClientIPLogging(TestCase):
@@ -86,35 +90,31 @@ class ClientIPLogging(TestCase):
         self.assertIsNone(log.remote_address)
 
 
-class CidLogging(TestCase):
-    """Test the extraction and logging of CID values from request headers."""
+class LoggingToDatabase(TestCase):
+    """Test the logging of requests to the database."""
 
-    def setUp(self) -> None:
-        """Instantiate testing fixtures."""
+    def test_authenticated_user(self) -> None:
+        """Verify requests are logged for authenticated users."""
 
-        self.rf = RequestFactory()
-        self.middleware = LogRequestMiddleware(lambda x: HttpResponse())
+        rf = RequestFactory()
+        request = rf.get('/hello/')
+        request.user = get_user_model().objects.create()
 
-    @override_settings(AUDITLOG_CID_HEADER='X-CUSTOM-CID')
-    def test_cid_header_logged(self) -> None:
-        """Verify the CID value is correctly extracted and saved."""
+        middleware = LogRequestMiddleware(lambda x: HttpResponse())
+        middleware(request)
 
-        cid_value = str(uuid.uuid4())
-        request = self.rf.get('/example/')
-        request.META['HTTP_X_CUSTOM_CID'] = cid_value
+        self.assertEqual(1, RequestLog.objects.count())
+        self.assertEqual(RequestLog.objects.first().user, request.user)
 
+    def test_anonymous_user(self) -> None:
+        """Verify requests are logged for anonymous users."""
+
+        rf = RequestFactory()
+        request = rf.get('/hello/')
         request.user = AnonymousUser()
 
-        self.middleware(request)
-        log = RequestLog.objects.first()
-        self.assertEqual(cid_value, log.cid)
+        middleware = LogRequestMiddleware(lambda x: HttpResponse())
+        middleware(request)
 
-    def test_missing_cid_header(self) -> None:
-        """Verify a valid CID value is automatically generated when the CID header is not present."""
-
-        request = self.rf.get('/example/')
-        request.user = AnonymousUser()
-        self.middleware(request)
-
-        log = RequestLog.objects.first()
-        self.assertTrue(uuid.UUID(log.cid))
+        self.assertEqual(1, RequestLog.objects.count())
+        self.assertIsNone(RequestLog.objects.first().user)

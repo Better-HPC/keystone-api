@@ -163,4 +163,4 @@ class Command(StdOutUtils, BaseCommand):
         controller = Controller(CustomMessageHandler(), hostname=host, port=port)
         controller.start()
 
-        print(f"  SMTP server running on {host}:{port}")
+        self._write(f"  SMTP server running on {host}:{port}")

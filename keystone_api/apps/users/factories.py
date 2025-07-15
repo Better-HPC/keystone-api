@@ -16,6 +16,26 @@ from .models import *
 __all__ = ['MembershipFactory', 'TeamFactory', 'UserFactory']
 
 
+class TeamFactory(DjangoModelFactory):
+    """Factory for creating mock `Team` instances."""
+
+    class Meta:
+        """Factory settings."""
+
+        model = Team
+
+    name = factory.Sequence(lambda n: f"Team {n}")
+    is_active = True
+
+    @factory.post_generation
+    def users(self, create: bool, extracted: list[User] | None, **kwargs):
+        """Populate the many-to-many `users` relationship."""
+
+        if extracted and not create:
+            for user in extracted:
+                self.users.add(user)
+
+
 class UserFactory(DjangoModelFactory):
     """Factory for creating mock `User` instances."""
 
@@ -36,26 +56,6 @@ class UserFactory(DjangoModelFactory):
     is_active = factory.Faker('pybool', truth_probability=98)
     is_staff = factory.Faker('pybool')
     is_ldap_user = False
-
-
-class TeamFactory(DjangoModelFactory):
-    """Factory for creating mock `Team` instances."""
-
-    class Meta:
-        """Factory settings."""
-
-        model = Team
-
-    name = factory.Sequence(lambda n: f"Team {n}")
-    is_active = True
-
-    @factory.post_generation
-    def users(self, create: bool, extracted: list[User] | None, **kwargs):
-        """Populate the many-to-many `users` relationship."""
-
-        if extracted and not create:
-            for user in extracted:
-                self.users.add(user)
 
 
 class MembershipFactory(DjangoModelFactory):

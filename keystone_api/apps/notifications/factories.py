@@ -21,6 +21,8 @@ class NotificationFactory(DjangoModelFactory):
     """Factory for creating mock `Notification` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Notification
 
     time = factory.Faker('date_time_this_year')
@@ -36,6 +38,8 @@ class PreferenceFactory(DjangoModelFactory):
     """Factory for creating mock `Preference` instances."""
 
     class Meta:
+        """Factory settings."""
+
         model = Preference
 
     request_expiry_thresholds = factory.LazyFunction(lambda: [30, 14])
