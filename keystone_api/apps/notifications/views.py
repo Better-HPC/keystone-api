@@ -6,8 +6,9 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status, viewsets
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -18,9 +19,33 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
+    'NotificationTypeChoicesView',
     'NotificationViewSet',
     'PreferenceViewSet',
 ]
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve valid notification types",
+        description="Retrieve valid notification types with human-readable labels.",
+        tags=["Notifications"],
+        responses=inline_serializer(
+            name="NotificationTypeChoices",
+            fields={k: serializers.CharField(default=v) for k, v in Notification.NotificationType.choices}
+        )
+    )
+)
+class NotificationTypeChoicesView(GenericAPIView):
+    """API endpoints for exposing valid notification `type` values."""
+
+    response_content = dict(Notification.NotificationType.choices)
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        """Return a dictionary mapping values to human-readable names."""
+
+        return Response(self.response_content)
 
 
 @extend_schema_view(
