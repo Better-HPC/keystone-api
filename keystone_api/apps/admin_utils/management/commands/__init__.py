@@ -7,7 +7,7 @@ class StdOutUtils:
         Args:
             message: The message to write.
             style: Optional style to apply.
-            ending: Optional line ending (default is newline).
+            ending: Optional line ending.
         """
 
         self.stdout.write(message, style, ending=ending)
