@@ -167,20 +167,20 @@ uvicorn --host 127.0.0.1 --port 8000 keystone_api.main.asgi:application
 The `uvicorn` command executes as a foreground process by default.
 The following unit files are provided as a starting point to daemonize the process via the systemd service manager.
 
-```
+```toml
 [Unit]
 Description=Webserver daemon for Keystone
 Requires=keystone-server.socket
 After=network.target
 
-[Service]
-Type=notify
+[Service] # (1)!
+Type=simple
 User=keystone
 Group=keystone
 RuntimeDirectory=uvicorn
 WorkingDirectory=/home/keystone
 EnvironmentFile=/home/keystone/keystone.env
-ExecStart=/home/keystone/.local/bin/uvicorn keystone_api.main.asgi:application --uds /run/uvicorn/keystone.sock # (1)!
+ExecStart=/home/keystone/.local/bin/uvicorn keystone_api.main.asgi:application --uds /run/uvicorn/keystone.sock
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
 TimeoutStopSec=5
@@ -190,7 +190,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 ```
 
-1. This directory must exist and be owned by the user/group specified in the systemd configuration.
+1. The sock directory must exist and be owned by the user/group specified in the systemd configuration.
 
 ## Configuring the Proxy
 

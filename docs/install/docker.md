@@ -106,7 +106,6 @@ volumes:
   uploaded_files:
   postgres_data:
   cache_data:
-
 ```
 
 1. The `cache` service acts as a job queue for background tasks. Note that cache data is mounted onto the host machine to ensure data persistence between container restarts.
