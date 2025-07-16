@@ -46,7 +46,7 @@ class UserFactory(DjangoModelFactory):
         model = User
         django_get_or_create = ('username',)
 
-    # Using a fixed, prehashed default password avoids the significant overhead
+    # Using a fixed, prehashed password avoids the significant overhead
     # of hashing a dynamically generated value for each record
     password = make_password('password')
 
