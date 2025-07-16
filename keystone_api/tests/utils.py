@@ -3,8 +3,10 @@
 from django.db import transaction
 from django.db.models import Model, QuerySet
 from django.test import Client
+from factory.django import DjangoModelFactory
 
-from apps.users.models import Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership, Team, User
 
 
 class CustomAsserts:
@@ -72,7 +74,7 @@ class TeamScopedListFilteringTests:
     """Test the filtering of returned records based on user team membership."""
 
     # Defined by subclasses
-    model: Model
+    factory: type[DjangoModelFactory]
     endpoint: str
     team_field = 'team'
 
@@ -81,19 +83,19 @@ class TeamScopedListFilteringTests:
     team_member: User
     staff_user: User
     generic_user: User
-    team_records: QuerySet
-    all_records: QuerySet
+    team_records: list
+    all_records: list
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.team = Team.objects.get(name='Team 1')
-        self.team_records = self.model.objects.filter(**{self.team_field: self.team})
-        self.all_records = self.model.objects.all()
+        self.team = TeamFactory()
+        self.team_records = [self.factory(**{self.team_field: self.team}) for _ in range(5)]
+        self.all_records = [self.factory() for _ in range(5)] + self.team_records
 
-        self.team_member = User.objects.get(username='member_1')
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory()
 
     def test_user_returned_filtered_records(self) -> None:
         """Verify users are only returned records for teams they belong to."""
@@ -102,7 +104,7 @@ class TeamScopedListFilteringTests:
         response = self.client.get(self.endpoint)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.team_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_staff_returned_all_records(self) -> None:
@@ -112,7 +114,7 @@ class TeamScopedListFilteringTests:
         response = self.client.get(self.endpoint)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.all_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_user_with_no_records(self) -> None:

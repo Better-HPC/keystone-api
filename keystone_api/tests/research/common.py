@@ -2,7 +2,7 @@
 
 from abc import abstractmethod
 
-from django.db.models import Model
+from factory.django import DjangoModelFactory
 from rest_framework import status
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
@@ -177,7 +177,7 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     """
 
     # Defined by subclasses
-    model: Model
+    factory: type[DjangoModelFactory]
     endpoint_pattern: str
 
     # Test Fixtures
@@ -192,13 +192,13 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.team = Team.objects.get(name='Team 1')
-        record = self.model.objects.filter(team=self.team).first()
+        self.team = TeamFactory()
+        record = self.factory(team=self.team)
         self.endpoint = self.endpoint_pattern.format(pk=record.pk)
 
-        self.team_member = User.objects.get(username='member_1')
-        self.non_member = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.non_member = UserFactory()
+        self.staff_user = UserFactory(is_staff=True)
 
         self.valid_record_data = self.build_valid_record_data()
 

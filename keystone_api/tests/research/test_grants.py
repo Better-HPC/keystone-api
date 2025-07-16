@@ -4,7 +4,7 @@ from datetime import date
 
 from rest_framework.test import APITestCase
 
-from apps.research_products.models import Grant
+from apps.research_products.factories import GrantFactory
 from tests.utils import TeamScopedListFilteringTests
 from .common import ListEndpointPermissionsTests
 
@@ -32,5 +32,5 @@ class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
 class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
+    factory = GrantFactory
     endpoint = '/research/grants/'
-    model = Grant

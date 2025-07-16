@@ -4,14 +4,14 @@ from datetime import date
 
 from rest_framework.test import APITestCase
 
-from apps.research_products.models import Grant
+from apps.research_products.factories import GrantFactory
 from .common import RecordEndpointPermissionsTests
 
 
 class EndpointPermissions(RecordEndpointPermissionsTests, APITestCase):
     """Test endpoint user permissions."""
 
-    model = Grant
+    factory = GrantFactory
     endpoint_pattern = '/research/grants/{pk}/'
 
     def build_valid_record_data(self) -> dict:
