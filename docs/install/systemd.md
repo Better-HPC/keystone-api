@@ -167,44 +167,30 @@ uvicorn --host 127.0.0.1 --port 8000 keystone_api.main.asgi:application
 The `uvicorn` command executes as a foreground process by default.
 The following unit files are provided as a starting point to daemonize the process via the systemd service manager.
 
-=== "keystone-server.service"
+```
+[Unit]
+Description=Webserver daemon for Keystone
+Requires=keystone-server.socket
+After=network.target
 
-    ```toml
-    [Unit]
-    Description=Uvicorn server daemon for Keystone
-    Requires=keystone-server.socket
-    After=network.target
-    
-    [Service]
-    Type=notify
-    User=keystone
-    Group=keystone
-    RuntimeDirectory=uvicorn
-    WorkingDirectory=/home/keystone
-    EnvironmentFile=/home/keystone/keystone.env
-    ExecStart=/home/keystone/.local/bin/uvicorn keystone_api.main.asgi
-    ExecReload=/bin/kill -s HUP $MAINPID
-    KillMode=mixed
-    TimeoutStopSec=5
-    PrivateTmp=true
-    
-    [Install]
-    WantedBy=multi-user.target
-    ```
+[Service]
+Type=notify
+User=keystone
+Group=keystone
+RuntimeDirectory=uvicorn
+WorkingDirectory=/home/keystone
+EnvironmentFile=/home/keystone/keystone.env
+ExecStart=/home/keystone/.local/bin/uvicorn keystone_api.main.asgi:application --uds /run/uvicorn/keystone.sock # (1)!
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
 
-=== "keystone-server.socket"
+[Install]
+WantedBy=multi-user.target
+```
 
-    ```toml
-    [Unit]
-    Description=Uvicorn socket for Keystone
-    
-    [Socket]
-    ListenStream=/run/uvicorn.sock
-    SocketUser=nginx
-    
-    [Install]
-    WantedBy=sockets.target
-    ```
+1. This directory must exist and be owned by the user/group specified in the systemd configuration.
 
 ## Configuring the Proxy
 
@@ -229,7 +215,7 @@ server {
     ssl_certificate_key /etc/pki/tls/private/keystone.key;
 
     location / {
-        proxy_pass http://unix:/run/uvicorn.sock;
+        proxy_pass http://unix:/run/uvicorn/keystone.sock;
     }
 
     location /media/ { # (1)!
