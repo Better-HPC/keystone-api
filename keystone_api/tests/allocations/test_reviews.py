@@ -23,7 +23,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -84,7 +83,6 @@ class ReviewerAssignment(APITestCase):
     """Test the automatic assignment and verification of the `reviewer` field."""
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

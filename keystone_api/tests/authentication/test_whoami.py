@@ -57,7 +57,6 @@ class UserData(APITestCase):
     """Test the fetching of user metadata."""
 
     endpoint = '/authentication/whoami/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

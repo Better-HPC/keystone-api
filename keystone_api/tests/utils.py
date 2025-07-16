@@ -84,8 +84,6 @@ class TeamScopedListFilteringTests:
     team_records: QuerySet
     all_records: QuerySet
 
-    fixtures = ['testing_common.yaml']
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -139,8 +137,6 @@ class UserScopedListFilteringTests:
     staff_user: User
     user_records: QuerySet
     all_records: QuerySet
-
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

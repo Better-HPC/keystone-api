@@ -22,7 +22,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = '/allocations/attachments/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

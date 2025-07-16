@@ -188,7 +188,6 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     valid_record_data: dict
 
     endpoint: str
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
