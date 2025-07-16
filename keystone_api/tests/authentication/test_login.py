@@ -21,7 +21,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     endpoint = '/authentication/login/'
 
     def setUp(self) -> None:
-        """Create a user account to use when testing authentication."""
+        """Create test fixtures using mock data."""
 
         self.user = User.objects.create_user(username='user', password='foobar123')
 
@@ -66,7 +66,7 @@ class UserAuthentication(APITestCase):
     whoami_endpoint = '/authentication/whoami/'
 
     def setUp(self) -> None:
-        """Create a user account to use when testing authentication."""
+        """Create test fixtures using mock data."""
 
         self.password = 'foobar123'
         self.user = User.objects.create_user(username='user', password=self.password)

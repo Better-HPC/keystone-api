@@ -87,7 +87,7 @@ class TeamScopedListFilteringTests:
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load records from test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.team = Team.objects.get(name='Team 1')
         self.team_records = self.model.objects.filter(**{self.team_field: self.team})
@@ -143,7 +143,7 @@ class UserScopedListFilteringTests:
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load records from test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.owner_user = User.objects.get(username='member_1')
         self.other_user = User.objects.get(username='generic_user')

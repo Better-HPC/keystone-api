@@ -26,7 +26,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     endpoint = '/health/prom/'
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
         self.staff_user = UserFactory(is_staff=True)
         self.generic_user = UserFactory(is_staff=False)

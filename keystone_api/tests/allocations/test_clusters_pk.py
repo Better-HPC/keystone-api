@@ -23,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts and allocation data from test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.endpoint = self.endpoint_pattern.format(pk=1)
         self.staff_user = User.objects.get(username='staff_user')

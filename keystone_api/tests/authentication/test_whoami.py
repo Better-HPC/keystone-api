@@ -19,7 +19,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = '/authentication/whoami/'
-    fixtures = ['testing_common.yaml']
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access the endpoint."""
@@ -61,7 +60,7 @@ class UserData(APITestCase):
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
         self.user = User.objects.get(username='generic_user')
 

@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 ENDPOINT_PATTERN = '/users/users/{pk}/'
@@ -23,14 +23,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint_pattern = ENDPOINT_PATTERN
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.user1 = User.objects.get(username='member_1')
-        self.user2 = User.objects.get(username='member_2')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.user1 = UserFactory(is_staff=False)
+        self.user2 = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -124,14 +123,13 @@ class CredentialHandling(APITestCase):
     """Test the getting/setting of user credentials."""
 
     endpoint_pattern = ENDPOINT_PATTERN
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.user1 = User.objects.get(username='member_1')
-        self.user2 = User.objects.get(username='member_2')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.user1 = UserFactory(is_staff=False)
+        self.user2 = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_user_get_own_password(self) -> None:
         """Verify users cannot retrieve their own password."""
@@ -214,12 +212,11 @@ class RecordHistory(APITestCase):
     """Test the serialization of record history."""
 
     endpoint_pattern = ENDPOINT_PATTERN
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
         """Authenticate as a generic application user."""
 
-        user = User.objects.get(username='generic_user')
+        user = UserFactory(is_staff=False)
         self.endpoint = self.endpoint_pattern.format(pk=user.id)
         self.client.force_authenticate(user=user)
 

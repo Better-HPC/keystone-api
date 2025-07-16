@@ -5,7 +5,8 @@ from abc import abstractmethod
 from django.db.models import Model
 from rest_framework import status
 
-from apps.users.models import Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership, Team, User
 from tests.utils import CustomAsserts
 
 
@@ -37,18 +38,16 @@ class ListEndpointPermissionsTests(CustomAsserts):
     generic_user: User
     valid_record_data: dict
 
-    fixtures = ['testing_common.yaml']
-
     def setUp(self) -> None:
-        """Load user accounts and test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.team = Team.objects.get(name='Team 1')
-        self.team_member = User.objects.get(username='member_1')
-        self.team_admin = User.objects.get(username='admin_1')
-        self.team_owner = User.objects.get(username='owner_1')
+        self.team = TeamFactory()
+        self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
+        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.generic_user = UserFactory()
+        self.staff_user = UserFactory(is_staff=True)
 
         self.valid_record_data = self.build_valid_record_data()
 
@@ -192,7 +191,7 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts and data from test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.team = Team.objects.get(name='Team 1')
         record = self.model.objects.filter(team=self.team).first()
