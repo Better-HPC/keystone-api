@@ -8,6 +8,7 @@ setup logic.
 """
 
 import factory
+from django.contrib.auth.hashers import make_password
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
@@ -45,8 +46,11 @@ class UserFactory(DjangoModelFactory):
         model = User
         django_get_or_create = ('username',)
 
+    # Using a fixed, prehashed password avoids the significant overhead
+    # of hashing a dynamically generated value for each record
+    password = make_password('password')
+
     username = factory.Sequence(lambda n: f"user{n}")
-    password = factory.PostGenerationMethodCall('set_password', 'password123!')
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")
