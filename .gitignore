@@ -17,6 +17,7 @@ dist/
 # IDE / Developer
 .idea/
 *.env
+*.pstats
 
 # OS
 .DS_Store
