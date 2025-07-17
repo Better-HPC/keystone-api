@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationReviewFactory
 from apps.users.factories import UserFactory
-from apps.users.models import User
 from tests.utils import CustomAsserts, TeamScopedListFilteringTests
 
 ENDPOINT = '/allocations/reviews/'
@@ -89,8 +88,8 @@ class ReviewerAssignment(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_default_reviewer(self) -> None:
         """Verify the reviewer field defaults to the current user."""
@@ -98,7 +97,7 @@ class ReviewerAssignment(APITestCase):
         self.client.force_authenticate(user=self.staff_user)
 
         response = self.client.post(self.endpoint, {'request': 1, 'status': 'AP'})
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
     def test_reviewer_provided(self) -> None:
@@ -107,7 +106,7 @@ class ReviewerAssignment(APITestCase):
         self.client.force_authenticate(user=self.staff_user)
 
         response = self.client.post(self.endpoint, {'request': 1, 'reviewer': self.staff_user.id, 'status': 'AP'})
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
     def test_error_when_not_matching_submitter(self) -> None:
@@ -117,7 +116,7 @@ class ReviewerAssignment(APITestCase):
 
         response = self.client.post(self.endpoint, {'request': 1, 'reviewer': self.generic_user.id, 'status': 'AP'})
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertIn('reviewer', response.data)
         self.assertEqual('reviewer cannot be set to a different user than the submitter', response.data['reviewer'][0].lower())
 

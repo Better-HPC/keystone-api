@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.notifications.models import Notification
+from apps.notifications.factories import NotificationFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, UserScopedListFilteringTests
 
@@ -82,4 +82,4 @@ class RecordFiltering(UserScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
     endpoint = ENDPOINT
-    model = Notification
+    factory = NotificationFactory

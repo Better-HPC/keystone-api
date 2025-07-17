@@ -25,7 +25,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Create test fixtures using mock data."""
 
         self.user = UserFactory(username='user', is_staff=False)
-        self.user.set_password('password')
+        self.user.set_password('foobar123')
+        self.user.save()
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users can submit post requests."""

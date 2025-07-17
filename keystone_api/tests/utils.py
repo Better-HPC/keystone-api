@@ -12,8 +12,9 @@ from apps.users.models import Membership, Team, User
 class CustomAsserts:
     """Custom assert methods for testing responses from REST endpoints."""
 
+    # Provided by the test framework
     client: Client
-    assertEqual: callable  # Provided by TestCase class
+    assertEqual: callable
 
     def assert_http_responses(self, endpoint: str, **kwargs) -> None:
         """Execute a series of API calls and assert the returned status matches the given values.
@@ -73,8 +74,10 @@ class CustomAsserts:
 class TeamScopedListFilteringTests:
     """Test the filtering of returned records based on user team membership."""
 
-    # Defined by test suite class
+    # Provided by the test framework
     client: Client
+    assertEqual: callable
+    assertSetEqual: callable
 
     # Defined by subclasses
     factory: type[DjangoModelFactory]
@@ -131,8 +134,10 @@ class TeamScopedListFilteringTests:
 class UserScopedListFilteringTests:
     """Test the filtering of returned records based on user ownership."""
 
-    # Defined by test suite class
+    # Provided by the test framework
     client: Client
+    assertEqual: callable
+    assertSetEqual: callable
 
     # Defined by subclasses
     factory: type[DjangoModelFactory]
@@ -154,7 +159,7 @@ class UserScopedListFilteringTests:
         self.staff_user = UserFactory(is_staff=True)
 
         self.user_records = [self.factory(**{self.user_field: self.owner_user}) for _ in range(5)]
-        self.all_records = [self.factory() for _ in range(5)] + self.team_records
+        self.all_records = [self.factory() for _ in range(5)] + self.user_records
 
     def test_user_returned_own_records(self) -> None:
         """Verify users only receive records they own."""

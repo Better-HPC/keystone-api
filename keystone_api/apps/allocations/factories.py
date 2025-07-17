@@ -57,7 +57,7 @@ class AllocationRequestFactory(DjangoModelFactory):
     expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
     status = randgen.choice(AllocationRequest.StatusChoices.values)
 
-    submitter = factory.SubFactory(UserFactory)
+    submitter = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
 
     @factory.post_generation
@@ -109,7 +109,7 @@ class AllocationReviewFactory(DjangoModelFactory):
     status = randgen.choice(AllocationReview.StatusChoices.values)
 
     request = factory.SubFactory(AllocationRequestFactory)
-    reviewer = factory.SubFactory(UserFactory)
+    reviewer = factory.SubFactory(UserFactory, is_staff=False)
 
 
 class AttachmentFactory(DjangoModelFactory):
@@ -136,7 +136,7 @@ class CommentFactory(DjangoModelFactory):
     content = factory.Faker('sentence', nb_words=10)
     private = factory.Faker('pybool', truth_probability=10)
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory, is_staff=False)
     request = factory.SubFactory(AllocationRequestFactory)
 
 
