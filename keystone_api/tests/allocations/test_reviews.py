@@ -1,9 +1,10 @@
 """Function tests for the `/allocations/reviews/` endpoint."""
 
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APIRequestFactory, APITestCase
 
-from apps.allocations.factories import AllocationReviewFactory
+from apps.allocations.factories import AllocationRequestFactory, AllocationReviewFactory
+from apps.allocations.models import AllocationReview
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, TeamScopedListFilteringTests
 
@@ -88,6 +89,7 @@ class ReviewerAssignment(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
+        self.request = AllocationRequestFactory()
         self.generic_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
@@ -96,7 +98,7 @@ class ReviewerAssignment(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
 
-        response = self.client.post(self.endpoint, {'request': 1, 'status': 'AP'})
+        response = self.client.post(self.endpoint, {'request': self.request.id, 'status': AllocationReview.StatusChoices.APPROVED})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
@@ -105,7 +107,7 @@ class ReviewerAssignment(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
 
-        response = self.client.post(self.endpoint, {'request': 1, 'reviewer': self.staff_user.id, 'status': 'AP'})
+        response = self.client.post(self.endpoint, {'request':  self.request.id, 'reviewer': self.staff_user.id, 'status': AllocationReview.StatusChoices.APPROVED})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
@@ -114,7 +116,7 @@ class ReviewerAssignment(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
 
-        response = self.client.post(self.endpoint, {'request': 1, 'reviewer': self.generic_user.id, 'status': 'AP'})
+        response = self.client.post(self.endpoint, {'request': self.request.id, 'reviewer': self.generic_user.id, 'status': AllocationReview.StatusChoices.APPROVED})
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertIn('reviewer', response.data)

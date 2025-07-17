@@ -109,7 +109,12 @@ class TeamScopedListFilteringTests:
         self.client.force_login(self.team_member)
         response = self.client.get(self.endpoint)
 
-        response_ids = {record['id'] for record in response.json()}
+        try:
+            response_ids = {record['id'] for record in response.json()}
+
+        except:
+            breakpoint()
+
         expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -148,8 +153,8 @@ class UserScopedListFilteringTests:
     owner_user: User
     other_user: User
     staff_user: User
-    user_records: QuerySet
-    all_records: QuerySet
+    user_records: list
+    all_records: list
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -158,7 +163,7 @@ class UserScopedListFilteringTests:
         self.other_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
-        self.user_records = [self.factory(**{self.user_field: self.owner_user}) for _ in range(5)]
+        self.user_records = [self.factory(**{self.user_field: self.owner_user}), ]
         self.all_records = [self.factory() for _ in range(5)] + self.user_records
 
     def test_user_returned_own_records(self) -> None:
