@@ -29,7 +29,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.non_team_member = UserFactory()
+        self.non_team_member = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
         self.team = TeamFactory()

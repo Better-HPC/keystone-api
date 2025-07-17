@@ -72,5 +72,5 @@ class MembershipFactory(DjangoModelFactory):
 
     role = randgen.choice(Membership.Role.values)
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)

@@ -46,8 +46,8 @@ class ListEndpointPermissionsTests(CustomAsserts):
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
-        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory(is_staff=False)
 
         self.valid_record_data = self.build_valid_record_data()
 
@@ -192,14 +192,15 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.team = TeamFactory()
+        self.staff_user = UserFactory(is_staff=True)
+        self.non_member = UserFactory(is_staff=False)
+
+        membership = MembershipFactory(role=Membership.Role.MEMBER)
+        self.team = membership.team
+        self.team_member = membership.user
+
         record = self.factory(team=self.team)
         self.endpoint = self.endpoint_pattern.format(pk=record.pk)
-
-        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
-        self.non_member = UserFactory()
-        self.staff_user = UserFactory(is_staff=True)
-
         self.valid_record_data = self.build_valid_record_data()
 
     def build_valid_record_data(self) -> dict:

@@ -5,18 +5,17 @@ from rest_framework import status
 
 from apps.allocations.models import AllocationRequest, AllocationReview
 from apps.allocations.views import AllocationReviewViewSet
+from apps.users.factories import UserFactory
 from apps.users.models import User
 
 
 class CreateMethod(TestCase):
     """Test the creation of new records via the `create` method."""
 
-    fixtures = ['testing_common.yaml']
-
     def setUp(self) -> None:
         """Load test data from fixtures."""
 
-        self.staff_user = User.objects.get(username='staff_user')
+        self.staff_user = UserFactory(is_staff=True)
         self.allocation_request = AllocationRequest.objects.get(pk=1)
 
     @staticmethod

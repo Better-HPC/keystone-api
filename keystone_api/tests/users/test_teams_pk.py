@@ -32,7 +32,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.team = TeamFactory()
         self.endpoint = self.endpoint_pattern.format(pk=self.team.pk)
 
-        self.non_team_member = UserFactory()
+        self.non_team_member = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
