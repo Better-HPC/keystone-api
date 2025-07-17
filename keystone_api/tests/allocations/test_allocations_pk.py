@@ -4,9 +4,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationFactory
-from apps.allocations.models import Allocation
 from apps.users.factories import MembershipFactory, UserFactory
-from apps.users.models import Membership, Team, User
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
 

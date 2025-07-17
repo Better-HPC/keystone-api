@@ -4,9 +4,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationReviewFactory
-from apps.allocations.models import AllocationReview
 from apps.users.factories import MembershipFactory, UserFactory
-from apps.users.models import Membership, Team, User
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
 
@@ -31,10 +30,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.review = AllocationReviewFactory()
         self.team = self.review.request.team
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
         self.staff_user = UserFactory(is_staff=True)
         self.non_member = UserFactory(is_staff=False)
-        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
         self.endpoint = self.endpoint_pattern.format(pk=self.review.pk)
 

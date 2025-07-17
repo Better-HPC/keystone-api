@@ -1,7 +1,6 @@
 """Custom testing utilities used to streamline common tests."""
 
 from django.db import transaction
-from django.db.models import QuerySet
 from django.test import Client
 from factory.django import DjangoModelFactory
 

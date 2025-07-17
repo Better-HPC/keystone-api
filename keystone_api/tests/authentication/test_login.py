@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
-from apps.users.models import User
 from tests.utils import CustomAsserts
 
 
@@ -72,7 +71,7 @@ class UserAuthentication(APITestCase):
         """Create test fixtures using mock data."""
 
         self.password = 'foobar123'
-        self.user = User.objects.create_user(username='user', password=self.password)
+        self.user = UserFactory(username='user', password=self.password, is_staff=False)
 
     def test_invalid_credentials(self) -> None:
         """Verify user authentication fails with invalid credentials."""

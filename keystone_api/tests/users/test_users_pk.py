@@ -31,13 +31,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.user2 = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
+        self.user1_endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
-
         self.assert_http_responses(
-            endpoint,
+            self.user1_endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -51,12 +51,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_different_user(self) -> None:
         """Verify users cannot modify other users' records."""
 
-        # Define a user / record endpoint from a DIFFERENT user
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
         self.client.force_authenticate(user=self.user2)
-
         self.assert_http_responses(
-            endpoint,
+            self.user1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -70,12 +67,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_same_user(self) -> None:
         """Verify authenticated users can access and modify their own records."""
 
-        # Define a user / record endpoint from the SAME user
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
         self.client.force_authenticate(user=self.user1)
-
         self.assert_http_responses(
-            endpoint,
+            self.user1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -96,11 +90,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_staff_user_permissions(self) -> None:
         """Verify staff users have full read and write permissions."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
         self.client.force_authenticate(user=self.staff_user)
-
         self.assert_http_responses(
-            endpoint,
+            self.user1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -131,13 +123,13 @@ class CredentialHandling(APITestCase):
         self.user2 = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
+        self.user1_endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+
     def test_user_get_own_password(self) -> None:
         """Verify users cannot retrieve their own password."""
 
         self.client.force_authenticate(user=self.user1)
-        response = self.client.get(
-            self.endpoint_pattern.format(pk=self.user1.id)
-        )
+        response = self.client.get(self.user1_endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertNotIn('password', response.json())
@@ -146,10 +138,7 @@ class CredentialHandling(APITestCase):
         """Verify users can change their own password."""
 
         self.client.force_authenticate(user=self.user1)
-        response = self.client.patch(
-            path=self.endpoint_pattern.format(pk=self.user1.id),
-            data={'password': 'new_password123'}
-        )
+        response = self.client.patch(self.user1_endpoint, data={'password': 'new_password123'})
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
@@ -158,13 +147,8 @@ class CredentialHandling(APITestCase):
     def test_user_get_others_password(self) -> None:
         """Verify users cannot retrieve another user's password."""
 
-        authenticated_user = self.user1
-        other_user = self.user2
-        self.client.force_authenticate(user=authenticated_user)
-
-        response = self.client.get(
-            self.endpoint_pattern.format(pk=other_user.id),
-        )
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get(self.user1_endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertNotIn('password', response.data)
@@ -172,14 +156,8 @@ class CredentialHandling(APITestCase):
     def test_user_set_others_password(self) -> None:
         """Verify users cannot change another user's password."""
 
-        authenticated_user = self.user1
-        other_user = self.user2
-        self.client.force_authenticate(user=authenticated_user)
-
-        response = self.client.patch(
-            path=self.endpoint_pattern.format(pk=other_user.id),
-            data={'password': 'new_password123'}
-        )
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.patch(self.user1_endpoint, data={'password': 'new_password123'})
 
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
@@ -187,9 +165,7 @@ class CredentialHandling(APITestCase):
         """Verify staff users cannot retrieve user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.get(
-            self.endpoint_pattern.format(pk=self.user1.id)
-        )
+        response = self.client.get(self.user1_endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertNotIn('password', response.json())
@@ -198,10 +174,7 @@ class CredentialHandling(APITestCase):
         """Verify staff users can change user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.patch(
-            path=self.endpoint_pattern.format(pk=self.user1.id),
-            data={'password': 'new_password123'}
-        )
+        response = self.client.patch(self.user1_endpoint, data={'password': 'new_password123'})
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
@@ -217,8 +190,8 @@ class RecordHistory(APITestCase):
         """Authenticate as a generic application user."""
 
         user = UserFactory(is_staff=False)
-        self.endpoint = self.endpoint_pattern.format(pk=user.id)
         self.client.force_authenticate(user=user)
+        self.endpoint = self.endpoint_pattern.format(pk=user.id)
 
     def test_password_masked(self) -> None:
         """Verify password values are masked in returned responses."""

@@ -192,12 +192,12 @@ class RecordEndpointPermissionsTests(CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.staff_user = UserFactory(is_staff=True)
-        self.non_member = UserFactory(is_staff=False)
-
         membership = MembershipFactory(role=Membership.Role.MEMBER)
         self.team = membership.team
         self.team_member = membership.user
+
+        self.staff_user = UserFactory(is_staff=True)
+        self.non_member = UserFactory(is_staff=False)
 
         record = self.factory(team=self.team)
         self.endpoint = self.endpoint_pattern.format(pk=record.pk)

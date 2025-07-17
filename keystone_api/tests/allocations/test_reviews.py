@@ -1,7 +1,7 @@
 """Function tests for the `/allocations/reviews/` endpoint."""
 
 from rest_framework import status
-from rest_framework.test import APIRequestFactory, APITestCase
+from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationRequestFactory, AllocationReviewFactory
 from apps.allocations.models import AllocationReview
@@ -28,9 +28,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        AllocationReviewFactory()
         self.generic_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
+        self.review = AllocationReviewFactory()
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -77,7 +77,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'status': 'AP', 'request': 1}
+            post_body={
+                'status': AllocationReview.StatusChoices.APPROVED,
+                'request': self.review.id
+            }
         )
 
 
@@ -89,16 +92,19 @@ class ReviewerAssignment(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.request = AllocationRequestFactory()
         self.generic_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
+        self.request = AllocationRequestFactory()
 
     def test_default_reviewer(self) -> None:
         """Verify the reviewer field defaults to the current user."""
 
         self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {
+            'request': self.request.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        })
 
-        response = self.client.post(self.endpoint, {'request': self.request.id, 'status': AllocationReview.StatusChoices.APPROVED})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
@@ -106,8 +112,12 @@ class ReviewerAssignment(APITestCase):
         """Verify the reviewer is set correctly when provided."""
 
         self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {
+            'request': self.request.id,
+            'reviewer': self.staff_user.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        })
 
-        response = self.client.post(self.endpoint, {'request':  self.request.id, 'reviewer': self.staff_user.id, 'status': AllocationReview.StatusChoices.APPROVED})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
@@ -115,8 +125,11 @@ class ReviewerAssignment(APITestCase):
         """Verify an error is raised when the reviewer field does not match the request submitter."""
 
         self.client.force_authenticate(user=self.staff_user)
-
-        response = self.client.post(self.endpoint, {'request': self.request.id, 'reviewer': self.generic_user.id, 'status': AllocationReview.StatusChoices.APPROVED})
+        response = self.client.post(self.endpoint, {
+            'request': self.request.id,
+            'reviewer': self.generic_user.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        })
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertIn('reviewer', response.data)

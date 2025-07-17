@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.factories import ClusterFactory
 from apps.users.factories import UserFactory
-from apps.users.models import User
 from tests.utils import CustomAsserts
 
 

@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
+ENDPOINT = '/authentication/whoami/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -18,7 +20,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authenticated User   | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/authentication/whoami/'
+    endpoint = ENDPOINT
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access the endpoint."""
@@ -56,7 +58,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class UserData(APITestCase):
     """Test the fetching of user metadata."""
 
-    endpoint = '/authentication/whoami/'
+    endpoint = ENDPOINT
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
