@@ -79,17 +79,17 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class ReviewerAssignment(APITestCase):
-    """Test the automatic assignment and verification of the `reviewer` field."""
+class UserFieldAssignment(APITestCase):
+    """Test the automatic assignment and verification of the `user` field."""
 
     endpoint = ENDPOINT
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user1 = User.objects.get(username='member_1')
-        self.user2 = User.objects.get(username='member_2')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.user1 = UserFactory(is_staff=False)
+        self.user2 = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_default_user(self) -> None:
         """Verify the user field defaults to the current user."""

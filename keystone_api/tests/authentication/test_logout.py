@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.users.factories import UserFactory
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
@@ -38,7 +39,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_permissions(self) -> None:
         """Verify authenticated users can submit post requests."""
 
-        user = User.objects.get(username='generic_user')
+        user = UserFactory(is_staff=False)
         self.client.force_authenticate(user=user)
         self.assert_http_responses(
             self.endpoint,

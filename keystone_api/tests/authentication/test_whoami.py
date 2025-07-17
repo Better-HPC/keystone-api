@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
@@ -38,7 +38,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_permissions(self) -> None:
         """Verify authenticated users can perform read operations."""
 
-        user = User.objects.get(username='generic_user')
+        user = UserFactory(is_staff=False)
         self.client.force_authenticate(user=user)
         self.assert_http_responses(
             self.endpoint,
@@ -61,7 +61,7 @@ class UserData(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user = User.objects.get(username='generic_user')
+        self.user = UserFactory(is_staff=False)
 
     def test_metadata_is_returned(self) -> None:
         """Verify GET responses include metadata for the currently authenticated user."""

@@ -3,8 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.notifications.models import Notification
-from apps.users.models import User
+from apps.notifications.factories import NotificationFactory
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
@@ -26,16 +26,16 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user1 = User.objects.get(username='owner_1')
-        self.user1_notification = Notification.objects.get(user=self.user1)
+        self.notified_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
-        self.user2 = User.objects.get(username='owner_2')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.notification = NotificationFactory(user=self.notified_user)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+        endpoint = self.endpoint_pattern.format(pk=self.notified_user.id)
 
         self.assert_http_responses(
             endpoint,
@@ -53,8 +53,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify authenticated users can access and modify their own records."""
 
         # Define a user / record endpoint from the SAME user
-        endpoint = self.endpoint_pattern.format(pk=self.user1_notification.id)
-        self.client.force_authenticate(user=self.user1)
+        endpoint = self.endpoint_pattern.format(pk=self.notification.id)
+        self.client.force_authenticate(user=self.notified_user)
 
         self.assert_http_responses(
             endpoint,
@@ -72,8 +72,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify users cannot modify other users' records."""
 
         # Define a user / record endpoint from a DIFFERENT user
-        endpoint = self.endpoint_pattern.format(pk=self.user1_notification.id)
-        self.client.force_authenticate(user=self.user2)
+        endpoint = self.endpoint_pattern.format(pk=self.notification.id)
+        self.client.force_authenticate(user=self.generic_user)
 
         self.assert_http_responses(
             endpoint,
@@ -90,7 +90,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_staff_user_permissions(self) -> None:
         """Verify staff users cannot modify other users' records."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.user1_notification.id)
+        endpoint = self.endpoint_pattern.format(pk=self.notification.id)
         self.client.force_authenticate(user=self.staff_user)
 
         self.assert_http_responses(

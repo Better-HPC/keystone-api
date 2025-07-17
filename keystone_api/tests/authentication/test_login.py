@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.users.factories import UserFactory
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
@@ -23,7 +24,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user = User.objects.create_user(username='user', password='foobar123')
+        self.user = UserFactory(username='user', is_staff=False)
+        self.user.set_password('password')
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users can submit post requests."""

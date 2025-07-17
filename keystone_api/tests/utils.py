@@ -1,7 +1,7 @@
 """Custom testing utilities used to streamline common tests."""
 
 from django.db import transaction
-from django.db.models import Model, QuerySet
+from django.db.models import QuerySet
 from django.test import Client
 from factory.django import DjangoModelFactory
 
@@ -73,6 +73,9 @@ class CustomAsserts:
 class TeamScopedListFilteringTests:
     """Test the filtering of returned records based on user team membership."""
 
+    # Defined by test suite class
+    client: Client
+
     # Defined by subclasses
     factory: type[DjangoModelFactory]
     endpoint: str
@@ -95,7 +98,7 @@ class TeamScopedListFilteringTests:
 
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
         self.staff_user = UserFactory(is_staff=True)
-        self.generic_user = UserFactory()
+        self.generic_user = UserFactory(is_staff=False)
 
     def test_user_returned_filtered_records(self) -> None:
         """Verify users are only returned records for teams they belong to."""
@@ -128,8 +131,11 @@ class TeamScopedListFilteringTests:
 class UserScopedListFilteringTests:
     """Test the filtering of returned records based on user ownership."""
 
+    # Defined by test suite class
+    client: Client
+
     # Defined by subclasses
-    model: Model
+    factory: type[DjangoModelFactory]
     endpoint: str
     user_field = 'user'
 
@@ -143,12 +149,12 @@ class UserScopedListFilteringTests:
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.owner_user = User.objects.get(username='member_1')
-        self.other_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.owner_user = User.objects.get(is_staff=False)
+        self.other_user = User.objects.get(is_staff=False)
+        self.staff_user = User.objects.get(is_staff=True)
 
-        self.user_records = self.model.objects.filter(**{self.user_field: self.owner_user})
-        self.all_records = self.model.objects.all()
+        self.user_records = [self.factory(**{self.user_field: self.owner_user}) for _ in range(5)]
+        self.all_records = [self.factory() for _ in range(5)] + self.team_records
 
     def test_user_returned_own_records(self) -> None:
         """Verify users only receive records they own."""
@@ -157,7 +163,7 @@ class UserScopedListFilteringTests:
         response = self.client.get(self.endpoint)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.user_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.user_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_staff_returned_all_records(self) -> None:
@@ -167,7 +173,7 @@ class UserScopedListFilteringTests:
         response = self.client.get(self.endpoint)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.all_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_user_with_no_records(self) -> None:
