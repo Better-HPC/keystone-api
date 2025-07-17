@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.factories import AllocationRequestFactory
 from apps.allocations.models import AllocationRequest
 from apps.users.models import Team, User
 from tests.utils import CustomAsserts, TeamScopedListFilteringTests
@@ -147,4 +148,4 @@ class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/requests/'
-    model = AllocationRequest
+    factory = AllocationRequestFactory

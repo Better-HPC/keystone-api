@@ -2,7 +2,7 @@
 
 from rest_framework import status
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 
 
 class GetResponseContentTests:
@@ -15,7 +15,7 @@ class GetResponseContentTests:
     def test_returns_expected_content(self) -> None:
         """Verify GET responses include the expected content."""
 
-        generic_user = User(username='generic_user')
+        generic_user = UserFactory(is_staff=False)
         self.client.force_authenticate(user=generic_user)
 
         response = self.client.get(self.endpoint)
