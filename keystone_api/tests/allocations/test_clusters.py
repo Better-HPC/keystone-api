@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.factories import ClusterFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
@@ -24,6 +25,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
+        ClusterFactory()
         self.generic_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 

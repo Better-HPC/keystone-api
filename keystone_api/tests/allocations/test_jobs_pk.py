@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.models import JobStats
 from apps.users.models import Team, User
-from tests.utils import CustomAsserts, TeamScopedListFilteringTests
+from tests.utils import CustomAsserts
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -96,11 +96,3 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
-
-
-class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
-    """Test the filtering of returned records based on user team membership."""
-
-    endpoint = '/allocations/jobs/'
-    model = JobStats
-    team_field = 'team'

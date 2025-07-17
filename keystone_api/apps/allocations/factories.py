@@ -152,8 +152,8 @@ class JobStatsFactory(DjangoModelFactory):
     jobname = factory.Faker('word')
     state = randgen.choice(["RUNNING", "COMPLETED", "FAILED"])
     submit = factory.Faker('date_time_between', start_date='-1y', end_date='-1d')
-    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(min=1, max=60)))
-    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(min=5, max=240)))
+    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(1, 60)))
+    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(5, 240)))
 
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)

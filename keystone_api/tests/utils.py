@@ -149,9 +149,9 @@ class UserScopedListFilteringTests:
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.owner_user = User.objects.get(is_staff=False)
-        self.other_user = User.objects.get(is_staff=False)
-        self.staff_user = User.objects.get(is_staff=True)
+        self.owner_user = UserFactory(is_staff=False)
+        self.other_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
         self.user_records = [self.factory(**{self.user_field: self.owner_user}) for _ in range(5)]
         self.all_records = [self.factory() for _ in range(5)] + self.team_records
