@@ -109,12 +109,7 @@ class TeamScopedListFilteringTests:
         self.client.force_login(self.team_member)
         response = self.client.get(self.endpoint)
 
-        try:
-            response_ids = {record['id'] for record in response.json()}
-
-        except:
-            breakpoint()
-
+        response_ids = {record['id'] for record in response.json()}
         expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
