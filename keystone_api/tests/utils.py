@@ -106,8 +106,10 @@ class TeamScopedListFilteringTests:
     def test_user_returned_filtered_records(self) -> None:
         """Verify users are only returned records for teams they belong to."""
 
-        self.client.force_login(self.team_member)
+        self.client.force_authenticate(self.team_member)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
         expected_ids = {record.id for record in self.team_records}
@@ -116,8 +118,10 @@ class TeamScopedListFilteringTests:
     def test_staff_returned_all_records(self) -> None:
         """Verify staff users are returned all records."""
 
-        self.client.force_login(self.staff_user)
+        self.client.force_authenticate(self.staff_user)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
         expected_ids = {record.id for record in self.all_records}
@@ -126,8 +130,10 @@ class TeamScopedListFilteringTests:
     def test_user_with_no_records(self) -> None:
         """Verify user's not belonging to any teams are returned an empty list."""
 
-        self.client.force_login(self.generic_user)
+        self.client.force_authenticate(self.generic_user)
         response = self.client.get(self.endpoint)
+
+        self.assertEqual(200, response.status_code)
         self.assertEqual(0, len(response.json()))
 
 
@@ -164,8 +170,10 @@ class UserScopedListFilteringTests:
     def test_user_returned_own_records(self) -> None:
         """Verify users only receive records they own."""
 
-        self.client.force_login(self.owner_user)
+        self.client.force_authenticate(self.owner_user)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
         expected_ids = {record.id for record in self.user_records}
@@ -174,8 +182,10 @@ class UserScopedListFilteringTests:
     def test_staff_returned_all_records(self) -> None:
         """Verify staff users are returned all records."""
 
-        self.client.force_login(self.staff_user)
+        self.client.force_authenticate(self.staff_user)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
         expected_ids = {record.id for record in self.all_records}
@@ -184,6 +194,8 @@ class UserScopedListFilteringTests:
     def test_user_with_no_records(self) -> None:
         """Verify users with no associated records receive an empty list."""
 
-        self.client.force_login(self.other_user)
+        self.client.force_authenticate(self.other_user)
         response = self.client.get(self.endpoint)
+
+        self.assertEqual(200, response.status_code)
         self.assertEqual(0, len(response.json()))
