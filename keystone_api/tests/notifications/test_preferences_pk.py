@@ -26,16 +26,16 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.owner_user = UserFactory(is_staff=False)
+        self.preference_user = UserFactory(is_staff=False)
         self.generic_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
-        self.preference = PreferenceFactory(user=self.owner_user)
+        self.preference = PreferenceFactory(user=self.preference_user)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.owner_user.id)
+        endpoint = self.endpoint_pattern.format(pk=self.preference_user.id)
 
         self.assert_http_responses(
             endpoint,
@@ -54,7 +54,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         # Define a user / record endpoint for the SAME user
         endpoint = self.endpoint_pattern.format(pk=self.preference.id)
-        self.client.force_authenticate(user=self.owner_user)
+        self.client.force_authenticate(user=self.preference_user)
 
         self.assert_http_responses(
             endpoint,
