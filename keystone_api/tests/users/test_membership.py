@@ -3,7 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
 
@@ -24,18 +25,17 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = '/users/membership/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user teams and accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.non_team_member = User.objects.get(username='generic_user')
+        self.team = TeamFactory()
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
+        self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
-        self.team = Team.objects.get(name='Team 1')
-        self.team_owner = User.objects.get(username='owner_1')
-        self.team_admin = User.objects.get(username='admin_1')
-        self.team_member = User.objects.get(username='member_1')
+        self.non_team_member = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -66,7 +66,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'team': self.team.pk, 'user': self.non_team_member.pk, 'role': 'MB'},
+            post_body={
+                'team': self.team.pk,
+                'user': self.non_team_member.pk,
+                'role': Membership.Role.MEMBER
+            }
         )
 
     def test_team_member_permissions(self) -> None:
@@ -83,7 +87,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'team': self.team.pk, 'user': self.non_team_member.pk, 'role': 'MB'},
+            post_body={
+                'team': self.team.pk,
+                'user': self.non_team_member.pk,
+                'role': Membership.Role.MEMBER
+            }
         )
 
     def test_team_admin_permissions(self) -> None:
@@ -100,7 +108,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'team': self.team.pk, 'user': self.non_team_member.pk, 'role': 'MB'},
+            post_body={
+                'team': self.team.pk,
+                'user': self.non_team_member.pk,
+                'role': Membership.Role.MEMBER
+            }
         )
 
     def test_team_owner_permissions(self) -> None:
@@ -117,7 +129,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'team': self.team.pk, 'user': self.non_team_member.pk, 'role': 'MB'},
+            post_body={
+                'team': self.team.pk,
+                'user': self.non_team_member.pk,
+                'role': Membership.Role.MEMBER
+            }
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -134,5 +150,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'team': self.team.pk, 'user': self.non_team_member.pk, 'role': 'MB'},
+            post_body={
+                'team': self.team.pk,
+                'user': self.non_team_member.pk,
+                'role': Membership.Role.MEMBER
+            }
         )

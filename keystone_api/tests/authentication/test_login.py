@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
@@ -21,9 +21,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     endpoint = '/authentication/login/'
 
     def setUp(self) -> None:
-        """Create a user account to use when testing authentication."""
+        """Create test fixtures using mock data."""
 
-        self.user = User.objects.create_user(username='user', password='foobar123')
+        self.user = UserFactory(username='user', is_staff=False)
+        self.user.set_password('foobar123')
+        self.user.save()
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users can submit post requests."""
@@ -66,10 +68,10 @@ class UserAuthentication(APITestCase):
     whoami_endpoint = '/authentication/whoami/'
 
     def setUp(self) -> None:
-        """Create a user account to use when testing authentication."""
+        """Create test fixtures using mock data."""
 
         self.password = 'foobar123'
-        self.user = User.objects.create_user(username='user', password=self.password)
+        self.user = UserFactory(username='user', password=self.password, is_staff=False)
 
     def test_invalid_credentials(self) -> None:
         """Verify user authentication fails with invalid credentials."""

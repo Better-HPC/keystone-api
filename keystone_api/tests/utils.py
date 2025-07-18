@@ -1,17 +1,19 @@
 """Custom testing utilities used to streamline common tests."""
 
 from django.db import transaction
-from django.db.models import Model, QuerySet
 from django.test import Client
+from factory.django import DjangoModelFactory
 
-from apps.users.models import Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership, Team, User
 
 
 class CustomAsserts:
     """Custom assert methods for testing responses from REST endpoints."""
 
+    # Provided by the test framework
     client: Client
-    assertEqual: callable  # Provided by TestCase class
+    assertEqual: callable
 
     def assert_http_responses(self, endpoint: str, **kwargs) -> None:
         """Execute a series of API calls and assert the returned status matches the given values.
@@ -71,8 +73,13 @@ class CustomAsserts:
 class TeamScopedListFilteringTests:
     """Test the filtering of returned records based on user team membership."""
 
+    # Provided by the test framework
+    client: Client
+    assertEqual: callable
+    assertSetEqual: callable
+
     # Defined by subclasses
-    model: Model
+    factory: type[DjangoModelFactory]
     endpoint: str
     team_field = 'team'
 
@@ -81,55 +88,65 @@ class TeamScopedListFilteringTests:
     team_member: User
     staff_user: User
     generic_user: User
-    team_records: QuerySet
-    all_records: QuerySet
-
-    fixtures = ['testing_common.yaml']
+    team_records: list
+    all_records: list
 
     def setUp(self) -> None:
-        """Load records from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.team = Team.objects.get(name='Team 1')
-        self.team_records = self.model.objects.filter(**{self.team_field: self.team})
-        self.all_records = self.model.objects.all()
+        self.team = TeamFactory()
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
-        self.team_member = User.objects.get(username='member_1')
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
+
+        self.team_records = [self.factory(**{self.team_field: self.team}) for _ in range(5)]
+        self.all_records = [self.factory() for _ in range(5)] + self.team_records
 
     def test_user_returned_filtered_records(self) -> None:
         """Verify users are only returned records for teams they belong to."""
 
-        self.client.force_login(self.team_member)
+        self.client.force_authenticate(self.team_member)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.team_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_staff_returned_all_records(self) -> None:
         """Verify staff users are returned all records."""
 
-        self.client.force_login(self.staff_user)
+        self.client.force_authenticate(self.staff_user)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.all_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_user_with_no_records(self) -> None:
         """Verify user's not belonging to any teams are returned an empty list."""
 
-        self.client.force_login(self.generic_user)
+        self.client.force_authenticate(self.generic_user)
         response = self.client.get(self.endpoint)
+
+        self.assertEqual(200, response.status_code)
         self.assertEqual(0, len(response.json()))
 
 
 class UserScopedListFilteringTests:
     """Test the filtering of returned records based on user ownership."""
 
+    # Provided by the test framework
+    client: Client
+    assertEqual: callable
+    assertSetEqual: callable
+
     # Defined by subclasses
-    model: Model
+    factory: type[DjangoModelFactory]
     endpoint: str
     user_field = 'user'
 
@@ -137,44 +154,48 @@ class UserScopedListFilteringTests:
     owner_user: User
     other_user: User
     staff_user: User
-    user_records: QuerySet
-    all_records: QuerySet
-
-    fixtures = ['testing_common.yaml']
+    user_records: list
+    all_records: list
 
     def setUp(self) -> None:
-        """Load records from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.owner_user = User.objects.get(username='member_1')
-        self.other_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.owner_user = UserFactory(is_staff=False)
+        self.other_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
-        self.user_records = self.model.objects.filter(**{self.user_field: self.owner_user})
-        self.all_records = self.model.objects.all()
+        self.user_records = [self.factory(**{self.user_field: self.owner_user}), ]
+        self.all_records = [self.factory() for _ in range(5)] + self.user_records
 
     def test_user_returned_own_records(self) -> None:
         """Verify users only receive records they own."""
 
-        self.client.force_login(self.owner_user)
+        self.client.force_authenticate(self.owner_user)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.user_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.user_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_staff_returned_all_records(self) -> None:
         """Verify staff users are returned all records."""
 
-        self.client.force_login(self.staff_user)
+        self.client.force_authenticate(self.staff_user)
+
         response = self.client.get(self.endpoint)
+        self.assertEqual(200, response.status_code)
 
         response_ids = {record['id'] for record in response.json()}
-        expected_ids = set(self.all_records.values_list('id', flat=True))
+        expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_user_with_no_records(self) -> None:
         """Verify users with no associated records receive an empty list."""
 
-        self.client.force_login(self.other_user)
+        self.client.force_authenticate(self.other_user)
         response = self.client.get(self.endpoint)
+
+        self.assertEqual(200, response.status_code)
         self.assertEqual(0, len(response.json()))

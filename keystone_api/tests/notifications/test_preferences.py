@@ -3,8 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.notifications.models import Preference
-from apps.users.models import User
+from apps.notifications.factories import PreferenceFactory
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, UserScopedListFilteringTests
 
 ENDPOINT = '/notifications/preferences/'
@@ -23,13 +23,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -79,18 +78,17 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class ReviewerAssignment(APITestCase):
-    """Test the automatic assignment and verification of the `reviewer` field."""
+class UserFieldAssignment(APITestCase):
+    """Test the automatic assignment and verification of the `user` field."""
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.user1 = User.objects.get(username='member_1')
-        self.user2 = User.objects.get(username='member_2')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.user1 = UserFactory(is_staff=False)
+        self.user2 = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_default_user(self) -> None:
         """Verify the user field defaults to the current user."""
@@ -134,4 +132,4 @@ class RecordFiltering(UserScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
     endpoint = ENDPOINT
-    model = Preference
+    factory = PreferenceFactory

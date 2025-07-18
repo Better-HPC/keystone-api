@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.users.factories import UserFactory
 from apps.users.models import User
 from tests.utils import CustomAsserts
 
@@ -20,13 +21,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = '/users/users/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.generic_user = User.objects.get(username='generic_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -85,13 +85,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class CredentialHandling(APITestCase):
     """Test the handling of user credentials."""
 
-    fixtures = ['testing_common.yaml']
-
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.generic_user = User.objects.get(username='generic_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_new_user_credentials_are_set(self) -> None:
         """Verify new users are created with the correctly hashed password.

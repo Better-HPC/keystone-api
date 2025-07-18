@@ -25,22 +25,26 @@ __all__ = [
 class PermissionUtils:
     """Common permission logic."""
 
-    def is_create(self, view: View) -> bool:
+    @staticmethod
+    def is_create(view: View) -> bool:
         """Return whether the requested operation creates a new record."""
 
         return getattr(view, 'action', None) == 'create'
 
-    def is_read_only(self, request: Request) -> bool:
+    @staticmethod
+    def is_read_only(request: Request) -> bool:
         """Return whether the requested operation is read-only."""
 
         return request.method in permissions.SAFE_METHODS
 
-    def user_is_staff(self, request: Request) -> bool:
+    @staticmethod
+    def user_is_staff(request: Request) -> bool:
         """Return whether the requested operation was made by a staff user."""
 
         return request.user and request.user.is_staff
 
-    def user_in_team(self, request, obj) -> bool:
+    @staticmethod
+    def user_in_team(request, obj) -> bool:
         """Return whether the requested operation was made by a team member."""
 
         return request.user in obj.get_team().get_all_members()

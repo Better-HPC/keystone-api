@@ -3,8 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import JobStats
-from apps.users.models import User
+from apps.allocations.factories import JobStatsFactory
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, TeamScopedListFilteringTests
 
 
@@ -21,13 +21,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = '/allocations/jobs/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        JobStatsFactory()
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -81,5 +81,5 @@ class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/jobs/'
-    model = JobStats
+    factory = JobStatsFactory
     team_field = 'team'

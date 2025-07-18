@@ -9,4 +9,3 @@ class EndpointPermissions(BaseEndpointPermissionTests, APITestCase):
     """Test endpoint user permissions."""
 
     endpoint = '/logs/tasks/'
-    fixtures = ['testing_common.yaml']

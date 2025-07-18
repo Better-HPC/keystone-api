@@ -31,7 +31,7 @@ class NotificationFactory(DjangoModelFactory):
     message = factory.Faker('paragraph', nb_sentences=3)
     notification_type = randgen.choice(Notification.NotificationType.values)
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory, is_staff=False)
 
 
 class PreferenceFactory(DjangoModelFactory):
@@ -45,4 +45,4 @@ class PreferenceFactory(DjangoModelFactory):
     request_expiry_thresholds = factory.LazyFunction(lambda: [30, 14])
     notify_on_expiration = factory.Faker("pybool", truth_probability=75)
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory, is_staff=False)

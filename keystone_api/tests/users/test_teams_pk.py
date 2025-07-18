@@ -3,7 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
 
@@ -24,27 +25,25 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint_pattern = '/users/teams/{pk}/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user teams and accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        # Define the API endpoint for Team 1
-        self.team = Team.objects.get(name='Team 1')
-        self.endpoint = self.endpoint_pattern.format(pk=self.team.pk)
+        self.team = TeamFactory()
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
+        self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
-        # Load user accounts for (non)team members
-        self.staff_user = User.objects.get(username='staff_user')
-        self.non_team_member = User.objects.get(username='generic_user')
-        self.team_owner = User.objects.get(username='owner_1')
-        self.team_admin = User.objects.get(username='admin_1')
-        self.team_member = User.objects.get(username='member_1')
+        self.non_team_member = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
+
+        self.team_endpoint = self.endpoint_pattern.format(pk=self.team.pk)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
-            self.endpoint,
+            self.team_endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -60,7 +59,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.non_team_member)
         self.assert_http_responses(
-            self.endpoint,
+            self.team_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -76,7 +75,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
-            self.endpoint,
+            self.team_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -92,7 +91,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_admin)
         self.assert_http_responses(
-            self.endpoint,
+            self.team_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -101,7 +100,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'Team 3', 'members': []},
+            put_body={'name': 'New Name', 'members': []},
             patch_body={'name': 'New Name'},
         )
 
@@ -110,7 +109,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_owner)
         self.assert_http_responses(
-            self.endpoint,
+            self.team_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -119,7 +118,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'Team 3', 'members': []},
+            put_body={'name': 'New Name', 'members': []},
             patch_body={'name': 'New Name'},
         )
 
@@ -128,7 +127,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
-            self.endpoint,
+            self.team_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -137,6 +136,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'Team 3', 'members': []},
+            put_body={'name': 'New Name', 'members': []},
             patch_body={'name': 'New Name'},
         )

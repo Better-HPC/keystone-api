@@ -16,6 +16,10 @@ from .models import *
 
 __all__ = ['MembershipFactory', 'TeamFactory', 'UserFactory']
 
+# Using a fixed, prehashed password avoids the significant overhead
+# of hashing a dynamically generated value for each record
+DEFAULT_PASSWORD = make_password('password')
+
 
 class TeamFactory(DjangoModelFactory):
     """Factory for creating mock `Team` instances."""
@@ -46,10 +50,6 @@ class UserFactory(DjangoModelFactory):
         model = User
         django_get_or_create = ('username',)
 
-    # Using a fixed, prehashed password avoids the significant overhead
-    # of hashing a dynamically generated value for each record
-    password = make_password('password')
-
     username = factory.Sequence(lambda n: f"user{n}")
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
@@ -60,6 +60,19 @@ class UserFactory(DjangoModelFactory):
     is_active = factory.Faker('pybool', truth_probability=98)
     is_staff = factory.Faker('pybool')
     is_ldap_user = False
+
+    @factory.post_generation
+    def password(obj, create, extracted, **kwargs):
+        """Hashes the user password before persisting the value."""
+
+        if extracted is not None:
+            obj.password = make_password(extracted)
+
+        else:
+            obj.password = DEFAULT_PASSWORD
+
+        if create:
+            obj.save()
 
 
 class MembershipFactory(DjangoModelFactory):
@@ -72,5 +85,5 @@ class MembershipFactory(DjangoModelFactory):
 
     role = randgen.choice(Membership.Role.values)
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)

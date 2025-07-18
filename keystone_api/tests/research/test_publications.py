@@ -4,7 +4,7 @@ import datetime
 
 from rest_framework.test import APITestCase
 
-from apps.research_products.models import Publication
+from apps.research_products.factories import PublicationFactory
 from tests.utils import TeamScopedListFilteringTests
 from .common import ListEndpointPermissionsTests
 
@@ -29,5 +29,5 @@ class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
 class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
+    factory = PublicationFactory
     endpoint = '/research/publications/'
-    model = Publication
