@@ -170,7 +170,6 @@ The following unit files are provided as a starting point to daemonize the proce
 ```toml
 [Unit]
 Description=Webserver daemon for Keystone
-Requires=keystone-server.socket
 After=network.target
 
 [Service] # (1)!
