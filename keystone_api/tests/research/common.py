@@ -42,12 +42,12 @@ class ListEndpointPermissionsTests(CustomAsserts):
         """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
-        self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
-        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
+        self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
-        self.staff_user = UserFactory(is_staff=True)
         self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
         self.valid_record_data = self.build_valid_record_data()
 

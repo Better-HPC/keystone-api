@@ -95,12 +95,13 @@ class TeamScopedListFilteringTests:
         """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
+
         self.team_records = [self.factory(**{self.team_field: self.team}) for _ in range(5)]
         self.all_records = [self.factory() for _ in range(5)] + self.team_records
-
-        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
-        self.staff_user = UserFactory(is_staff=True)
-        self.generic_user = UserFactory(is_staff=False)
 
     def test_user_returned_filtered_records(self) -> None:
         """Verify users are only returned records for teams they belong to."""

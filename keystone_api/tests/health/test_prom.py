@@ -28,8 +28,8 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.staff_user = UserFactory(is_staff=True)
         self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self, _mock_run_check: Mock) -> None:
         """Verify unauthenticated users have read-only permissions."""

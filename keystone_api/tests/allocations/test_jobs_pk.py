@@ -28,11 +28,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Create test fixtures using mock data."""
 
         self.jobstat = JobStatsFactory()
+
         self.team = self.jobstat.team
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
         self.staff_user = UserFactory(is_staff=True)
         self.non_member = UserFactory(is_staff=False)
-        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
         self.endpoint = self.endpoint_pattern.format(pk=self.jobstat.pk)
 

@@ -28,8 +28,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         cluster = ClusterFactory()
         self.endpoint = self.endpoint_pattern.format(pk=cluster.id)
 
-        self.staff_user = UserFactory(is_staff=True)
         self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

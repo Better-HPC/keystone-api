@@ -32,13 +32,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.comment = CommentFactory()
         self.request = self.comment.request
-        self.team = self.request.team
 
-        self.staff_user = UserFactory(is_staff=True)
-        self.non_member = UserFactory(is_staff=False)
+        self.team = self.request.team
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
+
+        self.staff_user = UserFactory(is_staff=True)
+        self.non_member = UserFactory(is_staff=False)
 
         self.endpoint = self.endpoint_pattern.format(pk=self.comment.pk)
         self.record_data = {'content': 'foobar', 'request': self.request.pk}

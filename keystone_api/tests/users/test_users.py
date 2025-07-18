@@ -25,8 +25,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.staff_user = UserFactory(is_staff=True)
         self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -88,8 +88,8 @@ class CredentialHandling(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.staff_user = UserFactory(is_staff=True)
         self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_new_user_credentials_are_set(self) -> None:
         """Verify new users are created with the correctly hashed password.

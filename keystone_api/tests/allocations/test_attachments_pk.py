@@ -30,12 +30,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Create test fixtures using mock data."""
 
         attachment = AttachmentFactory()
-        self.team = attachment.request.team
-        self.endpoint = self.endpoint_pattern.format(pk=attachment.pk)
 
-        self.staff_user = UserFactory(is_staff=True)
+        self.team = attachment.request.team
         self.non_member = UserFactory(is_staff=False)
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+
+        self.staff_user = UserFactory(is_staff=True)
+
+        self.endpoint = self.endpoint_pattern.format(pk=attachment.pk)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
