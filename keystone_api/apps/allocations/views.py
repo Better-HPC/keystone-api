@@ -46,8 +46,8 @@ __all__ = [
 class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     """API endpoints for exposing valid allocation request `status` values."""
 
-    response_content = dict(AllocationRequest.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
+    response_content = dict(AllocationRequest.StatusChoices.choices)
 
 
 @extend_schema_view(
@@ -87,10 +87,19 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = AllocationRequest
     team_field = 'team'
-    queryset = AllocationRequest.objects.all()
-    serializer_class = AllocationRequestSerializer
+
     permission_classes = [IsAuthenticated, AllocationRequestPermissions]
     search_fields = ['title', 'description', 'team__name']
+    serializer_class = AllocationRequestSerializer
+    queryset = AllocationRequest.objects.select_related(
+        'submitter', 'team'
+    ).prefetch_related(
+        'assignees',
+        'publications',
+        'grants',
+        'allocation_set',
+        'history'
+    )
 
 
 @extend_schema_view(
@@ -107,8 +116,8 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
     """API endpoints for exposing valid allocation review `status` values."""
 
-    response_content = dict(AllocationReview.StatusChoices.choices)
     permission_classes = [IsAuthenticated]
+    response_content = dict(AllocationReview.StatusChoices.choices)
 
 
 @extend_schema_view(
@@ -148,10 +157,15 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = AllocationReview
     team_field = 'request__team'
-    queryset = AllocationReview.objects.all()
-    serializer_class = AllocationReviewSerializer
+
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
+    serializer_class = AllocationReviewSerializer
+    queryset = AllocationReview.objects.select_related(
+        'request', 'reviewer', 'request__team'
+    ).prefetch_related(
+        'history'
+    )
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `AllocationReview` object."""
@@ -204,10 +218,15 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = Allocation
     team_field = 'request__team'
-    queryset = Allocation.objects.all()
+
     serializer_class = AllocationSerializer
-    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    queryset = Allocation.objects.select_related(
+        'request', 'cluster', 'request__team'
+    ).prefetch_related(
+        'history'
+    )
 
 
 @extend_schema_view(
@@ -247,10 +266,15 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = Attachment
     team_field = 'request__team'
-    queryset = Attachment.objects.all()
-    serializer_class = AttachmentSerializer
+
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     search_fields = ['path', 'request__title', 'request__submitter']
+    serializer_class = AttachmentSerializer
+    queryset = Attachment.objects.select_related(
+        'request', 'request__team'
+    ).prefetch_related(
+        'history'
+    )
 
 
 @extend_schema_view(
@@ -288,10 +312,10 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 class ClusterViewSet(viewsets.ModelViewSet):
     """API endpoints for managing Slurm clusters."""
 
-    queryset = Cluster.objects.all()
-    serializer_class = ClusterSerializer
     permission_classes = [IsAuthenticated, ClusterPermissions]
     search_fields = ['name', 'description']
+    serializer_class = ClusterSerializer
+    queryset = Cluster.objects.all()
 
 
 @extend_schema_view(
@@ -331,10 +355,15 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = Comment
     team_field = 'request__team'
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+
     permission_classes = [IsAuthenticated, CommentPermissions]
     search_fields = ['content', 'request__title', 'user__username']
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.select_related(
+        'request', 'request__team', 'user'
+    ).prefetch_related(
+        'history'
+    )
 
 
 @extend_schema_view(
@@ -353,7 +382,10 @@ class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching Slurm job statistics."""
 
     model = JobStats
-    queryset = JobStats.objects.all()
-    serializer_class = JobStatsSerializer
-    search_fields = ['account', 'username', 'group', 'team__name']
+
     permission_classes = [IsAuthenticated, MemberReadOnly]
+    search_fields = ['account', 'username', 'group', 'team__name']
+    serializer_class = JobStatsSerializer
+    queryset = JobStats.objects.select_related(
+        'team', 'cluster'
+    )

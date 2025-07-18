@@ -55,10 +55,11 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = Grant
     team_field = 'team'
-    queryset = Grant.objects.all()
-    serializer_class = GrantSerializer
-    search_fields = ['title', 'agency', 'team__name']
+
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
+    search_fields = ['title', 'agency', 'team__name']
+    serializer_class = GrantSerializer
+    queryset = Grant.objects.select_related('team').all()
 
 
 @extend_schema_view(
@@ -98,7 +99,8 @@ class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     model = Publication
     team_field = 'team'
-    queryset = Publication.objects.all()
-    serializer_class = PublicationSerializer
-    search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
+
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
+    search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
+    serializer_class = PublicationSerializer
+    queryset = Publication.objects.select_related('team').all()

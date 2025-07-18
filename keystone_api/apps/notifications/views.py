@@ -39,8 +39,8 @@ __all__ = [
 class NotificationTypeChoicesView(GenericAPIView):
     """API endpoints for exposing valid notification `type` values."""
 
-    response_content = dict(Notification.NotificationType.choices)
     permission_classes = [IsAuthenticated]
+    response_content = dict(Notification.NotificationType.choices)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Return a dictionary mapping values to human-readable names."""
@@ -68,11 +68,11 @@ class NotificationTypeChoicesView(GenericAPIView):
 class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for retrieving user notifications."""
 
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
-    search_fields = ['message', 'user__username']
     permission_classes = [IsAuthenticated, NotificationPermissions]
     http_method_names = ['get', 'head', 'options', 'patch']
+    search_fields = ['message', 'user__username']
+    serializer_class = NotificationSerializer
+    queryset = Notification.objects.select_related('user')
 
 
 @extend_schema_view(
@@ -110,13 +110,16 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user notification preferences."""
 
-    queryset = Preference.objects.all()
-    serializer_class = PreferenceSerializer
-    search_fields = ['user__username']
     permission_classes = [IsAuthenticated, PreferencePermissions]
+    search_fields = ['user__username']
+    serializer_class = PreferenceSerializer
+    queryset = Preference.objects.select_related('user')
 
     def create(self, request: Request, *args, **kwargs) -> Response:
-        """Create a new `Preference` object."""
+        """Create a new `Preference` object.
+
+        Defaults the `user` field to the authenticated user.
+        """
 
         data = request.data.copy()
         data.setdefault('user', request.user.pk)
