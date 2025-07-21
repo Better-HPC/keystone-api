@@ -166,6 +166,8 @@ class Command(StdOutUtils, BaseCommand):
     def _gen_teams(size: int, min_members: int, max_members: int) -> tuple[list[Team], list[User]]:
         """Populate the database with mock team records.
 
+        At least one team member is guaranteed to be assigned the team owner role.
+
         Args:
             size: Number of teams to create.
             min_members: Minimum members to create per team.
@@ -228,7 +230,6 @@ class Command(StdOutUtils, BaseCommand):
 
         return pubs
 
-    # Todo: Add reviews
     @staticmethod
     def _gen_alloc_reqs(
         teams: list[Team],
@@ -238,12 +239,12 @@ class Command(StdOutUtils, BaseCommand):
         publications: dict[Team, list[Publication]],
         n_reqs: tuple[int, int],
         n_req_clusters: tuple[int, int],
-        n_req_reviewers: tuple[int, int],
         n_req_jobs: tuple[int, int],
         n_req_grants: tuple[int, int],
         n_req_pubs: tuple[int, int],
         n_req_attachments: tuple[int, int],
         n_req_comments: tuple[int, int],
+        n_req_reviewers: tuple[int, int],
     ) -> None:
         """Populate the database with mock allocation request records.
 
@@ -251,12 +252,16 @@ class Command(StdOutUtils, BaseCommand):
             teams: List of teams to create grants for.
             staff: List of staff users to assign as reviewers.
             clusters: List of clusters to request resources on.
+            grants: Collection of mock grants generated for each team.
+            publications: Collection of mock publications generated for each team.
             n_reqs: Min/max records to create per team.
-            n_req_clusters: Min/max clusters to create per request.
-            n_req_reviewers: Min/max staff reviewers to create per request.
-            n_req_grants: Min/max grants to create per request.
-            n_req_pubs: Min/max publications to create per request.
+            n_req_clusters: Min/max clusters to include per request.
+            n_req_jobs: Min/max Slurm jobs to create per request.
+            n_req_grants: Min/max grants to attach to each request.
+            n_req_pubs: Min/max publication to attach to each request.
+            n_req_attachments: Min/max file attachments to create per request.
             n_req_comments: Min/max comments to create per request.
+            n_req_reviewers: Min/max staff reviewers to assign per request.
         """
 
         for team in teams:
