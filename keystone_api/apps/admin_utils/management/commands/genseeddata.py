@@ -181,16 +181,14 @@ class Command(StdOutUtils, BaseCommand):
             team = TeamFactory()
             num_members = randgen.randint(min_members, max_members)
 
-            created_owner = False
-            membership = None
-            for _ in range(num_members):
-                membership = MembershipFactory(team=team, user__is_staff=False)
-                created_owner = (membership.role == Membership.Role.OWNER)
-                users.append(membership.user)
+            # Create at least one owner member.
+            owner_mem = MembershipFactory(team=team, role=Membership.Role.OWNER, user__is_staff=False)
+            users.append(owner_mem.user)
 
-            if membership and not created_owner:
-                membership.role = Membership.Role.OWNER
-                team.save()
+            # All other members have random roles.
+            for _ in range(num_members - 1):
+                membership = MembershipFactory(team=team, user__is_staff=False)
+                users.append(membership.user)
 
             teams.append(team)
 

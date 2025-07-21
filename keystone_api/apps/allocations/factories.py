@@ -11,6 +11,7 @@ from datetime import timedelta
 
 import factory
 from django.utils import timezone
+from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
@@ -55,7 +56,7 @@ class AllocationRequestFactory(DjangoModelFactory):
     submitted = factory.LazyFunction(timezone.now)
     active = factory.LazyFunction(lambda: timezone.now().date())
     expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
-    status = randgen.choice(AllocationRequest.StatusChoices.values)
+    status = LazyFunction(lambda: randgen.choice(AllocationRequest.StatusChoices.values))
 
     submitter = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
@@ -106,7 +107,7 @@ class AllocationReviewFactory(DjangoModelFactory):
 
         model = AllocationReview
 
-    status = randgen.choice(AllocationReview.StatusChoices.values)
+    status = LazyFunction(lambda: randgen.choice(AllocationReview.StatusChoices.values))
 
     request = factory.SubFactory(AllocationRequestFactory)
     reviewer = factory.SubFactory(UserFactory, is_staff=False)
@@ -150,7 +151,7 @@ class JobStatsFactory(DjangoModelFactory):
 
     jobid = factory.Sequence(lambda n: f"{n}")
     jobname = factory.Faker('word')
-    state = randgen.choice(["RUNNING", "COMPLETED", "FAILED"])
+    state = LazyFunction(lambda: randgen.choice(["RUNNING", "COMPLETED", "FAILED"]))
     submit = factory.Faker('date_time_between', start_date='-1y', end_date='-1d', tzinfo=timezone.get_default_timezone())
     start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(1, 60)))
     end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(5, 240)))

@@ -9,6 +9,7 @@ setup logic.
 
 import factory
 from django.contrib.auth.hashers import make_password
+from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
@@ -83,7 +84,7 @@ class MembershipFactory(DjangoModelFactory):
 
         model = Membership
 
-    role = randgen.choice(Membership.Role.values)
+    role = LazyFunction(lambda: randgen.choice(Membership.Role.values))
 
     user = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)

@@ -8,6 +8,7 @@ setup logic.
 """
 
 import factory
+from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
@@ -29,7 +30,7 @@ class NotificationFactory(DjangoModelFactory):
     read = factory.Faker("pybool", truth_probability=30)
     subject = factory.Faker('sentence', nb_words=6)
     message = factory.Faker('paragraph', nb_sentences=3)
-    notification_type = randgen.choice(Notification.NotificationType.values)
+    notification_type = LazyFunction(lambda: randgen.choice(Notification.NotificationType.values))
 
     user = factory.SubFactory(UserFactory, is_staff=False)
 
