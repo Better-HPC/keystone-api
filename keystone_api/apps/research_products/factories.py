@@ -31,7 +31,7 @@ class GrantFactory(DjangoModelFactory):
     title = factory.Faker('sentence', nb_words=6)
     agency = factory.Faker('company')
     amount = factory.Faker('pydecimal', left_digits=6, right_digits=2, positive=True)
-    grant_number = factory.Sequence(lambda n: f"GRANT-{n:05d}")
+    grant_number = factory.Sequence(lambda n: f"GRANT-{n + 1:05d}")
     fiscal_year = factory.LazyAttribute(lambda obj: obj.start_date.year)
     start_date = factory.Faker('date_this_decade')
 

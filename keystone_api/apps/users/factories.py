@@ -31,7 +31,7 @@ class TeamFactory(DjangoModelFactory):
 
         model = Team
 
-    name = factory.Sequence(lambda n: f"Team {n}")
+    name = factory.Sequence(lambda n: f"Team {n + 1}")
     is_active = True
 
     @factory.post_generation
@@ -52,7 +52,7 @@ class UserFactory(DjangoModelFactory):
         model = User
         django_get_or_create = ('username',)
 
-    username = factory.Sequence(lambda n: f"user{n}")
+    username = factory.Sequence(lambda n: f"user{n + 1}")
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")

@@ -38,7 +38,7 @@ class ClusterFactory(DjangoModelFactory):
 
         model = Cluster
 
-    name = factory.Sequence(lambda n: f"Cluster {n}")
+    name = factory.Sequence(lambda n: f"Cluster {n + 1}")
     description = factory.Faker('sentence')
     enabled = True
 
@@ -172,7 +172,7 @@ class JobStatsFactory(DjangoModelFactory):
 
         model = JobStats
 
-    jobid = factory.Sequence(lambda n: f"{n}")
+    jobid = factory.Sequence(lambda n: f"{n + 1}")
     jobname = factory.Faker('word')
     state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
     submit = factory.Faker('date_time_between', start_date='-5y', end_date='today', tzinfo=timezone.get_default_timezone())
