@@ -54,7 +54,7 @@ class Command(StdOutUtils, BaseCommand):
 
         parser.add_argument('--seed', type=int, help='Optional seed for the random generator.')
         parser.add_argument('--n-staff', type=int, help='Number of staff users to create.', default=100)
-        parser.add_argument('--n-clusters', type=int, help='Number of clusters to create.', default=5)
+        parser.add_argument('--n-clusters', type=int, help='Number of clusters to create.', default=4)
         parser.add_argument('--n-teams', type=int, help='Number of user teams to create.', default=200)
         parser.add_argument('--n-team-members', **range_options, help='Min/max users to create per team.', default=[3, 5])
         parser.add_argument('--n-team-grants', **range_options, help='Min/max grants to create per team.', default=[4, 8])

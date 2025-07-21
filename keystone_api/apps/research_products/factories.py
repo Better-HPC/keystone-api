@@ -32,11 +32,23 @@ class GrantFactory(DjangoModelFactory):
     agency = factory.Faker('company')
     amount = factory.Faker('pydecimal', left_digits=6, right_digits=2, positive=True)
     grant_number = factory.Sequence(lambda n: f"GRANT-{n:05d}")
-    fiscal_year = factory.Faker('year')
+    fiscal_year = factory.LazyAttribute(lambda obj: obj.start_date.year)
     start_date = factory.Faker('date_this_decade')
-    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(randgen.randint(30, 730)))
 
     team = factory.SubFactory(TeamFactory)
+
+    @factory.lazy_attribute
+    def end_date(self) -> date:
+        """Generate the grant end date.
+
+        Returns:
+            A date within 1 to 3 years from the grant start.
+        """
+
+        start = cast(date, self.start_date)
+        duration_years = randgen.randint(1, 3)
+        duration_days = timedelta(days=duration_years * 365)
+        return start + duration_days
 
 
 class PublicationFactory(DjangoModelFactory):
@@ -64,10 +76,8 @@ class PublicationFactory(DjangoModelFactory):
         Returns `None` for publications still in preparation.
         """
 
-        if self.preparation:
-            return None
-
-        return date.today() - timedelta(days=randgen.randint(0, 365 * 3))
+        if not self.preparation:
+            return date.today() - timedelta(days=randgen.randint(0, 365 * 3))
 
     @factory.lazy_attribute
     def published(self) -> date | None:
@@ -76,9 +86,27 @@ class PublicationFactory(DjangoModelFactory):
         Returns `None` for publications still in preparation.
         """
 
-        if self.preparation:
-            return None
+        if not self.preparation:
+            submitted = cast(date, self.submitted)
+            delta = (date.today() - submitted).days
+            return submitted + timedelta(days=randgen.randint(0, delta))
 
-        submitted = cast(date, self.submitted)
-        delta = (date.today() - submitted).days
-        return submitted + timedelta(days=randgen.randint(0, delta))
+    @factory.lazy_attribute
+    def volume(self) -> int | None:
+        """Generate a random volume number.
+
+        Returns `None` for publications not yet published.
+        """
+
+        if not self.published:
+            return randgen.randint(1, 20)
+
+    @factory.lazy_attribute
+    def issue(self) -> int | None:
+        """Generate a random issue number.
+
+        Returns `None` for publications not yet published.
+        """
+
+        if not self.published:
+            return randgen.randint(1, 9)

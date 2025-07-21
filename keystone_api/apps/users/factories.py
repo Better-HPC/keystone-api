@@ -9,6 +9,7 @@ setup logic.
 
 import factory
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
@@ -61,6 +62,7 @@ class UserFactory(DjangoModelFactory):
     is_active = factory.Faker('pybool', truth_probability=98)
     is_staff = factory.Faker('pybool')
     is_ldap_user = False
+    date_joined = factory.Faker('date_time_between', start_date='-10y', end_date='now', tzinfo=timezone.get_default_timezone())
 
     @factory.post_generation
     def password(obj, create, extracted, **kwargs):
