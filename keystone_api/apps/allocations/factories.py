@@ -7,7 +7,7 @@ the creation of mock data, avoiding the need for hardcoded or repetitive
 setup logic.
 """
 
-from datetime import timedelta
+from datetime import date, timedelta
 
 import factory
 from django.utils import timezone
@@ -92,11 +92,34 @@ class AllocationFactory(DjangoModelFactory):
         model = Allocation
 
     requested = factory.Faker('pyint', min_value=1000, max_value=100000)
-    awarded = factory.Faker('pyint', min_value=500, max_value=100000)
-    final = factory.Faker('pyint', min_value=500, max_value=100000)
 
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
+
+    @factory.lazy_attribute
+    def awarded(self) -> int | None:
+        """Generate a number of awarded service units.
+
+        Returns `None` for allocations attached to unapproved allocation requests.
+        Generated values are guaranteed to be less than or equal to the requested service units.
+        """
+
+        is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
+        if is_approved:
+            return randgen.randint(0, self.requested // 100) * 100
+
+    @factory.lazy_attribute
+    def final(self) -> int | None:
+        """Generate a number of final utilized service units.
+
+        Returns `None` for allocations attached to unexpired allocation requests.
+        Generated values are guaranteed to be less than or equal to the awarded service units.
+        """
+
+        is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
+        is_expired = self.request.expire >= date.today()
+        if is_approved and is_expired:
+            return randgen.randint(0, self.awarded // 100) * 100
 
 
 class AllocationReviewFactory(DjangoModelFactory):
@@ -151,8 +174,8 @@ class JobStatsFactory(DjangoModelFactory):
 
     jobid = factory.Sequence(lambda n: f"{n}")
     jobname = factory.Faker('word')
-    state = LazyFunction(lambda: randgen.choice(["RUNNING", "COMPLETED", "FAILED"]))
-    submit = factory.Faker('date_time_between', start_date='-1y', end_date='-1d', tzinfo=timezone.get_default_timezone())
+    state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
+    submit = factory.Faker('date_time_between', start_date='-5y', end_date='today', tzinfo=timezone.get_default_timezone())
     start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(1, 60)))
     end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(5, 240)))
 
