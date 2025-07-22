@@ -8,6 +8,7 @@ setup logic.
 """
 
 from datetime import date, timedelta
+from typing import cast
 
 import factory
 from django.utils import timezone
@@ -53,7 +54,7 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     title = factory.Faker('sentence', nb_words=4)
     description = factory.Faker('text', max_nb_chars=2000)
-    submitted = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
+    submitted = factory.Faker('date_between', start_date="-5y", end_date="today")
 
     submitter = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
@@ -66,21 +67,21 @@ class AllocationRequestFactory(DjangoModelFactory):
         returned `PENDING` as a possible value.
         """
 
-        two_weeks_ago = timezone.now() - timedelta(weeks=2)
+        two_weeks_ago = date.today() - timedelta(weeks=2)
         if self.submitted < two_weeks_ago:
             weights = [.9, .1]
-            status_choices = [
+            status_choices = (
                 AllocationRequest.StatusChoices.APPROVED,
                 AllocationRequest.StatusChoices.DECLINED
-            ]
+            )
 
         else:
             weights = [.5, .4, .1]
-            status_choices = [
+            status_choices = (
                 AllocationRequest.StatusChoices.PENDING,
                 AllocationRequest.StatusChoices.APPROVED,
                 AllocationRequest.StatusChoices.DECLINED,
-            ]
+            )
 
         return randgen.choices(
             population=status_choices,
@@ -93,7 +94,8 @@ class AllocationRequestFactory(DjangoModelFactory):
         """Set active date only if status is `APPROVED`."""
 
         if self.status == AllocationRequest.StatusChoices.APPROVED:
-            return self.submitted.date()
+            days_spent_pending = randgen.randint(1, 7)
+            return cast(date, self.submitted) + timedelta(days=days_spent_pending)
 
         return None
 
@@ -101,8 +103,8 @@ class AllocationRequestFactory(DjangoModelFactory):
     def expire(self) -> date | None:
         """Set expiration date only if status is `APPROVED`."""
 
-        if self.status == AllocationRequest.StatusChoices.APPROVED and self.active:
-            return self.active + timedelta(days=365)
+        if self.active:
+            return cast(date, self.active) + timedelta(days=365)
 
         return None
 
