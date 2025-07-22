@@ -60,7 +60,7 @@ def send_notification_upcoming_expiration(user: User, request: AllocationRequest
     days_until_expire = request.get_days_until_expire()
     send_notification_template(
         user=user,
-        subject=f'You have an allocation expiring on {request.expire}',
+        subject=f'You have an allocation expiring on {request.expire.date()}',
         template='upcoming_expiration.html',
         context={
             'user': user,

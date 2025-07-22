@@ -4,6 +4,7 @@ import logging
 from datetime import date, timedelta
 
 from celery import shared_task
+from django.utils import timezone
 
 from apps.allocations.models import AllocationRequest
 from apps.allocations.shortcuts import send_notification_past_expiration, send_notification_upcoming_expiration
@@ -39,7 +40,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
         log.debug(msg_prefix + 'Request does not expire.')
         return False
 
-    if request.expire <= date.today():
+    if request.expire <= timezone.now():
         log.debug(msg_prefix + 'Request has already expired.')
         return False
 
