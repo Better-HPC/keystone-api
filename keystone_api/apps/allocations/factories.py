@@ -117,7 +117,7 @@ class AllocationFactory(DjangoModelFactory):
         """
 
         is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
-        is_expired = self.request.expire >= date.today()
+        is_expired = self.request.expire <= date.today()
         if is_approved and is_expired:
             return randgen.randint(0, self.awarded // 100) * 100
 
@@ -175,7 +175,7 @@ class JobStatsFactory(DjangoModelFactory):
     jobid = factory.Sequence(lambda n: f"{n + 1}")
     jobname = factory.Faker('word')
     state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
-    submit = factory.Faker('date_time_between', start_date='-5y', end_date='today', tzinfo=timezone.get_default_timezone())
+    submit = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
     start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(1, 60)))
     end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(5, 240)))
 
