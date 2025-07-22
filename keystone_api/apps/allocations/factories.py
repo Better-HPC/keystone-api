@@ -53,13 +53,58 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     title = factory.Faker('sentence', nb_words=4)
     description = factory.Faker('text', max_nb_chars=2000)
-    submitted = factory.LazyFunction(timezone.now)
-    active = factory.LazyFunction(lambda: timezone.now().date())
-    expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
-    status = LazyFunction(lambda: randgen.choice(AllocationRequest.StatusChoices.values))
+    submitted = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
 
     submitter = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
+
+    @factory.lazy_attribute
+    def status(self) -> AllocationRequest.StatusChoices:
+        """Randomly generate an allocation request status value.
+
+        Only allocation requests submitted within the last two weeks are
+        returned `PENDING` as a possible value.
+        """
+
+        two_weeks_ago = timezone.now() - timedelta(weeks=2)
+        if self.submitted < two_weeks_ago:
+            weights = [.9, .1]
+            status_choices = [
+                AllocationRequest.StatusChoices.APPROVED,
+                AllocationRequest.StatusChoices.DECLINED
+            ]
+
+        else:
+            weights = [.5, .4, .1]
+            status_choices = [
+                AllocationRequest.StatusChoices.PENDING,
+                AllocationRequest.StatusChoices.APPROVED,
+                AllocationRequest.StatusChoices.DECLINED,
+            ]
+
+        return randgen.choices(
+            population=status_choices,
+            weights=weights,
+            k=1
+        )[0]
+
+    @factory.lazy_attribute
+    def active(self) -> date | None:
+        """Set active date only if status is `APPROVED`."""
+
+        if self.status == AllocationRequest.StatusChoices.APPROVED:
+            return self.submitted.date()
+
+        return None
+
+    @factory.lazy_attribute
+    def expire(self) -> date | None:
+        """Set expiration date only if status is `APPROVED`."""
+
+        if self.status == AllocationRequest.StatusChoices.APPROVED and self.active:
+            return self.active + timedelta(days=365)
+
+        return None
 
     @factory.post_generation
     def assignees(self, create: bool, extracted: list[User] | None, **kwargs):
@@ -117,6 +162,9 @@ class AllocationFactory(DjangoModelFactory):
         """
 
         is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
+        if not is_approved:
+            return None
+
         is_expired = self.request.expire <= date.today()
         if is_approved and is_expired:
             return randgen.randint(0, self.awarded // 100) * 100
@@ -176,8 +224,8 @@ class JobStatsFactory(DjangoModelFactory):
     jobname = factory.Faker('word')
     state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
     submit = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
-    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(1, 60)))
-    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(5, 240)))
+    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(hours=randgen.randint(1, 60)))
+    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(25, 300)))
 
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)
