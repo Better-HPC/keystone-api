@@ -52,7 +52,13 @@ class GrantFactory(DjangoModelFactory):
 
 
 class PublicationFactory(DjangoModelFactory):
-    """Factory for creating mock `Publication` instances."""
+    """Factory for creating mock `Publication` instances.
+
+    The preparation flag is set to True 20% of the time. If a publication is
+    not in preparation, it is assigned a random submitted date within the
+    past five years. Submitted applications have an 85% chance of being published,
+    with a published date falling 20 to 60 days after submission.
+    """
 
     class Meta:
         """Factory settings."""
@@ -74,39 +80,43 @@ class PublicationFactory(DjangoModelFactory):
         """Generate a random submission date.
 
         Returns `None` for publications still in preparation.
+        Otherwise, returns a random date within the last five years
+        that is at least two months prior to today.
         """
 
+        five_years_in_days = 365 * 5
         if not self.preparation:
-            return date.today() - timedelta(days=randgen.randint(0, 365 * 3))
+            days = randgen.randint(60, five_years_in_days)
+            return date.today() - timedelta(days=days)
 
     @factory.lazy_attribute
     def published(self) -> date | None:
         """Generate a random publication date.
 
-        Returns `None` for publications still in preparation.
+        If `submitted` is set, there's an 85% chance of returning a random date
+        within 30 days after the `submitted` date. Otherwise, returns `None`.
         """
 
-        if not self.preparation:
+        if self.submitted and randgen.random() < 0.85:
             submitted = cast(date, self.submitted)
-            delta = (date.today() - submitted).days
-            return submitted + timedelta(days=randgen.randint(0, delta))
+            return submitted + timedelta(days=randgen.randint(20, 60))
 
     @factory.lazy_attribute
     def volume(self) -> int | None:
         """Generate a random volume number.
 
-        Returns `None` for publications not yet published.
+        Returns `None` for unpublished records and a random integer otherwise.
         """
 
-        if not self.published:
+        if self.published:
             return randgen.randint(1, 20)
 
     @factory.lazy_attribute
     def issue(self) -> int | None:
         """Generate a random issue number.
 
-        Returns `None` for publications not yet published.
+        Returns `None` for unpublished records and a random integer otherwise.
         """
 
-        if not self.published:
+        if self.published:
             return randgen.randint(1, 9)
