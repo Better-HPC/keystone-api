@@ -54,7 +54,7 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     title = factory.Faker('sentence', nb_words=4)
     description = factory.Faker('text', max_nb_chars=2000)
-    submitted = factory.Faker('date_between', start_date="-5y", end_date="today")
+    submitted = factory.Faker('date_time_between', start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     submitter = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
@@ -67,7 +67,7 @@ class AllocationRequestFactory(DjangoModelFactory):
         returned `PENDING` as a possible value.
         """
 
-        two_weeks_ago = date.today() - timedelta(weeks=2)
+        two_weeks_ago = timezone.now() - timedelta(weeks=2)
         if self.submitted < two_weeks_ago:
             weights = [.9, .1]
             status_choices = (
@@ -167,7 +167,7 @@ class AllocationFactory(DjangoModelFactory):
         if not is_approved:
             return None
 
-        is_expired = self.request.expire <= date.today()
+        is_expired = self.request.expire <= timezone.now()
         if is_approved and is_expired:
             return randgen.randint(0, self.awarded // 100) * 100
 
