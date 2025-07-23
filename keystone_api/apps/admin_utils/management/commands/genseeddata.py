@@ -281,6 +281,11 @@ class Command(StdOutUtils, BaseCommand):
                     num_assignees = min(randgen.randint(*n_req_reviewers), len(staff))
                     request.assignees.set(randgen.sample(staff, k=num_assignees))
 
+                # Generate reviews
+                if request.status != AllocationRequest.StatusChoices.PENDING:
+                    for reviewer in request.assignees.all():
+                        AllocationReviewFactory(request=request, reviewer=reviewer, status=request.status)
+
                 # Specify requested resources and simulate usage
                 if clusters:
                     num_clusters = min(randgen.randint(*n_req_clusters), len(clusters))
