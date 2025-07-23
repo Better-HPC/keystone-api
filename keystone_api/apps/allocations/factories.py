@@ -44,7 +44,10 @@ class ClusterFactory(DjangoModelFactory):
 
 
 class AllocationRequestFactory(DjangoModelFactory):
-    """Factory for creating mock `AllocationRequest` instances."""
+    """Factory for creating mock `AllocationRequest` instances.
+
+    Generates an allocation request submitted within the past five years.
+    """
 
     class Meta:
         """Factory settings."""
@@ -62,24 +65,25 @@ class AllocationRequestFactory(DjangoModelFactory):
     def status(self) -> AllocationRequest.StatusChoices:
         """Randomly generate an allocation request status value.
 
-        Only allocation requests submitted within the last two weeks are
-        returned `PENDING` as a possible value.
+        Allocation requests submitted within the last two weeks are set to
+        either `PENDING`, `APPROVED`, or `DECLINED`. Older allocation requests
+        are either `APPROVED`, or `DECLINED`.
         """
 
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
-        if self.submitted < two_weeks_ago:
-            weights = [90, 10]
-            status_choices = (
-                AllocationRequest.StatusChoices.APPROVED,
-                AllocationRequest.StatusChoices.DECLINED
-            )
-
-        else:
+        if self.submitted >= two_weeks_ago:
             weights = [60, 30, 10]
             status_choices = (
                 AllocationRequest.StatusChoices.PENDING,
                 AllocationRequest.StatusChoices.APPROVED,
                 AllocationRequest.StatusChoices.DECLINED,
+            )
+
+        else:
+            weights = [90, 10]
+            status_choices = (
+                AllocationRequest.StatusChoices.APPROVED,
+                AllocationRequest.StatusChoices.DECLINED
             )
 
         return randgen.choices(
@@ -90,7 +94,12 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     @factory.lazy_attribute
     def active(self) -> datetime | None:
-        """Set active date only if status is `APPROVED`."""
+        """Generate the request active date.
+
+        For approved allocation requests, the active date is set to a random
+        value between one and ten days after the submission date. For all
+        other requests, `None` is returned.
+        """
 
         if self.status == AllocationRequest.StatusChoices.APPROVED:
             days_spent_pending = randgen.randint(1, 10)
@@ -100,7 +109,11 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     @factory.lazy_attribute
     def expire(self) -> datetime | None:
-        """Set expiration date only if status is `APPROVED`."""
+        """Generate the request active date.
+
+        For approved allocation requests, the expiration date is set to one
+        year after the active date. For all other requests, `None` is returned.
+        """
 
         if self.active:
             return self.active + timedelta(days=365)
@@ -146,8 +159,8 @@ class AllocationFactory(DjangoModelFactory):
     def awarded(self) -> int | None:
         """Generate a number of awarded service units.
 
-        Returns `None` for allocations attached to unapproved allocation requests.
-        Generated values are guaranteed to be less than or equal to the requested service units.
+        Defaults to `None` for allocations attached to unapproved allocation requests.
+        Otherwise, generates a value less than or equal to the requested service units.
         """
 
         is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
@@ -159,7 +172,7 @@ class AllocationFactory(DjangoModelFactory):
         """Generate a number of final utilized service units.
 
         Returns `None` for allocations attached to unexpired allocation requests.
-        Generated values are guaranteed to be less than or equal to the awarded service units.
+        Otherwise, generates a value less than or equal to the awarded service units.
         """
 
         is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
@@ -172,7 +185,7 @@ class AllocationFactory(DjangoModelFactory):
 
 
 class AllocationReviewFactory(DjangoModelFactory):
-    """Factory for creating test instances of an `AllocationReview` model."""
+    """Factory for creating mock `AllocationReview` instances."""
 
     class Meta:
         """Factory settings."""

@@ -21,7 +21,11 @@ __all__ = ['GrantFactory', 'PublicationFactory']
 
 
 class GrantFactory(DjangoModelFactory):
-    """Factory for creating mock `Grant` instances."""
+    """Factory for creating mock `Grant` instances.
+
+    Generates grants with start dates between today and 5 years ago.
+    End dates are generated between one and three years following the start date.
+    """
 
     class Meta:
         """Factory settings."""
@@ -54,8 +58,9 @@ class GrantFactory(DjangoModelFactory):
 class PublicationFactory(DjangoModelFactory):
     """Factory for creating mock `Publication` instances.
 
-    The preparation flag is set to True 20% of the time. If a publication is
-    not in preparation, it is assigned a random submitted date within the
+    Publications have a 20% chance of being in preparation, resulting in
+    no `submitted` or `published` date being set on the record. If a publication
+    is not in preparation, it is assigned a random submitted date within the
     past five years. Submitted applications have an 85% chance of being published,
     with a published date falling 20 to 60 days after submission.
     """
@@ -79,9 +84,10 @@ class PublicationFactory(DjangoModelFactory):
     def submitted(self) -> date | None:
         """Generate a random submission date.
 
-        Returns `None` for publications still in preparation.
-        Otherwise, returns a random date within the last five years
-        that is at least two months prior to today.
+        Returns `None` for publications still in preparation. Otherwise,
+        returns a random date within the last five years that is at least
+        two months prior to today. This leave room for time between the
+        `submitted` and `published` dates.
         """
 
         five_years_in_days = 365 * 5
@@ -93,7 +99,7 @@ class PublicationFactory(DjangoModelFactory):
     def published(self) -> date | None:
         """Generate a random publication date.
 
-        If `submitted` is set, there's an 85% chance of returning a random date
+        Submitted publications have an 85% chance of returning a random date
         within 30 days after the `submitted` date. Otherwise, returns `None`.
         """
 
