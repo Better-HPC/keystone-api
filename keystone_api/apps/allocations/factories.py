@@ -68,14 +68,14 @@ class AllocationRequestFactory(DjangoModelFactory):
 
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
         if self.submitted < two_weeks_ago:
-            weights = [.9, .1]
+            weights = [90, 10]
             status_choices = (
                 AllocationRequest.StatusChoices.APPROVED,
                 AllocationRequest.StatusChoices.DECLINED
             )
 
         else:
-            weights = [.5, .4, .1]
+            weights = [60, 30, 10]
             status_choices = (
                 AllocationRequest.StatusChoices.PENDING,
                 AllocationRequest.StatusChoices.APPROVED,
@@ -93,7 +93,7 @@ class AllocationRequestFactory(DjangoModelFactory):
         """Set active date only if status is `APPROVED`."""
 
         if self.status == AllocationRequest.StatusChoices.APPROVED:
-            days_spent_pending = randgen.randint(1, 7)
+            days_spent_pending = randgen.randint(1, 10)
             return self.submitted + timedelta(days=days_spent_pending)
 
         return None
