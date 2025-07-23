@@ -75,8 +75,6 @@ class PublicationFactory(DjangoModelFactory):
     journal = factory.Faker("catch_phrase")
     doi = factory.Faker('doi')
     preparation = factory.Faker("pybool", truth_probability=20)
-    volume = factory.Faker("numerify", text="##")
-    issue = factory.Faker("numerify", text="#")
 
     team = factory.SubFactory(TeamFactory)
 
