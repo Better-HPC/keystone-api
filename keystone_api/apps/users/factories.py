@@ -9,6 +9,8 @@ setup logic.
 
 import factory
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
@@ -29,7 +31,7 @@ class TeamFactory(DjangoModelFactory):
 
         model = Team
 
-    name = factory.Sequence(lambda n: f"Team {n}")
+    name = factory.Sequence(lambda n: f"Team {n + 1}")
     is_active = True
 
     @factory.post_generation
@@ -50,7 +52,7 @@ class UserFactory(DjangoModelFactory):
         model = User
         django_get_or_create = ('username',)
 
-    username = factory.Sequence(lambda n: f"user{n}")
+    username = factory.Sequence(lambda n: f"user{n + 1}")
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     email = factory.LazyAttribute(lambda obj: f"{obj.username}@example.com")
@@ -60,6 +62,7 @@ class UserFactory(DjangoModelFactory):
     is_active = factory.Faker('pybool', truth_probability=98)
     is_staff = factory.Faker('pybool')
     is_ldap_user = False
+    date_joined = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
 
     @factory.post_generation
     def password(obj, create, extracted, **kwargs):
@@ -83,7 +86,7 @@ class MembershipFactory(DjangoModelFactory):
 
         model = Membership
 
-    role = randgen.choice(Membership.Role.values)
+    role = LazyFunction(lambda: randgen.choice(Membership.Role.values))
 
     user = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
