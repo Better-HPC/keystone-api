@@ -8,7 +8,6 @@ setup logic.
 """
 
 from datetime import date, timedelta
-from typing import cast
 
 import factory
 from factory.django import DjangoModelFactory
@@ -42,17 +41,16 @@ class GrantFactory(DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
-    def end_date(self) -> date:
+    def end_date(self: Grant) -> date:
         """Generate the grant end date.
 
         Returns:
             A date within 1 to 3 years from the grant start.
         """
 
-        start = cast(date, self.start_date)
         duration_years = randgen.randint(1, 3)
         duration_days = timedelta(days=duration_years * 365)
-        return start + duration_days
+        return self.start_date + duration_days
 
 
 class PublicationFactory(DjangoModelFactory):
@@ -79,7 +77,7 @@ class PublicationFactory(DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
-    def submitted(self) -> date | None:
+    def submitted(self: Publication) -> date | None:
         """Generate a random submission date.
 
         Returns `None` for publications still in preparation. Otherwise,
@@ -94,7 +92,7 @@ class PublicationFactory(DjangoModelFactory):
             return date.today() - timedelta(days=days)
 
     @factory.lazy_attribute
-    def published(self) -> date | None:
+    def published(self: Publication) -> date | None:
         """Generate a random publication date.
 
         Submitted publications have an 85% chance of returning a random date
@@ -102,25 +100,24 @@ class PublicationFactory(DjangoModelFactory):
         """
 
         if self.submitted and randgen.random() < 0.85:
-            submitted = cast(date, self.submitted)
-            return submitted + timedelta(days=randgen.randint(20, 60))
+            return self.submitted + timedelta(days=randgen.randint(20, 60))
 
     @factory.lazy_attribute
-    def volume(self) -> int | None:
+    def volume(self: Publication) -> str | None:
         """Generate a random volume number.
 
         Returns `None` for unpublished records and a random integer otherwise.
         """
 
         if self.published:
-            return randgen.randint(1, 20)
+            return f'{randgen.randint(1, 20):02}'
 
     @factory.lazy_attribute
-    def issue(self) -> int | None:
+    def issue(self: Publication) -> str | None:
         """Generate a random issue number.
 
         Returns `None` for unpublished records and a random integer otherwise.
         """
 
         if self.published:
-            return randgen.randint(1, 9)
+            return f'{randgen.randint(1, 9)}'

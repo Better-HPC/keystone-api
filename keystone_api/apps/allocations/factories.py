@@ -62,7 +62,7 @@ class AllocationRequestFactory(DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
-    def status(self) -> AllocationRequest.StatusChoices:
+    def status(self: AllocationRequest) -> AllocationRequest.StatusChoices:
         """Randomly generate an allocation request status value.
 
         Allocation requests submitted within the last two weeks are set to
@@ -93,7 +93,7 @@ class AllocationRequestFactory(DjangoModelFactory):
         )[0]
 
     @factory.lazy_attribute
-    def active(self) -> datetime | None:
+    def active(self: AllocationRequest) -> datetime | None:
         """Generate the request active date.
 
         For approved allocation requests, the active date is set to a random
@@ -108,7 +108,7 @@ class AllocationRequestFactory(DjangoModelFactory):
         return None
 
     @factory.lazy_attribute
-    def expire(self) -> datetime | None:
+    def expire(self: AllocationRequest) -> datetime | None:
         """Generate the request active date.
 
         For approved allocation requests, the expiration date is set to one
@@ -121,21 +121,21 @@ class AllocationRequestFactory(DjangoModelFactory):
         return None
 
     @factory.post_generation
-    def assignees(self, create: bool, extracted: list[User] | None, **kwargs):
+    def assignees(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `assignees` relationship."""
 
         if create and extracted:
             self.assignees.set(extracted)
 
     @factory.post_generation
-    def publications(self, create: bool, extracted: list[User] | None, **kwargs):
+    def publications(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `publications` relationship."""
 
         if create and extracted:
             self.publications.set(extracted)
 
     @factory.post_generation
-    def grants(self, create: bool, extracted: list[User] | None, **kwargs):
+    def grants(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `grants` relationship."""
 
         if create and extracted:
@@ -156,7 +156,7 @@ class AllocationFactory(DjangoModelFactory):
     request = factory.SubFactory(AllocationRequestFactory)
 
     @factory.lazy_attribute
-    def awarded(self) -> int | None:
+    def awarded(self: Allocation) -> int | None:
         """Generate a number of awarded service units.
 
         Defaults to `None` for allocations attached to unapproved allocation requests.
@@ -168,7 +168,7 @@ class AllocationFactory(DjangoModelFactory):
             return randgen.randint(0, self.requested // 100) * 100
 
     @factory.lazy_attribute
-    def final(self) -> int | None:
+    def final(self: Allocation) -> int | None:
         """Generate a number of final utilized service units.
 
         Returns `None` for allocations attached to unexpired allocation requests.
