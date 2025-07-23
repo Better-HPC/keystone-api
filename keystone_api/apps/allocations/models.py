@@ -102,7 +102,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
-    submitted = models.DateTimeField(auto_now=True)
+    submitted = models.DateTimeField(default=timezone.now)
     active = models.DateTimeField(null=True, blank=True)
     expire = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)

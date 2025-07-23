@@ -94,7 +94,6 @@ class AllocationRequestFactory(DjangoModelFactory):
 
         if self.status == AllocationRequest.StatusChoices.APPROVED:
             days_spent_pending = randgen.randint(1, 7)
-            print(self.id, self.submitted.date(), self.active.date(), days_spent_pending)
             return self.submitted + timedelta(days=days_spent_pending)
 
         return None
