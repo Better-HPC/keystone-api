@@ -7,10 +7,11 @@ the creation of mock data, avoiding the need for hardcoded or repetitive
 setup logic.
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import factory
 from django.utils import timezone
+from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
@@ -37,13 +38,16 @@ class ClusterFactory(DjangoModelFactory):
 
         model = Cluster
 
-    name = factory.Sequence(lambda n: f"Cluster {n}")
+    name = factory.Sequence(lambda n: f"Cluster {n + 1}")
     description = factory.Faker('sentence')
     enabled = True
 
 
 class AllocationRequestFactory(DjangoModelFactory):
-    """Factory for creating mock `AllocationRequest` instances."""
+    """Factory for creating mock `AllocationRequest` instances.
+
+    Generates an allocation request submitted within the past five years.
+    """
 
     class Meta:
         """Factory settings."""
@@ -52,30 +56,86 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     title = factory.Faker('sentence', nb_words=4)
     description = factory.Faker('text', max_nb_chars=2000)
-    submitted = factory.LazyFunction(timezone.now)
-    active = factory.LazyFunction(lambda: timezone.now().date())
-    expire = factory.LazyFunction(lambda: timezone.now().date() + timedelta(days=90))
-    status = randgen.choice(AllocationRequest.StatusChoices.values)
+    submitted = factory.Faker('date_time_between', start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     submitter = factory.SubFactory(UserFactory, is_staff=False)
     team = factory.SubFactory(TeamFactory)
 
+    @factory.lazy_attribute
+    def status(self: AllocationRequest) -> AllocationRequest.StatusChoices:
+        """Randomly generate an allocation request status value.
+
+        Allocation requests submitted within the last two weeks are set to
+        either `PENDING`, `APPROVED`, or `DECLINED`. Older allocation requests
+        are either `APPROVED`, or `DECLINED`.
+        """
+
+        two_weeks_ago = timezone.now() - timedelta(weeks=2)
+        if self.submitted >= two_weeks_ago:
+            weights = [60, 30, 10]
+            status_choices = (
+                AllocationRequest.StatusChoices.PENDING,
+                AllocationRequest.StatusChoices.APPROVED,
+                AllocationRequest.StatusChoices.DECLINED,
+            )
+
+        else:
+            weights = [90, 10]
+            status_choices = (
+                AllocationRequest.StatusChoices.APPROVED,
+                AllocationRequest.StatusChoices.DECLINED
+            )
+
+        return randgen.choices(
+            population=status_choices,
+            weights=weights,
+            k=1
+        )[0]
+
+    @factory.lazy_attribute
+    def active(self: AllocationRequest) -> datetime | None:
+        """Generate the request active date.
+
+        For approved allocation requests, the active date is set to a random
+        value between one and ten days after the submission date. For all
+        other requests, `None` is returned.
+        """
+
+        if self.status == AllocationRequest.StatusChoices.APPROVED:
+            days_spent_pending = randgen.randint(1, 10)
+            return self.submitted + timedelta(days=days_spent_pending)
+
+        return None
+
+    @factory.lazy_attribute
+    def expire(self: AllocationRequest) -> datetime | None:
+        """Generate the request active date.
+
+        For approved allocation requests, the expiration date is set to one
+        year after the active date. For all other requests, `None` is returned.
+        """
+
+        if self.active:
+            return self.active + timedelta(days=365)
+
+        return None
+
     @factory.post_generation
-    def assignees(self, create: bool, extracted: list[User] | None, **kwargs):
+    def assignees(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `assignees` relationship."""
 
         if create and extracted:
             self.assignees.set(extracted)
 
     @factory.post_generation
-    def publications(self, create: bool, extracted: list[User] | None, **kwargs):
+    def publications(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `publications` relationship."""
 
         if create and extracted:
             self.publications.set(extracted)
 
     @factory.post_generation
-    def grants(self, create: bool, extracted: list[User] | None, **kwargs):
+    def grants(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `grants` relationship."""
 
         if create and extracted:
@@ -91,22 +151,48 @@ class AllocationFactory(DjangoModelFactory):
         model = Allocation
 
     requested = factory.Faker('pyint', min_value=1000, max_value=100000)
-    awarded = factory.Faker('pyint', min_value=500, max_value=100000)
-    final = factory.Faker('pyint', min_value=500, max_value=100000)
 
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
+    @factory.lazy_attribute
+    def awarded(self: Allocation) -> int | None:
+        """Generate a number of awarded service units.
+
+        Defaults to `None` for allocations attached to unapproved allocation requests.
+        Otherwise, generates a value less than or equal to the requested service units.
+        """
+
+        is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
+        if is_approved:
+            return randgen.randint(0, self.requested // 100) * 100
+
+    @factory.lazy_attribute
+    def final(self: Allocation) -> int | None:
+        """Generate a number of final utilized service units.
+
+        Returns `None` for allocations attached to unexpired allocation requests.
+        Otherwise, generates a value less than or equal to the awarded service units.
+        """
+
+        is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
+        if not is_approved:
+            return None
+
+        is_expired = self.request.expire <= timezone.now()
+        if is_approved and is_expired:
+            return randgen.randint(0, self.awarded // 100) * 100
+
 
 class AllocationReviewFactory(DjangoModelFactory):
-    """Factory for creating test instances of an `AllocationReview` model."""
+    """Factory for creating mock `AllocationReview` instances."""
 
     class Meta:
         """Factory settings."""
 
         model = AllocationReview
 
-    status = randgen.choice(AllocationReview.StatusChoices.values)
+    status = LazyFunction(lambda: randgen.choice(AllocationReview.StatusChoices.values))
 
     request = factory.SubFactory(AllocationRequestFactory)
     reviewer = factory.SubFactory(UserFactory, is_staff=False)
@@ -148,12 +234,12 @@ class JobStatsFactory(DjangoModelFactory):
 
         model = JobStats
 
-    jobid = factory.Sequence(lambda n: f"{n}")
+    jobid = factory.Sequence(lambda n: f"{n + 1}")
     jobname = factory.Faker('word')
-    state = randgen.choice(["RUNNING", "COMPLETED", "FAILED"])
-    submit = factory.Faker('date_time_between', start_date='-1y', end_date='-1d')
-    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(minutes=randgen.randint(1, 60)))
-    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(5, 240)))
+    state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
+    submit = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
+    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(hours=randgen.randint(1, 60)))
+    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(25, 300)))
 
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)

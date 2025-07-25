@@ -7935,7 +7935,6 @@ components:
         submitted:
           type: string
           format: date-time
-          readOnly: true
         active:
           type: string
           format: date-time
@@ -7973,7 +7972,6 @@ components:
       - _team
       - description
       - id
-      - submitted
       - team
       - title
     AllocationRequestStatusChoices:
@@ -8742,7 +8740,6 @@ components:
         submitted:
           type: string
           format: date-time
-          readOnly: true
         active:
           type: string
           format: date-time
