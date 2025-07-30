@@ -2781,77 +2781,6 @@ paths:
         schema:
           type: integer
       - in: query
-        name: last_modified
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: last_modified__day
-        schema:
-          type: number
-      - in: query
-        name: last_modified__gt
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: last_modified__gte
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: last_modified__hour
-        schema:
-          type: number
-      - in: query
-        name: last_modified__in
-        schema:
-          type: array
-          items:
-            type: string
-            format: date-time
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: last_modified__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: last_modified__lt
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: last_modified__lte
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: last_modified__minute
-        schema:
-          type: number
-      - in: query
-        name: last_modified__month
-        schema:
-          type: number
-      - in: query
-        name: last_modified__second
-        schema:
-          type: number
-      - in: query
-        name: last_modified__week
-        schema:
-          type: number
-      - in: query
-        name: last_modified__week_day
-        schema:
-          type: number
-      - in: query
-        name: last_modified__year
-        schema:
-          type: number
-      - in: query
         name: request
         schema:
           type: integer
@@ -2922,6 +2851,65 @@ paths:
         name: status__startswith
         schema:
           type: string
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
       tags:
       - Resource Allocation Reviews
       security:
@@ -8003,9 +7991,9 @@ components:
           title: ' history'
         status:
           $ref: '#/components/schemas/ReviewStatusChoices'
-        last_modified:
+        submitted:
           type: string
-          format: date-time
+          format: date
           readOnly: true
         request:
           type: integer
@@ -8017,9 +8005,9 @@ components:
       - _request
       - _reviewer
       - id
-      - last_modified
       - request
       - status
+      - submitted
     AllocationReviewStatusChoices:
       type: object
       properties:
@@ -8802,9 +8790,9 @@ components:
           title: ' history'
         status:
           $ref: '#/components/schemas/ReviewStatusChoices'
-        last_modified:
+        submitted:
           type: string
-          format: date-time
+          format: date
           readOnly: true
         request:
           type: integer

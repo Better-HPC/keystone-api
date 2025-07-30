@@ -46,6 +46,9 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
 
         model = AllocationRequest
         fields = '__all__'
+        extra_kwargs = {
+            'submitted': {'read_only': True},
+        }
 
 
 class AllocationReviewSerializer(serializers.ModelSerializer):
