@@ -189,7 +189,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
     def sanitize_metric_name(name: str) -> str:
         """Sanitize a Prometheus metric name.
 
-        Replaces invalid characters with underscores.
+        Replaces invalid characters found in health check names with underscores.
 
         Args:
             name: The metric name to sanitize.
