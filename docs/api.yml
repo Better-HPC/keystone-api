@@ -7905,13 +7905,13 @@ components:
         _publications:
           type: array
           items:
-            $ref: '#/components/schemas/Publication'
+            $ref: '#/components/schemas/PublicationSummary'
           readOnly: true
           title: ' publications'
         _grants:
           type: array
           items:
-            $ref: '#/components/schemas/Grant'
+            $ref: '#/components/schemas/GrantSummary'
           readOnly: true
           title: ' grants'
         _history:
@@ -8401,6 +8401,49 @@ components:
       - start_date
       - team
       - title
+    GrantSummary:
+      type: object
+      description: Serializer for summarizing grant information in nested representations.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 250
+        agency:
+          type: string
+          maxLength: 100
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        grant_number:
+          type: string
+          maxLength: 250
+        fiscal_year:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        team:
+          type: integer
+      required:
+      - agency
+      - amount
+      - end_date
+      - fiscal_year
+      - grant_number
+      - id
+      - start_date
+      - team
+      - title
     JobStats:
       type: object
       description: Object serializer for the `JobStats` class.
@@ -8415,7 +8458,7 @@ components:
           title: ' team'
         _cluster:
           allOf:
-          - $ref: '#/components/schemas/Cluster'
+          - $ref: '#/components/schemas/ClusterSummary'
           readOnly: true
           title: ' cluster'
         account:
@@ -8710,13 +8753,13 @@ components:
         _publications:
           type: array
           items:
-            $ref: '#/components/schemas/Publication'
+            $ref: '#/components/schemas/PublicationSummary'
           readOnly: true
           title: ' publications'
         _grants:
           type: array
           items:
-            $ref: '#/components/schemas/Grant'
+            $ref: '#/components/schemas/GrantSummary'
           readOnly: true
           title: ' grants'
         _history:
@@ -9250,6 +9293,51 @@ components:
       required:
       - _history
       - _team
+      - abstract
+      - id
+      - team
+      - title
+    PublicationSummary:
+      type: object
+      description: Serializer for summarizing publication information in nested representations.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 250
+        abstract:
+          type: string
+        published:
+          type: string
+          format: date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
+        journal:
+          type: string
+          nullable: true
+          maxLength: 100
+        doi:
+          type: string
+          nullable: true
+          maxLength: 50
+        preparation:
+          type: boolean
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
+        team:
+          type: integer
+      required:
       - abstract
       - id
       - team

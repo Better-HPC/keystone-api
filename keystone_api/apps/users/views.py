@@ -85,9 +85,14 @@ class MembershipRoleChoicesView(APIView):
 class MembershipViewSet(viewsets.ModelViewSet):
     """API endpoints for managing team membership."""
 
-    queryset = Membership.objects.all()
     permission_classes = [IsAuthenticated, MembershipPermissions]
     serializer_class = MembershipSerializer
+    queryset = Membership.objects.prefetch_related(
+        'history'
+    ).select_related(
+        'user',
+        'team'
+    )
 
 
 @extend_schema_view(
@@ -125,10 +130,14 @@ class MembershipViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     """API endpoints for managing user teams."""
 
-    queryset = Team.objects.all()
     permission_classes = [IsAuthenticated, TeamPermissions]
     serializer_class = TeamSerializer
     search_fields = ['name']
+    queryset = Team.objects.prefetch_related(
+        'membership__user',
+        'users',
+        'history'
+    )
 
 
 @extend_schema_view(
@@ -166,9 +175,12 @@ class TeamViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     """API endpoints for managing user accounts."""
 
-    queryset = User.objects.all()
     permission_classes = [IsAuthenticated, UserPermissions]
     search_fields = ['username', 'first_name', 'last_name', 'email', 'department', 'role']
+    queryset = User.objects.prefetch_related(
+        'membership__team',
+        'history'
+    )
 
     def get_serializer_class(self) -> type[Serializer]:
         """Return the appropriate data serializer based on user roles/permissions."""

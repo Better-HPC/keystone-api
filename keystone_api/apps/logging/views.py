@@ -42,10 +42,10 @@ __all__ = [
 class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching application logs."""
 
-    queryset = AppLog.objects.all()
-    serializer_class = AppLogSerializer
-    search_fields = ['name', 'level', 'pathname', 'message', 'func', 'sinfo']
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+    search_fields = ['name', 'level', 'pathname', 'message', 'func', 'sinfo']
+    serializer_class = AppLogSerializer
+    queryset = AppLog.objects.all()
 
 
 @extend_schema_view(
@@ -69,10 +69,10 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching audit logs."""
 
-    queryset = AuditLog.objects.all()
-    serializer_class = AuditLogSerializer
-    search_fields = ['resource', 'action', 'user_username']
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+    search_fields = ['resource', 'action', 'user_username']
+    serializer_class = AuditLogSerializer
+    queryset = AuditLog.objects.select_related('actor', 'content_type')
 
 
 @extend_schema_view(
@@ -96,10 +96,10 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
 class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching HTTP request logs."""
 
-    queryset = RequestLog.objects.all()
-    serializer_class = RequestLogSerializer
-    search_fields = ['endpoint', 'method', 'response_code', 'body_request', 'body_response', 'remote_address']
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+    search_fields = ['endpoint', 'method', 'response_code', 'body_request', 'body_response', 'remote_address']
+    serializer_class = RequestLogSerializer
+    queryset = RequestLog.objects.select_related('user')
 
 
 @extend_schema_view(
@@ -123,7 +123,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
 class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching background task results."""
 
-    queryset = TaskResult.objects.all()
-    serializer_class = TaskResultSerializer
-    search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+    search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
+    serializer_class = TaskResultSerializer
+    queryset = TaskResult.objects.all()
