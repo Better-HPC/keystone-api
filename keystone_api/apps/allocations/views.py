@@ -6,6 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from django.db.models import Prefetch
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status, viewsets
 from rest_framework.generics import GenericAPIView
@@ -13,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from apps.research_products.models import Grant, Publication
 from apps.users.mixins import TeamScopedListMixin
 from .mixins import *
 from .models import *
@@ -91,14 +93,14 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, AllocationRequestPermissions]
     search_fields = ['title', 'description', 'team__name']
     serializer_class = AllocationRequestSerializer
-    queryset = AllocationRequest.objects.select_related(
-        'submitter', 'team'
-    ).prefetch_related(
-        'assignees',
-        'publications',
-        'grants',
-        'allocation_set',
-        'history'
+    queryset = AllocationRequest.objects.prefetch_related(
+        Prefetch('assignees'),
+        Prefetch('publications', queryset=Publication.objects.select_related('team')),
+        Prefetch('grants', queryset=Grant.objects.select_related('team')),
+        Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster')),
+    ).select_related(
+        'submitter',
+        'team',
     )
 
 
@@ -162,9 +164,8 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
     serializer_class = AllocationReviewSerializer
     queryset = AllocationReview.objects.select_related(
-        'request', 'reviewer', 'request__team'
-    ).prefetch_related(
-        'history'
+        'request',
+        'reviewer',
     )
 
     def create(self, request: Request, *args, **kwargs) -> Response:
@@ -223,7 +224,8 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     queryset = Allocation.objects.select_related(
-        'request', 'cluster', 'request__team'
+        'request',
+        'cluster',
     ).prefetch_related(
         'history'
     )
@@ -271,7 +273,7 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['path', 'request__title', 'request__submitter']
     serializer_class = AttachmentSerializer
     queryset = Attachment.objects.select_related(
-        'request', 'request__team'
+        'request',
     ).prefetch_related(
         'history'
     )
@@ -360,7 +362,8 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['content', 'request__title', 'user__username']
     serializer_class = CommentSerializer
     queryset = Comment.objects.select_related(
-        'request', 'request__team', 'user'
+        'request',
+        'user'
     ).prefetch_related(
         'history'
     )
@@ -387,5 +390,6 @@ class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
     search_fields = ['account', 'username', 'group', 'team__name']
     serializer_class = JobStatsSerializer
     queryset = JobStats.objects.select_related(
-        'team', 'cluster'
+        'cluster',
+        'team',
     )

@@ -87,9 +87,12 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated, MembershipPermissions]
     serializer_class = MembershipSerializer
-    queryset = Membership.objects \
-        .select_related('user', 'team') \
-        .prefetch_related('history')
+    queryset = Membership.objects.prefetch_related(
+        'history'
+    ).select_related(
+        'user',
+        'team'
+    )
 
 
 @extend_schema_view(
@@ -132,7 +135,6 @@ class TeamViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
     queryset = Team.objects.prefetch_related(
         'membership__user',
-        'membership__history',
         'users',
         'history'
     )
@@ -177,7 +179,6 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ['username', 'first_name', 'last_name', 'email', 'department', 'role']
     queryset = User.objects.prefetch_related(
         'membership__team',
-        'membership__history',
         'history'
     )
 
