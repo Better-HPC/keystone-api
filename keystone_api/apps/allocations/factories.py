@@ -7,7 +7,7 @@ the creation of mock data, avoiding the need for hardcoded or repetitive
 setup logic.
 """
 
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 
 import factory
 from django.utils import timezone
@@ -93,7 +93,7 @@ class AllocationRequestFactory(DjangoModelFactory):
         )[0]
 
     @factory.lazy_attribute
-    def active(self: AllocationRequest) -> datetime | None:
+    def active(self: AllocationRequest) -> date | None:
         """Generate the request active date.
 
         For approved allocation requests, the active date is set to a random
@@ -103,12 +103,12 @@ class AllocationRequestFactory(DjangoModelFactory):
 
         if self.status == AllocationRequest.StatusChoices.APPROVED:
             days_spent_pending = randgen.randint(1, 10)
-            return self.submitted + timedelta(days=days_spent_pending)
+            return self.submitted.date() + timedelta(days=days_spent_pending)
 
         return None
 
     @factory.lazy_attribute
-    def expire(self: AllocationRequest) -> datetime | None:
+    def expire(self: AllocationRequest) -> date | None:
         """Generate the request active date.
 
         For approved allocation requests, the expiration date is set to one
@@ -179,7 +179,7 @@ class AllocationFactory(DjangoModelFactory):
         if not is_approved:
             return None
 
-        is_expired = self.request.expire <= timezone.now()
+        is_expired = self.request.expire <= date.today()
         if is_approved and is_expired:
             return randgen.randint(0, self.awarded // 100) * 100
 
@@ -196,6 +196,23 @@ class AllocationReviewFactory(DjangoModelFactory):
 
     request = factory.SubFactory(AllocationRequestFactory)
     reviewer = factory.SubFactory(UserFactory, is_staff=False)
+
+    @factory.lazy_attribute
+    def submitted(self) -> date:
+        """Generates a submission date between the request's submitted and active dates.
+
+        If the request has no active date, the upper bound is today.
+        The result is always on or after the request's submitted date, and never in the future.
+        """
+
+        # Determine number of integer days between request submission and activation
+        request_submitted_date = self.request.submitted.date()
+        request_active_date = min(self.request.active or date.today(), date.today())
+        delta = request_active_date - request_submitted_date
+
+        # Return the request submission datetime plus a random number of days
+        delta_days = randgen.randint(0, max(delta.days, 0))
+        return self.request.submitted + timedelta(days=delta_days)
 
 
 class AttachmentFactory(DjangoModelFactory):

@@ -15,6 +15,7 @@ from auditlog.registry import auditlog
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.defaultfilters import truncatechars
+from django.utils import timezone
 
 from apps.allocations.managers import AllocationManager
 from apps.research_products.models import Grant, Publication
@@ -102,7 +103,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
-    submitted = models.DateField(default=date.today)
+    submitted = models.DateTimeField(default=timezone.now)
     active = models.DateField(null=True, blank=True)
     expire = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
@@ -163,7 +164,7 @@ class AllocationReview(TeamModelInterface, models.Model):
         CHANGES = 'CR', 'Changes Requested'
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
-    submitted = models.DateField(default=date.today)
+    submitted = models.DateTimeField(default=timezone.now)
     history = AuditlogHistoryField()
 
     request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
