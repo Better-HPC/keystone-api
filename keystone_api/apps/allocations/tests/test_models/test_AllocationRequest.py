@@ -1,10 +1,8 @@
 """Unit tests for the `AllocationRequest` class."""
-
 from datetime import date, timedelta
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.utils.timezone import now
 
 from apps.allocations.models import AllocationRequest
 from apps.users.models import Team, User
@@ -73,7 +71,7 @@ class GetDaysUntilExpiredMethod(TestCase):
         request = AllocationRequest.objects.create(
             title="Test Request",
             description="Test Description",
-            expire=now() + timedelta(days=10),
+            expire=date.today() + timedelta(days=10),
             team=self.team
         )
         self.assertEqual(request.get_days_until_expire(), 10)
@@ -84,7 +82,7 @@ class GetDaysUntilExpiredMethod(TestCase):
         request = AllocationRequest.objects.create(
             title="Test Request",
             description="Test Description",
-            expire=now() - timedelta(days=5),
+            expire=date.today() - timedelta(days=5),
             team=self.team
         )
         self.assertEqual(request.get_days_until_expire(), -5)
@@ -95,7 +93,7 @@ class GetDaysUntilExpiredMethod(TestCase):
         request = AllocationRequest.objects.create(
             title="Test Request",
             description="Test Description",
-            expire=now(),
+            expire=date.today(),
             team=self.team
         )
         self.assertEqual(request.get_days_until_expire(), 0)
