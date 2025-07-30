@@ -94,7 +94,8 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'team__name']
     serializer_class = AllocationRequestSerializer
     queryset = AllocationRequest.objects.prefetch_related(
-        Prefetch('assignees'),
+        'history',
+        'assignees',
         Prefetch('publications', queryset=Publication.objects.select_related('team')),
         Prefetch('grants', queryset=Grant.objects.select_related('team')),
         Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster')),
@@ -163,7 +164,9 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
     serializer_class = AllocationReviewSerializer
-    queryset = AllocationReview.objects.select_related(
+    queryset = AllocationReview.objects.prefetch_related(
+        'history'
+    ).select_related(
         'request',
         'reviewer',
     )
