@@ -17,22 +17,24 @@ class Migration(migrations.Migration):
             model_name='allocationreview',
             name='allocations_last_mo_15e9ea_idx',
         ),
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name='allocationreview',
-            name='last_modified',
-        ),
-        migrations.AddField(
-            model_name='allocationreview',
-            name='submitted',
-            field=models.DateTimeField(default=django.utils.timezone.now),
+            old_name='last_modified',
+            new_name='submitted',
         ),
         migrations.AlterField(
-            model_name='allocationrequest',
+            model_name='allocationreview',
             name='submitted',
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
         migrations.AddIndex(
             model_name='allocationreview',
             index=models.Index(fields=['submitted'], name='allocations_submitt_2717e4_idx'),
+        ),
+
+        migrations.AlterField(
+            model_name='allocationrequest',
+            name='submitted',
+            field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]
