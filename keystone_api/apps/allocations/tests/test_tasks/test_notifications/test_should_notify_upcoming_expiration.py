@@ -4,7 +4,6 @@ from datetime import date, datetime, timedelta, timezone
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
-from django.utils.timezone import now
 
 from apps.allocations.models import AllocationRequest
 from apps.allocations.tasks import should_notify_upcoming_expiration
@@ -25,7 +24,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         )
 
         self.team = Team.objects.create()
-        self.request = AllocationRequest.objects.create(team=self.team, expire=now() + timedelta(days=15))
+        self.request = AllocationRequest.objects.create(team=self.team, expire=date.today() + timedelta(days=15))
 
     def test_false_if_request_does_not_expire(self) -> None:
         """Verify the return value is `False` if the request does not expire."""
@@ -38,7 +37,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
     def test_false_if_request_already_expired(self) -> None:
         """Verify the return value is `False` if the request has already expired."""
 
-        self.request.expire = now()
+        self.request.expire = date.today()
         with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
             self.assertFalse(should_notify_upcoming_expiration(self.user, self.request))
             self.assertRegex(log.output[-1], '.*Request has already expired.')

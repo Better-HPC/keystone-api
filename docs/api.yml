@@ -2238,7 +2238,7 @@ paths:
         name: active
         schema:
           type: string
-          format: date-time
+          format: date
       - in: query
         name: active__day
         schema:
@@ -2247,23 +2247,19 @@ paths:
         name: active__gt
         schema:
           type: string
-          format: date-time
+          format: date
       - in: query
         name: active__gte
         schema:
           type: string
-          format: date-time
-      - in: query
-        name: active__hour
-        schema:
-          type: number
+          format: date
       - in: query
         name: active__in
         schema:
           type: array
           items:
             type: string
-            format: date-time
+            format: date
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -2275,22 +2271,14 @@ paths:
         name: active__lt
         schema:
           type: string
-          format: date-time
+          format: date
       - in: query
         name: active__lte
         schema:
           type: string
-          format: date-time
-      - in: query
-        name: active__minute
-        schema:
-          type: number
+          format: date
       - in: query
         name: active__month
-        schema:
-          type: number
-      - in: query
-        name: active__second
         schema:
           type: number
       - in: query
@@ -2338,7 +2326,7 @@ paths:
         name: expire
         schema:
           type: string
-          format: date-time
+          format: date
       - in: query
         name: expire__day
         schema:
@@ -2347,23 +2335,19 @@ paths:
         name: expire__gt
         schema:
           type: string
-          format: date-time
+          format: date
       - in: query
         name: expire__gte
         schema:
           type: string
-          format: date-time
-      - in: query
-        name: expire__hour
-        schema:
-          type: number
+          format: date
       - in: query
         name: expire__in
         schema:
           type: array
           items:
             type: string
-            format: date-time
+            format: date
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -2375,22 +2359,14 @@ paths:
         name: expire__lt
         schema:
           type: string
-          format: date-time
+          format: date
       - in: query
         name: expire__lte
         schema:
           type: string
-          format: date-time
-      - in: query
-        name: expire__minute
-        schema:
-          type: number
+          format: date
       - in: query
         name: expire__month
-        schema:
-          type: number
-      - in: query
-        name: expire__second
         schema:
           type: number
       - in: query
@@ -7935,13 +7911,14 @@ components:
         submitted:
           type: string
           format: date-time
+          readOnly: true
         active:
           type: string
-          format: date-time
+          format: date
           nullable: true
         expire:
           type: string
-          format: date-time
+          format: date
           nullable: true
         status:
           $ref: '#/components/schemas/RequestStatusChoices'
@@ -7972,6 +7949,7 @@ components:
       - _team
       - description
       - id
+      - submitted
       - team
       - title
     AllocationRequestStatusChoices:
@@ -8003,11 +7981,11 @@ components:
           $ref: '#/components/schemas/RequestStatusChoices'
         active:
           type: string
-          format: date-time
+          format: date
           nullable: true
         expire:
           type: string
-          format: date-time
+          format: date
           nullable: true
       required:
       - id
@@ -8783,13 +8761,14 @@ components:
         submitted:
           type: string
           format: date-time
+          readOnly: true
         active:
           type: string
-          format: date-time
+          format: date
           nullable: true
         expire:
           type: string
-          format: date-time
+          format: date
           nullable: true
         status:
           $ref: '#/components/schemas/RequestStatusChoices'

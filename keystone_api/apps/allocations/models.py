@@ -8,6 +8,7 @@ the associated table/fields/records are presented by parent interfaces.
 
 import abc
 import os
+from datetime import date
 
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
@@ -103,8 +104,8 @@ class AllocationRequest(TeamModelInterface, models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
     submitted = models.DateTimeField(default=timezone.now)
-    active = models.DateTimeField(null=True, blank=True)
-    expire = models.DateTimeField(null=True, blank=True)
+    active = models.DateField(null=True, blank=True)
+    expire = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
     history = AuditlogHistoryField()
 
@@ -123,7 +124,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
         """
 
         if self.active and self.expire and self.active >= self.expire:
-            raise ValidationError('The expiration time must come after the activation time.')
+            raise ValidationError('The expiration date must come after the activation date.')
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -133,7 +134,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
     def get_days_until_expire(self) -> int | None:
         """Calculate the number of days until this request expires."""
 
-        return (self.expire.date() - timezone.now().date()).days if self.expire else None
+        return (self.expire - date.today()).days if self.expire else None
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the request title as a string."""
@@ -163,7 +164,7 @@ class AllocationReview(TeamModelInterface, models.Model):
         CHANGES = 'CR', 'Changes Requested'
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
-    submitted = models.DateTimeField(auto_now=True)
+    submitted = models.DateTimeField(default=timezone.now)
     history = AuditlogHistoryField()
 
     request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
