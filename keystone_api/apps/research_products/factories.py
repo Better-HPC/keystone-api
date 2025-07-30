@@ -8,7 +8,6 @@ setup logic.
 """
 
 from datetime import date, timedelta
-from typing import cast
 
 import factory
 from factory.django import DjangoModelFactory
@@ -21,7 +20,11 @@ __all__ = ['GrantFactory', 'PublicationFactory']
 
 
 class GrantFactory(DjangoModelFactory):
-    """Factory for creating mock `Grant` instances."""
+    """Factory for creating mock `Grant` instances.
+
+    Generates grants with start dates between today and 5 years ago.
+    End dates are generated between one and three years following the start date.
+    """
 
     class Meta:
         """Factory settings."""
@@ -38,24 +41,24 @@ class GrantFactory(DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
-    def end_date(self) -> date:
+    def end_date(self: Grant) -> date:
         """Generate the grant end date.
 
         Returns:
             A date within 1 to 3 years from the grant start.
         """
 
-        start = cast(date, self.start_date)
         duration_years = randgen.randint(1, 3)
         duration_days = timedelta(days=duration_years * 365)
-        return start + duration_days
+        return self.start_date + duration_days
 
 
 class PublicationFactory(DjangoModelFactory):
     """Factory for creating mock `Publication` instances.
 
-    The preparation flag is set to True 20% of the time. If a publication is
-    not in preparation, it is assigned a random submitted date within the
+    Publications have a 20% chance of being in preparation, resulting in
+    no `submitted` or `published` date being set on the record. If a publication
+    is not in preparation, it is assigned a random submitted date within the
     past five years. Submitted applications have an 85% chance of being published,
     with a published date falling 20 to 60 days after submission.
     """
@@ -70,18 +73,17 @@ class PublicationFactory(DjangoModelFactory):
     journal = factory.Faker("catch_phrase")
     doi = factory.Faker('doi')
     preparation = factory.Faker("pybool", truth_probability=20)
-    volume = factory.Faker("numerify", text="##")
-    issue = factory.Faker("numerify", text="#")
 
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
-    def submitted(self) -> date | None:
+    def submitted(self: Publication) -> date | None:
         """Generate a random submission date.
 
-        Returns `None` for publications still in preparation.
-        Otherwise, returns a random date within the last five years
-        that is at least two months prior to today.
+        Returns `None` for publications still in preparation. Otherwise,
+        returns a random date within the last five years that is at least
+        two months prior to today. This leave room for time between the
+        `submitted` and `published` dates.
         """
 
         five_years_in_days = 365 * 5
@@ -90,33 +92,32 @@ class PublicationFactory(DjangoModelFactory):
             return date.today() - timedelta(days=days)
 
     @factory.lazy_attribute
-    def published(self) -> date | None:
+    def published(self: Publication) -> date | None:
         """Generate a random publication date.
 
-        If `submitted` is set, there's an 85% chance of returning a random date
+        Submitted publications have an 85% chance of returning a random date
         within 30 days after the `submitted` date. Otherwise, returns `None`.
         """
 
         if self.submitted and randgen.random() < 0.85:
-            submitted = cast(date, self.submitted)
-            return submitted + timedelta(days=randgen.randint(20, 60))
+            return self.submitted + timedelta(days=randgen.randint(20, 60))
 
     @factory.lazy_attribute
-    def volume(self) -> int | None:
+    def volume(self: Publication) -> str | None:
         """Generate a random volume number.
 
         Returns `None` for unpublished records and a random integer otherwise.
         """
 
         if self.published:
-            return randgen.randint(1, 20)
+            return f'{randgen.randint(1, 20):02}'
 
     @factory.lazy_attribute
-    def issue(self) -> int | None:
+    def issue(self: Publication) -> str | None:
         """Generate a random issue number.
 
         Returns `None` for unpublished records and a random integer otherwise.
         """
 
         if self.published:
-            return randgen.randint(1, 9)
+            return f'{randgen.randint(1, 9)}'

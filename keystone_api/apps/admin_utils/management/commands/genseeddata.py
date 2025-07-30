@@ -15,7 +15,7 @@
 | --n-req-clusters       | Min/max clusters to include per request.          |
 | --n-req-jobs           | Min/max Slurm jobs to create per request.         |
 | --n-req-grants         | Min/max grants to attach to each request.         |
-| --n-req-pubs           | Min/max publication to attach to each request.    |
+| --n-req-pubs           | Min/max publications to attach to each request.   |
 | --n-req-attachments    | Min/max file attachments to create per request.   |
 | --n-req-comments       | Min/max comments to create per request.           |
 | --n-req-reviewers      | Min/max staff reviewers to assign per request.    |
@@ -63,7 +63,7 @@ class Command(StdOutUtils, BaseCommand):
         parser.add_argument('--n-req-clusters', **range_options, help='Min/max clusters to include per request.', default=[0, 5])
         parser.add_argument('--n-req-jobs', **range_options, help='Min/max Slurm jobs to create per request.', default=[0, 30])
         parser.add_argument('--n-req-grants', **range_options, help='Min/max grants to attach to each request.', default=[1, 2])
-        parser.add_argument('--n-req-pubs', **range_options, help='Min/max publication to attach to each request.', default=[1, 2])
+        parser.add_argument('--n-req-pubs', **range_options, help='Min/max publications to attach to each request.', default=[1, 2])
         parser.add_argument('--n-req-attachments', **range_options, help='Min/max file attachments to create per request.', default=[0, 2])
         parser.add_argument('--n-req-comments', **range_options, help='Min/max comments to create per request.', default=[0, 4])
         parser.add_argument('--n-req-reviewers', **range_options, help='Min/max staff reviewers to assign per request.', default=[1, 2])
@@ -107,13 +107,13 @@ class Command(StdOutUtils, BaseCommand):
             n_clusters: Number of clusters to create.
             n_teams: Number of user teams to create.
             n_team_members: Min/max users to create per team.
-            n_team_grants: MMin/max grants to create per team.
+            n_team_grants: Min/max grants to create per team.
             n_team_pubs: Min/max publications to create per team.
             n_team_reqs: Min/max allocation requests to create per team.
             n_req_clusters: Min/max clusters to include per request.
             n_req_jobs: Min/max Slurm jobs to create per request.
             n_req_grants: Min/max grants to attach to each request.
-            n_req_pubs: Min/max publication to attach to each request.
+            n_req_pubs: Min/max publications to attach to each request.
             n_req_attachments: Min/max file attachments to create per request.
             n_req_comments: Min/max comments to create per request.
             n_req_reviewers: Min/max staff reviewers to assign per request.
@@ -258,7 +258,7 @@ class Command(StdOutUtils, BaseCommand):
             n_req_clusters: Min/max clusters to include per request.
             n_req_jobs: Min/max Slurm jobs to create per request.
             n_req_grants: Min/max grants to attach to each request.
-            n_req_pubs: Min/max publication to attach to each request.
+            n_req_pubs: Min/max publications to attach to each request.
             n_req_attachments: Min/max file attachments to create per request.
             n_req_comments: Min/max comments to create per request.
             n_req_reviewers: Min/max staff reviewers to assign per request.
@@ -280,6 +280,11 @@ class Command(StdOutUtils, BaseCommand):
                 if staff:
                     num_assignees = min(randgen.randint(*n_req_reviewers), len(staff))
                     request.assignees.set(randgen.sample(staff, k=num_assignees))
+
+                # Generate reviews
+                if request.status != AllocationRequest.StatusChoices.PENDING:
+                    for reviewer in request.assignees.all():
+                        AllocationReviewFactory(request=request, reviewer=reviewer, status=request.status)
 
                 # Specify requested resources and simulate usage
                 if clusters:

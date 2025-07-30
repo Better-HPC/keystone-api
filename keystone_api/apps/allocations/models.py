@@ -8,13 +8,13 @@ the associated table/fields/records are presented by parent interfaces.
 
 import abc
 import os
-from datetime import date
 
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.defaultfilters import truncatechars
+from django.utils import timezone
 
 from apps.allocations.managers import AllocationManager
 from apps.research_products.models import Grant, Publication
@@ -102,7 +102,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
-    submitted = models.DateTimeField(auto_now=True)
+    submitted = models.DateTimeField(default=timezone.now)
     active = models.DateTimeField(null=True, blank=True)
     expire = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
@@ -123,7 +123,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
         """
 
         if self.active and self.expire and self.active >= self.expire:
-            raise ValidationError('The expiration date must come after the activation date.')
+            raise ValidationError('The expiration time must come after the activation time.')
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -133,7 +133,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
     def get_days_until_expire(self) -> int | None:
         """Calculate the number of days until this request expires."""
 
-        return (self.expire - date.today()).days if self.expire else None
+        return (self.expire.date() - timezone.now().date()).days if self.expire else None
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the request title as a string."""

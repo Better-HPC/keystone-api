@@ -7,8 +7,7 @@ the creation of mock data, avoiding the need for hardcoded or repetitive
 setup logic.
 """
 
-from datetime import date, timedelta
-from typing import cast
+from datetime import datetime, timedelta
 
 import factory
 from django.utils import timezone
@@ -45,7 +44,10 @@ class ClusterFactory(DjangoModelFactory):
 
 
 class AllocationRequestFactory(DjangoModelFactory):
-    """Factory for creating mock `AllocationRequest` instances."""
+    """Factory for creating mock `AllocationRequest` instances.
+
+    Generates an allocation request submitted within the past five years.
+    """
 
     class Meta:
         """Factory settings."""
@@ -60,27 +62,28 @@ class AllocationRequestFactory(DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
-    def status(self) -> AllocationRequest.StatusChoices:
+    def status(self: AllocationRequest) -> AllocationRequest.StatusChoices:
         """Randomly generate an allocation request status value.
 
-        Only allocation requests submitted within the last two weeks are
-        returned `PENDING` as a possible value.
+        Allocation requests submitted within the last two weeks are set to
+        either `PENDING`, `APPROVED`, or `DECLINED`. Older allocation requests
+        are either `APPROVED`, or `DECLINED`.
         """
 
         two_weeks_ago = timezone.now() - timedelta(weeks=2)
-        if self.submitted < two_weeks_ago:
-            weights = [.9, .1]
-            status_choices = (
-                AllocationRequest.StatusChoices.APPROVED,
-                AllocationRequest.StatusChoices.DECLINED
-            )
-
-        else:
-            weights = [.5, .4, .1]
+        if self.submitted >= two_weeks_ago:
+            weights = [60, 30, 10]
             status_choices = (
                 AllocationRequest.StatusChoices.PENDING,
                 AllocationRequest.StatusChoices.APPROVED,
                 AllocationRequest.StatusChoices.DECLINED,
+            )
+
+        else:
+            weights = [90, 10]
+            status_choices = (
+                AllocationRequest.StatusChoices.APPROVED,
+                AllocationRequest.StatusChoices.DECLINED
             )
 
         return randgen.choices(
@@ -90,40 +93,49 @@ class AllocationRequestFactory(DjangoModelFactory):
         )[0]
 
     @factory.lazy_attribute
-    def active(self) -> date | None:
-        """Set active date only if status is `APPROVED`."""
+    def active(self: AllocationRequest) -> datetime | None:
+        """Generate the request active date.
+
+        For approved allocation requests, the active date is set to a random
+        value between one and ten days after the submission date. For all
+        other requests, `None` is returned.
+        """
 
         if self.status == AllocationRequest.StatusChoices.APPROVED:
-            days_spent_pending = randgen.randint(1, 7)
-            return cast(date, self.submitted) + timedelta(days=days_spent_pending)
+            days_spent_pending = randgen.randint(1, 10)
+            return self.submitted + timedelta(days=days_spent_pending)
 
         return None
 
     @factory.lazy_attribute
-    def expire(self) -> date | None:
-        """Set expiration date only if status is `APPROVED`."""
+    def expire(self: AllocationRequest) -> datetime | None:
+        """Generate the request active date.
+
+        For approved allocation requests, the expiration date is set to one
+        year after the active date. For all other requests, `None` is returned.
+        """
 
         if self.active:
-            return cast(date, self.active) + timedelta(days=365)
+            return self.active + timedelta(days=365)
 
         return None
 
     @factory.post_generation
-    def assignees(self, create: bool, extracted: list[User] | None, **kwargs):
+    def assignees(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `assignees` relationship."""
 
         if create and extracted:
             self.assignees.set(extracted)
 
     @factory.post_generation
-    def publications(self, create: bool, extracted: list[User] | None, **kwargs):
+    def publications(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `publications` relationship."""
 
         if create and extracted:
             self.publications.set(extracted)
 
     @factory.post_generation
-    def grants(self, create: bool, extracted: list[User] | None, **kwargs):
+    def grants(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
         """Populate the many-to-many `grants` relationship."""
 
         if create and extracted:
@@ -144,11 +156,11 @@ class AllocationFactory(DjangoModelFactory):
     request = factory.SubFactory(AllocationRequestFactory)
 
     @factory.lazy_attribute
-    def awarded(self) -> int | None:
+    def awarded(self: Allocation) -> int | None:
         """Generate a number of awarded service units.
 
-        Returns `None` for allocations attached to unapproved allocation requests.
-        Generated values are guaranteed to be less than or equal to the requested service units.
+        Defaults to `None` for allocations attached to unapproved allocation requests.
+        Otherwise, generates a value less than or equal to the requested service units.
         """
 
         is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
@@ -156,11 +168,11 @@ class AllocationFactory(DjangoModelFactory):
             return randgen.randint(0, self.requested // 100) * 100
 
     @factory.lazy_attribute
-    def final(self) -> int | None:
+    def final(self: Allocation) -> int | None:
         """Generate a number of final utilized service units.
 
         Returns `None` for allocations attached to unexpired allocation requests.
-        Generated values are guaranteed to be less than or equal to the awarded service units.
+        Otherwise, generates a value less than or equal to the awarded service units.
         """
 
         is_approved = self.request.status == AllocationRequest.StatusChoices.APPROVED
@@ -173,7 +185,7 @@ class AllocationFactory(DjangoModelFactory):
 
 
 class AllocationReviewFactory(DjangoModelFactory):
-    """Factory for creating test instances of an `AllocationReview` model."""
+    """Factory for creating mock `AllocationReview` instances."""
 
     class Meta:
         """Factory settings."""
