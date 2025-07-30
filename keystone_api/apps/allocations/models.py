@@ -102,9 +102,9 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
-    submitted = models.DateTimeField(default=timezone.now)
-    active = models.DateTimeField(null=True, blank=True)
-    expire = models.DateTimeField(null=True, blank=True)
+    submitted = models.DateField(auto_now=True)
+    active = models.DateField(null=True, blank=True)
+    expire = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
     history = AuditlogHistoryField()
 
@@ -141,7 +141,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
         return truncatechars(self.title, 100)
 
 
-@auditlog.register()
+@auditlog.register(exclude_fields=["last_modified"])
 class AllocationReview(TeamModelInterface, models.Model):
     """Reviewer feedback for an allocation request."""
 
@@ -150,7 +150,7 @@ class AllocationReview(TeamModelInterface, models.Model):
 
         indexes = [
             models.Index(fields=['status']),
-            models.Index(fields=['submitted']),
+            models.Index(fields=['last_modified']),
             models.Index(fields=['request']),
             models.Index(fields=['reviewer']),
         ]
@@ -163,7 +163,7 @@ class AllocationReview(TeamModelInterface, models.Model):
         CHANGES = 'CR', 'Changes Requested'
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
-    submitted = models.DateTimeField(auto_now=True)
+    last_modified = models.DateTimeField(auto_now=True)
     history = AuditlogHistoryField()
 
     request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
