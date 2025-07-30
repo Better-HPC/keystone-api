@@ -2457,7 +2457,7 @@ paths:
         name: submitted
         schema:
           type: string
-          format: date
+          format: date-time
       - in: query
         name: submitted__day
         schema:
@@ -2466,19 +2466,23 @@ paths:
         name: submitted__gt
         schema:
           type: string
-          format: date
+          format: date-time
       - in: query
         name: submitted__gte
         schema:
           type: string
-          format: date
+          format: date-time
+      - in: query
+        name: submitted__hour
+        schema:
+          type: number
       - in: query
         name: submitted__in
         schema:
           type: array
           items:
             type: string
-            format: date
+            format: date-time
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -2490,14 +2494,22 @@ paths:
         name: submitted__lt
         schema:
           type: string
-          format: date
+          format: date-time
       - in: query
         name: submitted__lte
         schema:
           type: string
-          format: date
+          format: date-time
+      - in: query
+        name: submitted__minute
+        schema:
+          type: number
       - in: query
         name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__second
         schema:
           type: number
       - in: query
@@ -2855,7 +2867,7 @@ paths:
         name: submitted
         schema:
           type: string
-          format: date
+          format: date-time
       - in: query
         name: submitted__day
         schema:
@@ -2864,19 +2876,23 @@ paths:
         name: submitted__gt
         schema:
           type: string
-          format: date
+          format: date-time
       - in: query
         name: submitted__gte
         schema:
           type: string
-          format: date
+          format: date-time
+      - in: query
+        name: submitted__hour
+        schema:
+          type: number
       - in: query
         name: submitted__in
         schema:
           type: array
           items:
             type: string
-            format: date
+            format: date-time
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -2888,14 +2904,22 @@ paths:
         name: submitted__lt
         schema:
           type: string
-          format: date
+          format: date-time
       - in: query
         name: submitted__lte
         schema:
           type: string
-          format: date
+          format: date-time
+      - in: query
+        name: submitted__minute
+        schema:
+          type: number
       - in: query
         name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__second
         schema:
           type: number
       - in: query
@@ -7886,7 +7910,7 @@ components:
           maxLength: 20000
         submitted:
           type: string
-          format: date
+          format: date-time
           readOnly: true
         active:
           type: string
@@ -7993,7 +8017,7 @@ components:
           $ref: '#/components/schemas/ReviewStatusChoices'
         submitted:
           type: string
-          format: date
+          format: date-time
           readOnly: true
         request:
           type: integer
@@ -8736,7 +8760,7 @@ components:
           maxLength: 20000
         submitted:
           type: string
-          format: date
+          format: date-time
           readOnly: true
         active:
           type: string
@@ -8792,7 +8816,7 @@ components:
           $ref: '#/components/schemas/ReviewStatusChoices'
         submitted:
           type: string
-          format: date
+          format: date-time
           readOnly: true
         request:
           type: integer
