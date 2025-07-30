@@ -226,11 +226,11 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = AllocationSerializer
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
-    queryset = Allocation.objects.select_related(
+    queryset = Allocation.objects.prefetch_related(
+        'history'
+    ).select_related(
         'request',
         'cluster',
-    ).prefetch_related(
-        'history'
     )
 
 
@@ -275,10 +275,10 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     search_fields = ['path', 'request__title', 'request__submitter']
     serializer_class = AttachmentSerializer
-    queryset = Attachment.objects.select_related(
-        'request',
-    ).prefetch_related(
+    queryset = Attachment.objects.prefetch_related(
         'history'
+    ).select_related(
+        'request',
     )
 
 
@@ -364,11 +364,11 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, CommentPermissions]
     search_fields = ['content', 'request__title', 'user__username']
     serializer_class = CommentSerializer
-    queryset = Comment.objects.select_related(
+    queryset = Comment.objects.prefetch_related(
+        'history'
+    ).select_related(
         'request',
         'user'
-    ).prefetch_related(
-        'history'
     )
 
 
