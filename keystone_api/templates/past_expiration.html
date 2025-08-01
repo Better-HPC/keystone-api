@@ -1,16 +1,72 @@
 {% extends "base.html" %}
 
 {% block main %}
-  {% if user.first_name and user.last_name %}
-    <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+  {% if user_first and user_last %}
+    <p>Dear {{ user_first }} {{ user_last }},</p>
   {% else %}
-    <p>Dear {{ user.username }},</p>
+    <p>Dear {{ user_name }},</p>
   {% endif %}
+
   <p>
-    This notification is to alert you your HPC compute allocation <strong>"{{ request.title }}"</strong>
-    expired on {{ request.expire.isoformat() }}. You will no longer be able to use the resources awarded
-    to you under this allocation when submitting new jobs.
+    This is an automated reminder to members of the <em>{{ req_team }}</em> HPC team.
   </p>
-  <p>Sincerely,</p>
-  <p>The keystone HPC utility</p>
+
+  <p>
+    On {{ req_expire.strftime('%B %d, %Y') }} your team's allocation request <strong>"{{ req_title }}"</strong>
+    (request #{{ req_id }}) expired.
+    A summary of the resources allocated under this request and your team's total usage is provided below.
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse">
+    <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Cluster</th>
+      <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Awarded SUs</th>
+      <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Utilized SUs</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for alloc in allocations %}
+      <tr>
+        <td style="text-align: center; padding: 8px; border: 1px solid #eee;">{{ alloc.alloc_cluster }}</td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #eee;">{{ alloc.alloc_awarded }}</td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #eee;">{{ alloc.alloc_final }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="padding-top: 10px">
+    <strong>What Does This Mean</strong>
+  </p>
+
+  <p>
+    The HPC resources allocated to your team under this request have expired.
+    As a result, any unused computational time granted by the request is no longer available for use.
+  </p>
+
+  <p>
+    If your team has HPC resources granted under a different allocation request, access to those resources remains
+    unaffected.
+    The system will automatically apply as much usage as possible to the expiring request so that more
+    service units remain available in your active allocations.
+  </p>
+
+  <p style="padding-top: 10px">
+    <strong>What Happens Now</strong>
+  </p>
+
+  <p>
+    If you no longer require HPC access, have been granted resources through a different request,
+    or have already submitted a new request pending approval, then no action is required at this time.
+    If you require additional HPC resources, you will need to submit a new allocation request.
+  </p>
+
+  <p>
+    For any additional questions, please contact your system administrator(s).
+  </p>
+
+  <p style="padding-top: 10px">
+    Sincerely,<br>The Keystone HPC Utility
+  </p>
 {% endblock %}
