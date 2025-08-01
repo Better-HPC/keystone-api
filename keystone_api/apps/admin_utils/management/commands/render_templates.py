@@ -9,7 +9,7 @@
 """
 
 from argparse import ArgumentParser
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from django.conf import settings
@@ -17,7 +17,7 @@ from django.core.management.base import BaseCommand
 from django.test import override_settings
 
 from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
-from apps.allocations.shortcuts import send_notification_past_expiration, send_notification_upcoming_expiration
+from apps.allocations.shortcuts import send_notification_upcoming_expiration
 
 
 class Command(BaseCommand):
@@ -79,18 +79,43 @@ class Command(BaseCommand):
             output_dir: The output directory where rendered templates are written.
         """
 
-        # Define mock data to populate notifications
-        alloc_request = AllocationRequestFactory.build(id=123, active=date.today(), expire=date.today())
-        allocations = AllocationFactory.build_batch(3, request=alloc_request)
-        user = alloc_request.submitter
-
         # Override settings so notifications are written to disk
         with override_settings(
             EMAIL_BACKEND=self._email_backend,
             EMAIL_FILE_PATH=output_dir,
             EMAIL_TEMPLATE_DIR=input_dir
         ):
-            send_notification_upcoming_expiration(user=user, request=alloc_request, allocations=allocations, save=False)
-            send_notification_past_expiration(user=user, request=alloc_request, allocations=allocations, save=False)
+            self._render_upcoming_expiration()
+            self._render_past_expiration()
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
+
+    def _render_upcoming_expiration(self) -> None:
+        """Render a sample notification for an allocation request with an upcoming expiration."""
+
+        today = date.today()
+        last_year = today - timedelta(days=365)
+
+        alloc_request = AllocationRequestFactory.build(id=123, active=last_year, expire=today)
+        allocations = AllocationFactory.build_batch(3, request=alloc_request)
+
+        send_notification_upcoming_expiration(
+            user=alloc_request.submitter,
+            request=alloc_request,
+            allocations=allocations,
+            save=False)
+
+    def _render_past_expiration(self) -> None:
+        """Render a sample notification for an allocation request that has expired."""
+
+        next_week = date.today() + timedelta(days=7)
+        last_year = next_week - timedelta(days=365)
+
+        alloc_request = AllocationRequestFactory.build(id=123, active=last_year, expire=next_week)
+        allocations = AllocationFactory.build_batch(3, request=alloc_request)
+
+        send_notification_upcoming_expiration(
+            user=alloc_request.submitter,
+            request=alloc_request,
+            allocations=allocations,
+            save=False)
