@@ -29,19 +29,19 @@ celery_app.conf.beat_schedule = {
         'schedule': crontab(minute='0'),
         'description': 'This task updates all Slurm clusters with the latest user allocation limits.'
     },
-    'apps.allocations.tasks.notifications.notify_upcoming_expirations': {
-        'task': 'apps.allocations.tasks.notifications.notify_upcoming_expirations',
-        'schedule': crontab(hour='0', minute='0'),
-        'description': 'This task issues notifications informing users of upcoming expirations.'
-    },
-    'apps.allocations.tasks.notifications.notify_past_expirations': {
-        'task': 'apps.allocations.tasks.notifications.notify_past_expirations',
-        'schedule': crontab(hour='0', minute='0'),
-        'description': 'This task issues notifications informing users when their allocations have expired.'
-    },
     'apps.allocations.tasks.jobstats.slurm_update_job_stats': {
         'task': 'apps.allocations.tasks.jobstats.slurm_update_job_stats',
         'schedule': crontab(minute='*/10'),
         'description': 'This task synchronizes slurm job information with the application database.'
+    },
+    'apps.notifications.tasks.notify_upcoming_expirations': {
+        'task': 'apps.notifications.tasks.notify_upcoming_expirations',
+        'schedule': crontab(hour='0', minute='0'),
+        'description': 'This task issues notifications informing users of upcoming expirations.'
+    },
+    'apps.notifications.tasks.notify_past_expirations': {
+        'task': 'apps.notifications.tasks.notify_past_expirations',
+        'schedule': crontab(hour='0', minute='0'),
+        'description': 'This task issues notifications informing users when their allocations have expired.'
     },
 }

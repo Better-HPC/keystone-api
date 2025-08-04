@@ -18,7 +18,7 @@ from django.test import override_settings
 
 from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
 from apps.allocations.models import AllocationRequest
-from apps.notifications.tasks import notify_allocation_past_expiration, notify_allocation_upcoming_expiration
+from apps.notifications.tasks import send_past_expiration_notice, send_upcoming_expiration_notice
 
 
 class Command(BaseCommand):
@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
         allocations = AllocationFactory.build_batch(3, request=alloc_request)
 
-        notify_allocation_upcoming_expiration(
+        send_upcoming_expiration_notice(
             user=alloc_request.submitter,
             request=alloc_request,
             allocations=allocations,
@@ -125,7 +125,7 @@ class Command(BaseCommand):
 
         allocations = AllocationFactory.build_batch(3, request=alloc_request)
 
-        notify_allocation_past_expiration(
+        send_past_expiration_notice(
             user=alloc_request.submitter,
             request=alloc_request,
             allocations=allocations,

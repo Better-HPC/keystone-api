@@ -10,7 +10,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.request import Request
 from rest_framework.views import View
 
-from apps.notifications.models import Notification, Preference
+from .models import *
 
 __all__ = [
     "NotificationPermissions",
