@@ -22,7 +22,7 @@ class NotificationPermissions(BasePermission):
     """Grant read-only access to users accessing their own notifications.
 
     Permissions:
-        - Grants read access to users accessing their own notifications.
+        - Grants read and patch access to users accessing their own notifications.
     """
 
     _allowed_methods = SAFE_METHODS + ('PATCH',)
