@@ -8,17 +8,13 @@
   {% endif %}
 
   <p>
-    This is an automated reminder to members of the <em>{{ req_team }}</em> HPC team.
-  </p>
-
-  <p>
-    Your team's allocation request <strong>"{{ req_title }}"</strong> (request #{{ req_id }}) is scheduled to expire in
-    {{ req_days_left }} days on {{ req_expire.strftime('%B %d, %Y') }}.
+    This is an automated notification that the HPC allocation request <strong>"{{ req_title }}"</strong>
+    (ID: {{ req_id }}) is scheduled to expire in {{ req_days_left }} days on {{ req_expire.strftime('%B %d, %Y') }}.
     On this day, any unused computational time granted by the request will no longer be available for use.
   </p>
 
   <p>
-    Your team may continue to submit jobs and leverage any allocated resources up to the expiration date.
+    Your team may continue to submit jobs and leverage any allocated service units up to the expiration date.
     If your team has HPC resources granted under a different allocation request, access to those resources will remain
     unaffected.
   </p>
