@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% macro percent(numerator, denominator) %}
+  {% if denominator %}
+    ({{ '%.0f' % ((numerator / denominator) * 100) }}%)
+  {% else %}
+    &nbsp;
+  {% endif %}
+{% endmacro %}
+
 {% block main %}
   {% if user_first and user_last %}
     <p>Dear {{ user_first }} {{ user_last }},</p>
@@ -8,29 +16,31 @@
   {% endif %}
 
   <p>
-    This is an automated reminder to members of the <em>{{ req_team }}</em> HPC team.
+    This is an automated notification that the HPC allocation request <strong>"{{ req_title }}"</strong>
+    (ID: {{ req_id }})
+    submitted by the <em>{{ req_team }}</em> team has expired.
   </p>
 
   <p>
-    On {{ req_expire.strftime('%B %d, %Y') }} your team's allocation request <strong>"{{ req_title }}"</strong>
-    (request #{{ req_id }}) has expired.
     A summary of the resources allocated under this request and your team's total usage is provided below.
   </p>
 
-  <table style="width: 100%; border-collapse: collapse">
+  <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px;">
     <thead>
     <tr style="background-color: #f2f2f2;">
-      <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Cluster</th>
-      <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Awarded SUs</th>
-      <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Utilized SUs</th>
+      <th style="text-align: center; padding: 8px; border: 1px solid #ccc;">Cluster</th>
+      <th style="text-align: center; padding: 8px; border: 1px solid #ccc;">Awarded SUs</th>
+      <th style="text-align: center; padding: 8px; border: 1px solid #ccc;">Utilized SUs</th>
     </tr>
     </thead>
     <tbody>
     {% for alloc in allocations %}
       <tr>
-        <td style="text-align: center; padding: 8px; border: 1px solid #eee;">{{ alloc.alloc_cluster }}</td>
-        <td style="text-align: center; padding: 8px; border: 1px solid #eee;">{{ alloc.alloc_awarded }}</td>
-        <td style="text-align: center; padding: 8px; border: 1px solid #eee;">{{ alloc.alloc_final }}</td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">{{ alloc.alloc_cluster }}</td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">{{ "{:,}".format(alloc.alloc_awarded) }}</td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+          {{ "{:,}".format(alloc.alloc_final) }} {{ percent(alloc.alloc_final, alloc.alloc_awarded) }}
+        </td>
       </tr>
     {% endfor %}
     </tbody>
@@ -41,15 +51,16 @@
   </p>
 
   <p>
-    The HPC resources allocated to your team under this request have expired.
-    As a result, any unused computational time granted by the request is no longer available for use.
+    On {{ req_submitted.strftime('%B %d, %Y') }} your team requested the HPC service units listed above.
+    Access to these resources went into effect on {{ req_active.strftime('%B %d, %Y') }} and expired on
+    {{ req_expire.strftime('%B %d, %Y') }}.
+    Now that the allocation request has expired, any unused service units are longer available for use by your team.
   </p>
 
   <p>
-    If your team has HPC resources granted under a different allocation request, access to those resources remains
-    unaffected.
-    The system will automatically apply as much usage as possible to the expiring request so that more
-    service units remain available in your active allocations.
+    Any resources granted to your team by other allocation requests remain unaffected.
+    The system will automatically apply as much of your system usage as possible to the expiring request, maximizing
+    the total service units available in any remaining allocations.
   </p>
 
   <p style="padding-top: 10px">
@@ -57,9 +68,13 @@
   </p>
 
   <p>
-    If you no longer require HPC access, have been granted resources through a different request,
-    or have already submitted a new request pending approval, then no action is required at this time.
-    If you require additional HPC resources, you will need to submit a new allocation request.
+    If you no longer require HPC service units, have already submitted a follow-up request, or have sufficient service
+    units through a different request, then no action is required at this time.
+  </p>
+
+  <p>
+    If you require additional HPC service units, an administrator for the {{ req_team }} team
+    will need to submit a new request for additional resources.
   </p>
 
   <p>
