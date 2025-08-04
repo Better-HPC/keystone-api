@@ -131,11 +131,6 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
         return self.team
 
-    def get_days_until_expire(self) -> int | None:
-        """Calculate the number of days until this request expires."""
-
-        return (self.expire - date.today()).days if self.expire else None
-
     def __str__(self) -> str:  # pragma: nocover
         """Return the request title as a string."""
 

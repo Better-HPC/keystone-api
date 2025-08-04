@@ -68,7 +68,7 @@ def send_upcoming_expiration_notice(
 
     log.info(f'Sending notification to user "{user.username}" on upcoming expiration for request {request.id}.')
 
-    days_until_expire = request.get_days_until_expire()
+    days_until_expire = (request.expire - date.today()).days if request.expire else None
     context = {
         'user_name': user.username,
         'user_first': user.first_name,
