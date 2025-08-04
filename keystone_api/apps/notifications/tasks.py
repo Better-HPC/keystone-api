@@ -6,21 +6,24 @@ redirecting URLs, issuing notifications, and handling HTTP responses.
 
 import logging
 
+from celery import shared_task
+
 from apps.allocations.models import Allocation, AllocationRequest
 from apps.notifications.models import Notification
 from apps.notifications.shortcuts import send_notification_template
 from apps.users.models import User
 
 __all__ = [
-    'send_notification_past_expiration',
-    'send_notification_upcoming_expiration',
+    'notify_allocation_past_expiration',
+    'notify_allocation_upcoming_expiration',
 
 ]
 
 log = logging.getLogger(__name__)
 
 
-def send_notification_past_expiration(
+@shared_task()
+def notify_allocation_past_expiration(
     user: User,
     request: AllocationRequest,
     allocations: list[Allocation],
@@ -71,7 +74,8 @@ def send_notification_past_expiration(
     )
 
 
-def send_notification_upcoming_expiration(
+@shared_task()
+def notify_allocation_upcoming_expiration(
     user: User,
     request: AllocationRequest,
     allocations: list[Allocation],

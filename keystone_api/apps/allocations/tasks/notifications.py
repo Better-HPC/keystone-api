@@ -6,7 +6,7 @@ from datetime import date, timedelta
 from celery import shared_task
 
 from apps.allocations.models import AllocationRequest
-from apps.allocations.shortcuts import send_notification_past_expiration, send_notification_upcoming_expiration
+from apps.notifications.tasks import notify_allocation_past_expiration, notify_allocation_upcoming_expiration
 from apps.notifications.models import Notification, Preference
 from apps.users.models import User
 
@@ -83,7 +83,7 @@ def notify_upcoming_expirations() -> None:
 
             try:
                 if should_notify_upcoming_expiration(user, request):
-                    send_notification_upcoming_expiration(user, request)
+                    notify_allocation_upcoming_expiration(user, request)
 
             except Exception as error:
                 failed = True
@@ -138,7 +138,7 @@ def notify_past_expirations() -> None:
 
             try:
                 if should_notify_past_expiration(user, request):
-                    send_notification_past_expiration(user, request)
+                    notify_allocation_past_expiration(user, request)
 
             except Exception as error:
                 failed = True

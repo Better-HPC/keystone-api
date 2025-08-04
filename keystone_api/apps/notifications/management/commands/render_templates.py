@@ -17,7 +17,7 @@ from django.core.management.base import BaseCommand
 from django.test import override_settings
 
 from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
-from apps.allocations.shortcuts import send_notification_upcoming_expiration
+from apps.allocations.tasks import send_notification_upcoming_expiration
 
 
 class Command(BaseCommand):
