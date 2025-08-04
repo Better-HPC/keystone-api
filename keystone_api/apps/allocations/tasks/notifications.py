@@ -6,8 +6,8 @@ from datetime import date, timedelta
 from celery import shared_task
 
 from apps.allocations.models import AllocationRequest
-from apps.notifications.tasks import notify_allocation_past_expiration, notify_allocation_upcoming_expiration
 from apps.notifications.models import Notification, Preference
+from apps.notifications.tasks import notify_allocation_past_expiration, notify_allocation_upcoming_expiration
 from apps.users.models import User
 
 __all__ = [
@@ -34,11 +34,14 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
         A boolean reflecting whether to send a notification.
     """
 
-    msg_prefix = f'Skipping notification on upcoming expiration for user "{user.username}" on request {request.id}: '
+    msg_prefix = f'Skipping notification on upcoming expiration for request {request.id} to user "{user.username}": '
+
+    # If the allocation request does not have an expiration date, no need to notify
     if not request.expire:
         log.debug(msg_prefix + 'Request does not expire.')
         return False
 
+    # If the request is already expired, it's too late to notify
     if request.expire <= date.today():
         log.debug(msg_prefix + 'Request has already expired.')
         return False
@@ -46,16 +49,19 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
     # Check user notification preferences
     days_until_expire = request.get_days_until_expire()
     next_threshold = Preference.get_user_preference(user).get_expiration_threshold(days_until_expire)
+
+    # If no notification threshold applies for the current number of days until expiration, do not notify
     if next_threshold is None:
         log.debug(msg_prefix + 'No notification threshold has been hit yet.')
         return False
 
-    # Avoid spamming new users
+    # Avoid spamming new users by skipping notifications for user accounts created
+    # after the notification threshold
     if user.date_joined.date() >= date.today() - timedelta(days=next_threshold):
         log.debug(msg_prefix + 'User account created after notification threshold.')
         return False
 
-    # Check if a notification has already been sent
+    # Check if a notification was already sent at or below this threshold for this request
     if Notification.objects.filter(
         user=user,
         notification_type=Notification.NotificationType.request_expiring,
@@ -65,6 +71,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
         log.debug(msg_prefix + 'Notification already sent for threshold.')
         return False
 
+    # All checks passed — safe to notify
     return True
 
 
@@ -77,22 +84,10 @@ def notify_upcoming_expirations() -> None:
         expire__gt=date.today()
     ).all()
 
-    failed = False
     for request in active_requests:
         for user in request.team.get_all_members().filter(is_active=True):
-
-            try:
-                if should_notify_upcoming_expiration(user, request):
-                    notify_allocation_upcoming_expiration(user, request)
-
-            except Exception as error:
-                failed = True
-                log.exception(
-                    f'Error notifying user "{user.username}" on upcoming expiration of request {request.id}: {error}'
-                )
-
-    if failed:
-        raise RuntimeError('Task failed with one or more errors. See logs for details.')
+            if should_notify_upcoming_expiration(user, request):
+                notify_allocation_upcoming_expiration.delay(user, request)
 
 
 def should_notify_past_expiration(user: User, request: AllocationRequest) -> bool:
@@ -132,19 +127,7 @@ def notify_past_expirations() -> None:
         expire__gt=date.today() - timedelta(days=3),
     ).all()
 
-    failed = False
     for request in active_requests:
         for user in request.team.get_all_members().filter(is_active=True):
-
-            try:
-                if should_notify_past_expiration(user, request):
-                    notify_allocation_past_expiration(user, request)
-
-            except Exception as error:
-                failed = True
-                log.exception(
-                    f'Error notifying user "{user.username}" on the expiration of request {request.id}: {error}'
-                )
-
-    if failed:
-        raise RuntimeError('Task failed with one or more errors. See logs for details.')
+            if should_notify_past_expiration(user, request):
+                notify_allocation_past_expiration.delay(user, request)
