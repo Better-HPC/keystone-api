@@ -31,6 +31,9 @@ def notify_allocation_past_expiration(
 ) -> None:
     """Send a notification to alert a user their allocation request has expired.
 
+    When persisting the notification record to the database, the allocation request
+    ID is saved as notification metadata.
+
     Args:
         user: The user to notify.
         request: The allocation request to notify the user about.
@@ -63,7 +66,7 @@ def notify_allocation_past_expiration(
 
     send_notification_template(
         user=user,
-        subject=f'Your HPC allocation has expired',
+        subject=f'Your HPC allocation #{request.id} has expired',
         template='past_expiration.html',
         context=context,
         notification_type=Notification.NotificationType.request_expired,
@@ -82,6 +85,9 @@ def notify_allocation_upcoming_expiration(
     save=True
 ) -> None:
     """Send a notification to alert a user their allocation request will expire soon.
+
+    When persisting the notification record to the database, the allocation request
+    ID and the days remaining until the expiration date are saved as notification metadata.
 
     Args:
         user: The user to notify.
@@ -116,7 +122,7 @@ def notify_allocation_upcoming_expiration(
 
     send_notification_template(
         user=user,
-        subject=f'Your HPC allocation is expiring soon',
+        subject=f'Your HPC allocation #{request.id} is expiring soon',
         template='upcoming_expiration.html',
         context=context,
         notification_type=Notification.NotificationType.request_expiring,

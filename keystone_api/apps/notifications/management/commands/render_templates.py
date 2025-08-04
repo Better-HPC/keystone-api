@@ -17,7 +17,7 @@ from django.core.management.base import BaseCommand
 from django.test import override_settings
 
 from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
-from apps.allocations.tasks import send_notification_upcoming_expiration
+from apps.notifications.tasks import notify_allocation_past_expiration, notify_allocation_upcoming_expiration
 
 
 class Command(BaseCommand):
@@ -93,20 +93,6 @@ class Command(BaseCommand):
     def _render_upcoming_expiration(self) -> None:
         """Render a sample notification for an allocation request with an upcoming expiration."""
 
-        today = date.today()
-        last_year = today - timedelta(days=365)
-
-        alloc_request = AllocationRequestFactory.build(id=123, active=last_year, expire=today)
-        allocations = AllocationFactory.build_batch(3, request=alloc_request)
-
-        send_notification_upcoming_expiration(
-            user=alloc_request.submitter,
-            request=alloc_request,
-            allocations=allocations,
-            save=False)
-
-    def _render_past_expiration(self) -> None:
-        """Render a sample notification for an allocation request that has expired."""
 
         next_week = date.today() + timedelta(days=7)
         last_year = next_week - timedelta(days=365)
@@ -114,7 +100,21 @@ class Command(BaseCommand):
         alloc_request = AllocationRequestFactory.build(id=123, active=last_year, expire=next_week)
         allocations = AllocationFactory.build_batch(3, request=alloc_request)
 
-        send_notification_upcoming_expiration(
+        notify_allocation_upcoming_expiration(
+            user=alloc_request.submitter,
+            request=alloc_request,
+            allocations=allocations,
+            save=False)
+
+    def _render_past_expiration(self) -> None:
+        """Render a sample notification for an allocation request that has expired."""
+        today = date.today()
+        last_year = today - timedelta(days=365)
+
+        alloc_request = AllocationRequestFactory.build(id=123, active=last_year, expire=today)
+        allocations = AllocationFactory.build_batch(3, request=alloc_request)
+
+        notify_allocation_past_expiration(
             user=alloc_request.submitter,
             request=alloc_request,
             allocations=allocations,

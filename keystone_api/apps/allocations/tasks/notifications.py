@@ -79,6 +79,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
 def notify_upcoming_expirations() -> None:
     """Send a notification to all users with soon-to-expire allocations."""
 
+    # Retrieve all approved allocation requests that expire in the future
     active_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,
         expire__gt=date.today()
@@ -87,7 +88,7 @@ def notify_upcoming_expirations() -> None:
     for request in active_requests:
         for user in request.team.get_all_members().filter(is_active=True):
             if should_notify_upcoming_expiration(user, request):
-                notify_allocation_upcoming_expiration.delay(user, request)
+                notify_allocation_upcoming_expiration.delay(user, request, request.allocation_set)
 
 
 def should_notify_past_expiration(user: User, request: AllocationRequest) -> bool:
@@ -121,6 +122,7 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
 def notify_past_expirations() -> None:
     """Send a notification to all users with expired allocations."""
 
+    # Retrieve all allocation requests that expired within the last three days
     active_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,
         expire__lte=date.today(),
@@ -130,4 +132,4 @@ def notify_past_expirations() -> None:
     for request in active_requests:
         for user in request.team.get_all_members().filter(is_active=True):
             if should_notify_past_expiration(user, request):
-                notify_allocation_past_expiration.delay(user, request)
+                notify_allocation_past_expiration.delay(user, request, request.allocation_set)
