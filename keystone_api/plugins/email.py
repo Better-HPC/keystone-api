@@ -14,6 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
 from django.core.mail.backends.base import BaseEmailBackend
 from django.utils.text import slugify
+from jinja2.runtime import Macro
 from jinja2.sandbox import SandboxedEnvironment
 
 __all__ = ['EmlFileEmailBackend', 'SecureSandboxedEnvironment']
@@ -99,8 +100,15 @@ class SecureSandboxedEnvironment(SandboxedEnvironment):
         return super().is_safe_attribute(obj, attr, value)
 
     def is_safe_callable(self, obj: callable) -> bool:
-        """Block all callables unless it's a constructor/method from a primitive type."""
+        """Block all callables unless it's a macro or a constructor/method from a primitive type."""
 
-        is_builtin_constructor = obj in self._allowed_constructors
-        is_builtin_method = isinstance(obj, (BuiltinFunctionType, BuiltinMethodType))
-        return is_builtin_constructor or is_builtin_method
+        is_macro = isinstance(obj, Macro)  # Allow user defined jinja2 macros
+        is_builtin_constructor = obj in self._allowed_constructors  # Allow typecasting to whitelisted types
+        is_builtin_method = isinstance(obj, (BuiltinFunctionType, BuiltinMethodType))  # Allow bound builtin functions/methods
+
+        # Allow unbound instances of primitive type methods
+        method_owner_name = getattr(obj, '__qualname__', '').split('.')[0]
+        allowed_type_names = {t.__name__ for t in self._allowed_constructors}
+        is_unbound_method = method_owner_name in allowed_type_names
+
+        return any((is_macro, is_builtin_constructor, is_builtin_method, is_unbound_method))
