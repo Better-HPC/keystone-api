@@ -118,7 +118,7 @@ class Preference(models.Model):
             default=None
         )
 
-    def should_notify_upcoming_expiration(self, request_id: int, expire_date: date) -> bool:
+    def should_notify_upcoming_expiration(self, request_id: int, expire_date: date | None) -> bool:
         """Check if user should be notified about upcoming expiration."""
 
         if not expire_date:

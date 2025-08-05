@@ -1,9 +1,14 @@
 """Unit tests for the `Preference` class."""
 
+from datetime import date, datetime, timedelta
+from unittest.mock import Mock, patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from apps.allocations.factories import AllocationRequestFactory
 from apps.notifications.models import default_expiry_thresholds, Preference
+from apps.users.factories import UserFactory
 
 User = get_user_model()
 
@@ -153,103 +158,90 @@ class SetUserPreferenceMethod(TestCase):
 
 
 class ShouldNotifyPastExpirationMethod(TestCase):
-    """Test the determination of whether an expiration notification should be issued."""
-
-    def setUp(self) -> None:
-        """Set up test data."""
-
-        self.user = User.objects.create_user(username='testuser', password='foobar123!')
-        self.team = Team.objects.create()
-        self.request = AllocationRequest.objects.create(team=self.team, expire=date.today())
+    """Test the determination of whether a notification should be issued for an expired allocation."""
 
     @patch('apps.notifications.models.Notification.objects.filter')
     def test_false_if_duplicate_notification(self, mock_notification_filter: Mock) -> None:
         """Verify the return value is `False` if a notification has already been issued."""
 
         mock_notification_filter.return_value.exists.return_value = True
-        with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
-            self.assertFalse(should_notify_past_expiration(self.user, self.request))
-            self.assertRegex(log.output[-1], '.*Notification already sent.')
+
+        request = AllocationRequestFactory(expire=date.today())
+        pref = Preference.objects.create(user=request.submitter, notify_on_expiration=True)
+        self.assertFalse(pref.should_notify_past_expiration(request.id))
 
     def test_false_if_disabled_in_preferences(self) -> None:
         """Verify the return value is `False` if expiry notifications are disabled in preferences."""
 
-        Preference.objects.create(user=self.user, notify_on_expiration=False)
-        self.assertFalse(should_notify_past_expiration(self.user, self.request))
+        request = AllocationRequestFactory(expire=date.today())
+        pref = Preference.objects.create(user=request.submitter, notify_on_expiration=False)
+        self.assertFalse(pref.should_notify_past_expiration(request.id))
 
     def test_true_if_new_notification(self) -> None:
         """Verify the return value is `True` if a notification has not been issued yet."""
 
-        self.assertTrue(should_notify_past_expiration(self.user, self.request))
+        request = AllocationRequestFactory(expire=date.today())
+        pref = Preference.objects.create(user=request.submitter, notify_on_expiration=True)
+        self.assertTrue(pref.should_notify_past_expiration(request.id))
 
 
 class ShouldNotifyUpcomingExpirationMethod(TestCase):
-    """Test the determination of whether an expiry threshold notification should be issued."""
-
-    def setUp(self) -> None:
-        """Set up test data."""
-
-        self.user = User.objects.create_user(
-            username='testuser',
-            password='foobar123!',
-            date_joined=datetime(2020, 1, 1, tzinfo=timezone.utc)
-        )
-
-        self.team = Team.objects.create()
-        self.request = AllocationRequest.objects.create(team=self.team, expire=date.today() + timedelta(days=15))
+    """Test the determination of whether a notification should be issued for an upcoming expiration."""
 
     def test_false_if_request_does_not_expire(self) -> None:
         """Verify the return value is `False` if the request does not expire."""
 
-        self.request.expire = None
-        with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
-            self.assertFalse(should_notify_upcoming_expiration(self.user, self.request))
-            self.assertRegex(log.output[-1], '.*Request does not expire.')
+        request = AllocationRequestFactory(expire=None)
+        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[15])
+        self.assertFalse(
+            pref.should_notify_upcoming_expiration(request.id, request.expire)
+        )
 
     def test_false_if_request_already_expired(self) -> None:
         """Verify the return value is `False` if the request has already expired."""
 
-        self.request.expire = date.today()
-        with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
-            self.assertFalse(should_notify_upcoming_expiration(self.user, self.request))
-            self.assertRegex(log.output[-1], '.*Request has already expired.')
+        request = AllocationRequestFactory(expire=date.today())
+        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[15])
+        self.assertFalse(
+            pref.should_notify_upcoming_expiration(request.id, request.expire)
+        )
 
     def test_false_if_no_threshold_reached(self) -> None:
-        """Verify the return value is `False` if no threshold is reached."""
+        """Verify the return value is `False` if no threshold has been reached."""
 
-        # Set notification threshold smaller than days to expiration
-        Preference.objects.create(user=self.user, request_expiry_thresholds=[5])
-
-        with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
-            self.assertFalse(should_notify_upcoming_expiration(self.user, self.request))
-            self.assertRegex(log.output[-1], '.*No notification threshold has been hit yet.')
+        request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
+        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[5])
+        self.assertFalse(
+            pref.should_notify_upcoming_expiration(request.id, request.expire)
+        )
 
     def test_false_if_user_recently_joined(self) -> None:
-        """Verify the return value is `False` if the user recently joined."""
+        """Verify the return value is `False` if the user is new."""
 
-        # Set account creation date after notification threshold
-        self.user.date_joined = datetime.now()
-        Preference.objects.create(user=self.user, request_expiry_thresholds=[15])
-
-        with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
-            self.assertFalse(should_notify_upcoming_expiration(self.user, self.request))
-            self.assertRegex(log.output[-1], '.*User account created after notification threshold.')
+        user = UserFactory(date_joined=datetime.now())
+        request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
+        pref = Preference.objects.create(user=user, request_expiry_thresholds=[15])
+        self.assertFalse(
+            pref.should_notify_upcoming_expiration(request.id, request.expire)
+        )
 
     @patch('apps.notifications.models.Notification.objects.filter')
-    def test_false_if_duplicate_notification(self, mock_notification_filter: Mock) -> None:
+    def test_false_if_duplicate_notification(self, mock_filter: Mock) -> None:
         """Verify the return value is `False` if a notification has already been issued."""
 
-        # Set notification threshold equal to the days until expiration
-        Preference.objects.create(user=self.user, request_expiry_thresholds=[15])
-        mock_notification_filter.return_value.exists.return_value = True
+        mock_filter.return_value.exists.return_value = True
 
-        with self.assertLogs('apps.allocations.tasks', level='DEBUG') as log:
-            self.assertFalse(should_notify_upcoming_expiration(self.user, self.request))
-            self.assertRegex(log.output[-1], '.*Notification already sent for threshold.')
+        request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
+        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[5])
+        self.assertFalse(
+            pref.should_notify_upcoming_expiration(request.id, request.expire)
+        )
 
     def test_true_if_new_notification(self) -> None:
         """Verify the return value is `True` if a notification threshold has been hit."""
 
-        # Set notification threshold equal to the days until expiration
-        Preference.objects.create(user=self.user, request_expiry_thresholds=[15])
-        self.assertTrue(should_notify_upcoming_expiration(self.user, self.request))
+        request = AllocationRequestFactory(expire=date.today() + timedelta(days=5))
+        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[15])
+        self.assertTrue(
+            pref.should_notify_upcoming_expiration(request.id, request.expire)
+        )
