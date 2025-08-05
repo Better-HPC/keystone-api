@@ -8,12 +8,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import override_settings, TestCase
 
 from apps.logging.models import AppLog, AuditLog, RequestLog
-from apps.logging.tasks import clear_log_files
+from apps.logging.tasks import clear_log_records
 
 
 @patch('django.utils.timezone.now')
-class ClearLogFilesMethod(TestCase):
-    """Test the deletion of log records by the  clear_log_files` method."""
+class ClearLogRecordsMethod(TestCase):
+    """Test the deletion of log records."""
 
     now = datetime(2025, 1, 1, tzinfo=timezone.utc)
 
@@ -89,7 +89,7 @@ class ClearLogFilesMethod(TestCase):
         self.create_dummy_records(mock_now, self.now, later_time)
 
         mock_now.return_value = later_time
-        clear_log_files()
+        clear_log_records()
 
         self.assert_log_counts(app=1, request=2, audit=2)
         self.assertEqual(later_time, AppLog.objects.first().timestamp)
@@ -104,7 +104,7 @@ class ClearLogFilesMethod(TestCase):
         self.create_dummy_records(mock_now, self.now, later_time)
 
         mock_now.return_value = later_time
-        clear_log_files()
+        clear_log_records()
 
         self.assert_log_counts(app=2, request=1, audit=2)
         self.assertEqual(later_time, RequestLog.objects.first().timestamp)
@@ -119,7 +119,7 @@ class ClearLogFilesMethod(TestCase):
         self.create_dummy_records(mock_now, self.now, later_time)
 
         mock_now.return_value = later_time
-        clear_log_files()
+        clear_log_records()
 
         self.assert_log_counts(app=2, request=2, audit=1)
         self.assertEqual(later_time, AuditLog.objects.first().timestamp)
@@ -134,7 +134,7 @@ class ClearLogFilesMethod(TestCase):
         self.create_dummy_records(mock_now, later_time)
 
         mock_now.return_value = self.now
-        clear_log_files()
+        clear_log_records()
 
         self.assertEqual(1, AppLog.objects.count())
         self.assertEqual(1, RequestLog.objects.count())
