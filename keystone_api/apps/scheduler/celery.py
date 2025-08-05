@@ -19,15 +19,20 @@ celery_app.conf.beat_schedule = {
         'schedule': crontab(minute='*/15'),
         'description': 'This task synchronizes user data against LDAP. This task does nothing if LDAP is disabled.'
     },
-    'apps.logging.tasks.clear_log_files': {
-        'task': 'apps.logging.tasks.clear_log_files',
-        'schedule': crontab(hour='0', minute='0'),
+    'apps.logging.tasks.clear_log_records': {
+        'task': 'apps.logging.tasks.clear_log_records',
+        'schedule': crontab(minute='0'),
         'description': 'This task deletes old log entries according to application settings.'
     },
     'apps.allocations.tasks.limits.update_limits': {
         'task': 'apps.allocations.tasks.limits.update_limits',
         'schedule': crontab(minute='0'),
         'description': 'This task updates all Slurm clusters with the latest user allocation limits.'
+    },
+    'apps.allocations.tasks.jobstats.slurm_update_job_stats': {
+        'task': 'apps.allocations.tasks.jobstats.slurm_update_job_stats',
+        'schedule': crontab(minute='*/5'),
+        'description': 'This task synchronizes slurm job information with the application database.'
     },
     'apps.allocations.tasks.notifications.notify_upcoming_expirations': {
         'task': 'apps.allocations.tasks.notifications.notify_upcoming_expirations',
@@ -38,10 +43,5 @@ celery_app.conf.beat_schedule = {
         'task': 'apps.allocations.tasks.notifications.notify_past_expirations',
         'schedule': crontab(hour='0', minute='0'),
         'description': 'This task issues notifications informing users when their allocations have expired.'
-    },
-    'apps.allocations.tasks.jobstats.slurm_update_job_stats': {
-        'task': 'apps.allocations.tasks.jobstats.slurm_update_job_stats',
-        'schedule': crontab(minute='*/10'),
-        'description': 'This task synchronizes slurm job information with the application database.'
     },
 }
