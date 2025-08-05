@@ -24,7 +24,6 @@ class AppLog(models.Model):
         indexes = [
             models.Index(fields=['timestamp']),
             models.Index(fields=['level', 'timestamp']),
-            models.Index(fields=['name', 'level', 'timestamp']),
             models.Index(fields=['pathname', 'lineno']),
         ]
 
@@ -54,12 +53,6 @@ class RequestLog(models.Model):
             models.Index(fields=['endpoint', 'timestamp']),
             models.Index(fields=['remote_address', 'timestamp']),
             models.Index(fields=['response_code', 'timestamp']),
-
-            models.Index(fields=['cid', 'method', 'timestamp']),
-            models.Index(fields=['user', 'method', 'timestamp']),
-            models.Index(fields=['endpoint', 'method', 'timestamp']),
-            models.Index(fields=['remote_address', 'method', 'timestamp']),
-            models.Index(fields=['response_code', 'method', 'timestamp']),
         ]
 
     method = models.CharField(max_length=10)

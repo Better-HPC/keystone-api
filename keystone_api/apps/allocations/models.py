@@ -90,6 +90,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
             models.Index(fields=['team', 'status']),
             models.Index(fields=['team', 'submitter', 'status']),
             models.Index(fields=['team', 'active', 'expire']),
+            models.Index(fields=['team', 'expire']),
             models.Index(fields=['submitter', 'status']),
         ]
 
