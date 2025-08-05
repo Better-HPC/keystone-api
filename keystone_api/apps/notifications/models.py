@@ -32,7 +32,7 @@ class Notification(models.Model):
             models.Index(fields=['notification_type']),
             models.Index(fields=['user']),
             models.Index(fields=['user', 'read', 'notification_type']),
-            models.Index(fields=['user', 'notification_type', 'time']),
+            models.Index(fields=['user', 'time', 'notification_type']),
         ]
 
     class NotificationType(models.TextChoices):
