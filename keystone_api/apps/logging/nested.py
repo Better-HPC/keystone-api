@@ -18,7 +18,7 @@ __all__ = ['AuditLogSummarySerializer']
 class AuditLogSummarySerializer(serializers.ModelSerializer):
     """Object serializer for the `AuditLog` class."""
 
-    _actor = UserSummarySerializer(source='user', read_only=True)
+    _actor = UserSummarySerializer(source='actor', read_only=True)
     action = serializers.SerializerMethodField()
 
     class Meta:
