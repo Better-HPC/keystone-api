@@ -10,17 +10,27 @@
   <p>
     This is an automated notification that the HPC allocation request <strong>"{{ req_title }}"</strong>
     (ID: {{ req_id }}) is scheduled to expire in {{ req_days_left }} days on {{ req_expire.strftime('%B %d, %Y') }}.
-    On this day, any unused computational time granted by the request will no longer be available for use.
+  </p>
+
+  <p style="padding-top: 10px">
+    <strong>What Does This Mean</strong>
   </p>
 
   <p>
-    Your team may continue to submit jobs and leverage any allocated service units up to the expiration date.
-    If your team has HPC resources granted under a different allocation request, access to those resources will remain
-    unaffected.
+    On {{ req_active.strftime('%B %d, %Y') }} the <em>{{ req_team }}</em> team was granted computational time across one
+    or more HPC clusters.
+    These allocated resources are set to expire on {{ req_expire.strftime('%B %d, %Y') }}, after which point any
+    unused computational time will become unavailble for use by your team.
+  </p>
+
+  <p style="padding-top: 10px">
+    <strong>What Happens Now</strong>
   </p>
 
   <p>
-    For any additional questions, please contact your system administrator(s).
+    Your team may continue to submit jobs and leverage any remaining compute time up to the expiration date.
+    If you require additional compute time after expiration, an administrator for the <em>{{ req_team }}</em> team
+    will need to submit a request for additional resources.
   </p>
 
   <p style="padding-top: 10px">
