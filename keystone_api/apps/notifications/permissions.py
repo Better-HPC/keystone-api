@@ -10,7 +10,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework.request import Request
 from rest_framework.views import View
 
-from apps.notifications.models import Notification, Preference
+from .models import *
 
 __all__ = [
     "NotificationPermissions",
@@ -22,7 +22,7 @@ class NotificationPermissions(BasePermission):
     """Grant read-only access to users accessing their own notifications.
 
     Permissions:
-        - Grants read access to users accessing their own notifications.
+        - Grants read and patch access to users accessing their own notifications.
     """
 
     _allowed_methods = SAFE_METHODS + ('PATCH',)
