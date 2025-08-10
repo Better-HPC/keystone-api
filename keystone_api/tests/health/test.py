@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 from rest_framework import status
 from rest_framework.test import APITransactionTestCase
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
@@ -25,14 +25,12 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     """
 
     endpoint = '/health/'
-    fixtures = ['testing_common.yaml']
-    valid_responses = (status.HTTP_200_OK, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.generic_user = User.objects.get(username='generic_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self, _mock_run_check: Mock) -> None:
         """Verify unauthenticated users have read-only permissions."""

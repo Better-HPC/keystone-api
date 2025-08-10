@@ -3,7 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
 
@@ -17,32 +18,36 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated non-member   | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team member                | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member (other record) | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member (own record)   | 200 | 200  | 200     | 405  | 403 | 403   | 204    | 405   |
     | Team admin                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Team owner                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
     endpoint_pattern = '/users/membership/{pk}/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user teams and accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.team = Team.objects.get(name='Team 1')
-        self.endpoint = self.endpoint_pattern.format(pk=self.team.pk)
+        membership = MembershipFactory(role=Membership.Role.MEMBER)
+        self.team = membership.team
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.non_team_member = User.objects.get(username='generic_user')
-        self.team_owner = User.objects.get(username='owner_1')
-        self.team_admin = User.objects.get(username='admin_1')
-        self.team_member = User.objects.get(username='member_1')
+        self.team_member1 = membership.user
+        self.team_member2 = MembershipFactory(team=membership.team, role=Membership.Role.MEMBER).user
+        self.team_admin = MembershipFactory(team=membership.team, role=Membership.Role.ADMIN).user
+        self.team_owner = MembershipFactory(team=membership.team, role=Membership.Role.OWNER).user
+
+        self.non_team_member = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
+
+        self.member1_endpoint = self.endpoint_pattern.format(pk=membership.pk)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
-            self.endpoint,
+            self.member1_endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -58,7 +63,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.non_team_member)
         self.assert_http_responses(
-            self.endpoint,
+            self.member1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -69,12 +74,28 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
-    def test_team_member_permissions(self) -> None:
-        """Verify team members have read-only permissions."""
+    def test_team_member_own_record_permissions(self) -> None:
+        """Verify team members have read and delete permissions for their own record."""
 
-        self.client.force_authenticate(user=self.team_member)
+        self.client.force_authenticate(user=self.team_member1)
         self.assert_http_responses(
-            self.endpoint,
+            self.member1_endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def test_team_member_others_record_permissions(self) -> None:
+        """Verify team members have read-only permissions for other team member's records."""
+
+        self.client.force_authenticate(user=self.team_member2)
+        self.assert_http_responses(
+            self.member1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -86,11 +107,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_admin_permissions(self) -> None:
-        """Verify team admins have read and write permissions for their own team."""
+        """Verify team admins have read and write permissions for their own record."""
 
         self.client.force_authenticate(user=self.team_admin)
         self.assert_http_responses(
-            self.endpoint,
+            self.member1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -99,15 +120,19 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'user': self.non_team_member.pk, 'team': self.team.pk, 'role': 'MB'}
+            put_body={
+                'user': self.non_team_member.pk,
+                'team': self.team.pk,
+                'role': Membership.Role.MEMBER
+            }
         )
 
     def test_team_owner_permissions(self) -> None:
-        """Verify team owners have read and write permissions for their own team."""
+        """Verify team owners have read and write permissions for their own record."""
 
         self.client.force_authenticate(user=self.team_owner)
         self.assert_http_responses(
-            self.endpoint,
+            self.member1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -116,7 +141,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'user': self.non_team_member.pk, 'team': self.team.pk, 'role': 'MB'}
+            put_body={
+                'user': self.non_team_member.pk,
+                'team': self.team.pk,
+                'role': Membership.Role.MEMBER
+            }
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -124,7 +153,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
-            self.endpoint,
+            self.member1_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -133,5 +162,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'user': self.non_team_member.pk, 'team': self.team.pk, 'role': 'MB'}
+            put_body={
+                'user': self.non_team_member.pk,
+                'team': self.team.pk,
+                'role': Membership.Role.MEMBER
+            }
         )

@@ -18,6 +18,13 @@ from apps.notifications.models import Notification
 from apps.users.models import User
 from plugins.email import SecureSandboxedEnvironment
 
+__all__ = [
+    'get_template',
+    'format_template',
+    'send_notification',
+    'send_notification_template'
+]
+
 
 def get_template(template_name: str) -> Template:
     """Retrieve a Jinja2 email template by name.
@@ -36,7 +43,7 @@ def get_template(template_name: str) -> Template:
         PermissionError: When attempting to load a template with insecure file permissions.
     """
 
-    loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR, ])
+    loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR])
     environment = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
     # Get resolved path from the loader

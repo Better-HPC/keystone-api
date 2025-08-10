@@ -5,39 +5,6 @@ from django.test import TestCase
 from apps.users.models import Membership, Team, User
 
 
-class GetMembers(TestCase):
-    """Test fetching all team members via getter methods."""
-
-    def setUp(self) -> None:
-        """Create temporary user accounts for use in tests."""
-
-        self.owner = User.objects.create(username='owner')
-        self.admin = User.objects.create(username='admin')
-        self.member1 = User.objects.create(username='unprivileged1')
-        self.member2 = User.objects.create(username='unprivileged2')
-
-        self.team = Team.objects.create(name="Test Team")
-        self.team.add_or_update_member(self.owner, role=Membership.Role.OWNER)
-        self.team.add_or_update_member(self.admin, role=Membership.Role.ADMIN)
-        self.team.add_or_update_member(self.member1, role=Membership.Role.MEMBER)
-        self.team.add_or_update_member(self.member2, role=Membership.Role.MEMBER)
-
-    def test_get_all_members(self) -> None:
-        """Verify the `get_all_members` method returns all team members."""
-
-        expected_members = [self.owner, self.admin, self.member1, self.member2]
-        self.assertQuerySetEqual(
-            expected_members,
-            self.team.get_all_members(),
-            ordered=False
-        )
-
-    def test_get_privileged_members(self) -> None:
-        """Verify the `get_privileged_members` method only returns privileged team members."""
-
-        self.assertQuerySetEqual([self.owner, self.admin], self.team.get_privileged_members(), ordered=False)
-
-
 class AddOrUpdateMemberMethod(TestCase):
     """Test the modification of team membership via the `add_or_update_member` method."""
 
@@ -99,3 +66,36 @@ class AddOrUpdateMemberMethod(TestCase):
         # Check the user has membership in both teams
         self.assertTrue(Membership.objects.filter(user=self.test_user1, team=self.team).exists())
         self.assertTrue(Membership.objects.filter(user=self.test_user1, team=team2).exists())
+
+
+class GetMemberMethods(TestCase):
+    """Test fetching all team members via getter methods."""
+
+    def setUp(self) -> None:
+        """Create temporary user accounts for use in tests."""
+
+        self.owner = User.objects.create(username='owner')
+        self.admin = User.objects.create(username='admin')
+        self.member1 = User.objects.create(username='unprivileged1')
+        self.member2 = User.objects.create(username='unprivileged2')
+
+        self.team = Team.objects.create(name="Test Team")
+        self.team.add_or_update_member(self.owner, role=Membership.Role.OWNER)
+        self.team.add_or_update_member(self.admin, role=Membership.Role.ADMIN)
+        self.team.add_or_update_member(self.member1, role=Membership.Role.MEMBER)
+        self.team.add_or_update_member(self.member2, role=Membership.Role.MEMBER)
+
+    def test_get_all_members(self) -> None:
+        """Verify the `get_all_members` method returns all team members."""
+
+        expected_members = [self.owner, self.admin, self.member1, self.member2]
+        self.assertQuerySetEqual(
+            expected_members,
+            self.team.get_all_members(),
+            ordered=False
+        )
+
+    def test_get_privileged_members(self) -> None:
+        """Verify the `get_privileged_members` method only returns privileged team members."""
+
+        self.assertQuerySetEqual([self.owner, self.admin], self.team.get_privileged_members(), ordered=False)

@@ -12,9 +12,9 @@ from apps.users.tasks import ldap_update_users
 
 
 class Command(BaseCommand):
-    """Create or update user accounts to reflect changes made in LDAP."""
+    """Synchronize user accounts against LDAP."""
 
-    help = 'Create/update user accounts to reflect changes made in LDAP.'
+    help = __doc__
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command-line arguments to the parser.

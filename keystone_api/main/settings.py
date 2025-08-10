@@ -23,7 +23,6 @@ SUMMARY = dist.metadata['summary']
 
 env = environ.Env()
 DEBUG = env.bool('DEBUG', False)
-FIXTURE_DIRS = [BASE_DIR / 'fixtures']
 
 # Core security settings
 
@@ -120,7 +119,6 @@ INSTALLED_APPS = [
     'health_check.contrib.redis',
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth',
     'django_celery_beat',
     'django_celery_results',
     'django_filters',
@@ -132,6 +130,7 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.health',
     'apps.logging',
+    'apps.metrics',
     'apps.notifications',
     'apps.openapi',
     'apps.research_products',
@@ -150,7 +149,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "servestatic.middleware.ServeStaticMiddleware",
     'auditlog.middleware.AuditlogMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]

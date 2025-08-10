@@ -6,7 +6,9 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from rest_framework import status, viewsets
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from rest_framework import serializers, status, viewsets
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -17,31 +19,107 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
+    'NotificationTypeChoicesView',
     'NotificationViewSet',
     'PreferenceViewSet',
 ]
 
 
-class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
-    """Returns user notifications."""
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve valid notification types",
+        description="Retrieve valid notification types with human-readable labels.",
+        tags=["Notifications"],
+        responses=inline_serializer(
+            name="NotificationTypeChoices",
+            fields={k: serializers.CharField(default=v) for k, v in Notification.NotificationType.choices}
+        )
+    )
+)
+class NotificationTypeChoicesView(GenericAPIView):
+    """API endpoints for exposing valid notification `type` values."""
 
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
-    search_fields = ['message', 'user__username']
+    permission_classes = [IsAuthenticated]
+    response_content = dict(Notification.NotificationType.choices)
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        """Return a dictionary mapping values to human-readable names."""
+
+        return Response(self.response_content)
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all notifications",
+        description="Retrieve all notifications visible to the current user.",
+        tags=["Notifications"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a notification",
+        description="Retrieve a single notification by ID.",
+        tags=["Notifications"],
+    ),
+    partial_update=extend_schema(
+        summary="Update a notification's read status",
+        description="Update a notifications `read` status. All other fields are read only.",
+        tags=["Notifications"],
+    ),
+)
+class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
+    """API endpoints for retrieving user notifications."""
+
     permission_classes = [IsAuthenticated, NotificationPermissions]
     http_method_names = ['get', 'head', 'options', 'patch']
+    search_fields = ['message', 'user__username']
+    serializer_class = NotificationSerializer
+    queryset = Notification.objects.select_related('user')
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List all notification preferences",
+        description="Retrieve all notification preferences visible to the current user.",
+        tags=["Notification Preferences"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve a user's notification preferences",
+        description="Retrieve a user's notification preference by ID.",
+        tags=["Notification Preferences"],
+    ),
+    create=extend_schema(
+        summary="Create a notification preference",
+        description="Create a new notification preference.",
+        tags=["Notification Preferences"],
+    ),
+    update=extend_schema(
+        summary="Update a user's notification preferences",
+        description="Replace a user's existing notification preference with new values.",
+        tags=["Notification Preferences"],
+    ),
+    partial_update=extend_schema(
+        summary="Partially update a user's notification preferences",
+        description="Apply a partial update to a user's notification preference.",
+        tags=["Notification Preferences"],
+    ),
+    destroy=extend_schema(
+        summary="Delete a user's notification preferences",
+        description="Delete a user's notification preference, and resort to default notification preferences.",
+        tags=["Notification Preferences"],
+    ),
+)
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
-    """Returns user notification preferences."""
+    """API endpoints for managing user notification preferences."""
 
-    queryset = Preference.objects.all()
-    serializer_class = PreferenceSerializer
-    search_fields = ['user__username']
     permission_classes = [IsAuthenticated, PreferencePermissions]
+    search_fields = ['user__username']
+    serializer_class = PreferenceSerializer
+    queryset = Preference.objects.select_related('user')
 
     def create(self, request: Request, *args, **kwargs) -> Response:
-        """Create a new `Preference` object."""
+        """Create a new `Preference` object.
+
+        Defaults the `user` field to the authenticated user.
+        """
 
         data = request.data.copy()
         data.setdefault('user', request.user.pk)

@@ -18,36 +18,14 @@ __all__ = [
 ]
 
 
-class UserSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing user information in nested responses."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = User
-        fields = ["username", "first_name", "last_name", "email"]
-
-
-class UserRoleSerializer(serializers.ModelSerializer):
-    """Serializer for summarizing team member usernames and roles in nested responses."""
-
-    _user = UserSummarySerializer(source="user", read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Membership
-        fields = ["id", "user", "role", "_user"]
-
-
 class TeamSummarySerializer(serializers.ModelSerializer):
-    """Serializer for summarizing team information in nested responses."""
+    """Serializer for summarizing team records in nested responses."""
 
     class Meta:
         """Serializer settings."""
 
         model = Team
-        fields = ["name", "is_active"]
+        fields = ["id", "name", "is_active"]
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):
@@ -60,3 +38,25 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 
         model = Membership
         fields = ["id", "team", "role", "_team"]
+
+
+class UserSummarySerializer(serializers.ModelSerializer):
+    """Serializer for summarizing user records in nested responses."""
+
+    class Meta:
+        """Serializer settings."""
+
+        model = User
+        fields = ["id", "username", "first_name", "last_name", "email"]
+
+
+class UserRoleSerializer(serializers.ModelSerializer):
+    """Serializer for summarizing team member usernames and roles in nested responses."""
+
+    _user = UserSummarySerializer(source="user", read_only=True)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Membership
+        fields = ["id", "user", "role", "_user"]

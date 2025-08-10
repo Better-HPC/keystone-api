@@ -3,8 +3,9 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import AllocationReview
-from apps.users.models import Team, User
+from apps.allocations.factories import AllocationReviewFactory
+from apps.users.factories import MembershipFactory, UserFactory
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
 
@@ -23,20 +24,18 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint_pattern = '/allocations/reviews/{pk}/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts and requet review data from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        # Load a team of users and define an allocation endpoint belonging to that team
-        self.team = Team.objects.get(name='Team 1')
-        self.review = AllocationReview.objects.filter(request__team=self.team).first()
+        self.review = AllocationReviewFactory()
+        self.team = self.review.request.team
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+
+        self.staff_user = UserFactory(is_staff=True)
+        self.non_member = UserFactory(is_staff=False)
+
         self.endpoint = self.endpoint_pattern.format(pk=self.review.pk)
-
-        # Load (non)member accounts for the team
-        self.staff_user = User.objects.get(username='staff_user')
-        self.non_member = User.objects.get(username='generic_user')
-        self.team_member = User.objects.get(username='member_1')
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

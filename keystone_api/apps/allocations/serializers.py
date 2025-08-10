@@ -13,9 +13,9 @@ from django.core.files.uploadedfile import UploadedFile
 from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
-from apps.research_products.serializers import GrantSerializer, PublicationSerializer
-from apps.users.models import (User)
-from apps.users.nested import TeamSummarySerializer, UserSummarySerializer
+from apps.research_products.nested import *
+from apps.users.models import User
+from apps.users.nested import *
 from .models import *
 from .nested import *
 
@@ -30,35 +30,25 @@ __all__ = [
 ]
 
 
-class AllocationSerializer(serializers.ModelSerializer):
-    """Object serializer for the `Allocation` class."""
-
-    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Allocation
-        fields = '__all__'
-
-
 class AllocationRequestSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationRequest` class."""
 
     _submitter = UserSummarySerializer(source='submitter', read_only=True)
     _team = TeamSummarySerializer(source='team', read_only=True)
     _assignees = UserSummarySerializer(source='assignees', many=True, read_only=True)
-    _publications = PublicationSerializer(source='publications', many=True, read_only=True)
-    _grants = GrantSerializer(source='grants', many=True, read_only=True)
+    _publications = PublicationSummarySerializer(source='publications', many=True, read_only=True)
+    _grants = GrantSummarySerializer(source='grants', many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = AllocationRequest
         fields = '__all__'
+        extra_kwargs = {
+            'submitted': {'read_only': True},
+        }
 
 
 class AllocationReviewSerializer(serializers.ModelSerializer):
@@ -73,7 +63,10 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
 
         model = AllocationReview
         fields = '__all__'
-        extra_kwargs = {'reviewer': {'required': False}}  # Default reviewer value is set by the view class
+        extra_kwargs = {
+            'reviewer': {'required': False},  # Default reviewer value is set by the view class
+            'submitted': {'read_only': True},
+        }
 
     def validate_reviewer(self, value: User) -> User:
         """Validate the reviewer matches the user submitting the request."""
@@ -82,6 +75,20 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
 
         return value
+
+
+class AllocationSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Allocation` class."""
+
+    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
+    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Allocation
+        fields = '__all__'
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -156,7 +163,7 @@ class JobStatsSerializer(serializers.ModelSerializer):
     """Object serializer for the `JobStats` class."""
 
     _team = TeamSummarySerializer(source='team', read_only=True)
-    _cluster = ClusterSerializer(source='cluster', read_only=True)
+    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
 
     class Meta:
         """Serializer settings."""

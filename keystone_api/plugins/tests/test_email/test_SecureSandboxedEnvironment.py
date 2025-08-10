@@ -97,3 +97,10 @@ class IsSafeCallableMethod(SimpleTestCase):
 
         self.assertFalse(self.env.is_safe_callable(DangerousStr))
         self.assertFalse(self.env.is_safe_callable(DangerousStr("hello").secret))
+
+    def test_allows_unbound_primitive_methods(self) -> None:
+        """Verify unbound methods from primitive types (e.g., str.format) are allowed."""
+
+        self.assertTrue(self.env.is_safe_callable(str.format))
+        self.assertTrue(self.env.is_safe_callable(list.append))
+        self.assertTrue(self.env.is_safe_callable(dict.get))

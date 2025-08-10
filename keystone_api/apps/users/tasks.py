@@ -9,6 +9,8 @@ from celery import shared_task
 from django.conf import settings
 from tqdm import tqdm
 
+from .models import User
+
 # Optional dependencies
 try:
     import ldap
@@ -16,6 +18,8 @@ try:
 
 except ImportError:  # pragma: nocover
     pass
+
+__all__ = ['ldap_update_users']
 
 
 def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
@@ -33,7 +37,7 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
 
 
 @shared_task()
-def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
+def ldap_update_users() -> None:
     """Update the user database with the latest data from LDAP.
 
     This function does nothing if the `AUTH_LDAP_SERVER_URI` value is not
@@ -63,11 +67,10 @@ def ldap_update_users(prune: bool = settings.PURGE_REMOVED_LDAP_USERS) -> None:
             user.save()
 
     # Handle usernames that have been removed from LDAP
-    from .models import User
     keystone_names = set(User.objects.filter(is_ldap_user=True).values_list('username', flat=True))
     removed_usernames = keystone_names - ldap_names
 
-    if prune:
+    if settings.AUTH_LDAP_PURGE_REMOVED:
         User.objects.filter(username__in=removed_usernames).delete()
 
     else:

@@ -4,18 +4,18 @@ from datetime import date
 
 from rest_framework.test import APITestCase
 
-from apps.research_products.models import Publication
+from apps.research_products.factories import PublicationFactory
 from .common import RecordEndpointPermissionsTests
 
 
 class EndpointPermissions(RecordEndpointPermissionsTests, APITestCase):
     """Test endpoint user permissions."""
 
-    model = Publication
+    factory = PublicationFactory
     endpoint_pattern = '/research/publications/{pk}/'
 
     def build_valid_record_data(self) -> dict:
-        """Return a dictionary with valid Publication data."""
+        """Return a dictionary containing valid Publication data."""
 
         return {
             'title': 'foo',

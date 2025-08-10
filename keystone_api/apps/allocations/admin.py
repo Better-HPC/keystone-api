@@ -38,7 +38,7 @@ class AllocationReviewInline(admin.StackedInline):
     model = AllocationReview
     verbose_name = 'Review'
     show_change_link = True
-    readonly_fields = ('last_modified',)
+    readonly_fields = ['submitted']
     extra = 1
 
 
@@ -47,7 +47,7 @@ class AttachmentInline(admin.TabularInline):
 
     model = Attachment
     show_change_link = True
-    readonly_fields = ('name',)
+    readonly_fields = ['name']
     extra = 1
 
 
@@ -57,7 +57,7 @@ class CommentInline(admin.StackedInline):
     model = Comment
     verbose_name = 'Comment'
     show_change_link = True
-    readonly_fields = ('created',)
+    readonly_fields = ['created']
     extra = 1
 
 
@@ -141,6 +141,7 @@ class AllocationRequestAdmin(admin.ModelAdmin):
     list_display = ['team', 'title', 'submitted', 'active', 'expire', 'reviews', 'status']
     list_display_links = list_display
     search_fields = ['title', 'description', 'team__name']
+    readonly_fields = ['submitted']
     ordering = ['submitted']
     list_filter = [
         ('submitted', admin.DateFieldListFilter),

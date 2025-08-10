@@ -3,7 +3,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import User
+from apps.allocations.factories import ClusterFactory
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
@@ -20,14 +21,15 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint_pattern = '/allocations/clusters/{pk}/'
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts and allocation data from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.endpoint = self.endpoint_pattern.format(pk=1)
-        self.staff_user = User.objects.get(username='staff_user')
-        self.generic_user = User.objects.get(username='generic_user')
+        cluster = ClusterFactory()
+        self.endpoint = self.endpoint_pattern.format(pk=cluster.id)
+
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

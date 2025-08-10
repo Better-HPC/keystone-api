@@ -3,8 +3,9 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.factories import AllocationRequestFactory, AllocationReviewFactory
 from apps.allocations.models import AllocationReview
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, TeamScopedListFilteringTests
 
 ENDPOINT = '/allocations/reviews/'
@@ -23,13 +24,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
+        self.review = AllocationReviewFactory()
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -76,7 +77,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'status': 'AP', 'request': 1}
+            post_body={
+                'status': AllocationReview.StatusChoices.APPROVED,
+                'request': self.review.id
+            }
         )
 
 
@@ -84,40 +88,50 @@ class ReviewerAssignment(APITestCase):
     """Test the automatic assignment and verification of the `reviewer` field."""
 
     endpoint = ENDPOINT
-    fixtures = ['testing_common.yaml']
 
     def setUp(self) -> None:
-        """Load user accounts from test fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.generic_user = User.objects.get(username='generic_user')
-        self.staff_user = User.objects.get(username='staff_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
+        self.request = AllocationRequestFactory()
 
     def test_default_reviewer(self) -> None:
         """Verify the reviewer field defaults to the current user."""
 
         self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {
+            'request': self.request.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        })
 
-        response = self.client.post(self.endpoint, {'request': 1, 'status': 'AP'})
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
     def test_reviewer_provided(self) -> None:
         """Verify the reviewer is set correctly when provided."""
 
         self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {
+            'request': self.request.id,
+            'reviewer': self.staff_user.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        })
 
-        response = self.client.post(self.endpoint, {'request': 1, 'reviewer': self.staff_user.id, 'status': 'AP'})
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.staff_user.id, response.data['reviewer'])
 
     def test_error_when_not_matching_submitter(self) -> None:
         """Verify an error is raised when the reviewer field does not match the request submitter."""
 
         self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {
+            'request': self.request.id,
+            'reviewer': self.generic_user.id,
+            'status': AllocationReview.StatusChoices.APPROVED
+        })
 
-        response = self.client.post(self.endpoint, {'request': 1, 'reviewer': self.generic_user.id, 'status': 'AP'})
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertIn('reviewer', response.data)
         self.assertEqual('reviewer cannot be set to a different user than the submitter', response.data['reviewer'][0].lower())
 
@@ -126,5 +140,5 @@ class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = ENDPOINT
-    model = AllocationReview
+    factory = AllocationReviewFactory
     team_field = 'request__team'

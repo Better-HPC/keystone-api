@@ -6,8 +6,6 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
-from __future__ import annotations
-
 import abc
 import os
 from datetime import date
@@ -17,6 +15,7 @@ from auditlog.registry import auditlog
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.defaultfilters import truncatechars
+from django.utils import timezone
 
 from apps.allocations.managers import AllocationManager
 from apps.research_products.models import Grant, Publication
@@ -91,6 +90,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
             models.Index(fields=['team', 'status']),
             models.Index(fields=['team', 'submitter', 'status']),
             models.Index(fields=['team', 'active', 'expire']),
+            models.Index(fields=['team', 'expire']),
             models.Index(fields=['submitter', 'status']),
         ]
 
@@ -104,7 +104,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
-    submitted = models.DateField(auto_now=True)
+    submitted = models.DateTimeField(default=timezone.now)
     active = models.DateField(null=True, blank=True)
     expire = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
@@ -143,7 +143,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
         return truncatechars(self.title, 100)
 
 
-@auditlog.register(exclude_fields=["last_modified"])
+@auditlog.register()
 class AllocationReview(TeamModelInterface, models.Model):
     """Reviewer feedback for an allocation request."""
 
@@ -152,7 +152,7 @@ class AllocationReview(TeamModelInterface, models.Model):
 
         indexes = [
             models.Index(fields=['status']),
-            models.Index(fields=['last_modified']),
+            models.Index(fields=['submitted']),
             models.Index(fields=['request']),
             models.Index(fields=['reviewer']),
         ]
@@ -165,7 +165,7 @@ class AllocationReview(TeamModelInterface, models.Model):
         CHANGES = 'CR', 'Changes Requested'
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
-    last_modified = models.DateTimeField(auto_now=True)
+    submitted = models.DateTimeField(default=timezone.now)
     history = AuditlogHistoryField()
 
     request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
@@ -276,7 +276,7 @@ class JobStats(TeamModelInterface, models.Model):
     account = models.CharField(max_length=128, null=True, blank=True)
     allocnodes = models.CharField(max_length=128, null=True, blank=True)
     alloctres = models.TextField(null=True, blank=True)
-    derivedexitcode = models.CharField(max_length=4, null=True, blank=True)
+    derivedexitcode = models.CharField(max_length=10, null=True, blank=True)
     elapsed = models.DurationField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
     group = models.CharField(max_length=128, null=True, blank=True)

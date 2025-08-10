@@ -6,10 +6,10 @@ from apps.users.serializers import RestrictedUserSerializer
 
 
 class CreateMethod(TestCase):
-    """Test record creation via the `create` method."""
+    """Test record creation via the `create` method is disabled ."""
 
     def test_create_raises_not_permitted(self) -> None:
-        """Verify the create method raises a `RuntimeError`."""
+        """Verify the `create` method raises a `RuntimeError`."""
 
         serializer = RestrictedUserSerializer()
         with self.assertRaises(RuntimeError):

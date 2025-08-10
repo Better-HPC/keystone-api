@@ -16,30 +16,35 @@ from .models import *
 __all__ = [
     'AllocationRequestPermissions',
     'ClusterPermissions',
-    'StaffWriteMemberRead',
     'CommentPermissions',
+    'MemberReadOnly',
+    'StaffWriteMemberRead',
 ]
 
 
 class PermissionUtils:
     """Common permission logic."""
 
-    def is_create(self, view: View) -> bool:
+    @staticmethod
+    def is_create(view: View) -> bool:
         """Return whether the requested operation creates a new record."""
 
         return getattr(view, 'action', None) == 'create'
 
-    def is_read_only(self, request: Request) -> bool:
+    @staticmethod
+    def is_read_only(request: Request) -> bool:
         """Return whether the requested operation is read-only."""
 
         return request.method in permissions.SAFE_METHODS
 
-    def user_is_staff(self, request: Request) -> bool:
+    @staticmethod
+    def user_is_staff(request: Request) -> bool:
         """Return whether the requested operation was made by a staff user."""
 
         return request.user and request.user.is_staff
 
-    def user_in_team(self, request, obj) -> bool:
+    @staticmethod
+    def user_in_team(request, obj) -> bool:
         """Return whether the requested operation was made by a team member."""
 
         return request.user in obj.get_team().get_all_members()
@@ -125,6 +130,24 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
         return self.user_is_staff(request) or self.user_in_team(request, obj)
 
 
+class MemberReadOnly(PermissionUtils, permissions.BasePermission):
+    """Grant read-only access to users in the same team as the requested object.
+
+    Permissions:
+        - Grants read access to users in the same team as the requested object.
+    """
+
+    def has_permission(self, request: Request, view: View) -> bool:
+        """Return whether the request has permissions to access the requested resource."""
+
+        return not self.is_create(view)
+
+    def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
+        return self.is_read_only(request) and (self.user_is_staff(request) or self.user_in_team(request, obj))
+
+
 class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
     """Grant read access to users in the same team as the requested object and write access to staff.
 
@@ -143,21 +166,3 @@ class StaffWriteMemberRead(PermissionUtils, permissions.BasePermission):
         """Return whether the incoming HTTP request has permission to access a database record."""
 
         return self.user_is_staff(request) or (self.is_read_only(request) and self.user_in_team(request, obj))
-
-
-class MemberReadOnly(PermissionUtils, permissions.BasePermission):
-    """Grant read-only access to users in the same team as the requested object.
-
-    Permissions:
-        - Grants read access to users in the same team as the requested object.
-    """
-
-    def has_permission(self, request: Request, view: View) -> bool:
-        """Return whether the request has permissions to access the requested resource."""
-
-        return not self.is_create(view)
-
-    def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
-        """Return whether the incoming HTTP request has permission to access a database record."""
-
-        return self.is_read_only(request) and (self.user_is_staff(request) or self.user_in_team(request, obj))

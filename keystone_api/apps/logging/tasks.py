@@ -11,9 +11,11 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 
+__all__ = ['clear_log_records']
+
 
 @shared_task()
-def clear_log_files() -> None:
+def clear_log_records() -> None:
     """Delete request and application logs according to retention policies set in application settings."""
 
     from .models import AppLog, RequestLog, AuditLog

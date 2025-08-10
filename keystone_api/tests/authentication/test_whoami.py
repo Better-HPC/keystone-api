@@ -1,10 +1,12 @@
-"""Unit tests for the `WhoAmIView` class."""
+"""Function tests for the `/authentication/whoami/` endpoint."""
 
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+ENDPOINT = '/authentication/whoami/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -18,8 +20,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authenticated User   | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/authentication/whoami/'
-    fixtures = ['testing_common.yaml']
+    endpoint = ENDPOINT
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access the endpoint."""
@@ -39,7 +40,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_permissions(self) -> None:
         """Verify authenticated users can perform read operations."""
 
-        user = User.objects.get(username='generic_user')
+        user = UserFactory(is_staff=False)
         self.client.force_authenticate(user=user)
         self.assert_http_responses(
             self.endpoint,
@@ -57,13 +58,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class UserData(APITestCase):
     """Test the fetching of user metadata."""
 
-    endpoint = '/authentication/whoami/'
-    fixtures = ['testing_common.yaml']
+    endpoint = ENDPOINT
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.user = User.objects.get(username='generic_user')
+        self.user = UserFactory(is_staff=False)
 
     def test_metadata_is_returned(self) -> None:
         """Verify GET responses include metadata for the currently authenticated user."""

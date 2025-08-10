@@ -17,88 +17,113 @@ log = logging.getLogger(__name__)
 def update_limits() -> None:
     """Adjust TRES billing limits for all Slurm accounts on all enabled clusters."""
 
+    # Trigger a separate, concurrent background task for each cluster
     for cluster in Cluster.objects.filter(enabled=True).all():
-        update_limits_for_cluster(cluster)
+        update_limits_for_cluster.delay(cluster.name)
 
 
 @shared_task()
-def update_limits_for_cluster(cluster: Cluster) -> None:
-    """Adjust TRES billing limits for all Slurm accounts on a given Slurm cluster.
+def update_limits_for_cluster(cluster_name: str) -> None:
+    """Adjust TRES billing limits for all Slurm accounts on a given cluster.
 
-    The Slurm accounts for `root` and any that are missing from Keystone are automatically ignored.
+    Any Slurm accounts without a corresponding Keystone team are ignored.
+    The `root` account is also ignored.
 
     Args:
-        cluster: The name of the Slurm cluster.
+        cluster_name: The name of the Slurm cluster to update.
     """
 
-    for account_name in slurm.get_slurm_account_names(cluster.name):
-        if account_name in ['root']:
+    try:
+        cluster = Cluster.objects.get(name=cluster_name)
+
+    except Cluster.DoesNotExist:
+        log.error(f"Cluster '{cluster_name}' does not exist.")
+        return
+
+    slurm_accounts = slurm.get_slurm_account_names(cluster.name)
+    teams_by_name = {
+        team.name: team for team in Team.objects.filter(name__in=slurm_accounts)
+    }
+
+    for account_name in slurm_accounts:
+        if account_name == 'root':
             continue
 
         try:
-            account = Team.objects.get(name=account_name)
+            team = teams_by_name[account_name]
 
-        except Team.DoesNotExist:
-            log.warning(f"No existing team for account {account_name} on {cluster.name}, skipping for now")
+        except KeyError:
+            log.warning(f"No existing team for account '{account_name}' on cluster '{cluster.name}'.")
             continue
 
-        update_limit_for_account(account, cluster)
+        try:
+            update_limit_for_account(team, cluster)
+
+        except Exception as e:
+            log.exception(f"Failed to update limit for account '{account_name}' on cluster '{cluster.name}': {e}")
+            continue
 
 
-@shared_task()
 def update_limit_for_account(account: Team, cluster: Cluster) -> None:
-    """Update the allocation limits for an individual Slurm account and close out any expired allocations.
+    """Update resource limits for an individual Slurm account.
 
     Args:
         account: Team object for the account.
         cluster: Cluster object corresponding to the Slurm cluster.
     """
 
-    # Calculate service units for expired and active allocations
-    closing_sus = Allocation.objects.expiring_service_units(account, cluster)
+    # Retrieve service units (SUs) associated with:
+    # - active_sus: Total SUs across all currently active allocations
+    # - expiring_sus: Total SUs about to expire
     active_sus = Allocation.objects.active_service_units(account, cluster)
+    expiring_sus = Allocation.objects.expiring_service_units(account, cluster)
 
-    # Determine the historical contribution to the current limit
+    # Get the current TRES limit from Slurm and use it to estimate
+    # previously consumed SUs not tied to active/expiring allocations
     current_limit = slurm.get_cluster_limit(account.name, cluster.name)
-    historical_usage = current_limit - active_sus - closing_sus
+    historical_usage = current_limit - active_sus - expiring_sus
 
     if historical_usage < 0:
-        log.warning(f"Negative Historical usage found for {account.name} on {cluster.name}:\n"
-                    f"historical: {historical_usage}, current: {current_limit}, active: {active_sus}, closing: {closing_sus}\n"
-                    f"Assuming zero...")
         historical_usage = 0
+        log.warning(
+            f"Negative historical usage calculated for account '{account.name}' on cluster '{cluster.name}':\n"
+            f"  > current limit: {current_limit}\n"
+            f"  > active sus: {active_sus}\n"
+            f"  > expiring sus: {expiring_sus}\n"
+            f"  > historical usage: {historical_usage}\n"
+            f"Assuming zero...")
 
-    # Close expired allocations and determine the current usage
+    # Calculate consumed SUs attributable to current (non-expired) allocations
     total_usage = slurm.get_cluster_usage(account.name, cluster.name)
     current_usage = total_usage - historical_usage
+
     if current_usage < 0:
-        log.warning(f"Negative Current usage found for {account.name} on {cluster.name}:\n"
-                    f"current: {current_usage} = total: {total_usage} - historical: {historical_usage}\n"
-                    f"Setting to historical usage: {historical_usage}...")
         current_usage = historical_usage
+        log.warning(
+            f"Negative current usage calculated for account '{account.name}' on cluster '{cluster.name}':\n"
+            f"  > total usage: {total_usage}\n"
+            f"  > historical usage: {historical_usage}\n"
+            f"  > current usage: {current_usage}\n"
+            f"Defaulting to historical usage: {historical_usage}...")
 
-    closing_summary = (f"Summary of closing allocations:\n"
-                       f"> Current Usage before closing: {current_usage}\n")
-    for allocation in Allocation.objects.expiring_allocations(account, cluster):
+    # Distribute current usage across expiring allocations proportionally,
+    # capping each at its awarded value and reducing remaining usage
+    expired_allocations = Allocation.objects.expiring_allocations(account, cluster)
+    for allocation in expired_allocations:
         allocation.final = min(current_usage, allocation.awarded)
-        closing_summary += f"> Allocation {allocation.id}: {current_usage} - {allocation.final} -> {current_usage - allocation.final}\n"
         current_usage -= allocation.final
-        allocation.save()
-    closing_summary += f"> Current Usage after closing: {current_usage}"
 
-    # This shouldn't happen but if it does somehow, create a warning so an admin will notice
+    Allocation.objects.bulk_update(expired_allocations, ['final'])
+
+    # Sanity check: usage beyond the sum of active allocations may indicate a bug or abuse
     if current_usage > active_sus:
-        log.warning(f"The current usage is somehow higher than the limit for {account.name}!")
+        log.warning(f"The system usage for account '{account.name}' exceeds its limit on cluster '{cluster.name}'")
 
-    # Set the new account usage limit using the updated historical usage after closing any expired allocations
+    # Recalculate historical usage based on updated allocations, and set a new TRES limit in Slurm
     updated_historical_usage = Allocation.objects.historical_usage(account, cluster)
     updated_limit = updated_historical_usage + active_sus
     slurm.set_cluster_limit(account.name, cluster.name, updated_limit)
 
-    # Log summary of changes during limits update for this Slurm account on this cluster
-    log.debug(f"Summary of limits update for {account.name} on {cluster.name}:\n"
-              f"> Service units from active allocations: {active_sus}\n"
-              f"> Service units from closing allocations: {closing_sus}\n"
-              f"> {closing_summary}\n"
-              f"> historical usage change: {historical_usage} -> {updated_historical_usage}\n"
-              f"> limit change: {current_limit} -> {updated_limit}")
+    log.debug(
+        f"Setting new TRES limit for account '{account.name}' on cluster '{cluster.name}':\n"
+        f"  > limit change: {current_limit} -> {updated_limit}")

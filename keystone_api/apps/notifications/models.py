@@ -9,7 +9,7 @@ the associated table/fields/records are presented by parent interfaces.
 from django.conf import settings
 from django.db import models
 
-__all__ = ['Notification', 'Preference']
+__all__ = ['Notification', 'Preference', 'default_expiry_thresholds']
 
 
 def default_expiry_thresholds() -> list[int]:  # pragma: nocover
@@ -32,7 +32,7 @@ class Notification(models.Model):
             models.Index(fields=['notification_type']),
             models.Index(fields=['user']),
             models.Index(fields=['user', 'read', 'notification_type']),
-            models.Index(fields=['user', 'notification_type', 'time']),
+            models.Index(fields=['user', 'time', 'notification_type']),
         ]
 
     class NotificationType(models.TextChoices):

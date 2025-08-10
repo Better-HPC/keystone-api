@@ -2,7 +2,7 @@
 
 from rest_framework import status
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
@@ -19,10 +19,10 @@ class BaseEndpointPermissionTests(CustomAsserts):
     """
 
     def setUp(self) -> None:
-        """Load user accounts from testing fixtures."""
+        """Create test fixtures using mock data."""
 
-        self.staff_user = User.objects.get(username='staff_user')
-        self.generic_user = User.objects.get(username='generic_user')
+        self.generic_user = UserFactory(is_staff=False)
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_anonymous_user_permissions(self) -> None:
         """Test unauthenticated users cannot access resources."""

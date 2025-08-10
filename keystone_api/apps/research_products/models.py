@@ -18,7 +18,7 @@ __all__ = ['Grant', 'Publication']
 
 @auditlog.register()
 class Grant(models.Model):
-    """Metadata for a funding grant."""
+    """A grant or funding award."""
 
     class Meta:
         """Database model settings."""
@@ -55,7 +55,7 @@ class Grant(models.Model):
 
 @auditlog.register()
 class Publication(models.Model):
-    """Metadata for an academic publication."""
+    """An academic publication."""
 
     class Meta:
         """Database model settings."""

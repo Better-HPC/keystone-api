@@ -1,10 +1,14 @@
 # Application files
 keystone_api/keystone.db
+keystone_api/keystone.db-journal
 keystone_api/static_files/
 keystone_api/media/
 keystone_api/email/
 *.log
 *.eml
+
+# Redis
+dump.rdb
 
 # Distribution and packaging
 __pycache__/
@@ -13,6 +17,7 @@ dist/
 # IDE / Developer
 .idea/
 *.env
+*.pstats
 
 # OS
 .DS_Store

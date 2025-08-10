@@ -37,51 +37,6 @@ class MembershipSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TeamSerializer(serializers.ModelSerializer):
-    """Object serializer for the `Team` model."""
-
-    membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = Team
-        fields = "__all__"
-
-    @transaction.atomic
-    def create(self, validated_data: dict) -> Team:
-        """Create and return a new Team from validated data."""
-
-        members_data = validated_data.pop("membership", [])
-        team = Team.objects.create(**validated_data)
-        for membership in members_data:
-            Membership.objects.create(team=team, user=membership["user"], role=membership["role"])
-
-        return team
-
-    @transaction.atomic
-    def update(self, instance: Team, validated_data: dict) -> Team:
-        """Update and return an existing Team instance."""
-
-        members_data = validated_data.pop("membership", [])
-
-        # Update team attributes
-        instance.name = validated_data.get("name", instance.name)
-        instance.save()
-
-        if self.partial is False:
-            instance.membership.all().delete()
-
-        # Update membership records
-        for membership in members_data:
-            Membership.objects.update_or_create(
-                team=instance, user=membership["user"], defaults={"role": membership["role"]}
-            )
-
-        return instance
-
-
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including sensitive fields."""
 
@@ -96,11 +51,14 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         read_only_fields = ['date_joined', 'last_login']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate(self, attrs: dict) -> None:
+    def validate(self, attrs: dict) -> dict:
         """Validate user attributes match the ORM data model.
 
         Args:
-            attrs: Dictionary of user attributes.
+            attrs: The user attributes to validate.
+
+        Returns:
+            A dictionary containing the validated values.
         """
 
         # Hash the password value
@@ -178,3 +136,48 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
         """
 
         raise RuntimeError('Attempted to create new user record using a serializer with restricted permissions.')
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Team` model."""
+
+    membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
+    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Team
+        fields = "__all__"
+
+    @transaction.atomic
+    def create(self, validated_data: dict) -> Team:
+        """Create and return a new Team from validated data."""
+
+        members_data = validated_data.pop("membership", [])
+        team = Team.objects.create(**validated_data)
+        for membership in members_data:
+            Membership.objects.create(team=team, user=membership["user"], role=membership["role"])
+
+        return team
+
+    @transaction.atomic
+    def update(self, instance: Team, validated_data: dict) -> Team:
+        """Update and return an existing Team instance."""
+
+        members_data = validated_data.pop("membership", [])
+
+        # Update team attributes
+        instance.name = validated_data.get("name", instance.name)
+        instance.save()
+
+        if self.partial is False:
+            instance.membership.all().delete()
+
+        # Update membership records
+        for membership in members_data:
+            Membership.objects.update_or_create(
+                team=instance, user=membership["user"], defaults={"role": membership["role"]}
+            )
+
+        return instance
