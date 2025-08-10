@@ -13,8 +13,8 @@ from rest_framework.response import Response
 class PaginationHandler(LimitOffsetPagination):
     """A limit/offset style pagination for API responses."""
 
-    max_limit = 500
-    default_limit = 50
+    max_limit = None
+    default_limit = None
     limit_query_param = '_limit'
     offset_query_param = '_offset'
 
