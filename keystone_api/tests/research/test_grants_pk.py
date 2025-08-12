@@ -5,11 +5,15 @@ from datetime import date
 from rest_framework.test import APITestCase
 
 from apps.research_products.factories import GrantFactory
-from .common import RecordEndpointPermissionsTests
+from .common import ResearchDetailEndpointPermissionsTests
 
 
-class EndpointPermissions(RecordEndpointPermissionsTests, APITestCase):
-    """Test endpoint user permissions."""
+class EndpointPermissions(ResearchDetailEndpointPermissionsTests, APITestCase):
+    """Test endpoint user permissions.
+
+    See the `ResearchDetailEndpointPermissionsTests` class docstring for details on the
+    tested endpoint permissions.
+    """
 
     factory = GrantFactory
     endpoint_pattern = '/research/grants/{pk}/'
