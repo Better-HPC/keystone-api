@@ -6,7 +6,7 @@ from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
-class BaseEndpointPermissionTests(CustomAsserts):
+class LogEndpointPermissionTests(CustomAsserts):
     """Test endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
