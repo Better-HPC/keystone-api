@@ -43,9 +43,12 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve the current application health status",
-        description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
-        tags=["Admin - Application Health"],
+        summary="Retrieve the current application health status .",
+        description=(
+            "Returns a 200 status if all application health checks pass and a 500 status otherwise. "
+            "Health checks are performed on demand and cached for 60 seconds."
+        ),
+        tags=["Admin - Health Checks"],
         responses={
             '200': inline_serializer('health_ok', fields=dict()),
             '500': inline_serializer('health_error', fields=dict()),
@@ -78,12 +81,13 @@ class HealthCheckView(BaseHealthCheckView):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve application health checks in JSON format",
+        summary="Retrieve health check results in JSON format.",
         description=(
-            "Retrieve results from individual application health checks in JSON format. "
-            "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
+            "Returns individual health check results in JSON format. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+            "A `200` status code is returned regardless of whether individual health checks are passing."
         ),
-        tags=["Admin - Application Health"],
+        tags=["Admin - Health Checks"],
         responses={
             '200': inline_serializer('health_json_ok', fields={
                 'healthCheckName': inline_serializer(
@@ -149,12 +153,13 @@ class HealthCheckJsonView(BaseHealthCheckView):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve application health checks in Prometheus format",
+        summary="Retrieve health check results in Prometheus format.",
         description=(
-            "Retrieve results from individual application health checks in Prometheus format. "
-            "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
+            "Returns individual health check results in Prometheus format. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+            "A `200` status code is returned regardless of whether individual health checks are passing."
         ),
-        tags=["Admin - Application Health"],
+        tags=["Admin - Health Checks"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
         },
