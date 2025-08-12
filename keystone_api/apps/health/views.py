@@ -43,7 +43,7 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve the current application health status .",
+        summary="Retrieve the current application health status.",
         description=(
             "Returns a 200 status if all application health checks pass and a 500 status otherwise. "
             "Health checks are performed on demand and cached for 60 seconds."

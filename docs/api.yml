@@ -3154,7 +3154,7 @@ paths:
       description: Returns a 200 status if all application health checks pass and
         a 500 status otherwise. Health checks are performed on demand and cached for
         60 seconds.
-      summary: Retrieve the current application health status .
+      summary: Retrieve the current application health status.
       tags:
       - Admin - Health Checks
       responses:
@@ -5037,6 +5037,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskResult'
+          description: ''
+  /metrics/:
+    get:
+      operationId: metrics_retrieve
+      description: Returns runtime metrics in Prometheus format.
+      summary: Retrieve application metrics.
+      tags:
+      - Admin - Metrics
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
           description: ''
   /notifications/notifications/:
     get:
