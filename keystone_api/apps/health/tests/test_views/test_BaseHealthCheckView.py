@@ -37,7 +37,7 @@ class GetMethod(TestCase):
         mock_check.assert_called_once()
 
     def test_response_is_cached(self, mock_check: Mock) -> None:
-        """Verify response is cached after processing get requests."""
+        """Verify responses are cached after processing get requests."""
 
         request = HttpRequest()
         view = ConcreteHealthCheckView()
@@ -50,7 +50,7 @@ class GetMethod(TestCase):
         self.assertEqual(response.content, cached_response.content)
 
     def test_cached_response_skips_checks(self, mock_check: Mock) -> None:
-        """Verify the cached response is returned when available and `check` is NOT called"""
+        """Verify cached responses are returned instead of evaluating system checks."""
 
         request = HttpRequest()
         view = ConcreteHealthCheckView()
