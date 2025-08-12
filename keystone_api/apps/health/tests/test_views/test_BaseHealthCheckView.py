@@ -36,7 +36,7 @@ class GetMethod(TestCase):
         # Test the method for updating health checks was run
         mock_check.assert_called_once()
 
-    def test_response_is_cached_after_get(self, mock_check: Mock) -> None:
+    def test_response_is_cached(self, mock_check: Mock) -> None:
         """Verify response is cached after processing get requests."""
 
         request = HttpRequest()
@@ -49,7 +49,7 @@ class GetMethod(TestCase):
         self.assertEqual(response.status_code, cached_response.status_code)
         self.assertEqual(response.content, cached_response.content)
 
-    def test_cached_response_is_returned_without_check(self, mock_check: Mock) -> None:
+    def test_cached_response_skips_checks(self, mock_check: Mock) -> None:
         """Verify the cached response is returned when available and `check` is NOT called"""
 
         request = HttpRequest()
@@ -64,3 +64,27 @@ class GetMethod(TestCase):
         mock_check.assert_not_called()
         self.assertEqual(fake_response.status_code, response.status_code)
         self.assertEqual(fake_response.content, response.content)
+
+    def test_cache_on_500(self, mock_check: Mock) -> None:
+        """Verify responses are cached even if they have a 500 status code."""
+
+        class ErrorHealthCheckView(ConcreteHealthCheckView):
+            """A mock system health check view that always fails."""
+
+            @staticmethod
+            def render_response(plugins: dict) -> HttpResponse:
+                return HttpResponse("Internal Server Error", status=500)
+
+        request = HttpRequest()
+        view = ErrorHealthCheckView()
+
+        # Verify the response has 500 code, otherwise this test has no meaning
+        cache.delete(BaseHealthCheckView._cache_key)
+        response = view.get(request)
+        self.assertEqual(response.status_code, 500)
+
+        # Verify 5xx responses are cached
+        cached_response = cache.get(BaseHealthCheckView._cache_key)
+        self.assertIsNotNone(cached_response)
+        self.assertEqual(500, cached_response.status_code)
+        self.assertEqual(response.content, cached_response.content)
