@@ -23,7 +23,7 @@ class VersionView(GenericAPIView):
         auth=[],
         summary="Retrieve the application version number",
         description="Retrieve the application version number as a plain text response.",
-        tags=["Application Version"],
+        tags=["Admin - Application Version"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
         },

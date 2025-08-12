@@ -29,7 +29,7 @@ __all__ = [
     get=extend_schema(
         summary="Retrieve valid notification types",
         description="Retrieve valid notification types with human-readable labels.",
-        tags=["Notifications"],
+        tags=["Notifications - Notifications"],
         responses=inline_serializer(
             name="NotificationTypeChoices",
             fields={k: serializers.CharField(default=v) for k, v in Notification.NotificationType.choices}
@@ -52,17 +52,17 @@ class NotificationTypeChoicesView(GenericAPIView):
     list=extend_schema(
         summary="List all notifications",
         description="Retrieve all notifications visible to the current user.",
-        tags=["Notifications"],
+        tags=["Notifications - Notifications"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a notification",
         description="Retrieve a single notification by ID.",
-        tags=["Notifications"],
+        tags=["Notifications - Notifications"],
     ),
     partial_update=extend_schema(
         summary="Update a notification's read status",
         description="Update a notifications `read` status. All other fields are read only.",
-        tags=["Notifications"],
+        tags=["Notifications - Notifications"],
     ),
 )
 class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
@@ -79,32 +79,32 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     list=extend_schema(
         summary="List all notification preferences",
         description="Retrieve all notification preferences visible to the current user.",
-        tags=["Notification Preferences"],
+        tags=["Notifications - Preferences"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a user's notification preferences",
         description="Retrieve a user's notification preference by ID.",
-        tags=["Notification Preferences"],
+        tags=["Notifications - Preferences"],
     ),
     create=extend_schema(
         summary="Create a notification preference",
         description="Create a new notification preference.",
-        tags=["Notification Preferences"],
+        tags=["Notifications - Preferences"],
     ),
     update=extend_schema(
         summary="Update a user's notification preferences",
         description="Replace a user's existing notification preference with new values.",
-        tags=["Notification Preferences"],
+        tags=["Notifications - Preferences"],
     ),
     partial_update=extend_schema(
         summary="Partially update a user's notification preferences",
         description="Apply a partial update to a user's notification preference.",
-        tags=["Notification Preferences"],
+        tags=["Notifications - Preferences"],
     ),
     destroy=extend_schema(
         summary="Delete a user's notification preferences",
         description="Delete a user's notification preference, and resort to default notification preferences.",
-        tags=["Notification Preferences"],
+        tags=["Notifications - Preferences"],
     ),
 )
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):

@@ -45,7 +45,7 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
         auth=[],
         summary="Retrieve the current application health status",
         description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
-        tags=["Application Health"],
+        tags=["Admin - Application Health"],
         responses={
             '200': inline_serializer('health_ok', fields=dict()),
             '500': inline_serializer('health_error', fields=dict()),
@@ -83,7 +83,7 @@ class HealthCheckView(BaseHealthCheckView):
             "Retrieve results from individual application health checks in JSON format. "
             "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
         ),
-        tags=["Application Health"],
+        tags=["Admin - Application Health"],
         responses={
             '200': inline_serializer('health_json_ok', fields={
                 'healthCheckName': inline_serializer(
@@ -154,7 +154,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
             "Retrieve results from individual application health checks in Prometheus format. "
             "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
         ),
-        tags=["Application Health"],
+        tags=["Admin - Application Health"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
         },

@@ -11,7 +11,7 @@ paths:
         labels.
       summary: Retrieve valid request status options
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -29,7 +29,7 @@ paths:
         labels.
       summary: Retrieve valid review status options
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -225,7 +225,7 @@ paths:
         schema:
           type: integer
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -243,7 +243,7 @@ paths:
       description: Create a new resource allocation.
       summary: Create an resource allocation
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       requestBody:
         content:
           application/json:
@@ -279,7 +279,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -302,7 +302,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       requestBody:
         content:
           application/json:
@@ -337,7 +337,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       requestBody:
         content:
           application/json:
@@ -371,7 +371,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -548,7 +548,7 @@ paths:
         schema:
           type: number
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -566,7 +566,7 @@ paths:
       description: Create a new file attachment.
       summary: Create a file attachment
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       requestBody:
         content:
           application/json:
@@ -602,7 +602,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -625,7 +625,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       requestBody:
         content:
           application/json:
@@ -660,7 +660,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       requestBody:
         content:
           application/json:
@@ -694,7 +694,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -828,7 +828,7 @@ paths:
         schema:
           type: string
       tags:
-      - Clusters
+      - Allocations - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -846,7 +846,7 @@ paths:
       description: Create a new HPC cluster.
       summary: Create an HPC cluster
       tags:
-      - Clusters
+      - Allocations - Clusters
       requestBody:
         content:
           application/json:
@@ -882,7 +882,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -905,7 +905,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       requestBody:
         content:
           application/json:
@@ -940,7 +940,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       requestBody:
         content:
           application/json:
@@ -974,7 +974,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1184,7 +1184,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1202,7 +1202,7 @@ paths:
       description: Create a new comment.
       summary: Create a comment
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       requestBody:
         content:
           application/json:
@@ -1238,7 +1238,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1261,7 +1261,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       requestBody:
         content:
           application/json:
@@ -1296,7 +1296,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       requestBody:
         content:
           application/json:
@@ -1330,7 +1330,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1342,7 +1342,7 @@ paths:
       operationId: allocations_jobs_list
       description: Retrieve status information for all Slurm jobs visible to the current
         user.
-      summary: List all Slurm jobs
+      summary: List all user Slurm jobs
       parameters:
       - name: _order
         required: false
@@ -2179,7 +2179,7 @@ paths:
         schema:
           type: string
       tags:
-      - Slurm Jobs
+      - Allocations - User Jobs
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2196,7 +2196,7 @@ paths:
     get:
       operationId: allocations_jobs_retrieve
       description: Retrieve status information for a single slurm job by ID.
-      summary: Retrieve a Slurm job
+      summary: Retrieve a user Slurm job
       parameters:
       - in: path
         name: id
@@ -2205,7 +2205,7 @@ paths:
         description: A unique integer value identifying this job stats.
         required: true
       tags:
-      - Slurm Jobs
+      - Allocations - User Jobs
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2588,7 +2588,7 @@ paths:
         schema:
           type: string
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2606,7 +2606,7 @@ paths:
       description: Create a new allocation request for review.
       summary: Create an allocation request
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       requestBody:
         content:
           application/json:
@@ -2642,7 +2642,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2665,7 +2665,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       requestBody:
         content:
           application/json:
@@ -2700,7 +2700,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       requestBody:
         content:
           application/json:
@@ -2734,7 +2734,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2935,7 +2935,7 @@ paths:
         schema:
           type: number
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2953,7 +2953,7 @@ paths:
       description: Create a new allocation review.
       summary: Create an allocation review
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       requestBody:
         content:
           application/json:
@@ -2989,7 +2989,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3012,7 +3012,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       requestBody:
         content:
           application/json:
@@ -3047,7 +3047,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       requestBody:
         content:
           application/json:
@@ -3081,7 +3081,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3152,7 +3152,7 @@ paths:
         500 status otherwise.
       summary: Retrieve the current application health status
       tags:
-      - Application Health
+      - Admin - Application Health
       responses:
         '200':
           description: No response body
@@ -3166,7 +3166,7 @@ paths:
         health checks are passing.
       summary: Retrieve application health checks in JSON format
       tags:
-      - Application Health
+      - Admin - Application Health
       responses:
         '200':
           content:
@@ -3197,7 +3197,7 @@ paths:
         health checks are passing.
       summary: Retrieve application health checks in Prometheus format
       tags:
-      - Application Health
+      - Admin - Application Health
       responses:
         '200':
           content:
@@ -3550,7 +3550,7 @@ paths:
         schema:
           type: number
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3577,7 +3577,7 @@ paths:
         description: A unique integer value identifying this app log.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4017,7 +4017,7 @@ paths:
         schema:
           type: number
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4044,7 +4044,7 @@ paths:
         description: A unique integer value identifying this audit log.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4345,7 +4345,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4372,7 +4372,7 @@ paths:
         description: A unique integer value identifying this request log.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4997,7 +4997,7 @@ paths:
         schema:
           type: string
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5024,7 +5024,7 @@ paths:
         description: A unique integer value identifying this task result.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5034,23 +5034,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskResult'
-          description: ''
-  /notifications/allocation-request/status-choices/:
-    get:
-      operationId: notifications_allocation_request_status_choices_retrieve
-      description: Retrieve valid notification types with human-readable labels.
-      summary: Retrieve valid notification types
-      tags:
-      - Notifications
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotificationTypeChoices'
           description: ''
   /notifications/notifications/:
     get:
@@ -5304,7 +5287,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Notifications
+      - Notifications - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5330,7 +5313,7 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - Notifications
+      - Notifications - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5354,7 +5337,7 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - Notifications
+      - Notifications - Notifications
       requestBody:
         content:
           application/json:
@@ -5445,7 +5428,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5463,7 +5446,7 @@ paths:
       description: Create a new notification preference.
       summary: Create a notification preference
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       requestBody:
         content:
           application/json:
@@ -5498,7 +5481,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5521,7 +5504,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       requestBody:
         content:
           application/json:
@@ -5555,7 +5538,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       requestBody:
         content:
           application/json:
@@ -5590,13 +5573,30 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
         '204':
           description: No response body
+  /notifications/status-choices/:
+    get:
+      operationId: notifications_status_choices_retrieve
+      description: Retrieve valid notification types with human-readable labels.
+      summary: Retrieve valid notification types
+      tags:
+      - Notifications - Notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTypeChoices'
+          description: ''
   /research/grants/:
     get:
       operationId: research_grants_list
@@ -5937,7 +5937,7 @@ paths:
         schema:
           type: string
       tags:
-      - Grants
+      - Research - Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5955,7 +5955,7 @@ paths:
       description: Create a new research grant for review.
       summary: Create a research grant
       tags:
-      - Grants
+      - Research - Grants
       requestBody:
         content:
           application/json:
@@ -5991,7 +5991,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6014,7 +6014,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       requestBody:
         content:
           application/json:
@@ -6049,7 +6049,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       requestBody:
         content:
           application/json:
@@ -6083,7 +6083,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6468,7 +6468,7 @@ paths:
         schema:
           type: string
       tags:
-      - Publications
+      - Research - Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6486,7 +6486,7 @@ paths:
       description: Create a new research publication for review.
       summary: Create a research publication
       tags:
-      - Publications
+      - Research - Publications
       requestBody:
         content:
           application/json:
@@ -6522,7 +6522,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6545,7 +6545,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       requestBody:
         content:
           application/json:
@@ -6580,7 +6580,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       requestBody:
         content:
           application/json:
@@ -6614,7 +6614,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6744,7 +6744,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6762,7 +6762,7 @@ paths:
       description: Create a new team membership account.
       summary: Create a team membership
       tags:
-      - Team Membership
+      - Users - Team Membership
       requestBody:
         content:
           application/json:
@@ -6798,7 +6798,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6821,7 +6821,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       requestBody:
         content:
           application/json:
@@ -6856,7 +6856,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       requestBody:
         content:
           application/json:
@@ -6890,7 +6890,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6903,7 +6903,7 @@ paths:
       description: Retrieve valid team `role` options with human-readable labels.
       summary: Retrieve valid team role options
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7012,7 +7012,7 @@ paths:
         schema:
           type: string
       tags:
-      - Teams
+      - Users - Teams
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7030,7 +7030,7 @@ paths:
       description: Create a new team.
       summary: Create a team
       tags:
-      - Teams
+      - Users - Teams
       requestBody:
         content:
           application/json:
@@ -7066,7 +7066,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7089,7 +7089,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       requestBody:
         content:
           application/json:
@@ -7124,7 +7124,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       requestBody:
         content:
           application/json:
@@ -7158,7 +7158,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7630,7 +7630,7 @@ paths:
         schema:
           type: string
       tags:
-      - Users
+      - Users - Accounts
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7648,7 +7648,7 @@ paths:
       description: Create a new user account.
       summary: Create a user
       tags:
-      - Users
+      - Users - Accounts
       requestBody:
         content:
           application/json:
@@ -7684,7 +7684,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7707,7 +7707,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       requestBody:
         content:
           application/json:
@@ -7742,7 +7742,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       requestBody:
         content:
           application/json:
@@ -7776,7 +7776,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7789,7 +7789,7 @@ paths:
       description: Retrieve the application version number as a plain text response.
       summary: Retrieve the application version number
       tags:
-      - Application Version
+      - Admin - Application Version
       responses:
         '200':
           content:
