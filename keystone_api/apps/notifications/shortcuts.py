@@ -14,9 +14,9 @@ from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
 
-from apps.notifications.models import Notification
 from apps.users.models import User
 from plugins.email import SecureSandboxedEnvironment
+from .models import Notification
 
 __all__ = [
     'get_template',

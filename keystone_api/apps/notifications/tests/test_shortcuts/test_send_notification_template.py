@@ -34,7 +34,12 @@ class SendNotificationTemplateMethod(TestCase):
             self.user,
             subject,
             template='general.html',
-            context={"user": self.user, "message": "this is a message"},
+            context={
+                "user_first": self.user.first_name,
+                "user_last": self.user.last_name,
+                "user_name": self.user.username,
+                "message": "this is a message"
+            },
             notification_type=Notification.NotificationType.general_message
         )
 
@@ -55,7 +60,12 @@ class SendNotificationTemplateMethod(TestCase):
             self.user,
             "Test subject",
             template='general.html',
-            context={"user": self.user, "message": "this is a message"},
+            context={
+                "user_first": self.user.first_name,
+                "user_last": self.user.last_name,
+                "user_name": self.user.username,
+                "message": "this is a message"
+            },
             notification_type=notification_type,
             notification_metadata=notification_metadata
         )

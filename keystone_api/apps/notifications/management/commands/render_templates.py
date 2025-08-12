@@ -16,9 +16,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.test import override_settings
 
+from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
 from apps.allocations.models import AllocationRequest
-from apps.allocations.shortcuts import send_notification_past_expiration, send_notification_upcoming_expiration
-from apps.users.models import User
+from apps.notifications.tasks import send_past_expiration_notice, send_upcoming_expiration_notice
 
 
 class Command(BaseCommand):
@@ -80,41 +80,53 @@ class Command(BaseCommand):
             output_dir: The output directory where rendered templates are written.
         """
 
-        # Define mock data to populate notifications
-        user = self._create_dummy_user()
-        alloc_request = self._create_dummy_allocation_request()
-
         # Override settings so notifications are written to disk
         with override_settings(
             EMAIL_BACKEND=self._email_backend,
             EMAIL_FILE_PATH=output_dir,
             EMAIL_TEMPLATE_DIR=input_dir
         ):
-            send_notification_upcoming_expiration(user=user, request=alloc_request, save=False)
-            send_notification_past_expiration(user=user, request=alloc_request, save=False)
+            self._render_upcoming_expiration()
+            self._render_past_expiration()
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 
-    @staticmethod
-    def _create_dummy_user() -> User:
-        """Create a `User` object suitable for use when formatting example notification templates."""
+    def _render_upcoming_expiration(self) -> None:
+        """Render a sample notification for an allocation request with an upcoming expiration."""
 
-        return User(
-            username="username",
-            first_name="first_name",
-            last_name="last_name",
-            email="username.email.com"
+        next_week = date.today() + timedelta(days=7)
+        last_year = next_week - timedelta(days=365)
+        alloc_request = AllocationRequestFactory.build(
+            id=123,
+            active=last_year,
+            expire=next_week,
+            status=AllocationRequest.StatusChoices.APPROVED
         )
 
-    @staticmethod
-    def _create_dummy_allocation_request() -> AllocationRequest:
-        """Create an `AllocationRequest` object suitable for use when formatting example notification templates."""
+        allocations = AllocationFactory.build_batch(3, request=alloc_request)
 
-        return AllocationRequest(
-            title="Allocation Request Title",
-            description="This is a project description.",
-            submitted=date.today() - timedelta(days=370),
-            active=date.today() - timedelta(days=365),
-            expire=date.today(),
-            status=AllocationRequest.StatusChoices.APPROVED,
+        send_upcoming_expiration_notice(
+            user=alloc_request.submitter,
+            request=alloc_request,
+            allocations=allocations,
+            save=False)
+
+    def _render_past_expiration(self) -> None:
+        """Render a sample notification for an allocation request that has expired."""
+
+        today = date.today()
+        last_year = today - timedelta(days=365)
+        alloc_request = AllocationRequestFactory.build(
+            id=123,
+            active=last_year,
+            expire=today,
+            status=AllocationRequest.StatusChoices.APPROVED
         )
+
+        allocations = AllocationFactory.build_batch(3, request=alloc_request)
+
+        send_past_expiration_notice(
+            user=alloc_request.submitter,
+            request=alloc_request,
+            allocations=allocations,
+            save=False)
