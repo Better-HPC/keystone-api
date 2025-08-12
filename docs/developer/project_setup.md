@@ -1,4 +1,4 @@
-# Project Setup
+# Developer Quickstart
 
 The following sections outline common tasks for application developers and contributors.
 
@@ -12,7 +12,8 @@ git clone https://github.com/better-hpc/keystone-api
 
 Keystone-API uses [Poetry](https://python-poetry.org/docs/) to manage application dependencies.
 Certain dependencies, such as those required for building documentation, are optional.
-To install the project dependencies, execute the following command from the root of the cloned repository:
+To install the project with all optional dependencies, execute the following command from the root of the cloned
+repository:
 
 ```bash
 poetry install --all-extras
@@ -25,6 +26,13 @@ The use of editable mode (`-e`) is recommended:
 pip install -e .
 ```
 
+!!! note
+
+    Using the `-e` option installs packages in _editable_ mode.
+    When this option is enabled, `pip` will point to the local source tree as the installed package instead of
+    copying the source files to the standard install location. This allows any file changes to take immediate effect
+    without requiring a reinstall.
+
 If the installation was successful, the packaged CLI tool will be available in your working environment.
 Use the `enable_autocomplete` command to enable autocomplete for the Bash and Zsh shells.
 
@@ -32,47 +40,43 @@ Use the `enable_autocomplete` command to enable autocomplete for the Bash and Zs
 keystone-api enable_autocomplete
 ```
 
-## CLI Utilities
+!!! note
 
-Keystone-API comes bundled with the `keystone-api` utility which wraps the standard Django management script.
-Use the `runserver` command to launch a development API server:
+    Developers are **strongly** encouraged to review the latest availible CLI commands as described by the CLI
+    help text: `keystone-api --help`.
+
+## Running a Server
+
+Keystone-API comes bundled with the `keystone-api` utility which wraps the standard Django management commands.
+The most common way to launch an API instance during development is with the runserver command:
 
 ```bash
 keystone-api runserver
 ```
 
-In addition to the standard Django commands, `keystone-api` includes the following custom commands for automating development tasks.
-Use the `keystone-api <command> --help` option for specific usage information.
+The `runserver` command launches a development server that automatically reloads when source files change.
+This server is intended for local development only, and is not safe for use in a production deployment.
 
-| Command                   | Description                                                                              |
-|---------------------------|------------------------------------------------------------------------------------------|
-| `clean`                   | Clean up files generated when launching a new application instance.                      |
-| `quickstart`              | A helper utility for quickly migrating/deploying an application instance.                |
-
-### Running in Debug Mode
-
-The Django framework provides a debug mode which enables detailed error tracebacks directly in the browser.
-To enable debug mode, specify the `DEBUG=true` setting.
-
-!!! danger
-
-    The `DEBUG` option is inherently insecure and should **never** be enabled in production settings.
+In addition to Django’s built-in commands, keystone-api includes several custom utilities for automating common
+development tasks.
+Select commands are demonstrated below.
+For a full list of commands, see `keystone-api --help`.
 
 ```bash
-DEBUG=True keystone-api runserver
+keystone-api clean --all #(1)! 
+keystone-api quickstart --all #(2)! 
+keystone-api genseeddata #(3)! 
 ```
+
+1. Delete local application data.
+2. Bootstrap application dependencies and create an initial database.
+3. Load seed data for testing.
 
 ## Running Application Tests
 
-Application tests are organized based on the testing methodology.
+Application tests are organized by the testing methodology.
 Function tests are packaged in the top level `keystone_api/tests/` directory.
 Unit tests are contained within the module being tested under `keystone_api/<module_path>/tests/`.
-
-Before executing the test suite, ensure the necessary dependencies are installed:
-
-```bash
-poetry install --with tests
-```
 
 Use the `test` command to execute all available tests:
 
@@ -106,9 +110,9 @@ keystone-api makemigrations --check #(2)!
 keystone-api health_check #(3)! 
 ```
 
-1. Check for system configuration errors
-2. Check for missing database migrations
-3. Check the status of backend services
+1. Check for system configuration errors.
+2. Check for missing database migrations.
+3. Check the status of backend services.
 
 ## OpenAPI Generation
 
