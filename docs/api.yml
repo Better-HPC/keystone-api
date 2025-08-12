@@ -3091,8 +3091,9 @@ paths:
   /authentication/login/:
     post:
       operationId: authentication_login_create
-      description: Validate the provided credentials and start a new user session.
-      summary: Authenticate a user and start a new session
+      description: Validates user provided credentials and returns new session/CSRF
+        tokens as cookie data.
+      summary: Authenticate a new user session.
       tags:
       - Authentication
       requestBody:
@@ -3117,8 +3118,9 @@ paths:
   /authentication/logout/:
     post:
       operationId: authentication_logout_create
-      description: Logout an authenticated user and terminate their active session.
-      summary: Logout an authenticated user
+      description: Terminates the active user sessions and invalidates and associated
+        tokens.
+      summary: Terminate an active user session.
       tags:
       - Authentication
       security:
@@ -3130,9 +3132,10 @@ paths:
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
-      description: Retrieve metadata for the currently authenticated user, including
-        personal data and team memberships.
-      summary: Retrieve metadata for the currently authenticated user
+      description: Returns metadata for the currently authenticated user, including
+        personal data and team memberships. This endpoint can also be used to verify
+        general authentication status.
+      summary: Retrieve metadata for the authenticated user.
       tags:
       - Authentication
       security:
@@ -3151,7 +3154,7 @@ paths:
       description: Returns a 200 status if all application health checks pass and
         a 500 status otherwise. Health checks are performed on demand and cached for
         60 seconds.
-      summary: Retrieve the current application health status.
+      summary: Retrieve the current application health status .
       tags:
       - Admin - Health Checks
       responses:
