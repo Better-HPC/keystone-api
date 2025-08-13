@@ -10,7 +10,7 @@ from apps.users.models import Membership, Team, User
 from tests.utils import CustomAsserts
 
 
-class ListEndpointPermissionsTests(CustomAsserts):
+class ResearchListEndpointPermissionsTests(CustomAsserts):
     """Test user permissions for list endpoints.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
@@ -162,7 +162,7 @@ class ListEndpointPermissionsTests(CustomAsserts):
         )
 
 
-class RecordEndpointPermissionsTests(CustomAsserts):
+class ResearchDetailEndpointPermissionsTests(CustomAsserts):
     """Test user permissions for per-record endpoints.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.

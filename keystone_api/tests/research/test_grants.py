@@ -6,11 +6,15 @@ from rest_framework.test import APITestCase
 
 from apps.research_products.factories import GrantFactory
 from tests.utils import TeamScopedListFilteringTests
-from .common import ListEndpointPermissionsTests
+from .common import ResearchListEndpointPermissionsTests
 
 
-class EndpointPermissions(ListEndpointPermissionsTests, APITestCase):
-    """Test endpoint user permissions."""
+class EndpointPermissions(ResearchListEndpointPermissionsTests, APITestCase):
+    """Test endpoint user permissions.
+
+    See the `ResearchListEndpointPermissionsTests` class docstring for details on the
+    tested endpoint permissions.
+    """
 
     endpoint = '/research/grants/'
 

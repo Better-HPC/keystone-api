@@ -7,9 +7,8 @@ appropriately rendered HTML template or other HTTP response.
 import re
 from abc import ABC, abstractmethod
 
+from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiExample
 from health_check.mixins import CheckMixin
@@ -27,17 +26,26 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
     desired format of rendered health check results.
     """
 
+    _cache_key = 'healthcheck_cache'
+
     @staticmethod
     @abstractmethod
     def render_response(plugins: dict) -> HttpResponse:
         """Render the response based on the view's specific format."""
 
-    @method_decorator(cache_page(60))
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Check system health and return the appropriate response."""
 
+        cached_response = cache.get(self._cache_key)
+        if cached_response:
+            return cached_response
+
         self.check()
-        return self.render_response(self.plugins)
+        response = self.render_response(self.plugins)
+
+        # Cache the full HttpResponse object for 60 seconds
+        cache.set(self._cache_key, response, 60)
+        return response
 
 
 @extend_schema_view(
