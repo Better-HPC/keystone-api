@@ -56,7 +56,7 @@ class CleanMethod(TestCase):
 
 
 class GetTeamMethod(TestCase):
-    """Test the retrieval of a request's parent team via the `get_team` method.."""
+    """Test the retrieval of a request's parent team via the `get_team` method."""
 
     def setUp(self) -> None:
         """Create mock user records"""

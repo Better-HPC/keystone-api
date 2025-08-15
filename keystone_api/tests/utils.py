@@ -1,21 +1,22 @@
 """Custom testing utilities used to streamline common tests."""
 
+from abc import ABC, abstractmethod
+from typing import TypeVar
+
 from django.db import transaction
-from django.test import Client
 from factory.django import DjangoModelFactory
+from rest_framework.test import APITestCase
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership, Team, User
+
+TApiTestCase = TypeVar("TApiTestCase", bound=APITestCase)
 
 
 class CustomAsserts:
     """Custom assert methods for testing responses from REST endpoints."""
 
-    # Provided by the test framework
-    client: Client
-    assertEqual: callable
-
-    def assert_http_responses(self, endpoint: str, **kwargs) -> None:
+    def assert_http_responses(self: TApiTestCase, endpoint: str, **kwargs) -> None:
         """Execute a series of API calls and assert the returned status matches the given values.
 
         Args:
@@ -31,7 +32,7 @@ class CustomAsserts:
             if expected_status is not None:
                 self._assert_http_response(method, endpoint, expected_status, kwargs)
 
-    def _assert_http_response(self, method: str, endpoint: str, expected_status: int, kwargs: dict):
+    def _assert_http_response(self: TApiTestCase, method: str, endpoint: str, expected_status: int, kwargs: dict):
         """Assert the HTTP response for a specific method matches the expected status.
 
         Args:
@@ -70,17 +71,10 @@ class CustomAsserts:
         return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
 
 
-class TeamScopedListFilteringTests:
+class TeamScopedListFilteringTestMixin(ABC):
     """Test the filtering of returned records based on user team membership."""
 
-    # Provided by the test framework
-    client: Client
-    assertEqual: callable
-    assertSetEqual: callable
-
-    # Defined by subclasses
-    factory: type[DjangoModelFactory]
-    endpoint: str
+    # Test configuration
     team_field = 'team'
 
     # Test Fixtures
@@ -91,7 +85,17 @@ class TeamScopedListFilteringTests:
     team_records: list
     all_records: list
 
-    def setUp(self) -> None:
+    @property
+    @abstractmethod
+    def factory(self) -> type[DjangoModelFactory]:
+        """Object factory used to define valid record data during testing."""
+
+    @property
+    @abstractmethod
+    def endpoint(self) -> str:
+        """The API endpoint to test."""
+
+    def setUp(self: TApiTestCase) -> None:
         """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
@@ -103,7 +107,7 @@ class TeamScopedListFilteringTests:
         self.team_records = [self.factory(**{self.team_field: self.team}) for _ in range(5)]
         self.all_records = [self.factory() for _ in range(5)] + self.team_records
 
-    def test_user_returned_filtered_records(self) -> None:
+    def test_user_returned_filtered_records(self: TApiTestCase) -> None:
         """Verify users are only returned records for teams they belong to."""
 
         self.client.force_authenticate(self.team_member)
@@ -115,7 +119,7 @@ class TeamScopedListFilteringTests:
         expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
-    def test_staff_returned_all_records(self) -> None:
+    def test_staff_returned_all_records(self: TApiTestCase) -> None:
         """Verify staff users are returned all records."""
 
         self.client.force_authenticate(self.staff_user)
@@ -127,7 +131,7 @@ class TeamScopedListFilteringTests:
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
-    def test_user_with_no_records(self) -> None:
+    def test_user_with_no_records(self: TApiTestCase) -> None:
         """Verify user's not belonging to any teams are returned an empty list."""
 
         self.client.force_authenticate(self.generic_user)
@@ -137,17 +141,10 @@ class TeamScopedListFilteringTests:
         self.assertEqual(0, len(response.json()))
 
 
-class UserScopedListFilteringTests:
+class UserScopedListFilteringTestMixin:
     """Test the filtering of returned records based on user ownership."""
 
-    # Provided by the test framework
-    client: Client
-    assertEqual: callable
-    assertSetEqual: callable
-
-    # Defined by subclasses
-    factory: type[DjangoModelFactory]
-    endpoint: str
+    # Test configuration
     user_field = 'user'
 
     # Test Fixtures
@@ -157,7 +154,17 @@ class UserScopedListFilteringTests:
     user_records: list
     all_records: list
 
-    def setUp(self) -> None:
+    @property
+    @abstractmethod
+    def endpoint(self) -> str:
+        """The API endpoint to test."""
+
+    @property
+    @abstractmethod
+    def factory(self) -> type[DjangoModelFactory]:
+        """Object factory used to define valid record data during testing."""
+
+    def setUp(self: TApiTestCase) -> None:
         """Create test fixtures using mock data."""
 
         self.owner_user = UserFactory(is_staff=False)
@@ -167,7 +174,7 @@ class UserScopedListFilteringTests:
         self.user_records = [self.factory(**{self.user_field: self.owner_user}), ]
         self.all_records = [self.factory() for _ in range(5)] + self.user_records
 
-    def test_user_returned_own_records(self) -> None:
+    def test_user_returned_own_records(self: TApiTestCase) -> None:
         """Verify users only receive records they own."""
 
         self.client.force_authenticate(self.owner_user)
@@ -179,7 +186,7 @@ class UserScopedListFilteringTests:
         expected_ids = {record.id for record in self.user_records}
         self.assertSetEqual(expected_ids, response_ids)
 
-    def test_staff_returned_all_records(self) -> None:
+    def test_staff_returned_all_records(self: TApiTestCase) -> None:
         """Verify staff users are returned all records."""
 
         self.client.force_authenticate(self.staff_user)
@@ -191,7 +198,7 @@ class UserScopedListFilteringTests:
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
-    def test_user_with_no_records(self) -> None:
+    def test_user_with_no_records(self: TApiTestCase) -> None:
         """Verify users with no associated records receive an empty list."""
 
         self.client.force_authenticate(self.other_user)
