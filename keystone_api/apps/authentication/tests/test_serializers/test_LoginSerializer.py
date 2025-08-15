@@ -1,9 +1,9 @@
 """Unit tests for the `LoginSerializer` class."""
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from rest_framework.exceptions import ValidationError
-from rest_framework.test import APIRequestFactory
+from rest_framework.request import Request
 
 from apps.authentication.serializers import LoginSerializer
 
@@ -18,7 +18,7 @@ class Validation(TestCase):
 
         self.password = 'securepass'
         self.user = User.objects.create_user(username='testuser', password=self.password)
-        self.request = APIRequestFactory().post('/login/')
+        self.request = Request(RequestFactory().post('/login/'))
 
     def test_valid_credentials(self) -> None:
         """Verify valid user credentials pass validation."""
