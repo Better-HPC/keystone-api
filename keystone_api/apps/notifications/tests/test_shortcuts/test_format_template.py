@@ -25,7 +25,7 @@ class FormatTemplateMethod(TestCase):
         self.assertEqual(expected_text, text)
 
     def test_template_with_special_chars(self) -> None:
-        """Verify special characters are properly fomratted in HTML and plain text."""
+        """Verify special characters are properly formatted in HTML and plain text."""
 
         template = Template("<p>Use &lt;code&gt; tags for code.</p>")
         html, text = format_template(template, {})

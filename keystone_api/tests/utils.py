@@ -1,8 +1,8 @@
 """Custom testing utilities used to streamline common tests."""
 
 from django.db import transaction
-from django.test import Client
 from factory.django import DjangoModelFactory
+from rest_framework.test import APIClient
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership, Team, User
@@ -12,7 +12,7 @@ class CustomAsserts:
     """Custom assert methods for testing responses from REST endpoints."""
 
     # Provided by the test framework
-    client: Client
+    client: APIClient
     assertEqual: callable
 
     def assert_http_responses(self, endpoint: str, **kwargs) -> None:
@@ -74,7 +74,7 @@ class TeamScopedListFilteringTests:
     """Test the filtering of returned records based on user team membership."""
 
     # Provided by the test framework
-    client: Client
+    client: APIClient
     assertEqual: callable
     assertSetEqual: callable
 
@@ -141,7 +141,7 @@ class UserScopedListFilteringTests:
     """Test the filtering of returned records based on user ownership."""
 
     # Provided by the test framework
-    client: Client
+    client: APIClient
     assertEqual: callable
     assertSetEqual: callable
 

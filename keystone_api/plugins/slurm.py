@@ -9,12 +9,15 @@ from subprocess import PIPE, Popen
 log = logging.getLogger(__name__)
 
 __all__ = [
+    'get_cluster_jobs',
     'get_cluster_limit',
+    'set_cluster_limit',
     'get_cluster_usage',
     'get_slurm_account_names',
     'get_slurm_account_principal_investigator',
     'get_slurm_account_users',
-    'set_cluster_limit',
+    'parse_slurm_date',
+    'parse_slurm_elapsed'
 ]
 
 

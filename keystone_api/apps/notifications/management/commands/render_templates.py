@@ -91,7 +91,8 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 
-    def _render_upcoming_expiration(self) -> None:
+    @staticmethod
+    def _render_upcoming_expiration() -> None:
         """Render a sample notification for an allocation request with an upcoming expiration."""
 
         next_week = date.today() + timedelta(days=7)
@@ -111,7 +112,8 @@ class Command(BaseCommand):
             allocations=allocations,
             save=False)
 
-    def _render_past_expiration(self) -> None:
+    @staticmethod
+    def _render_past_expiration() -> None:
         """Render a sample notification for an allocation request that has expired."""
 
         today = date.today()
