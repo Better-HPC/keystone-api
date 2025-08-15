@@ -4,8 +4,8 @@ from unittest.mock import Mock, patch
 
 from django.core.cache import cache
 from django.http import HttpResponse
-from django.test import TestCase
-from requests import Request
+from django.test import RequestFactory, TestCase
+from rest_framework.request import Request
 
 from apps.health.views import BaseHealthCheckView
 
@@ -30,7 +30,7 @@ class GetMethod(TestCase):
     def test_status_checks_are_run(self, mock_check: Mock) -> None:
         """Verify status checks are updated when processing get requests"""
 
-        request = Request()
+        request = Request(RequestFactory().get('/'))
         view = ConcreteHealthCheckView()
         view.get(request)
 
@@ -40,7 +40,7 @@ class GetMethod(TestCase):
     def test_response_is_cached(self, mock_check: Mock) -> None:
         """Verify responses are cached after processing get requests."""
 
-        request = Request()
+        request = Request(RequestFactory().get('/'))
         view = ConcreteHealthCheckView()
         response = view.get(request)
 
@@ -53,7 +53,7 @@ class GetMethod(TestCase):
     def test_cached_response_skips_checks(self, mock_check: Mock) -> None:
         """Verify cached responses are returned instead of evaluating system checks."""
 
-        request = Request()
+        request = Request(RequestFactory().get('/'))
         view = ConcreteHealthCheckView()
 
         # Create and cache a fake HttpResponse
@@ -76,7 +76,7 @@ class GetMethod(TestCase):
             def render_response(plugins: dict) -> HttpResponse:
                 return HttpResponse("Internal Server Error", status=500)
 
-        request = Request()
+        request = Request(RequestFactory().get('/'))
         view = ErrorHealthCheckView()
 
         # Verify the response has 500 code, otherwise this test has no meaning
