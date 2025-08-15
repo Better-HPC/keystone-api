@@ -1,13 +1,15 @@
 """Common tests for logging endpoints."""
 
+from abc import ABC, abstractmethod
+
 from rest_framework import status
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
 
-class LogEndpointPermissionTests(CustomAsserts):
-    """Test endpoint user permissions.
+class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
+    """Mixin class used to define common tests for log endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
@@ -17,6 +19,11 @@ class LogEndpointPermissionTests(CustomAsserts):
     | Authenticated User         | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
+
+    @property
+    @abstractmethod
+    def endpoint(self) -> str:
+        """The API endpoint to test."""
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

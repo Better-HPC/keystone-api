@@ -240,7 +240,7 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
     job_list = []
     for line in subprocess_call(cmd).splitlines():
         parsed_line = line.split('|')
-        job_data = {field.lower(): value for field, value in zip(fields, parsed_line)}
+        job_data: dict[str, any] = {field.lower(): value for field, value in zip(fields, parsed_line)}
 
         # Cast select values into Python objects
         job_data['priority'] = int(job_data['priority']) if job_data['priority'] else None

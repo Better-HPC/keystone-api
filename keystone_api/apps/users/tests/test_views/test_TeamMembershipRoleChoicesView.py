@@ -2,6 +2,7 @@
 
 from django.test import TestCase
 from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
 from apps.users.models import Membership
@@ -14,8 +15,9 @@ class GetMethod(TestCase):
     def test_roles_match_membership_model(self) -> None:
         """Verify the response body contains the same membership roles used by the `Membership` model."""
 
-        request = APIRequestFactory().get('/')
-        response = MembershipRoleChoicesView().get(request)
+        wsgi_request = APIRequestFactory().get('/')
+        api_request = Request(wsgi_request)
+        response = MembershipRoleChoicesView().get(api_request)
 
         expected_roles = dict(Membership.Role.choices)
         self.assertEqual(status.HTTP_200_OK, response.status_code)

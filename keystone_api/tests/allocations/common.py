@@ -1,8 +1,13 @@
 """Common tests for allocations endpoints."""
 
+from typing import TypeVar
+
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
+
+TAPITestCase = TypeVar("TAPITestCase", bound=APITestCase)
 
 
 class GetResponseContentTests:
@@ -12,7 +17,7 @@ class GetResponseContentTests:
     endpoint: str
     expected_content: dict
 
-    def test_returns_expected_content(self) -> None:
+    def test_returns_expected_content(self: TAPITestCase) -> None:
         """Verify GET responses include the expected content."""
 
         generic_user = UserFactory(is_staff=False)
