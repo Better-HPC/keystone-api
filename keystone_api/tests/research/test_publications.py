@@ -6,10 +6,10 @@ from rest_framework.test import APITestCase
 
 from apps.research_products.factories import PublicationFactory
 from tests.utils import TeamScopedListFilteringTestMixin
-from .common import ResearchListEndpointPermissionsTests
+from .common import ResearchListEndpointPermissionsTestMixin
 
 
-class EndpointPermissions(ResearchListEndpointPermissionsTests, APITestCase):
+class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase):
     """Test endpoint user permissions.
 
     See the `ResearchListEndpointPermissionsTests` class docstring for details on the

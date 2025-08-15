@@ -1,11 +1,15 @@
 """Common tests for logging endpoints."""
 
 from abc import ABC, abstractmethod
+from typing import TypeVar
 
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+TApiTestCase = TypeVar("TApiTestCase", bound=APITestCase)
 
 
 class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
@@ -22,16 +26,16 @@ class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
 
     @property
     @abstractmethod
-    def endpoint(self) -> str:
+    def endpoint(self: TApiTestCase) -> str:
         """The API endpoint to test."""
 
-    def setUp(self) -> None:
+    def setUp(self: TApiTestCase) -> None:
         """Create test fixtures using mock data."""
 
         self.generic_user = UserFactory(is_staff=False)
         self.staff_user = UserFactory(is_staff=True)
 
-    def test_anonymous_user_permissions(self) -> None:
+    def test_anonymous_user_permissions(self: TApiTestCase) -> None:
         """Test unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
@@ -46,7 +50,7 @@ class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
             trace=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_authenticated_user_permissions(self) -> None:
+    def test_authenticated_user_permissions(self: TApiTestCase) -> None:
         """Verify authenticated users are returned a 403 status code for all request types."""
 
         self.client.force_authenticate(user=self.generic_user)
@@ -62,7 +66,7 @@ class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
-    def test_staff_user_permissions(self) -> None:
+    def test_staff_user_permissions(self: TApiTestCase) -> None:
         """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
