@@ -21,7 +21,6 @@ class LdapUpdateUsersMethod(TestCase):
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
         AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'},
-        AUTH_LDAP_PURGE_REMOVED=False
     )
     @patch('apps.users.tasks.get_ldap_connection')
     @patch('apps.users.tasks.LDAPBackend')
@@ -52,7 +51,6 @@ class LdapUpdateUsersMethod(TestCase):
         AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn='dc=example,dc=com'),
         AUTH_LDAP_USER_ATTR_MAP={'username': 'uid'},
-        AUTH_LDAP_PURGE_REMOVED=False
     )
     @patch('apps.users.tasks.get_ldap_connection')
     def test_no_users_account_found(self, mock_get_ldap_connection: Mock) -> None:
@@ -70,7 +68,7 @@ class LdapUpdateUsersMethod(TestCase):
     )
     @patch('apps.users.tasks.get_ldap_connection')
     def test_users_are_pruned(self, mock_get_ldap_connection: Mock) -> None:
-        """Verify missing user accounts are deleted when `prune=True`."""
+        """Verify missing user accounts are deleted when `AUTH_LDAP_PURGE_REMOVED=True`."""
 
         # Mock an LDAP search result with no users
         mock_conn = MagicMock()
@@ -81,7 +79,7 @@ class LdapUpdateUsersMethod(TestCase):
         User.objects.create(username='user_to_prune', is_ldap_user=True)
         User.objects.create(username='non_ldap_user', is_ldap_user=False)
 
-        # Test missing LDAP users are deleted
+        # Test missing LDAP users are deleted and non-ldap users are not modified
         ldap_update_users()
         self.assertFalse(User.objects.filter(username='user_to_prune').exists())
         self.assertTrue(User.objects.filter(username='non_ldap_user').exists())
@@ -94,7 +92,7 @@ class LdapUpdateUsersMethod(TestCase):
     )
     @patch('apps.users.tasks.get_ldap_connection')
     def test_users_are_deactivated(self, mock_get_ldap_connection: Mock) -> None:
-        """Verify missing LDAP users are deactivated when `prune=False`."""
+        """Verify missing LDAP users are deactivated when `AUTH_LDAP_PURGE_REMOVED=False`."""
 
         # Mock an LDAP search result with no users
         mock_conn = MagicMock()
@@ -105,7 +103,7 @@ class LdapUpdateUsersMethod(TestCase):
         User.objects.create(username='user_to_deactivate', is_ldap_user=True, is_active=True)
         User.objects.create(username='non_ldap_user', is_ldap_user=False, is_active=True)
 
-        # Test missing LDAP users are deactivated
+        # Test missing LDAP users are deactivated and non-ldap users are not modified
         ldap_update_users()
         self.assertFalse(User.objects.get(username='user_to_deactivate').is_active)
         self.assertTrue(User.objects.get(username='non_ldap_user').is_active)
