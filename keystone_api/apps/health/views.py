@@ -26,7 +26,10 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
     desired format of rendered health check results.
     """
 
-    _cache_key = 'healthcheck_cache'
+    @property
+    @abstractmethod
+    def cache_key(self) -> str:
+        """Cache key used to store and retrieve the view's health check response."""
 
     @staticmethod
     @abstractmethod
@@ -36,7 +39,7 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Check system health and return the appropriate response."""
 
-        cached_response = cache.get(self._cache_key)
+        cached_response = cache.get(self.cache_key)
         if cached_response:
             return cached_response
 
@@ -44,7 +47,7 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
         response = self.render_response(self.plugins)
 
         # Cache the full HttpResponse object for 60 seconds
-        cache.set(self._cache_key, response, 60)
+        cache.set(self.cache_key, response, 60)
         return response
 
 
@@ -64,6 +67,7 @@ class HealthCheckView(BaseHealthCheckView):
     """Return a 200 status code if all health checks pass and 500 otherwise."""
 
     permission_classes = []
+    cache_key = 'healthcheck_cache'
 
     @staticmethod
     def render_response(plugins: dict) -> HttpResponse:
@@ -131,6 +135,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
     """API endpoints for fetching application health checks in JSON format."""
 
     permission_classes = []
+    cache_key = 'healthcheck_json_cache'
 
     @staticmethod
     def render_response(plugins: dict) -> JsonResponse:
@@ -192,6 +197,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
     """API endpoints for fetching application health checks in Prometheus format."""
 
     permission_classes = []
+    cache_key = 'healthcheck_prom_cache'
 
     @staticmethod
     def sanitize_metric_name(name: str) -> str:
