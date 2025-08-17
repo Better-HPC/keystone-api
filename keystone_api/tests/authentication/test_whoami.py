@@ -40,8 +40,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_permissions(self) -> None:
         """Verify authenticated users can perform read operations."""
 
-        user = UserFactory(is_staff=False)
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=UserFactory())
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_200_OK,
@@ -63,7 +62,7 @@ class UserData(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user = UserFactory(is_staff=False)
+        self.user = UserFactory()
 
     def test_metadata_is_returned(self) -> None:
         """Verify GET responses include metadata for the currently authenticated user."""

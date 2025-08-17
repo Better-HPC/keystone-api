@@ -52,7 +52,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
         self.valid_record_data = self.build_valid_record_data()
@@ -207,8 +207,8 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
         self.team = membership.team
         self.team_member = membership.user
 
+        self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
-        self.non_member = UserFactory(is_staff=False)
 
         record = self.factory(team=self.team)
         self.endpoint = self.endpoint_pattern.format(pk=record.pk)

@@ -37,8 +37,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
+        self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
-        self.non_member = UserFactory(is_staff=False)
 
         self.valid_record_data = {'content': 'foo', 'request': self.request.pk}
 

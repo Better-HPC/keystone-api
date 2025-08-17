@@ -101,7 +101,7 @@ class TeamScopedListFilteringTestMixin(ABC):
         self.team = TeamFactory()
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
         self.team_records = [self.factory(**{self.team_field: self.team}) for _ in range(5)]
@@ -167,8 +167,8 @@ class UserScopedListFilteringTestMixin:
     def setUp(self: TApiTestCase) -> None:
         """Create test fixtures using mock data."""
 
-        self.owner_user = UserFactory(is_staff=False)
-        self.other_user = UserFactory(is_staff=False)
+        self.owner_user = UserFactory()
+        self.other_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
         self.user_records = [self.factory(**{self.user_field: self.owner_user}), ]

@@ -58,7 +58,7 @@ class AllocationRequestFactory(DjangoModelFactory):
     description = factory.Faker('text', max_nb_chars=2000)
     submitted = factory.Faker('date_time_between', start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
-    submitter = factory.SubFactory(UserFactory, is_staff=False)
+    submitter = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
 
     @factory.lazy_attribute
@@ -195,7 +195,7 @@ class AllocationReviewFactory(DjangoModelFactory):
     status = LazyFunction(lambda: randgen.choice(AllocationReview.StatusChoices.values))
 
     request = factory.SubFactory(AllocationRequestFactory)
-    reviewer = factory.SubFactory(UserFactory, is_staff=False)
+    reviewer = factory.SubFactory(UserFactory, is_staff=True)
 
     @factory.lazy_attribute
     def submitted(self) -> date:
@@ -239,7 +239,7 @@ class CommentFactory(DjangoModelFactory):
     content = factory.Faker('sentence', nb_words=10)
     private = factory.Faker('pybool', truth_probability=10)
 
-    user = factory.SubFactory(UserFactory, is_staff=False)
+    user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
 
 

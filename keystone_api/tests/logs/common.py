@@ -32,7 +32,7 @@ class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
     def setUp(self: TApiTestCase) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
     def test_anonymous_user_permissions(self: TApiTestCase) -> None:

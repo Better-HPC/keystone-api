@@ -62,9 +62,10 @@ class UserFactory(DjangoModelFactory):
     department = factory.Faker('bs')
     role = factory.Faker('job')
 
-    is_active = factory.Faker('pybool', truth_probability=98)
-    is_staff = factory.Faker('pybool')
+    is_active = True
+    is_staff = False
     is_ldap_user = False
+
     date_joined = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
 
     @factory.post_generation
@@ -91,5 +92,5 @@ class MembershipFactory(DjangoModelFactory):
 
     role = LazyFunction(lambda: randgen.choice(Membership.Role.values))
 
-    user = factory.SubFactory(UserFactory, is_staff=False)
+    user = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)

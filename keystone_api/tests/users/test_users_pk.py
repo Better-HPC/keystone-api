@@ -27,8 +27,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user1 = UserFactory(is_staff=False)
-        self.user2 = UserFactory(is_staff=False)
+        self.user1 = UserFactory()
+        self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
         self.user1_endpoint = self.endpoint_pattern.format(pk=self.user1.id)
@@ -119,8 +119,8 @@ class CredentialHandling(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user1 = UserFactory(is_staff=False)
-        self.user2 = UserFactory(is_staff=False)
+        self.user1 = UserFactory()
+        self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
         self.user1_endpoint = self.endpoint_pattern.format(pk=self.user1.id)
@@ -189,7 +189,7 @@ class RecordHistory(APITestCase):
     def setUp(self) -> None:
         """Authenticate as a generic application user."""
 
-        user = UserFactory(is_staff=False)
+        user = UserFactory()
         self.client.force_authenticate(user=user)
         self.endpoint = self.endpoint_pattern.format(pk=user.id)
 
