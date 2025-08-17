@@ -27,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
@@ -86,8 +86,8 @@ class UserFieldAssignment(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user1 = UserFactory(is_staff=False)
-        self.user2 = UserFactory(is_staff=False)
+        self.user1 = UserFactory()
+        self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
     def test_default_user(self) -> None:

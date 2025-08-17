@@ -14,8 +14,8 @@ class GetSerializerClassMethod(TestCase):
     def setUp(self) -> None:
         """Create user accounts for testing"""
 
+        self.regular_user = User.objects.create(username='regularuser')
         self.staff_user = User.objects.create(username='staffuser', is_staff=True)
-        self.regular_user = User.objects.create(username='regularuser', is_staff=False)
 
     def test_get_serializer_class_for_staff_user(self) -> None:
         """Verify the `PrivilegeUserSerializer` serializer is returned for a staff user."""

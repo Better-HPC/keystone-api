@@ -27,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Create test fixtures using mock data."""
 
         AttachmentFactory()
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:

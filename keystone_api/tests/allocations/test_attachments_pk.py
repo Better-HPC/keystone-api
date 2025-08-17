@@ -32,7 +32,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         attachment = AttachmentFactory()
 
         self.team = attachment.request.team
-        self.non_member = UserFactory(is_staff=False)
+        self.non_member = UserFactory()
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
         self.staff_user = UserFactory(is_staff=True)
