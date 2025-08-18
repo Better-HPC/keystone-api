@@ -20,33 +20,51 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all research grants",
-        description="Retrieve all research grants visible to the current user.",
+        summary="List all research grants.",
+        description=(
+            "Returns a list of all research grants belonging to teams where the user is a member. "
+            "Administrators are returned all records regardless of the parent team"
+        ),
         tags=["Research - Grants"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a research grant",
-        description="Retrieve a single research grant by ID.",
+        summary="Retrieve a research grant.",
+        description=(
+            "Returns a single research grant by its ID. "
+            "Users may only access records for teams they belong to."
+        ),
         tags=["Research - Grants"],
     ),
     create=extend_schema(
-        summary="Create a research grant",
-        description="Create a new research grant for review.",
+        summary="Create a research grant.",
+        description=(
+            "Create a new research grant. "
+            "Users may only create records for teams they belong to."
+        ),
         tags=["Research - Grants"],
     ),
     update=extend_schema(
-        summary="Update a research grant",
-        description="Replace an existing research grant with new values.",
+        summary="Update a research grant.",
+        description=(
+            "Replaces an existing research grant with new values. "
+            "Users may only modify records for teams they belong to."
+        ),
         tags=["Research - Grants"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a research grant",
-        description="Apply a partial update to an existing research grant.",
+        summary="Partially update a research grant.",
+        description=(
+            "Partially update an existing research grant with new values. "
+            "Users may only modify records for teams they belong to."
+        ),
         tags=["Research - Grants"],
     ),
     destroy=extend_schema(
-        summary="Delete a research grant",
-        description="Delete a research grant by ID.",
+        summary="Delete a research grant.",
+        description=(
+            "Deletes a single research grant by its ID. "
+            "Users may only delete records for teams they belong to."
+        ),
         tags=["Research - Grants"],
     ),
 )
@@ -68,33 +86,51 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all research publications",
-        description="Retrieve all research publications visible to the current user.",
+        summary="List all publications.",
+        description=(
+            "Returns a list of all publications belonging to teams where the user is a member. "
+            "Administrators are returned all records regardless of the parent team"
+        ),
         tags=["Research - Publications"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a research publication",
-        description="Retrieve a single research publication by ID.",
+        summary="Retrieve a publications.",
+        description=(
+            "Returns a single publications by its ID. "
+            "Users may only access records for teams they belong to."
+        ),
         tags=["Research - Publications"],
     ),
     create=extend_schema(
-        summary="Create a research publication",
-        description="Create a new research publication for review.",
+        summary="Create a publications.",
+        description=(
+            "Create a new publications. "
+            "Users may only create records for teams they belong to."
+        ),
         tags=["Research - Publications"],
     ),
     update=extend_schema(
-        summary="Update a research publication",
-        description="Replace an existing research publication with new values.",
+        summary="Update a publications.",
+        description=(
+            "Replaces an existing publications with new values. "
+            "Users may only modify records for teams they belong to."
+        ),
         tags=["Research - Publications"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a research publication",
-        description="Apply a partial update to an existing research publication.",
+        summary="Partially update a publications.",
+        description=(
+            "Partially update an existing publications with new values. "
+            "Users may only modify records for teams they belong to."
+        ),
         tags=["Research - Publications"],
     ),
     destroy=extend_schema(
-        summary="Delete a research publication",
-        description="Delete a research publication by ID.",
+        summary="Delete a publications.",
+        description=(
+            "Deletes a single publications by its ID. "
+            "Users may only delete records for teams they belong to."
+        ),
         tags=["Research - Publications"],
     ),
 )

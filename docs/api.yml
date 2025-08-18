@@ -3197,8 +3197,9 @@ paths:
   /logs/apps/:
     get:
       operationId: logs_apps_list
-      description: Application logs capture internal system messages used to debug
-        application behavior. Access to log records is restricted to admin users.
+      description: Returns a list of application logs. Application logs capture internal
+        system messages used to debug application behavior. Access to log records
+        is restricted to admin users.
       summary: List all application logs.
       parameters:
       - name: _order
@@ -3541,8 +3542,9 @@ paths:
   /logs/apps/{id}/:
     get:
       operationId: logs_apps_retrieve
-      description: Application logs capture internal system messages used to debug
-        application behavior. Access to log records is restricted to admin users.
+      description: Returns a single application log by its ID. Application logs capture
+        internal system messages used to debug application behavior. Access to log
+        records is restricted to admin users.
       summary: Retrieve a single application log.
       parameters:
       - in: path
@@ -3566,8 +3568,9 @@ paths:
   /logs/audit/:
     get:
       operationId: logs_audit_list
-      description: Audit logs track changes to database records and are used for compliance
-        and security auditing. Access to log records is restricted to admin users.
+      description: Returns a list of audit logs. Audit logs track changes to database
+        records and are used for compliance and security auditing. Access to log records
+        is restricted to admin users.
       summary: List all audit logs.
       parameters:
       - name: _order
@@ -4008,8 +4011,9 @@ paths:
   /logs/audit/{id}/:
     get:
       operationId: logs_audit_retrieve
-      description: Audit logs track changes to database records and are used for compliance
-        and security auditing. Access to log records is restricted to admin users.
+      description: Returns a single audit log by its ID. Audit logs track changes
+        to database records and are used for compliance and security auditing. Access
+        to log records is restricted to admin users.
       summary: Retrieve a single audit log.
       parameters:
       - in: path
@@ -4033,8 +4037,9 @@ paths:
   /logs/requests/:
     get:
       operationId: logs_requests_list
-      description: HTTP request logs track incoming API requests and their resulting
-        HTTP responses. Access to log records is restricted to admin users.
+      description: Returns a list of HTTP request logs. Request logs track incoming
+        API requests and their resulting HTTP responses. Access to log records is
+        restricted to admin users.
       summary: List all HTTP request logs.
       parameters:
       - name: _order
@@ -4336,8 +4341,9 @@ paths:
   /logs/requests/{id}/:
     get:
       operationId: logs_requests_retrieve
-      description: HTTP request logs track incoming API requests and their resulting
-        HTTP responses. Access to log records is restricted to admin users.
+      description: Returns a single HTTP request log by its ID. Request logs track
+        incoming API requests and their resulting HTTP responses. Access to log records
+        is restricted to admin users.
       summary: Retrieve a single HTTP request log.
       parameters:
       - in: path
@@ -4361,8 +4367,9 @@ paths:
   /logs/tasks/:
     get:
       operationId: logs_tasks_list
-      description: Task logs are collected from the Celery backend to track background
-        task outcomes and failures. Access to log records is restricted to admin users.
+      description: Returns a list of task logs. Task logs are collected from the Celery
+        backend to track background task outcomes and failures. Access to log records
+        is restricted to admin users.
       summary: List all background task results.
       parameters:
       - name: _order
@@ -4988,8 +4995,9 @@ paths:
   /logs/tasks/{id}/:
     get:
       operationId: logs_tasks_retrieve
-      description: Task logs are collected from the Celery backend to track background
-        task outcomes and failures. Access to log records is restricted to admin users.
+      description: Returns a single task log by its ID. Task logs are collected from
+        the Celery backend to track background task outcomes and failures. Access
+        to log records is restricted to admin users.
       summary: Retrieve a single background task result.
       parameters:
       - in: path
@@ -5027,8 +5035,9 @@ paths:
   /notifications/notification-choices/type:
     get:
       operationId: notifications_notification_choices_type_retrieve
-      description: Retrieve valid notification types with human-readable labels.
-      summary: Retrieve valid notification types
+      description: Returns valid values for the notification `type` field along with
+        human-readable labels.
+      summary: Retrieve valid notification types.
       tags:
       - Notifications - Notifications
       security:
@@ -5044,7 +5053,7 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Retrieve all notifications visible to the current user.
+      description: Returns all notifications visible to the current user.
       summary: List all notifications
       parameters:
       - name: _order
@@ -5309,7 +5318,7 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Retrieve a single notification by ID.
+      description: Returns a single notification by ID.
       summary: Retrieve a notification
       parameters:
       - in: path
@@ -5589,8 +5598,10 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Retrieve all research grants visible to the current user.
-      summary: List all research grants
+      description: Returns a list of all research grants belonging to teams where
+        the user is a member. Administrators are returned all records regardless of
+        the parent team
+      summary: List all research grants.
       parameters:
       - name: _order
         required: false
@@ -5941,8 +5952,9 @@ paths:
           description: ''
     post:
       operationId: research_grants_create
-      description: Create a new research grant for review.
-      summary: Create a research grant
+      description: Create a new research grant. Users may only create records for
+        teams they belong to.
+      summary: Create a research grant.
       tags:
       - Research - Grants
       requestBody:
@@ -5970,8 +5982,9 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Retrieve a single research grant by ID.
-      summary: Retrieve a research grant
+      description: Returns a single research grant by its ID. Users may only access
+        records for teams they belong to.
+      summary: Retrieve a research grant.
       parameters:
       - in: path
         name: id
@@ -5993,8 +6006,9 @@ paths:
           description: ''
     put:
       operationId: research_grants_update
-      description: Replace an existing research grant with new values.
-      summary: Update a research grant
+      description: Replaces an existing research grant with new values. Users may
+        only modify records for teams they belong to.
+      summary: Update a research grant.
       parameters:
       - in: path
         name: id
@@ -6028,8 +6042,9 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Apply a partial update to an existing research grant.
-      summary: Partially update a research grant
+      description: Partially update an existing research grant with new values. Users
+        may only modify records for teams they belong to.
+      summary: Partially update a research grant.
       parameters:
       - in: path
         name: id
@@ -6062,8 +6077,9 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Delete a research grant by ID.
-      summary: Delete a research grant
+      description: Deletes a single research grant by its ID. Users may only delete
+        records for teams they belong to.
+      summary: Delete a research grant.
       parameters:
       - in: path
         name: id
@@ -6082,8 +6098,10 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Retrieve all research publications visible to the current user.
-      summary: List all research publications
+      description: Returns a list of all publications belonging to teams where the
+        user is a member. Administrators are returned all records regardless of the
+        parent team
+      summary: List all publications.
       parameters:
       - name: _order
         required: false
@@ -6472,8 +6490,9 @@ paths:
           description: ''
     post:
       operationId: research_publications_create
-      description: Create a new research publication for review.
-      summary: Create a research publication
+      description: Create a new publications. Users may only create records for teams
+        they belong to.
+      summary: Create a publications.
       tags:
       - Research - Publications
       requestBody:
@@ -6501,8 +6520,9 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Retrieve a single research publication by ID.
-      summary: Retrieve a research publication
+      description: Returns a single publications by its ID. Users may only access
+        records for teams they belong to.
+      summary: Retrieve a publications.
       parameters:
       - in: path
         name: id
@@ -6524,8 +6544,9 @@ paths:
           description: ''
     put:
       operationId: research_publications_update
-      description: Replace an existing research publication with new values.
-      summary: Update a research publication
+      description: Replaces an existing publications with new values. Users may only
+        modify records for teams they belong to.
+      summary: Update a publications.
       parameters:
       - in: path
         name: id
@@ -6559,8 +6580,9 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Apply a partial update to an existing research publication.
-      summary: Partially update a research publication
+      description: Partially update an existing publications with new values. Users
+        may only modify records for teams they belong to.
+      summary: Partially update a publications.
       parameters:
       - in: path
         name: id
@@ -6593,8 +6615,9 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Delete a research publication by ID.
-      summary: Delete a research publication
+      description: Deletes a single publications by its ID. Users may only delete
+        records for teams they belong to.
+      summary: Delete a publications.
       parameters:
       - in: path
         name: id

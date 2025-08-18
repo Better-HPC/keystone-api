@@ -25,6 +25,7 @@ __all__ = [
     list=extend_schema(
         summary="List all application logs.",
         description=(
+            "Returns a list of application logs. "
             "Application logs capture internal system messages used to debug application behavior. "
             "Access to log records is restricted to admin users."
         ),
@@ -33,6 +34,7 @@ __all__ = [
     retrieve=extend_schema(
         summary="Retrieve a single application log.",
         description=(
+            "Returns a single application log by its ID. "
             "Application logs capture internal system messages used to debug application behavior. "
             "Access to log records is restricted to admin users."
         ),
@@ -52,6 +54,7 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
     list=extend_schema(
         summary="List all audit logs.",
         description=(
+            "Returns a list of audit logs. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
             "Access to log records is restricted to admin users."
         ),
@@ -60,6 +63,7 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
     retrieve=extend_schema(
         summary="Retrieve a single audit log.",
         description=(
+            "Returns a single audit log by its ID. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
             "Access to log records is restricted to admin users."
         ),
@@ -79,7 +83,8 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     list=extend_schema(
         summary="List all HTTP request logs.",
         description=(
-            "HTTP request logs track incoming API requests and their resulting HTTP responses. "
+            "Returns a list of HTTP request logs. "
+            "Request logs track incoming API requests and their resulting HTTP responses. "
             "Access to log records is restricted to admin users."
         ),
         tags=["Admin - Logging"],
@@ -87,7 +92,8 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     retrieve=extend_schema(
         summary="Retrieve a single HTTP request log.",
         description=(
-            "HTTP request logs track incoming API requests and their resulting HTTP responses. "
+            "Returns a single HTTP request log by its ID. "
+            "Request logs track incoming API requests and their resulting HTTP responses. "
             "Access to log records is restricted to admin users."
         ),
         tags=["Admin - Logging"],
@@ -106,6 +112,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     list=extend_schema(
         summary="List all background task results.",
         description=(
+            "Returns a list of task logs. "
             "Task logs are collected from the Celery backend to track background task outcomes and failures. "
             "Access to log records is restricted to admin users."
         ),
@@ -114,6 +121,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     retrieve=extend_schema(
         summary="Retrieve a single background task result.",
         description=(
+            "Returns a single task log by its ID. "
             "Task logs are collected from the Celery backend to track background task outcomes and failures. "
             "Access to log records is restricted to admin users."
         ),
