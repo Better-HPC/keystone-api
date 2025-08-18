@@ -4,42 +4,6 @@ info:
   version: 0.0.0
   description: A REST API for managing user resource allocations on HPC systems.
 paths:
-  /allocations/allocation-request/status-choices/:
-    get:
-      operationId: allocations_allocation_request_status_choices_retrieve
-      description: Retrieve valid allocation request `status` options with human-readable
-        labels.
-      summary: Retrieve valid request status options
-      tags:
-      - Allocations - Requests
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AllocationRequestStatusChoices'
-          description: ''
-  /allocations/allocation-review/status-choices/:
-    get:
-      operationId: allocations_allocation_review_status_choices_retrieve
-      description: Retrieve valid allocation review `status` options with human-readable
-        labels.
-      summary: Retrieve valid review status options
-      tags:
-      - Allocations - Reviews
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AllocationReviewStatusChoices'
-          description: ''
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
@@ -2216,6 +2180,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobStats'
           description: ''
+  /allocations/request-choices/status/:
+    get:
+      operationId: allocations_request_choices_status_retrieve
+      description: Retrieve valid allocation request `status` options with human-readable
+        labels.
+      summary: Retrieve valid request status options
+      tags:
+      - Allocations - Requests
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationRequestStatusChoices'
+          description: ''
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
@@ -2741,6 +2723,24 @@ paths:
       responses:
         '204':
           description: No response body
+  /allocations/review-choices/status/:
+    get:
+      operationId: allocations_review_choices_status_retrieve
+      description: Retrieve valid allocation review `status` options with human-readable
+        labels.
+      summary: Retrieve valid review status options
+      tags:
+      - Allocations - Reviews
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationReviewStatusChoices'
+          description: ''
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
@@ -5024,6 +5024,23 @@ paths:
               schema:
                 type: string
           description: ''
+  /notifications/notification-choices/type:
+    get:
+      operationId: notifications_notification_choices_type_retrieve
+      description: Retrieve valid notification types with human-readable labels.
+      summary: Retrieve valid notification types
+      tags:
+      - Notifications - Notifications
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationTypeChoices'
+          description: ''
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
@@ -5569,23 +5586,6 @@ paths:
       responses:
         '204':
           description: No response body
-  /notifications/status-choices/:
-    get:
-      operationId: notifications_status_choices_retrieve
-      description: Retrieve valid notification types with human-readable labels.
-      summary: Retrieve valid notification types
-      tags:
-      - Notifications - Notifications
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotificationTypeChoices'
-          description: ''
   /research/grants/:
     get:
       operationId: research_grants_list
@@ -6610,9 +6610,26 @@ paths:
       responses:
         '204':
           description: No response body
-  /users/membership/:
+  /users/membership-choices/role/:
     get:
-      operationId: users_membership_list
+      operationId: users_membership_choices_role_retrieve
+      description: Retrieve valid team `role` options with human-readable labels.
+      summary: Retrieve valid team role options
+      tags:
+      - Users - Team Membership
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipRoleChoices'
+          description: ''
+  /users/memberships/:
+    get:
+      operationId: users_memberships_list
       description: Retrieve all team membership accounts.
       summary: List all team memberships
       parameters:
@@ -6747,7 +6764,7 @@ paths:
                   $ref: '#/components/schemas/Membership'
           description: ''
     post:
-      operationId: users_membership_create
+      operationId: users_memberships_create
       description: Create a new team membership account.
       summary: Create a team membership
       tags:
@@ -6774,9 +6791,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Membership'
           description: ''
-  /users/membership/{id}/:
+  /users/memberships/{id}/:
     get:
-      operationId: users_membership_retrieve
+      operationId: users_memberships_retrieve
       description: Retrieve a single team membership account by ID.
       summary: Retrieve a team membership
       parameters:
@@ -6799,7 +6816,7 @@ paths:
                 $ref: '#/components/schemas/Membership'
           description: ''
     put:
-      operationId: users_membership_update
+      operationId: users_memberships_update
       description: Replace an existing team membership account with new values.
       summary: Update a team membership
       parameters:
@@ -6834,7 +6851,7 @@ paths:
                 $ref: '#/components/schemas/Membership'
           description: ''
     patch:
-      operationId: users_membership_partial_update
+      operationId: users_memberships_partial_update
       description: Apply a partial update to an existing team membership account.
       summary: Partially update a team membership
       parameters:
@@ -6868,7 +6885,7 @@ paths:
                 $ref: '#/components/schemas/Membership'
           description: ''
     delete:
-      operationId: users_membership_destroy
+      operationId: users_memberships_destroy
       description: Delete a team membership account by ID.
       summary: Delete a team membership
       parameters:
@@ -6886,23 +6903,6 @@ paths:
       responses:
         '204':
           description: No response body
-  /users/team-membership/role-choices/:
-    get:
-      operationId: users_team_membership_role_choices_retrieve
-      description: Retrieve valid team `role` options with human-readable labels.
-      summary: Retrieve valid team role options
-      tags:
-      - Users - Team Membership
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MembershipRoleChoices'
-          description: ''
   /users/teams/:
     get:
       operationId: users_teams_list
