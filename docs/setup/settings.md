@@ -11,6 +11,12 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### Core Security
 
+!!! note
+
+    Secret keys are conventionally 50 characters long.
+    The `openssl` utility provides a convenient method for generating secure key values:
+    `openssl rand -base64 48 | cut -c1-50`
+
 | Setting Name        | Default Value      | Description                                      |
 |---------------------|--------------------|--------------------------------------------------|
 | `SECURE_SECRET_KEY` | Randomly generated | Key value used to enforce cryptographic signing. |
@@ -130,13 +136,8 @@ See the `apps.users.models.User` class for a full list of available Keystone fie
 
 ## Developer Settings
 
-The following settings are intended exclusively for use in development.
-
-!!! danger
-
-    The `DEBUG` option is inherently insecure and should **never** be enabled in production settings.
+The following settings are intended for use in debugging or development.
 
 | Setting Name      | Default Value | Description                                            |
 |-------------------|---------------|--------------------------------------------------------|
-| `DEBUG`           | `False`       | Enables in-browser error tracebacks.                   |
-| `DEBUG_EMAIL_DIR` | ``            | Write emails to disk instead of using the SMTP server. |
+| `DEBUG_EMAIL_DIR` |               | Write emails to disk instead of using the SMTP server. |
