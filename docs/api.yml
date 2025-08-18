@@ -3177,21 +3177,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/health_json_ok'
-              examples:
-                PassingJSONHealthCheck:
-                  value:
-                    DatabaseBackend:
-                      status: 200
-                      message: working
-                      critical_service: true
-                  summary: Passing JSON Health Check
-                FailingJSONHealthCheck:
-                  value:
-                    DatabaseBackend:
-                      status: 500
-                      message: database unreachable
-                      critical_service: true
-                  summary: Failing JSON Health Check
           description: ''
   /health/prom/:
     get:
@@ -3208,19 +3193,6 @@ paths:
             text/plain:
               schema:
                 type: string
-              examples:
-                PassingPrometheusHealthCheck:
-                  value: |-
-                    # HELP DatabaseBackend health_check.db.backendsDatabaseBackend
-                    # TYPE DatabaseBackend gauge
-                    DatabaseBackend{critical_service="True",message="working"} 200.0
-                  summary: Passing Prometheus Health Check
-                FailingPrometheusHealthCheck:
-                  value: |-
-                    # HELP DatabaseBackend health_check.db.backendsDatabaseBackend
-                    # TYPE DatabaseBackend gauge
-                    DatabaseBackend{critical_service="True",message="database unreachable"} 500.0
-                  summary: Failing Prometheus Health Check
           description: ''
   /logs/apps/:
     get:
@@ -5041,7 +5013,7 @@ paths:
   /metrics/:
     get:
       operationId: metrics_retrieve
-      description: Returns runtime metrics in Prometheus format.
+      description: Returns Prometheus-formatted metrics for application monitoring.
       summary: Retrieve application metrics.
       tags:
       - Admin - Metrics
@@ -7813,10 +7785,6 @@ paths:
             text/plain:
               schema:
                 type: string
-              examples:
-                VersionNumber:
-                  value: 1.2.3
-                  summary: Version Number
           description: ''
 components:
   schemas:

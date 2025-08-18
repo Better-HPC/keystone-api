@@ -111,28 +111,6 @@ class HealthCheckView(BaseHealthCheckView):
                     })
             })
         },
-        examples=[
-            OpenApiExample(
-                name='Passing JSON Health Check',
-                value={
-                    "DatabaseBackend": {
-                        "status": 200,
-                        "message": "working",
-                        "critical_service": True
-                    }
-                }
-            ),
-            OpenApiExample(
-                name='Failing JSON Health Check',
-                value={
-                    "DatabaseBackend": {
-                        "status": 500,
-                        "message": "database unreachable",
-                        "critical_service": True
-                    }
-                },
-            )
-        ]
     )
 )
 class HealthCheckJsonView(BaseHealthCheckView):
@@ -176,26 +154,6 @@ class HealthCheckJsonView(BaseHealthCheckView):
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
         },
-        examples=[
-            OpenApiExample(
-                name="Passing Prometheus Health Check",
-                media_type="text/plain",
-                value=(
-                    "# HELP DatabaseBackend health_check.db.backendsDatabaseBackend\n"
-                    "# TYPE DatabaseBackend gauge\n"
-                    "DatabaseBackend{critical_service=\"True\",message=\"working\"} 200.0"
-                )
-            ),
-            OpenApiExample(
-                name="Failing Prometheus Health Check",
-                media_type="text/plain",
-                value=(
-                    "# HELP DatabaseBackend health_check.db.backendsDatabaseBackend\n"
-                    "# TYPE DatabaseBackend gauge\n"
-                    "DatabaseBackend{critical_service=\"True\",message=\"database unreachable\"} 500.0"
-                )
-            )
-        ]
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):
