@@ -94,7 +94,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         tags=["Research - Publications"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a publications.",
+        summary="Retrieve a publication.",
         description=(
             "Returns a single publications by its ID. "
             "Users may only access records for teams they belong to."
@@ -102,7 +102,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         tags=["Research - Publications"],
     ),
     create=extend_schema(
-        summary="Create a publications.",
+        summary="Create a publication.",
         description=(
             "Create a new publications. "
             "Users may only create records for teams they belong to."
@@ -110,7 +110,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         tags=["Research - Publications"],
     ),
     update=extend_schema(
-        summary="Update a publications.",
+        summary="Update a publication.",
         description=(
             "Replaces an existing publications with new values. "
             "Users may only modify records for teams they belong to."
@@ -118,7 +118,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         tags=["Research - Publications"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a publications.",
+        summary="Partially update a publication.",
         description=(
             "Partially update an existing publications with new values. "
             "Users may only modify records for teams they belong to."
@@ -126,7 +126,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         tags=["Research - Publications"],
     ),
     destroy=extend_schema(
-        summary="Delete a publications.",
+        summary="Delete a publication.",
         description=(
             "Deletes a single publications by its ID. "
             "Users may only delete records for teams they belong to."

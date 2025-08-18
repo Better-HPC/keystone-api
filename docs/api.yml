@@ -5053,8 +5053,9 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Returns all notifications visible to the current user.
-      summary: List all notifications
+      description: Returns a list of notifications for the current user. Administrators
+        are returned all notifications regardless of recipient.
+      summary: List all notifications.
       parameters:
       - name: _order
         required: false
@@ -5318,8 +5319,9 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Returns a single notification by ID.
-      summary: Retrieve a notification
+      description: Returns a single notification by its ID. General users may only
+        access their own notifications. Administrators can access any notification.
+      summary: Retrieve a notification.
       parameters:
       - in: path
         name: id
@@ -5341,9 +5343,9 @@ paths:
           description: ''
     patch:
       operationId: notifications_notifications_partial_update
-      description: Update a notifications `read` status. All other fields are read
-        only.
-      summary: Update a notification's read status
+      description: Updates the `read` status of a notification. General users may
+        only update their own notifications. Administrators can update any notification.
+      summary: Partially update a notification.
       parameters:
       - in: path
         name: id
@@ -6492,7 +6494,7 @@ paths:
       operationId: research_publications_create
       description: Create a new publications. Users may only create records for teams
         they belong to.
-      summary: Create a publications.
+      summary: Create a publication.
       tags:
       - Research - Publications
       requestBody:
@@ -6522,7 +6524,7 @@ paths:
       operationId: research_publications_retrieve
       description: Returns a single publications by its ID. Users may only access
         records for teams they belong to.
-      summary: Retrieve a publications.
+      summary: Retrieve a publication.
       parameters:
       - in: path
         name: id
@@ -6546,7 +6548,7 @@ paths:
       operationId: research_publications_update
       description: Replaces an existing publications with new values. Users may only
         modify records for teams they belong to.
-      summary: Update a publications.
+      summary: Update a publication.
       parameters:
       - in: path
         name: id
@@ -6582,7 +6584,7 @@ paths:
       operationId: research_publications_partial_update
       description: Partially update an existing publications with new values. Users
         may only modify records for teams they belong to.
-      summary: Partially update a publications.
+      summary: Partially update a publication.
       parameters:
       - in: path
         name: id
@@ -6617,7 +6619,7 @@ paths:
       operationId: research_publications_destroy
       description: Deletes a single publications by its ID. Users may only delete
         records for teams they belong to.
-      summary: Delete a publications.
+      summary: Delete a publication.
       parameters:
       - in: path
         name: id
