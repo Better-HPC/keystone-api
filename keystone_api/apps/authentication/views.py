@@ -59,7 +59,7 @@ class LogoutView(GenericAPIView):
 
     @extend_schema(
         summary="Terminate an active user session.",
-        description="Terminates the active user sessions and invalidates and associated tokens.",
+        description="Terminates the authenticated user session and invalidates associated tokens.",
         tags=["Authentication"]
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover

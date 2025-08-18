@@ -28,8 +28,8 @@ __all__ = [
 
 @extend_schema_view(  # pragma: nocover
     get=extend_schema(
-        summary="Retrieve valid team role options",
-        description="Retrieve valid team `role` options with human-readable labels.",
+        summary="Retrieve valid team role options.",
+        description="Returns valid choices for the team `role` field mapped to human-readable labels.",
         tags=["Users - Team Membership"],
         responses=inline_serializer(
             name="MembershipRoleChoices",
@@ -142,23 +142,27 @@ class TeamViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all users",
-        description="Retrieve all user accounts.",
+        summary="List all users.",
+        description="Returns a list of all user accounts.",
         tags=["Users - Accounts"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a user",
-        description="Retrieve a single user account by ID.",
+        summary="Retrieve a user.",
+        description="Returns a single user account by its ID.",
         tags=["Users - Accounts"],
     ),
     create=extend_schema(
-        summary="Create a user",
-        description="Create a new user account.",
+        summary="Create a user.",
+        description="Create a new user account. This action is limited to admin users.",
         tags=["Users - Accounts"],
     ),
     update=extend_schema(
-        summary="Update a user",
-        description="Replace an existing user account with new values.",
+        summary="Update a user.",
+        description=(
+            "Replace an existing user account with new values. "
+            "This action is limited to admin users and users modifying their own user record. "
+            "General users are limited to modifying "
+        ),
         tags=["Users - Accounts"],
     ),
     partial_update=extend_schema(

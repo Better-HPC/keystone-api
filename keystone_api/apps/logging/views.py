@@ -27,7 +27,7 @@ __all__ = [
         description=(
             "Returns a list of application logs. "
             "Application logs capture internal system messages used to debug application behavior. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     ),
@@ -36,7 +36,7 @@ __all__ = [
         description=(
             "Returns a single application log by its ID. "
             "Application logs capture internal system messages used to debug application behavior. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     )
@@ -56,7 +56,7 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a list of audit logs. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     ),
@@ -65,7 +65,7 @@ class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a single audit log by its ID. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     )
@@ -85,7 +85,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a list of HTTP request logs. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     ),
@@ -94,7 +94,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a single HTTP request log by its ID. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     )
@@ -114,7 +114,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a list of task logs. "
             "Task logs are collected from the Celery backend to track background task outcomes. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     ),
@@ -123,7 +123,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a single task log by its ID. "
             "Task logs are collected from the Celery backend to track background task outcomes. "
-            "Access to log records is restricted to admin users."
+            "Access to log records is restricted to staff users."
         ),
         tags=["Admin - Logging"],
     )

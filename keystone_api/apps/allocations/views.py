@@ -36,8 +36,8 @@ __all__ = [
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Retrieve valid request status options",
-        description="Retrieve valid allocation request `status` options with human-readable labels.",
+        summary="Retrieve valid request status options.",
+        description="Returns valid choices for the request `status` field mapped to human-readable labels.",
         tags=["Allocations - Requests"],
         responses=inline_serializer(
             name="AllocationRequestStatusChoices",
@@ -55,32 +55,50 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
 @extend_schema_view(
     list=extend_schema(
         summary="List all allocation requests",
-        description="Retrieve all allocation requests visible to the current user.",
+        description=(
+            "Returns a list of all allocation requests belonging to teams where the user is a member. "
+            "Administrators are returned all records regardless of the parent team."
+        ),
         tags=["Allocations - Requests"],
     ),
     retrieve=extend_schema(
         summary="Retrieve an allocation request",
-        description="Retrieve a single allocation request by ID.",
+        description=(
+            "Returns a single allocation request by its ID. "
+            "Users can only access records for teams they belong to."
+        ),
         tags=["Allocations - Requests"],
     ),
     create=extend_schema(
         summary="Create an allocation request",
-        description="Create a new allocation request for review.",
+        description=(
+            "Create a new allocation request. "
+            "Users can only create records for teams where they are an administrator."
+        ),
         tags=["Allocations - Requests"],
     ),
     update=extend_schema(
         summary="Update an allocation request",
-        description="Replace an existing allocation request with new values.",
+        description=(
+            "Replaces an existing allocation request with new values. "
+            "Users can only modify records for teams where they are an administrator."
+        ),
         tags=["Allocations - Requests"],
     ),
     partial_update=extend_schema(
         summary="Partially update an allocation request",
-        description="Apply a partial update to an existing allocation request.",
+        description=(
+            "Partially update an existing research grant with new values. "
+            "Users can only modify records for teams where they are an administrator."
+        ),
         tags=["Allocations - Requests"],
     ),
     destroy=extend_schema(
         summary="Delete an allocation request",
-        description="Delete an allocation request by ID.",
+        description=(
+            "Deletes a single research grant by its ID. "
+            "Users can only delete records for teams where they are an administrator."
+        ),
         tags=["Allocations - Requests"],
     ),
 )
@@ -237,32 +255,55 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(
         summary="List all file attachments",
-        description="Retrieve metadata for all file attachments visible to the current user.",
+        description=(
+            "Returns a list of file attachments on allocation requests from teams the user belongs to. "
+            "Staff users are returned all attachments regardless of the parent team."
+        ),
         tags=["Allocations - Request Attachments"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a file attachment",
-        description="Retrieve metadata for a single file attachment by ID.",
+        description=(
+            "Returns a single file attachment by its ID. "
+            "General users can only access attachments on requests from teams they belong to. "
+            "Staff users can access any attachment."
+        ),
         tags=["Allocations - Request Attachments"],
     ),
     create=extend_schema(
         summary="Create a file attachment",
-        description="Create a new file attachment.",
+        description=(
+            "Creates a new file attachment on an allocation request. "
+            "General users can only create attachments on requests from teams they belong to. "
+            "Staff users can create attachments on any request."
+        ),
         tags=["Allocations - Request Attachments"],
     ),
     update=extend_schema(
         summary="Update a file attachment",
-        description="Replace metadata for an existing file attachment with new values.",
+        description=(
+            "Replaces an existing file attachment with new values. "
+            "General users can only modify attachments on requests from teams they belong to. "
+            "Staff users can modify any attachment."
+        ),
         tags=["Allocations - Request Attachments"],
     ),
     partial_update=extend_schema(
         summary="Partially update a file attachment",
-        description="Apply a partial update to metadata for an existing file attachment.",
+        description=(
+            "Partially updates an existing file attachment with new values. "
+            "General users can only modify attachments on requests from teams they belong to. "
+            "Staff users can modify any attachment."
+        ),
         tags=["Allocations - Request Attachments"],
     ),
     destroy=extend_schema(
         summary="Delete a file attachment",
-        description="Delete a file attachment and its metadata by ID.",
+        description=(
+            "Deletes a file attachment by its ID. "
+            "General users only delete attachments on requests from teams they belong to. "
+            "Staff users can delete any attachment."
+        ),
         tags=["Allocations - Request Attachments"],
     ),
 )
@@ -295,22 +336,34 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
     create=extend_schema(
         summary="Create an HPC cluster",
-        description="Create a new HPC cluster.",
+        description=(
+            "Create a new HPC cluster. "
+            "New HPC clusters can only be created by staff users."
+        ),
         tags=["Allocations - Clusters"],
     ),
     update=extend_schema(
         summary="Update an HPC cluster",
-        description="Replace an existing HPC cluster with new values.",
+        description=(
+            "Replace an existing HPC cluster with new values. "
+            "HPC clusters can only be modified by staff users."
+        ),
         tags=["Allocations - Clusters"],
     ),
     partial_update=extend_schema(
         summary="Partially update an HPC cluster",
-        description="Apply a partial update to an existing HPC cluster.",
+        description=(
+            "Apply a partial update to an existing HPC cluster. "
+            "HPC clusters can only be modified by staff users."
+        ),
         tags=["Allocations - Clusters"],
     ),
     destroy=extend_schema(
         summary="Delete an HPC cluster",
-        description="Delete an HPC cluster by ID.",
+        description=(
+            "Delete an HPC cluster by ID. "
+            "HPC clusters can only be deleted by staff users."
+        ),
         tags=["Allocations - Clusters"],
     ),
 )
@@ -325,33 +378,56 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all comments",
-        description="Retrieve all comments visible to the current user.",
+        summary="List all comments.",
+        description=(
+            "Returns a list of comments made on allocation requests from teams the user belongs to. "
+            "Staff users are returned all comments regardless of the parent team."
+        ),
         tags=["Allocations - Request Comments"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a comment",
-        description="Retrieve a single comment by ID.",
+        summary="Retrieve a comment.",
+        description=(
+            "Returns a single comment by its ID. "
+            "General users can only access comments on requests from teams they belong to. "
+            "Staff users can access any comment."
+        ),
         tags=["Allocations - Request Comments"],
     ),
     create=extend_schema(
-        summary="Create a comment",
-        description="Create a new comment.",
+        summary="Create a comment.",
+        description=(
+            "Creates a new comment on an allocation request. "
+            "General users can only create comments on requests from teams they belong to. "
+            "Staff users can create comments on any request."
+        ),
         tags=["Allocations - Request Comments"],
     ),
     update=extend_schema(
-        summary="Update a comment",
-        description="Replace an existing comment with new values.",
+        summary="Update a comment.",
+        description=(
+            "Replaces an existing comment with new values. "
+            "General users can only modify comments on requests from teams they belong to. "
+            "Staff users can modify any comment."
+        ),
         tags=["Allocations - Request Comments"],
     ),
     partial_update=extend_schema(
         summary="Partially update a comment",
-        description="Apply a partial update to an existing comment.",
+        description=(
+            "Partially updates an existing comment with new values. "
+            "General users can only modify comments on requests from teams they belong to. "
+            "Staff users can modify any comment."
+        ),
         tags=["Allocations - Request Comments"],
     ),
     destroy=extend_schema(
         summary="Delete a comment",
-        description="Delete a comment and its metadata by ID.",
+        description=(
+            "Deletes a comment by its ID. "
+            "General users only delete comments on requests from teams they belong to. "
+            "Staff users can delete any comment."
+        ),
         tags=["Allocations - Request Comments"],
     ),
 )
@@ -374,13 +450,20 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all user Slurm jobs",
-        description="Retrieve status information for all Slurm jobs visible to the current user.",
+        summary="List all user Slurm jobs.",
+        description=(
+            "Returns a list of all Slurm jobs belonging to teams where the user is a member. "
+            "Staff users are returned all records regardless of the parent team."
+        ),
         tags=["Allocations - User Jobs"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a user Slurm job",
-        description="Retrieve status information for a single slurm job by ID.",
+        summary="Retrieve a user Slurm job.",
+        description=(
+            "Returns a single Slurm job by its ID. "
+            "Users can only access records for teams they belong to. "
+            "Staff users can access all records."
+        ),
         tags=["Allocations - User Jobs"],
     )
 )

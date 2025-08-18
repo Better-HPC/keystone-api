@@ -28,7 +28,7 @@ __all__ = [
 @extend_schema_view(
     get=extend_schema(
         summary="Retrieve valid notification types.",
-        description="Returns the valid choices for the notification `type` field mapped to human-readable labels.",
+        description="Returns valid choices for the notification `type` field mapped to human-readable labels.",
         tags=["Notifications - Notifications"],
         responses=inline_serializer(
             name="NotificationTypeChoices",
@@ -53,7 +53,7 @@ class NotificationTypeChoicesView(GenericAPIView):
         summary="List all notifications.",
         description=(
             "Returns a list of notifications for the current user. "
-            "Administrators are returned all notifications regardless of recipient."
+            "Staff users are returned all notifications regardless of recipient."
         ),
         tags=["Notifications - Notifications"],
     ),
@@ -61,8 +61,8 @@ class NotificationTypeChoicesView(GenericAPIView):
         summary="Retrieve a notification.",
         description=(
             "Returns a single notification by its ID. "
-            "General users may only access their own notifications. "
-            "Administrators can access any notification."
+            "General users can only access their own notifications. "
+            "Staff users can access notifications for any user."
         ),
         tags=["Notifications - Notifications"],
     ),
@@ -70,8 +70,8 @@ class NotificationTypeChoicesView(GenericAPIView):
         summary="Partially update a notification.",
         description=(
             "Updates the `read` status of a notification. "
-            "General users may only update their own notifications. "
-            "Administrators can update any notification."
+            "General users can only modify their own notifications. "
+            "Staff users can modify notifications for any user."
         ),
         tags=["Notifications - Notifications"],
     ),
@@ -91,7 +91,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="List all notification preferences",
         description=(
             "Returns all notification preferences for the current user. "
-            "Administrators are returned all user preferences."
+            "Staff users are returned all user preferences."
         ),
         tags=["Notifications - Preferences"],
     ),
@@ -99,8 +99,8 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve a notification preference.",
         description=(
             "Returns a single notification preference by its ID. "
-            "General users may only access their own preferences. "
-            "Administrators can access any preference."
+            "General users can only access their own preferences. "
+            "Staff users can access preferences for any user."
         ),
         tags=["Notifications - Preferences"],
     ),
@@ -108,8 +108,8 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Create a custom notification preference.",
         description=(
             "Creates a custom notification preference in leu of application defaults. "
-            "General users may only create preferences for themselves. "
-            "Administrators can create preferences for any user."
+            "General users can only create preferences for themselves. "
+            "Staff users can create preferences for any user."
         ),
         tags=["Notifications - Preferences"],
     ),
@@ -117,17 +117,17 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Update a notification preference.",
         description=(
             "Replaces an existing notification preference with new values. "
-            "General users may only modify their own preferences. "
-            "Administrators can modify any preference."
+            "General users can only modify their own preferences. "
+            "Staff users can modify preferences for any user."
         ),
         tags=["Notifications - Preferences"],
     ),
     partial_update=extend_schema(
         summary="Partially update a notification preference.",
         description=(
-            "Applies a partial update to an existing notification preference. "
-            "General users may only modify their own preferences. "
-            "Administrators can modify any preference."
+            "Partially updates an existing notification preference with new values. "
+            "General users can only modify their own preferences. "
+            "Staff users can modify preferences for any user."
         ),
         tags=["Notifications - Preferences"],
     ),
@@ -135,8 +135,8 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Delete a notification preference.",
         description=(
             "Deletes a single notification preference by its ID, restoring default settings. "
-            "General users may only delete their own preferences. "
-            "Administrators can delete any preference. "
+            "General users can only delete their own preferences. "
+            "Staff users can delete preferences for any user. "
         ),
         tags=["Notifications - Preferences"],
     ),

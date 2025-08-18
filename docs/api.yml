@@ -345,8 +345,9 @@ paths:
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Retrieve metadata for all file attachments visible to the current
-        user.
+      description: Returns a list of file attachments on allocation requests from
+        teams the user belongs to. Staff users are returned all attachments regardless
+        of the parent team.
       summary: List all file attachments
       parameters:
       - name: _order
@@ -527,7 +528,9 @@ paths:
           description: ''
     post:
       operationId: allocations_attachments_create
-      description: Create a new file attachment.
+      description: Creates a new file attachment on an allocation request. General
+        users can only create attachments on requests from teams they belong to. Staff
+        users can create attachments on any request.
       summary: Create a file attachment
       tags:
       - Allocations - Request Attachments
@@ -556,7 +559,9 @@ paths:
   /allocations/attachments/{id}/:
     get:
       operationId: allocations_attachments_retrieve
-      description: Retrieve metadata for a single file attachment by ID.
+      description: Returns a single file attachment by its ID. General users can only
+        access attachments on requests from teams they belong to. Staff users can
+        access any attachment.
       summary: Retrieve a file attachment
       parameters:
       - in: path
@@ -579,7 +584,9 @@ paths:
           description: ''
     put:
       operationId: allocations_attachments_update
-      description: Replace metadata for an existing file attachment with new values.
+      description: Replaces an existing file attachment with new values. General users
+        can only modify attachments on requests from teams they belong to. Staff users
+        can modify any attachment.
       summary: Update a file attachment
       parameters:
       - in: path
@@ -614,7 +621,9 @@ paths:
           description: ''
     patch:
       operationId: allocations_attachments_partial_update
-      description: Apply a partial update to metadata for an existing file attachment.
+      description: Partially updates an existing file attachment with new values.
+        General users can only modify attachments on requests from teams they belong
+        to. Staff users can modify any attachment.
       summary: Partially update a file attachment
       parameters:
       - in: path
@@ -648,7 +657,9 @@ paths:
           description: ''
     delete:
       operationId: allocations_attachments_destroy
-      description: Delete a file attachment and its metadata by ID.
+      description: Deletes a file attachment by its ID. General users only delete
+        attachments on requests from teams they belong to. Staff users can delete
+        any attachment.
       summary: Delete a file attachment
       parameters:
       - in: path
@@ -807,7 +818,8 @@ paths:
           description: ''
     post:
       operationId: allocations_clusters_create
-      description: Create a new HPC cluster.
+      description: Create a new HPC cluster. New HPC clusters can only be created
+        by staff users.
       summary: Create an HPC cluster
       tags:
       - Allocations - Clusters
@@ -859,7 +871,8 @@ paths:
           description: ''
     put:
       operationId: allocations_clusters_update
-      description: Replace an existing HPC cluster with new values.
+      description: Replace an existing HPC cluster with new values. HPC clusters can
+        only be modified by staff users.
       summary: Update an HPC cluster
       parameters:
       - in: path
@@ -894,7 +907,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_clusters_partial_update
-      description: Apply a partial update to an existing HPC cluster.
+      description: Apply a partial update to an existing HPC cluster. HPC clusters
+        can only be modified by staff users.
       summary: Partially update an HPC cluster
       parameters:
       - in: path
@@ -928,7 +942,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_clusters_destroy
-      description: Delete an HPC cluster by ID.
+      description: Delete an HPC cluster by ID. HPC clusters can only be deleted by
+        staff users.
       summary: Delete an HPC cluster
       parameters:
       - in: path
@@ -948,8 +963,10 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Retrieve all comments visible to the current user.
-      summary: List all comments
+      description: Returns a list of comments made on allocation requests from teams
+        the user belongs to. Staff users are returned all comments regardless of the
+        parent team.
+      summary: List all comments.
       parameters:
       - name: _order
         required: false
@@ -1163,8 +1180,10 @@ paths:
           description: ''
     post:
       operationId: allocations_comments_create
-      description: Create a new comment.
-      summary: Create a comment
+      description: Creates a new comment on an allocation request. General users can
+        only create comments on requests from teams they belong to. Staff users can
+        create comments on any request.
+      summary: Create a comment.
       tags:
       - Allocations - Request Comments
       requestBody:
@@ -1192,8 +1211,10 @@ paths:
   /allocations/comments/{id}/:
     get:
       operationId: allocations_comments_retrieve
-      description: Retrieve a single comment by ID.
-      summary: Retrieve a comment
+      description: Returns a single comment by its ID. General users can only access
+        comments on requests from teams they belong to. Staff users can access any
+        comment.
+      summary: Retrieve a comment.
       parameters:
       - in: path
         name: id
@@ -1215,8 +1236,10 @@ paths:
           description: ''
     put:
       operationId: allocations_comments_update
-      description: Replace an existing comment with new values.
-      summary: Update a comment
+      description: Replaces an existing comment with new values. General users can
+        only modify comments on requests from teams they belong to. Staff users can
+        modify any comment.
+      summary: Update a comment.
       parameters:
       - in: path
         name: id
@@ -1250,7 +1273,9 @@ paths:
           description: ''
     patch:
       operationId: allocations_comments_partial_update
-      description: Apply a partial update to an existing comment.
+      description: Partially updates an existing comment with new values. General
+        users can only modify comments on requests from teams they belong to. Staff
+        users can modify any comment.
       summary: Partially update a comment
       parameters:
       - in: path
@@ -1284,7 +1309,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_comments_destroy
-      description: Delete a comment and its metadata by ID.
+      description: Deletes a comment by its ID. General users only delete comments
+        on requests from teams they belong to. Staff users can delete any comment.
       summary: Delete a comment
       parameters:
       - in: path
@@ -1304,9 +1330,10 @@ paths:
   /allocations/jobs/:
     get:
       operationId: allocations_jobs_list
-      description: Retrieve status information for all Slurm jobs visible to the current
-        user.
-      summary: List all user Slurm jobs
+      description: Returns a list of all Slurm jobs belonging to teams where the user
+        is a member. Staff users are returned all records regardless of the parent
+        team.
+      summary: List all user Slurm jobs.
       parameters:
       - name: _order
         required: false
@@ -2159,8 +2186,9 @@ paths:
   /allocations/jobs/{id}/:
     get:
       operationId: allocations_jobs_retrieve
-      description: Retrieve status information for a single slurm job by ID.
-      summary: Retrieve a user Slurm job
+      description: Returns a single Slurm job by its ID. Users can only access records
+        for teams they belong to. Staff users can access all records.
+      summary: Retrieve a user Slurm job.
       parameters:
       - in: path
         name: id
@@ -2183,9 +2211,9 @@ paths:
   /allocations/request-choices/status/:
     get:
       operationId: allocations_request_choices_status_retrieve
-      description: Retrieve valid allocation request `status` options with human-readable
-        labels.
-      summary: Retrieve valid request status options
+      description: Returns valid choices for the request `status` field mapped to
+        human-readable labels.
+      summary: Retrieve valid request status options.
       tags:
       - Allocations - Requests
       security:
@@ -2201,7 +2229,9 @@ paths:
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Retrieve all allocation requests visible to the current user.
+      description: Returns a list of all allocation requests belonging to teams where
+        the user is a member. Administrators are returned all records regardless of
+        the parent team.
       summary: List all allocation requests
       parameters:
       - name: _order
@@ -2585,7 +2615,8 @@ paths:
           description: ''
     post:
       operationId: allocations_requests_create
-      description: Create a new allocation request for review.
+      description: Create a new allocation request. Users can only create records
+        for teams where they are an administrator.
       summary: Create an allocation request
       tags:
       - Allocations - Requests
@@ -2614,7 +2645,8 @@ paths:
   /allocations/requests/{id}/:
     get:
       operationId: allocations_requests_retrieve
-      description: Retrieve a single allocation request by ID.
+      description: Returns a single allocation request by its ID. Users can only access
+        records for teams they belong to.
       summary: Retrieve an allocation request
       parameters:
       - in: path
@@ -2637,7 +2669,8 @@ paths:
           description: ''
     put:
       operationId: allocations_requests_update
-      description: Replace an existing allocation request with new values.
+      description: Replaces an existing allocation request with new values. Users
+        can only modify records for teams where they are an administrator.
       summary: Update an allocation request
       parameters:
       - in: path
@@ -2672,7 +2705,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_requests_partial_update
-      description: Apply a partial update to an existing allocation request.
+      description: Partially update an existing research grant with new values. Users
+        can only modify records for teams where they are an administrator.
       summary: Partially update an allocation request
       parameters:
       - in: path
@@ -2706,7 +2740,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_requests_destroy
-      description: Delete an allocation request by ID.
+      description: Deletes a single research grant by its ID. Users can only delete
+        records for teams where they are an administrator.
       summary: Delete an allocation request
       parameters:
       - in: path
@@ -3118,7 +3153,7 @@ paths:
   /authentication/logout/:
     post:
       operationId: authentication_logout_create
-      description: Terminates the active user sessions and invalidates and associated
+      description: Terminates the authenticated user session and invalidates associated
         tokens.
       summary: Terminate an active user session.
       tags:
@@ -3199,7 +3234,7 @@ paths:
       operationId: logs_apps_list
       description: Returns a list of application logs. Application logs capture internal
         system messages used to debug application behavior. Access to log records
-        is restricted to admin users.
+        is restricted to staff users.
       summary: List all application logs.
       parameters:
       - name: _order
@@ -3544,7 +3579,7 @@ paths:
       operationId: logs_apps_retrieve
       description: Returns a single application log by its ID. Application logs capture
         internal system messages used to debug application behavior. Access to log
-        records is restricted to admin users.
+        records is restricted to staff users.
       summary: Retrieve a single application log.
       parameters:
       - in: path
@@ -3570,7 +3605,7 @@ paths:
       operationId: logs_audit_list
       description: Returns a list of audit logs. Audit logs track changes to database
         records and are used for compliance and security auditing. Access to log records
-        is restricted to admin users.
+        is restricted to staff users.
       summary: List all audit logs.
       parameters:
       - name: _order
@@ -4013,7 +4048,7 @@ paths:
       operationId: logs_audit_retrieve
       description: Returns a single audit log by its ID. Audit logs track changes
         to database records and are used for compliance and security auditing. Access
-        to log records is restricted to admin users.
+        to log records is restricted to staff users.
       summary: Retrieve a single audit log.
       parameters:
       - in: path
@@ -4039,7 +4074,7 @@ paths:
       operationId: logs_requests_list
       description: Returns a list of HTTP request logs. Request logs track incoming
         API requests and their resulting HTTP responses. Access to log records is
-        restricted to admin users.
+        restricted to staff users.
       summary: List all HTTP request logs.
       parameters:
       - name: _order
@@ -4343,7 +4378,7 @@ paths:
       operationId: logs_requests_retrieve
       description: Returns a single HTTP request log by its ID. Request logs track
         incoming API requests and their resulting HTTP responses. Access to log records
-        is restricted to admin users.
+        is restricted to staff users.
       summary: Retrieve a single HTTP request log.
       parameters:
       - in: path
@@ -4369,7 +4404,7 @@ paths:
       operationId: logs_tasks_list
       description: Returns a list of task logs. Task logs are collected from the Celery
         backend to track background task outcomes. Access to log records is restricted
-        to admin users.
+        to staff users.
       summary: List all background task results.
       parameters:
       - name: _order
@@ -4997,7 +5032,7 @@ paths:
       operationId: logs_tasks_retrieve
       description: Returns a single task log by its ID. Task logs are collected from
         the Celery backend to track background task outcomes. Access to log records
-        is restricted to admin users.
+        is restricted to staff users.
       summary: Retrieve a single background task result.
       parameters:
       - in: path
@@ -5035,7 +5070,7 @@ paths:
   /notifications/notification-choices/type:
     get:
       operationId: notifications_notification_choices_type_retrieve
-      description: Returns the valid choices for the notification `type` field mapped
+      description: Returns valid choices for the notification `type` field mapped
         to human-readable labels.
       summary: Retrieve valid notification types.
       tags:
@@ -5053,7 +5088,7 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Returns a list of notifications for the current user. Administrators
+      description: Returns a list of notifications for the current user. Staff users
         are returned all notifications regardless of recipient.
       summary: List all notifications.
       parameters:
@@ -5319,8 +5354,9 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Returns a single notification by its ID. General users may only
-        access their own notifications. Administrators can access any notification.
+      description: Returns a single notification by its ID. General users can only
+        access their own notifications. Staff users can access notifications for any
+        user.
       summary: Retrieve a notification.
       parameters:
       - in: path
@@ -5343,8 +5379,9 @@ paths:
           description: ''
     patch:
       operationId: notifications_notifications_partial_update
-      description: Updates the `read` status of a notification. General users may
-        only update their own notifications. Administrators can update any notification.
+      description: Updates the `read` status of a notification. General users can
+        only modify their own notifications. Staff users can modify notifications
+        for any user.
       summary: Partially update a notification.
       parameters:
       - in: path
@@ -5379,8 +5416,8 @@ paths:
   /notifications/preferences/:
     get:
       operationId: notifications_preferences_list
-      description: Returns all notification preferences for the current user. Administrators
-        are returned all user preferences.
+      description: Returns all notification preferences for the current user. Staff
+        users are returned all user preferences.
       summary: List all notification preferences
       parameters:
       - name: _order
@@ -5462,8 +5499,8 @@ paths:
     post:
       operationId: notifications_preferences_create
       description: Creates a custom notification preference in leu of application
-        defaults. General users may only create preferences for themselves. Administrators
-        can create preferences for any user.
+        defaults. General users can only create preferences for themselves. Staff
+        users can create preferences for any user.
       summary: Create a custom notification preference.
       tags:
       - Notifications - Preferences
@@ -5492,7 +5529,8 @@ paths:
     get:
       operationId: notifications_preferences_retrieve
       description: Returns a single notification preference by its ID. General users
-        may only access their own preferences. Administrators can access any preference.
+        can only access their own preferences. Staff users can access preferences
+        for any user.
       summary: Retrieve a notification preference.
       parameters:
       - in: path
@@ -5516,8 +5554,8 @@ paths:
     put:
       operationId: notifications_preferences_update
       description: Replaces an existing notification preference with new values. General
-        users may only modify their own preferences. Administrators can modify any
-        preference.
+        users can only modify their own preferences. Staff users can modify preferences
+        for any user.
       summary: Update a notification preference.
       parameters:
       - in: path
@@ -5551,9 +5589,9 @@ paths:
           description: ''
     patch:
       operationId: notifications_preferences_partial_update
-      description: Applies a partial update to an existing notification preference.
-        General users may only modify their own preferences. Administrators can modify
-        any preference.
+      description: Partially updates an existing notification preference with new
+        values. General users can only modify their own preferences. Staff users can
+        modify preferences for any user.
       summary: Partially update a notification preference.
       parameters:
       - in: path
@@ -5588,8 +5626,8 @@ paths:
     delete:
       operationId: notifications_preferences_destroy
       description: 'Deletes a single notification preference by its ID, restoring
-        default settings. General users may only delete their own preferences. Administrators
-        can delete any preference. '
+        default settings. General users can only delete their own preferences. Staff
+        users can delete preferences for any user. '
       summary: Delete a notification preference.
       parameters:
       - in: path
@@ -5609,10 +5647,10 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Returns a list of all research grants belonging to teams where
-        the user is a member. Administrators are returned all records regardless of
-        the parent team
-      summary: List all research grants.
+      description: Returns a list of all funding grants belonging to teams where the
+        user is a member. Administrators are returned all records regardless of the
+        parent team.
+      summary: List all funding grants.
       parameters:
       - name: _order
         required: false
@@ -5963,9 +6001,9 @@ paths:
           description: ''
     post:
       operationId: research_grants_create
-      description: Create a new research grant. Users may only create records for
-        teams they belong to.
-      summary: Create a research grant.
+      description: Create a new funding grant. General users can only create records
+        for teams they belong to. Staff users can create records for any team.
+      summary: Create a funding grant.
       tags:
       - Research - Grants
       requestBody:
@@ -5993,9 +6031,10 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Returns a single research grant by its ID. Users may only access
-        records for teams they belong to.
-      summary: Retrieve a research grant.
+      description: Returns a single funding grant by its ID. General users can only
+        access records for teams they belong to. Staff users can access records for
+        any team.
+      summary: Retrieve a funding grant.
       parameters:
       - in: path
         name: id
@@ -6017,9 +6056,10 @@ paths:
           description: ''
     put:
       operationId: research_grants_update
-      description: Replaces an existing research grant with new values. Users may
-        only modify records for teams they belong to.
-      summary: Update a research grant.
+      description: Replaces an existing funding grant with new values. General users
+        can only modify records for teams they belong to. Staff users can modify records
+        for any team.
+      summary: Update a funding grant.
       parameters:
       - in: path
         name: id
@@ -6053,9 +6093,10 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Partially update an existing research grant with new values. Users
-        may only modify records for teams they belong to.
-      summary: Partially update a research grant.
+      description: Partially update an existing funding grant with new values. General
+        users can only modify records for teams they belong to. Staff users can modify
+        records for any team.
+      summary: Partially update a funding grant.
       parameters:
       - in: path
         name: id
@@ -6088,9 +6129,10 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Deletes a single research grant by its ID. Users may only delete
-        records for teams they belong to.
-      summary: Delete a research grant.
+      description: Deletes a single funding grant by its ID. General users can only
+        delete records for teams they belong to. Staff users can delete records for
+        any team.
+      summary: Delete a funding grant.
       parameters:
       - in: path
         name: id
@@ -6110,8 +6152,8 @@ paths:
     get:
       operationId: research_publications_list
       description: Returns a list of all publications belonging to teams where the
-        user is a member. Administrators are returned all records regardless of the
-        parent team.
+        user is a member. Staff users are returned all records regardless of the parent
+        team.
       summary: List all publications.
       parameters:
       - name: _order
@@ -6501,8 +6543,8 @@ paths:
           description: ''
     post:
       operationId: research_publications_create
-      description: Create a new publication. Users may only create records for teams
-        they belong to.
+      description: Create a new publication. General users can only create records
+        for teams they belong to. Staff users can create records for any team.
       summary: Create a publication.
       tags:
       - Research - Publications
@@ -6531,8 +6573,9 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Returns a single publications by its ID. Users may only access
-        records for teams they belong to.
+      description: Returns a single publication by its ID. General users can only
+        access records for teams they belong to. Staff users can access records for
+        any team.
       summary: Retrieve a publication.
       parameters:
       - in: path
@@ -6555,8 +6598,9 @@ paths:
           description: ''
     put:
       operationId: research_publications_update
-      description: Replaces an existing publications with new values. Users may only
-        modify records for teams they belong to.
+      description: Replaces an existing publication with new values. General users
+        can only modify records for teams they belong to. Staff users can modify records
+        for any team.
       summary: Update a publication.
       parameters:
       - in: path
@@ -6591,8 +6635,9 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Partially update an existing publications with new values. Users
-        may only modify records for teams they belong to.
+      description: Partially update an existing publication with new values. General
+        users can only modify records for teams they belong to. Staff users can modify
+        records for any team.
       summary: Partially update a publication.
       parameters:
       - in: path
@@ -6626,8 +6671,9 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Deletes a single publications by its ID. Users may only delete
-        records for teams they belong to.
+      description: Deletes a single publication by its ID. General users can only
+        delete records for teams they belong to. Staff users can delete records for
+        any team.
       summary: Delete a publication.
       parameters:
       - in: path
@@ -6647,8 +6693,9 @@ paths:
   /users/membership-choices/role/:
     get:
       operationId: users_membership_choices_role_retrieve
-      description: Retrieve valid team `role` options with human-readable labels.
-      summary: Retrieve valid team role options
+      description: Returns valid choices for the team `role` field mapped to human-readable
+        labels.
+      summary: Retrieve valid team role options.
       tags:
       - Users - Team Membership
       security:
@@ -7191,8 +7238,8 @@ paths:
   /users/users/:
     get:
       operationId: users_users_list
-      description: Retrieve all user accounts.
-      summary: List all users
+      description: Returns a list of all user accounts.
+      summary: List all users.
       parameters:
       - name: _order
         required: false
@@ -7668,8 +7715,8 @@ paths:
           description: ''
     post:
       operationId: users_users_create
-      description: Create a new user account.
-      summary: Create a user
+      description: Create a new user account. This action is limited to admin users.
+      summary: Create a user.
       tags:
       - Users - Accounts
       requestBody:
@@ -7697,8 +7744,8 @@ paths:
   /users/users/{id}/:
     get:
       operationId: users_users_retrieve
-      description: Retrieve a single user account by ID.
-      summary: Retrieve a user
+      description: Returns a single user account by its ID.
+      summary: Retrieve a user.
       parameters:
       - in: path
         name: id
@@ -7720,8 +7767,10 @@ paths:
           description: ''
     put:
       operationId: users_users_update
-      description: Replace an existing user account with new values.
-      summary: Update a user
+      description: 'Replace an existing user account with new values. This action
+        is limited to admin users and users modifying their own user record. General
+        users are limited to modifying '
+      summary: Update a user.
       parameters:
       - in: path
         name: id
