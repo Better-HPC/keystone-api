@@ -1,13 +1,19 @@
 """Common tests for logging endpoints."""
 
+from abc import ABC, abstractmethod
+from typing import TypeVar
+
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
+TApiTestCase = TypeVar("TApiTestCase", bound=APITestCase)
 
-class LogEndpointPermissionTests(CustomAsserts):
-    """Test endpoint user permissions.
+
+class LogEndpointPermissionTestMixin(CustomAsserts, ABC):
+    """Mixin class used to define common tests for log endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
@@ -18,13 +24,18 @@ class LogEndpointPermissionTests(CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    def setUp(self) -> None:
+    @property
+    @abstractmethod
+    def endpoint(self: TApiTestCase) -> str:
+        """The API endpoint to test."""
+
+    def setUp(self: TApiTestCase) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-    def test_anonymous_user_permissions(self) -> None:
+    def test_anonymous_user_permissions(self: TApiTestCase) -> None:
         """Test unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
@@ -39,7 +50,7 @@ class LogEndpointPermissionTests(CustomAsserts):
             trace=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_authenticated_user_permissions(self) -> None:
+    def test_authenticated_user_permissions(self: TApiTestCase) -> None:
         """Verify authenticated users are returned a 403 status code for all request types."""
 
         self.client.force_authenticate(user=self.generic_user)
@@ -55,7 +66,7 @@ class LogEndpointPermissionTests(CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
-    def test_staff_user_permissions(self) -> None:
+    def test_staff_user_permissions(self: TApiTestCase) -> None:
         """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)

@@ -299,7 +299,7 @@ else:
 AUTH_USER_MODEL = "users.User"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
-PURGE_REMOVED_LDAP_USERS = env.bool("AUTH_LDAP_PURGE_REMOVED", False)
+AUTH_LDAP_PURGE_REMOVED = env.bool("AUTH_LDAP_PURGE_REMOVED", False)
 if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
     import ldap
     from django_auth_ldap.config import LDAPSearch

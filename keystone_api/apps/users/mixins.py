@@ -5,16 +5,17 @@ Each mixin defines a single, isolated piece of functionality and can be
 combined with other mixins or base view classes as needed.
 """
 
-from typing import Callable
+from typing import TypeVar
 
-from django.db.models import QuerySet
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import Serializer
+from rest_framework.viewsets import GenericViewSet
 
 from .models import Team
 
 __all__ = ['TeamScopedListMixin', 'UserScopedListMixin']
+
+TViewSet = TypeVar("TViewSet", bound=GenericViewSet)
 
 
 class TeamScopedListMixin:
@@ -28,11 +29,7 @@ class TeamScopedListMixin:
     # Can be overwritten by subclasses to match the relevant ForeignKey field in a request.
     team_field = 'team'
 
-    # Defined by DRF base classes
-    queryset: QuerySet
-    get_serializer: Callable[..., Serializer]
-
-    def list(self, request: Request) -> Response:
+    def list(self: TViewSet, request: Request) -> Response:
         """Return a list of serialized records filtered by user team permissions."""
 
         queryset = self.filter_queryset(self.get_queryset())
@@ -61,7 +58,7 @@ class UserScopedListMixin:
     # Can be overwritten by subclasses to match the relevant ForeignKey field in a request.
     user_field = 'user'
 
-    def list(self, request: Request, *args, **kwargs) -> Response:
+    def list(self: TViewSet, request: Request, *args, **kwargs) -> Response:
         """Return a list of serialized records filtered for the requesting user."""
 
         queryset = self.filter_queryset(self.get_queryset())

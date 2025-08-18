@@ -1,8 +1,7 @@
 """Unit tests for the `AllocationReviewSerializer` class."""
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from rest_framework.exceptions import ValidationError
-from rest_framework.test import APIRequestFactory
 
 from apps.allocations.models import AllocationRequest, AllocationReview
 from apps.allocations.serializers import AllocationReviewSerializer
@@ -34,8 +33,10 @@ class ValidateReviewerMethod(TestCase):
             data: The request data to be serialized.
         """
 
-        request = APIRequestFactory().post('/reviews/', data)
+        request = RequestFactory().post('/reviews/')
         request.user = requesting_user
+        request.data = data
+
         return AllocationReviewSerializer(data=data, context={'request': request})
 
     def test_reviewer_matches_submitter(self) -> None:

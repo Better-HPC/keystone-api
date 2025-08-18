@@ -35,4 +35,3 @@ class GetTeamMethod(TestCase):
         """Verify the `get_team` method returns the correct `Team` instance."""
 
         self.assertEqual(self.team, self.allocation_review.get_team())
-

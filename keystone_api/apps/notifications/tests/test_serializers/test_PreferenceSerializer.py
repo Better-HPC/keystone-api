@@ -1,8 +1,8 @@
 """Unit tests for the `PreferenceSerializer` class."""
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from rest_framework.exceptions import ValidationError
-from rest_framework.test import APIRequestFactory
+from rest_framework.request import Request
 
 from apps.notifications.serializers import PreferenceSerializer
 from apps.users.models import User
@@ -27,9 +27,10 @@ class ValidateUserMethod(TestCase):
             data: The data to be serialized.
         """
 
-        request = APIRequestFactory().post('/reviews/', data)
-        request.user = requesting_user
-        return PreferenceSerializer(data=data, context={'request': request})
+        django_request = RequestFactory().post('/reviews/', data)
+        api_request = Request(django_request)
+        api_request.user = requesting_user
+        return PreferenceSerializer(data=data, context={'request': api_request})
 
     def test_field_matches_submitter(self) -> None:
         """Verify validation passes when the user field equals the user submitting the HTTP request."""

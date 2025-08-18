@@ -1,5 +1,7 @@
 """Unit tests for the `AllocationManager` class."""
 
+from datetime import timedelta
+
 from django.test import TestCase
 from django.utils import timezone
 
@@ -22,7 +24,7 @@ class GetAllocationData(TestCase):
             team=self.team,
             status='PD',
             active=timezone.now().date(),
-            expire=timezone.now().date() + timezone.timedelta(days=30)
+            expire=timezone.now().date() + timedelta(days=30)
         )
         self.allocation1 = Allocation.objects.create(
             requested=100,
@@ -37,7 +39,7 @@ class GetAllocationData(TestCase):
             team=self.team,
             status='AP',
             active=timezone.now().date(),
-            expire=timezone.now().date() + timezone.timedelta(days=30)
+            expire=timezone.now().date() + timedelta(days=30)
         )
         self.allocation2 = Allocation.objects.create(
             requested=100,
@@ -51,8 +53,8 @@ class GetAllocationData(TestCase):
         self.request3 = AllocationRequest.objects.create(
             team=self.team,
             status='AP',
-            active=timezone.now().date() - timezone.timedelta(days=60),
-            expire=timezone.now().date() - timezone.timedelta(days=30)
+            active=timezone.now().date() - timedelta(days=60),
+            expire=timezone.now().date() - timedelta(days=30)
         )
         self.allocation3 = Allocation.objects.create(
             requested=100,
@@ -66,7 +68,7 @@ class GetAllocationData(TestCase):
         self.request4 = AllocationRequest.objects.create(
             team=self.team,
             status='AP',
-            active=timezone.now().date() - timezone.timedelta(days=30),
+            active=timezone.now().date() - timedelta(days=30),
             expire=timezone.now().date()
         )
         self.allocation4 = Allocation.objects.create(

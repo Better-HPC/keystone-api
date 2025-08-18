@@ -6,7 +6,10 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from typing import cast
+
 from django.contrib.auth import login, logout
+from django.http import HttpRequest
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -44,7 +47,7 @@ class LoginView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
 
-        login(request, user)
+        login(cast(HttpRequest, request), user)
         return Response(RestrictedUserSerializer(user).data)
 
 
@@ -66,7 +69,7 @@ class LogoutView(GenericAPIView):
             An empty 200 response.
         """
 
-        logout(request)
+        logout(cast(HttpRequest, request))
         return Response()
 
 

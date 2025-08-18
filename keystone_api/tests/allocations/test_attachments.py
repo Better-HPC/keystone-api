@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AttachmentFactory
 from apps.users.factories import UserFactory
-from tests.utils import CustomAsserts, TeamScopedListFilteringTests
+from tests.utils import CustomAsserts, TeamScopedListFilteringTestMixin
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -27,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Create test fixtures using mock data."""
 
         AttachmentFactory()
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
@@ -81,7 +81,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
+class RecordFiltering(TeamScopedListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/attachments/'

@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from apps.allocations.factories import AllocationRequestFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
-from tests.utils import CustomAsserts, TeamScopedListFilteringTests
+from tests.utils import CustomAsserts, TeamScopedListFilteringTestMixin
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -37,8 +37,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
+        self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
-        self.non_member = UserFactory(is_staff=False)
 
         self.valid_record_data = {'title': 'foo', 'description': 'bar', 'team': self.team.pk}
 
@@ -143,7 +143,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
+class RecordFiltering(TeamScopedListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/requests/'

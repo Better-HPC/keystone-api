@@ -42,9 +42,6 @@ def ldap_update_users() -> None:
 
     This function does nothing if the `AUTH_LDAP_SERVER_URI` value is not
     configured in application settings.
-
-    Args:
-        prune: Optionally delete accounts with usernames no longer found in LDAP.
     """
 
     if not settings.AUTH_LDAP_SERVER_URI:

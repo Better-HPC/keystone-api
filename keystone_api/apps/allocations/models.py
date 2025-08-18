@@ -8,7 +8,6 @@ the associated table/fields/records are presented by parent interfaces.
 
 import abc
 import os
-from datetime import date
 
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog

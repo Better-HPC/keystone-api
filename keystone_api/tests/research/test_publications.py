@@ -5,11 +5,11 @@ import datetime
 from rest_framework.test import APITestCase
 
 from apps.research_products.factories import PublicationFactory
-from tests.utils import TeamScopedListFilteringTests
-from .common import ResearchListEndpointPermissionsTests
+from tests.utils import TeamScopedListFilteringTestMixin
+from .common import ResearchListEndpointPermissionsTestMixin
 
 
-class EndpointPermissions(ResearchListEndpointPermissionsTests, APITestCase):
+class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase):
     """Test endpoint user permissions.
 
     See the `ResearchListEndpointPermissionsTests` class docstring for details on the
@@ -30,7 +30,7 @@ class EndpointPermissions(ResearchListEndpointPermissionsTests, APITestCase):
         }
 
 
-class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
+class RecordFiltering(TeamScopedListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     factory = PublicationFactory
