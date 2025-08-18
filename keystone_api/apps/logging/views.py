@@ -113,7 +113,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
         summary="List all background task results.",
         description=(
             "Returns a list of task logs. "
-            "Task logs are collected from the Celery backend to track background task outcomes and failures. "
+            "Task logs are collected from the Celery backend to track background task outcomes. "
             "Access to log records is restricted to admin users."
         ),
         tags=["Admin - Logging"],
@@ -122,7 +122,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
         summary="Retrieve a single background task result.",
         description=(
             "Returns a single task log by its ID. "
-            "Task logs are collected from the Celery backend to track background task outcomes and failures. "
+            "Task logs are collected from the Celery backend to track background task outcomes. "
             "Access to log records is restricted to admin users."
         ),
         tags=["Admin - Logging"],

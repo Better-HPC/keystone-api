@@ -89,7 +89,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="List all publications.",
         description=(
             "Returns a list of all publications belonging to teams where the user is a member. "
-            "Administrators are returned all records regardless of the parent team"
+            "Administrators are returned all records regardless of the parent team."
         ),
         tags=["Research - Publications"],
     ),
@@ -104,7 +104,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     create=extend_schema(
         summary="Create a publication.",
         description=(
-            "Create a new publications. "
+            "Create a new publication. "
             "Users may only create records for teams they belong to."
         ),
         tags=["Research - Publications"],

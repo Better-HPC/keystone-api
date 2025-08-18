@@ -99,7 +99,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve a notification preference.",
         description=(
             "Returns a single notification preference by its ID. "
-            "Users may only access their own preferences. "
+            "General users may only access their own preferences. "
             "Administrators can access any preference."
         ),
         tags=["Notifications - Preferences"],
@@ -107,26 +107,26 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     create=extend_schema(
         summary="Create a custom notification preference.",
         description=(
-            "Creates a new notification preference. "
-            "Users may only create preferences for themselves. "
+            "Creates a custom notification preference in leu of application defaults. "
+            "General users may only create preferences for themselves. "
             "Administrators can create preferences for any user."
         ),
         tags=["Notifications - Preferences"],
     ),
     update=extend_schema(
-        summary="Update a user's notification preferences.",
+        summary="Update a notification preference.",
         description=(
             "Replaces an existing notification preference with new values. "
-            "Users may only modify their own preferences. "
+            "General users may only modify their own preferences. "
             "Administrators can modify any preference."
         ),
         tags=["Notifications - Preferences"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a user's notification preferences.",
+        summary="Partially update a notification preference.",
         description=(
             "Applies a partial update to an existing notification preference. "
-            "Users may only modify their own preferences. "
+            "General users may only modify their own preferences. "
             "Administrators can modify any preference."
         ),
         tags=["Notifications - Preferences"],
@@ -134,8 +134,8 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     destroy=extend_schema(
         summary="Delete a notification preference.",
         description=(
-            "Deletes a single notification preference by its ID, returning the user to default settings. "
-            "Users may only delete their own preferences. "
+            "Deletes a single notification preference by its ID, restoring default settings. "
+            "General users may only delete their own preferences. "
             "Administrators can delete any preference. "
         ),
         tags=["Notifications - Preferences"],
