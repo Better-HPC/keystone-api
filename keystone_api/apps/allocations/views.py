@@ -54,50 +54,55 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all allocation requests",
+        summary="List all allocation requests.",
         description=(
-            "Returns a list of all allocation requests belonging to teams where the user is a member. "
-            "Administrators are returned all records regardless of the parent team."
+            "Returns allocation requests belonging to teams where the user is a member. "
+            "Staff users can access all requests regardless of team."
         ),
         tags=["Allocations - Requests"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve an allocation request",
+        summary="Retrieve an allocation request.",
         description=(
             "Returns a single allocation request by its ID. "
-            "Users can only access records for teams they belong to."
+            "General users can only access requests from teams they belong to. "
+            "Staff users can access any request."
         ),
         tags=["Allocations - Requests"],
     ),
     create=extend_schema(
-        summary="Create an allocation request",
+        summary="Create an allocation request.",
         description=(
-            "Create a new allocation request. "
-            "Users can only create records for teams where they are an administrator."
+            "Creates a new allocation request. "
+            "General users can only create requests for teams where they are administrators. "
+            "Staff users can create requests for any team."
         ),
         tags=["Allocations - Requests"],
     ),
     update=extend_schema(
-        summary="Update an allocation request",
+        summary="Update an allocation request.",
         description=(
             "Replaces an existing allocation request with new values. "
-            "Users can only modify records for teams where they are an administrator."
+            "General users can only modify requests for teams where they are administrators. "
+            "Staff users can modify any request."
         ),
         tags=["Allocations - Requests"],
     ),
     partial_update=extend_schema(
-        summary="Partially update an allocation request",
+        summary="Partially update an allocation request.",
         description=(
-            "Partially update an existing research grant with new values. "
-            "Users can only modify records for teams where they are an administrator."
+            "Partially updates an existing allocation request with new values. "
+            "General users can only modify requests for teams where they are administrators. "
+            "Administrators can modify any request."
         ),
         tags=["Allocations - Requests"],
     ),
     destroy=extend_schema(
-        summary="Delete an allocation request",
+        summary="Delete an allocation request.",
         description=(
-            "Deletes a single research grant by its ID. "
-            "Users can only delete records for teams where they are an administrator."
+            "Deletes a single allocation request by its ID. "
+            "General users can only delete requests for teams where they are administrators. "
+            "Staff users can delete any request."
         ),
         tags=["Allocations - Requests"],
     ),
@@ -143,33 +148,56 @@ class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all allocation reviews",
-        description="Retrieve all allocation reviews visible to the current user.",
+        summary="List all allocation reviews.",
+        description=(
+            "Returns allocation reviews for requests belonging to teams where the user is a member. "
+            "Staff users can access all reviews."
+        ),
         tags=["Allocations - Reviews"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve an allocation review",
-        description="Retrieve a single allocation review by ID.",
+        summary="Retrieve an allocation review.",
+        description=(
+            "Returns a single allocation review by its ID. "
+            "General users can only access reviews for requests from teams they belong to. "
+            "Staff users can access any review."
+        ),
         tags=["Allocations - Reviews"],
     ),
     create=extend_schema(
-        summary="Create an allocation review",
-        description="Create a new allocation review.",
+        summary="Create an allocation review.",
+        description=(
+            "Creates a new allocation review. "
+            "General users can only create reviews for requests from teams they belong to. "
+            "Staff users can create reviews for any request."
+        ),
         tags=["Allocations - Reviews"],
     ),
     update=extend_schema(
-        summary="Update an allocation review",
-        description="Replace an existing allocation review with new values.",
+        summary="Update an allocation review.",
+        description=(
+            "Replaces an existing allocation review with new values. "
+            "General users can only modify reviews for requests from teams they belong to. "
+            "Staff users can modify any review."
+        ),
         tags=["Allocations - Reviews"],
     ),
     partial_update=extend_schema(
-        summary="Partially update an allocation review",
-        description="Apply a partial update to an existing allocation review.",
+        summary="Partially update an allocation review.",
+        description=(
+            "Partially updates an existing allocation review with new values. "
+            "General users can only modify reviews for requests from teams they belong to. "
+            "Staff users can modify any review."
+        ),
         tags=["Allocations - Reviews"],
     ),
     destroy=extend_schema(
-        summary="Delete an allocation review",
-        description="Delete an allocation review by ID.",
+        summary="Delete an allocation review.",
+        description=(
+            "Deletes a single allocation review by its ID. "
+            "General users can only delete reviews for requests from teams they belong to. "
+            "Staff users can delete any review."
+        ),
         tags=["Allocations - Reviews"],
     ),
 )
@@ -206,32 +234,55 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(
         summary="List all resource allocations",
-        description="Retrieve all resource allocations visible to the current user.",
+        description=(
+            "Returns resource allocations granted to the current user's teams. "
+            "Staff users are returned all allocations regardless of the parent team."
+        ),
         tags=["Allocations - Allocated Resources"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve an resource allocation",
-        description="Retrieve a single resource allocation by ID.",
+        summary="Retrieve a resource allocation.",
+        description=(
+            "Returns a single resource allocation by its ID. "
+            "General users can only access allocations granted to teams they belong to. "
+            "Staff users can access any allocation."
+        ),
         tags=["Allocations - Allocated Resources"],
     ),
     create=extend_schema(
-        summary="Create an resource allocation",
-        description="Create a new resource allocation.",
+        summary="Create a resource allocation.",
+        description=(
+            "Creates a new resource allocation. "
+            "General users can only create allocations granted to teams they belong to. "
+            "Staff users can create allocations for any request."
+        ),
         tags=["Allocations - Allocated Resources"],
     ),
     update=extend_schema(
-        summary="Update an resource allocation",
-        description="Replace an existing resource allocation with new values.",
+        summary="Update a resource allocation.",
+        description=(
+            "Replaces an existing resource allocation with new values. "
+            "General users can only modify allocations granted to teams they belong to. "
+            "Staff users can modify any allocation."
+        ),
         tags=["Allocations - Allocated Resources"],
     ),
     partial_update=extend_schema(
-        summary="Partially update an resource allocation",
-        description="Apply a partial update to an existing resource allocation.",
+        summary="Partially update a resource allocation.",
+        description=(
+            "Partially updates an existing resource allocation with new values. "
+            "General users can only modify allocations granted to teams they belong to. "
+            "Staff users can modify any allocation."
+        ),
         tags=["Allocations - Allocated Resources"],
     ),
     destroy=extend_schema(
-        summary="Delete an resource allocation",
-        description="Delete an resource allocation by ID.",
+        summary="Delete a resource allocation.",
+        description=(
+            "Deletes a resource allocation by its ID. "
+            "Users can only delete allocations granted to teams they belong to. "
+            "Staff can delete any allocation."
+        ),
         tags=["Allocations - Allocated Resources"],
     ),
 )
@@ -380,7 +431,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     list=extend_schema(
         summary="List all comments.",
         description=(
-            "Returns a list of comments made on allocation requests from teams the user belongs to. "
+            "Returns comments made on allocation requests from teams the user belongs to. "
             "Staff users are returned all comments regardless of the parent team."
         ),
         tags=["Allocations - Request Comments"],
@@ -452,7 +503,7 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     list=extend_schema(
         summary="List all user Slurm jobs.",
         description=(
-            "Returns a list of all Slurm jobs belonging to teams where the user is a member. "
+            "Returns Slurm jobs belonging to teams where the user is a member. "
             "Staff users are returned all records regardless of the parent team."
         ),
         tags=["Allocations - User Jobs"],
