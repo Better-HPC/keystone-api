@@ -34,7 +34,7 @@ Administrators are cautioned to consider the potentially irreversible side effec
 
 ### CORS/CSRF
 
-CORS and CSRF settings define domains are allowed to interact with the Keystone-API.
+CORS and CSRF settings define which domains are allowed to interact with the Keystone-API.
 
 | Setting Name             | Default Value                        <br/><br/> | Description                                                                |
 |--------------------------|-------------------------------------------------|----------------------------------------------------------------------------|
