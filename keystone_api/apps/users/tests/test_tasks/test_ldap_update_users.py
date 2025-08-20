@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 from django.test import override_settings, TestCase
 
+from apps.users.factories import UserFactory
 from apps.users.models import User
 from apps.users.tasks import ldap_update_users
 
@@ -76,8 +77,8 @@ class LdapUpdateUsersMethod(TestCase):
         mock_get_ldap_connection.return_value = mock_conn
 
         # Create users
-        User.objects.create(username='user_to_prune', is_ldap_user=True)
-        User.objects.create(username='non_ldap_user', is_ldap_user=False)
+        UserFactory(username='user_to_prune', is_ldap_user=True)
+        UserFactory(username='non_ldap_user', is_ldap_user=False)
 
         # Test missing LDAP users are deleted and non-ldap users are not modified
         ldap_update_users()
@@ -100,8 +101,8 @@ class LdapUpdateUsersMethod(TestCase):
         mock_get_ldap_connection.return_value = mock_conn
 
         # Create users
-        User.objects.create(username='user_to_deactivate', is_ldap_user=True, is_active=True)
-        User.objects.create(username='non_ldap_user', is_ldap_user=False, is_active=True)
+        UserFactory(username='user_to_deactivate', is_ldap_user=True, is_active=True)
+        UserFactory(username='non_ldap_user', is_ldap_user=False, is_active=True)
 
         # Test missing LDAP users are deactivated and non-ldap users are not modified
         ldap_update_users()

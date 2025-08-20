@@ -10,6 +10,7 @@ from django.test.client import RequestFactory
 
 from apps.logging.middleware import LogRequestMiddleware
 from apps.logging.models import RequestLog
+from apps.users.factories import UserFactory
 
 
 class CidLogging(TestCase):
@@ -95,7 +96,7 @@ class LoggingToDatabase(TestCase):
         """Verify requests are logged for authenticated users."""
 
         request = RequestFactory().get('/hello/')
-        request.user = get_user_model().objects.create()
+        request.user = UserFactory()
 
         middleware = LogRequestMiddleware(lambda x: HttpResponse())
         middleware(request)
