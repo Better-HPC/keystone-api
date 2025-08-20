@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 
 from apps.authentication.serializers import LoginSerializer
+from apps.users.factories import UserFactory
 
 User = get_user_model()
 
@@ -17,7 +18,7 @@ class Validation(TestCase):
         """Create a user account to test authentication with."""
 
         self.password = 'securepass'
-        self.user = User.objects.create_user(username='testuser', password=self.password)
+        self.user = UserFactory(username='testuser', password=self.password)
         self.request = Request(RequestFactory().post('/login/'))
 
     def test_valid_credentials(self) -> None:
@@ -52,7 +53,7 @@ class Validation(TestCase):
 
         # Create a user with whitespace in the password
         password_with_spaces = '  spacedpass  '
-        user_with_spaces = User.objects.create_user(username='whitespaceuser', password=password_with_spaces)
+        user_with_spaces = UserFactory(username='whitespaceuser', password=password_with_spaces)
 
         # Attempt login with exact password (should succeed)
         data = {'username': user_with_spaces.username, 'password': password_with_spaces}

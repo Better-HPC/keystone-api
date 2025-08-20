@@ -2,7 +2,9 @@
 
 from django.test import TestCase
 
+from apps.allocations.factories import AllocationRequestFactory, CommentFactory
 from apps.allocations.models import AllocationRequest, Comment
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import Team, User
 
 
@@ -12,15 +14,15 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock database records"""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
-        self.allocation_request = AllocationRequest.objects.create(
+        self.user = UserFactory(username='pi', password='foobar123!')
+        self.team = TeamFactory(name='Test Team')
+        self.allocation_request = AllocationRequestFactory(
             title='Test Request',
             description='A test description',
             team=self.team
         )
 
-        self.comment = Comment.objects.create(
+        self.comment = CommentFactory(
             user=self.user,
             content='This is a test.',
             request=self.allocation_request,

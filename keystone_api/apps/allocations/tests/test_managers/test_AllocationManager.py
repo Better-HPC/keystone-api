@@ -5,7 +5,9 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
+from apps.allocations.factories import AllocationFactory, AllocationRequestFactory, ClusterFactory
 from apps.allocations.models import *
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import *
 
 
@@ -15,18 +17,18 @@ class GetAllocationData(TestCase):
     def setUp(self) -> None:
         """Create test data."""
 
-        self.user = User.objects.create(username="user", password='foobar123!')
-        self.team = Team.objects.create(name="Research Team 1")
-        self.cluster = Cluster.objects.create(name="Test Cluster")
+        self.user = UserFactory(username="user", password='foobar123!')
+        self.team = TeamFactory(name="Research Team 1")
+        self.cluster = ClusterFactory(name="Test Cluster")
 
         # An allocation request pending review
-        self.request1 = AllocationRequest.objects.create(
+        self.request1 = AllocationRequestFactory(
             team=self.team,
             status='PD',
             active=timezone.now().date(),
             expire=timezone.now().date() + timedelta(days=30)
         )
-        self.allocation1 = Allocation.objects.create(
+        self.allocation1 = AllocationFactory(
             requested=100,
             awarded=80,
             final=None,
@@ -35,13 +37,13 @@ class GetAllocationData(TestCase):
         )
 
         # An approved allocation request that is active
-        self.request2 = AllocationRequest.objects.create(
+        self.request2 = AllocationRequestFactory(
             team=self.team,
             status='AP',
             active=timezone.now().date(),
             expire=timezone.now().date() + timedelta(days=30)
         )
-        self.allocation2 = Allocation.objects.create(
+        self.allocation2 = AllocationFactory(
             requested=100,
             awarded=80,
             final=None,
@@ -50,13 +52,13 @@ class GetAllocationData(TestCase):
         )
 
         # An approved allocation request that is expired without final usage
-        self.request3 = AllocationRequest.objects.create(
+        self.request3 = AllocationRequestFactory(
             team=self.team,
             status='AP',
             active=timezone.now().date() - timedelta(days=60),
             expire=timezone.now().date() - timedelta(days=30)
         )
-        self.allocation3 = Allocation.objects.create(
+        self.allocation3 = AllocationFactory(
             requested=100,
             awarded=70,
             final=None,
@@ -65,13 +67,13 @@ class GetAllocationData(TestCase):
         )
 
         # An approved allocation request that is expired with final usage
-        self.request4 = AllocationRequest.objects.create(
+        self.request4 = AllocationRequestFactory(
             team=self.team,
             status='AP',
             active=timezone.now().date() - timedelta(days=30),
             expire=timezone.now().date()
         )
-        self.allocation4 = Allocation.objects.create(
+        self.allocation4 = AllocationFactory(
             requested=100,
             awarded=60,
             final=60,

@@ -5,7 +5,9 @@ import os
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
+from apps.allocations.factories import AllocationRequestFactory, AttachmentFactory
 from apps.allocations.models import AllocationRequest, Attachment
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import Team, User
 
 
@@ -15,15 +17,15 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
-        self.allocation_request = AllocationRequest.objects.create(
+        self.user = UserFactory(username='pi', password='foobar123!')
+        self.team = TeamFactory(name='Test Team')
+        self.allocation_request = AllocationRequestFactory(
             title='Test Request',
             description='A test description',
             team=self.team
         )
 
-        self.attachment = Attachment.objects.create(
+        self.attachment = AttachmentFactory(
             file='dummy.file',
             name='dummy.name',
             request=self.allocation_request,
@@ -41,9 +43,9 @@ class SaveMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user and related records."""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
-        self.allocation_request = AllocationRequest.objects.create(
+        self.user = UserFactory(username='pi', password='foobar123!')
+        self.team = TeamFactory(name='Test Team')
+        self.allocation_request = AllocationRequestFactory(
             title='Test Request',
             description='A test description',
             team=self.team

@@ -2,7 +2,9 @@
 
 from django.test import TestCase
 
+from apps.allocations.factories import AllocationRequestFactory, AllocationReviewFactory
 from apps.allocations.models import AllocationRequest, AllocationReview
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import Team, User
 
 
@@ -13,19 +15,19 @@ class GetTeamMethod(TestCase):
         """Create mock user records"""
 
         # Create a Team instance
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
+        self.user = UserFactory(username='pi', password='foobar123!')
+        self.team = TeamFactory(name='Test Team')
 
         # Create an AllocationRequest instance linked to the team
-        self.allocation_request = AllocationRequest.objects.create(
+        self.allocation_request = AllocationRequestFactory(
             title='Test Request',
             description='A test description',
             team=self.team
         )
 
         # Create an AllocationReview instance linked to the AllocationRequest
-        self.reviewer = User.objects.create_user(username='reviewer', password='foobar123!')
-        self.allocation_review = AllocationReview.objects.create(
+        self.reviewer = UserFactory(username='reviewer', password='foobar123!')
+        self.allocation_review = AllocationReviewFactory(
             status=AllocationReview.StatusChoices.APPROVED,
             request=self.allocation_request,
             reviewer=self.reviewer

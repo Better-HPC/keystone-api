@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from apps.allocations.factories import AllocationRequestFactory
+from apps.notifications.factories import PreferenceFactory
 from apps.notifications.models import default_expiry_thresholds, Preference
 from apps.users.factories import UserFactory
 
@@ -19,8 +20,8 @@ class GetExpirationThresholdMethod(TestCase):
     def setUp(self) -> None:
         """Set up test data."""
 
-        self.user = get_user_model().objects.create_user(username="testuser", password="foobar123")
-        self.preference = Preference.objects.create(
+        self.user = UserFactory(username="testuser", password="foobar123")
+        self.preference = PreferenceFactory(
             user=self.user,
             request_expiry_thresholds=[7, 14, 30]
         )
@@ -63,8 +64,8 @@ class GetUsageThresholdMethod(TestCase):
     def setUp(self) -> None:
         """Set up test data."""
 
-        self.user = get_user_model().objects.create_user(username="testuser", password="foobar123")
-        self.preference = Preference.objects.create(
+        self.user = UserFactory(username="testuser", password="foobar123")
+        self.preference = PreferenceFactory(
             user=self.user,
             request_expiry_thresholds=[10, 20, 30, 50, 75]
         )
@@ -107,7 +108,7 @@ class GetUserPreferenceMethod(TestCase):
     def setUp(self) -> None:
         """Create a test user."""
 
-        self.user = User.objects.create_user(username='testuser', password='foobar123!')
+        self.user = UserFactory(username='testuser', password='foobar123!')
 
     def test_get_user_preference_creates_new_preference(self) -> None:
         """Verify a new Preference object is created if one does not exist."""
@@ -124,7 +125,7 @@ class GetUserPreferenceMethod(TestCase):
     def test_get_user_preference_returns_existing_preference(self) -> None:
         """Verify an existing Preference object is returned if it already exists."""
 
-        existing_preference = Preference.objects.create(user=self.user)
+        existing_preference = PreferenceFactory(user=self.user)
         preference = Preference.get_user_preference(user=self.user)
         self.assertEqual(existing_preference, preference)
 
@@ -135,7 +136,7 @@ class SetUserPreferenceMethod(TestCase):
     def setUp(self) -> None:
         """Create a test user."""
 
-        self.user = User.objects.create_user(username='testuser', password='foobar123!')
+        self.user = UserFactory(username='testuser', password='foobar123!')
 
     def test_set_user_preference_creates_preference(self) -> None:
         """Verify a new Preference object is created with specified values."""
@@ -149,7 +150,7 @@ class SetUserPreferenceMethod(TestCase):
     def test_set_user_preference_updates_existing_preference(self) -> None:
         """Verify an existing Preference object is updated with specified values."""
 
-        preference = Preference.objects.create(user=self.user, notify_on_expiration=True)
+        preference = PreferenceFactory(user=self.user, notify_on_expiration=True)
         self.assertTrue(Preference.objects.filter(user=self.user).exists())
 
         Preference.set_user_preference(user=self.user, notify_on_expiration=False)
@@ -167,21 +168,21 @@ class ShouldNotifyPastExpirationMethod(TestCase):
         mock_notification_filter.return_value.exists.return_value = True
 
         request = AllocationRequestFactory(expire=date.today())
-        pref = Preference.objects.create(user=request.submitter, notify_on_expiration=True)
+        pref = PreferenceFactory(user=request.submitter, notify_on_expiration=True)
         self.assertFalse(pref.should_notify_past_expiration(request.id))
 
     def test_false_if_disabled_in_preferences(self) -> None:
         """Verify the return value is `False` if expiry notifications are disabled in preferences."""
 
         request = AllocationRequestFactory(expire=date.today())
-        pref = Preference.objects.create(user=request.submitter, notify_on_expiration=False)
+        pref = PreferenceFactory(user=request.submitter, notify_on_expiration=False)
         self.assertFalse(pref.should_notify_past_expiration(request.id))
 
     def test_true_if_new_notification(self) -> None:
         """Verify the return value is `True` if a notification has not been issued yet."""
 
         request = AllocationRequestFactory(expire=date.today())
-        pref = Preference.objects.create(user=request.submitter, notify_on_expiration=True)
+        pref = PreferenceFactory(user=request.submitter, notify_on_expiration=True)
         self.assertTrue(pref.should_notify_past_expiration(request.id))
 
 
@@ -192,7 +193,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         """Verify the return value is `False` if the request does not expire."""
 
         request = AllocationRequestFactory(expire=None)
-        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[15])
+        pref = PreferenceFactory(user=request.submitter, request_expiry_thresholds=[15])
         self.assertFalse(
             pref.should_notify_upcoming_expiration(request.id, request.expire)
         )
@@ -201,7 +202,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         """Verify the return value is `False` if the request has already expired."""
 
         request = AllocationRequestFactory(expire=date.today())
-        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[15])
+        pref = PreferenceFactory(user=request.submitter, request_expiry_thresholds=[15])
         self.assertFalse(
             pref.should_notify_upcoming_expiration(request.id, request.expire)
         )
@@ -210,7 +211,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         """Verify the return value is `False` if no threshold has been reached."""
 
         request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
-        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[5])
+        pref = PreferenceFactory(user=request.submitter, request_expiry_thresholds=[5])
         self.assertFalse(
             pref.should_notify_upcoming_expiration(request.id, request.expire)
         )
@@ -220,7 +221,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
 
         user = UserFactory(date_joined=datetime.now())
         request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
-        pref = Preference.objects.create(user=user, request_expiry_thresholds=[15])
+        pref = PreferenceFactory(user=user, request_expiry_thresholds=[15])
         self.assertFalse(
             pref.should_notify_upcoming_expiration(request.id, request.expire)
         )
@@ -232,7 +233,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         mock_filter.return_value.exists.return_value = True
 
         request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
-        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[5])
+        pref = PreferenceFactory(user=request.submitter, request_expiry_thresholds=[5])
         self.assertFalse(
             pref.should_notify_upcoming_expiration(request.id, request.expire)
         )
@@ -241,7 +242,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         """Verify the return value is `True` if a notification threshold has been hit."""
 
         request = AllocationRequestFactory(expire=date.today() + timedelta(days=5))
-        pref = Preference.objects.create(user=request.submitter, request_expiry_thresholds=[15])
+        pref = PreferenceFactory(user=request.submitter, request_expiry_thresholds=[15])
         self.assertTrue(
             pref.should_notify_upcoming_expiration(request.id, request.expire)
         )
