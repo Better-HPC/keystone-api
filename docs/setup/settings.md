@@ -11,17 +11,19 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### Core Security
 
-!!! note
-
-    Secret keys are conventionally 50 characters long.
-    The `openssl` utility provides a convenient method for generating secure key values:
-    `openssl rand -base64 48 | cut -c1-50`
+Keystone-API requires a random secret key to sign and verify requests.
+Secret keys are conventionally 50 characters long and can be generated using common unities like `openssl`.
+For example: `openssl rand -base64 48 | cut -c1-50`
 
 | Setting Name        | Default Value      | Description                                      |
 |---------------------|--------------------|--------------------------------------------------|
 | `SECURE_SECRET_KEY` | Randomly generated | Key value used to enforce cryptographic signing. |
 
 ### SSL/TLS
+
+Enabling TLS is strongly recommended in production.
+Enabling HSTS is also recommended, but only when TLS is already fully configured.
+Administrators are cautioned to consider the potentially irreversible side effects of HSTS before enabling it.
 
 | Setting Name             | Default Value  | Description                                       |
 |--------------------------|----------------|---------------------------------------------------|
@@ -32,7 +34,17 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### CORS/CSRF
 
-Default values for CORS and CSRF permissions are defined relative to the following list of trusted local addresses:
+CORS and CSRF settings define domains are allowed to interact with the Keystone-API.
+
+| Setting Name             | Default Value                        <br/><br/> | Description                                                                |
+|--------------------------|-------------------------------------------------|----------------------------------------------------------------------------|
+| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of accepted host/domain names (**without** protocol). |
+| `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted CORS origin domains (**with** protocol).  |
+| `SECURE_CSRF_ORIGINS`    | _See default local addresses._                  | Comma-separated list of accepted CSRF origin domains (**with** protocol).  |
+| `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                    |
+| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                             | Number of seconds before session tokens expire.                            |
+
+Default values are defined relative to the following list of _default local addresses_:
 
 - `http://localhost:80`
 - `https://localhost:443`
@@ -42,14 +54,6 @@ Default values for CORS and CSRF permissions are defined relative to the followi
 - `https://127.0.0.1:443`
 - `http://127.0.0.1:4200`
 - `http://127.0.0.1:8000`
-
-| Setting Name             | Default Value                        <br/><br/>  | Description                                                            |
-|--------------------------|--------------------------------------------------|------------------------------------------------------------------------|
-| `SECURE_ALLOWED_HOSTS`   | <code>localhost</code><br><code>127.0.0.1</code> | Comma-separated list of accepted host/domain names (without protocol). |
-| `SECURE_ALLOWED_ORIGINS` | _See list of trusted local addresses._           | Comma-separated list of accepted CORS origin domains (with protocol).  |
-| `SECURE_CSRF_ORIGINS`    | _See list of trusted local addresses._           | Comma-separated list of accepted CSRF origin domains (with protocol).  |
-| `SECURE_SSL_TOKENS`      | `False`                                          | Only issue session/CSRF tokens over secure connections.                |
-| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                              | Number of seconds before session tokens expire.                        |
 
 ## General Configuration
 
