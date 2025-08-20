@@ -6,6 +6,7 @@ from django.test import override_settings, TestCase
 
 from apps.notifications.models import Notification
 from apps.notifications.shortcuts import send_notification_template
+from apps.users.factories import UserFactory
 from apps.users.models import User
 from main import settings
 
@@ -17,7 +18,7 @@ class SendNotificationTemplateMethod(TestCase):
     def setUp(self) -> None:
         """Send an email template to a dummy user."""
 
-        self.user = User.objects.create_user(
+        self.user = UserFactory(
             email='test@example.com',
             username='foobar',
             first_name='Foo',

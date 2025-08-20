@@ -5,8 +5,9 @@ import os
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
-from apps.allocations.models import AllocationRequest, Attachment
-from apps.users.models import Team, User
+from apps.allocations.factories import AllocationRequestFactory, AttachmentFactory
+from apps.allocations.models import Attachment
+from apps.users.factories import TeamFactory, UserFactory
 
 
 class GetTeamMethod(TestCase):
@@ -15,17 +16,11 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
-        self.allocation_request = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
-            team=self.team
-        )
+        self.team = TeamFactory()
+        self.allocation_request = AllocationRequestFactory(team=self.team)
 
-        self.attachment = Attachment.objects.create(
-            file='dummy.file',
-            name='dummy.name',
+        # Create an attachment linked to a request submitted by `self.team`
+        self.attachment = AttachmentFactory(
             request=self.allocation_request,
         )
 
@@ -41,13 +36,9 @@ class SaveMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user and related records."""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
-        self.allocation_request = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
-            team=self.team
-        )
+        self.user = UserFactory()
+        self.team = TeamFactory()
+        self.allocation_request = AllocationRequestFactory(team=self.team)
 
     def test_sets_default_name_file(self) -> None:
         """Verify the attachment name is defaults to the upload path basename."""

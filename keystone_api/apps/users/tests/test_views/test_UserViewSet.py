@@ -3,7 +3,7 @@
 from django.test import RequestFactory, TestCase
 from rest_framework.request import Request
 
-from apps.users.models import User
+from apps.users.factories import UserFactory
 from apps.users.serializers import PrivilegedUserSerializer, RestrictedUserSerializer
 from apps.users.views import UserViewSet
 
@@ -14,8 +14,8 @@ class GetSerializerClassMethod(TestCase):
     def setUp(self) -> None:
         """Create user accounts for testing"""
 
-        self.regular_user = User.objects.create(username='regularuser')
-        self.staff_user = User.objects.create(username='staffuser', is_staff=True)
+        self.regular_user = UserFactory()
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_get_serializer_class_for_staff_user(self) -> None:
         """Verify the `PrivilegeUserSerializer` serializer is returned for a staff user."""

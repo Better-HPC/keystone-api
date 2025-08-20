@@ -19,10 +19,7 @@ dist = importlib.metadata.distribution('keystone-api')
 VERSION = dist.metadata['version']
 SUMMARY = dist.metadata['summary']
 
-# Developer settings
-
 env = environ.Env()
-DEBUG = env.bool('DEBUG', False)
 
 # Core security settings
 

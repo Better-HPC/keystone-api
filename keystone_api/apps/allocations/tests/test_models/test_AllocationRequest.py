@@ -3,8 +3,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from apps.allocations.models import AllocationRequest
-from apps.users.models import Team, User
+from apps.allocations.factories import AllocationRequestFactory
+from apps.users.factories import TeamFactory
 
 
 class CleanMethod(TestCase):
@@ -13,16 +13,12 @@ class CleanMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
+        self.team = TeamFactory()
 
     def test_clean_method_valid(self) -> None:
         """Verify the clean method returns successfully when dates are valid."""
 
-        allocation_request = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
-            team=self.team,
+        allocation_request = AllocationRequestFactory(
             active='2024-01-01',
             expire='2024-12-31'
         )
@@ -32,10 +28,7 @@ class CleanMethod(TestCase):
     def test_clean_method_invalid(self) -> None:
         """Verify the clean method raises a `ValidationError` when active date is after or equal to expire."""
 
-        allocation_request_after = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
-            team=self.team,
+        allocation_request_after = AllocationRequestFactory(
             active='2024-12-31',
             expire='2024-01-01'
         )
@@ -43,10 +36,7 @@ class CleanMethod(TestCase):
         with self.assertRaises(ValidationError):
             allocation_request_after.clean()
 
-        allocation_request_equal = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
-            team=self.team,
+        allocation_request_equal = AllocationRequestFactory(
             active='2024-01-01',
             expire='2024-01-01'
         )
@@ -61,11 +51,8 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
-        self.allocation_request = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
+        self.team = TeamFactory()
+        self.allocation_request = AllocationRequestFactory(
             team=self.team
         )
 
