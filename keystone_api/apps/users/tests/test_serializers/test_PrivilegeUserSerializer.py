@@ -5,7 +5,8 @@ from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
-from apps.users.models import Membership, Team
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership
 from apps.users.serializers import PrivilegedUserSerializer
 
 User = get_user_model()
@@ -17,8 +18,8 @@ class CreateMethod(TestCase):
     def setUp(self) -> None:
         """Define test users and teams."""
 
-        self.team1 = Team.objects.create(name="Team Alpha")
-        self.team2 = Team.objects.create(name="Team Beta")
+        self.team1 = TeamFactory()
+        self.team2 = TeamFactory()
 
         self.user_data = {
             "username": "testuser",
@@ -69,11 +70,11 @@ class UpdateMethod(TestCase):
     def setUp(self) -> None:
         """Define dummy team and membership data."""
 
-        self.user = User.objects.create_user(username="old_username", email="old@example.com", password="old_password")
-        self.team1 = Team.objects.create(name="Team Alpha")
-        self.team2 = Team.objects.create(name="Team Beta")
+        self.team1 = TeamFactory()
+        self.team2 = TeamFactory()
 
-        Membership.objects.create(user=self.user, team=self.team1, role=Membership.Role.OWNER)
+        self.user = UserFactory(username="old_username", email="old@example.com", password="old_password")
+        self.team1.add_or_update_member(user=self.user, role=Membership.Role.OWNER)
 
     def test_update_user(self) -> None:
         """Verify a user is updated with correct attributes and nested memberships."""
