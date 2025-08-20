@@ -32,13 +32,24 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### CORS/CSRF
 
-| Setting Name             | Default Value                                                                                                                                          | Description                                                            |
-|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
-| `SECURE_ALLOWED_HOSTS`   | <code>localhost</code><br><code>127.0.0.1</code>                                                                                                       | Comma-separated list of accepted host/domain names (without protocol). |
-| `SECURE_ALLOWED_ORIGINS` | <code>http://localhost:4200</code><br><code>https://localhost:4200</code><br><code>http://127.0.0.1:4200</code><br><code>https://127.0.0.1:4200</code> | Comma-separated list of accepted CORS origin domains (with protocol).  |
-| `SECURE_CSRF_ORIGINS`    | <code>http://localhost:4200</code><br><code>https://localhost:4200</code><br><code>http://127.0.0.1:4200</code><br><code>https://127.0.0.1:4200</code> | Comma-separated list of accepted CSRF origin domains (with protocol).  |
-| `SECURE_SSL_TOKENS`      | `False`                                                                                                                                                | Only issue session/CSRF tokens over secure connections.                |
-| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                                                                                                                                    | Number of seconds before session tokens expire.                        |
+Default values for CORS and CSRF permissions are defined relative to the following list of trusted local addresses:
+
+- `http://localhost:80`
+- `https://localhost:443`
+- `http://localhost:4200`
+- `http://localhost:8000`
+- `http://127.0.0.1:80`
+- `https://127.0.0.1:443`
+- `http://127.0.0.1:4200`
+- `http://127.0.0.1:8000`
+
+| Setting Name             | Default Value                        <br/><br/>  | Description                                                            |
+|--------------------------|--------------------------------------------------|------------------------------------------------------------------------|
+| `SECURE_ALLOWED_HOSTS`   | <code>localhost</code><br><code>127.0.0.1</code> | Comma-separated list of accepted host/domain names (without protocol). |
+| `SECURE_ALLOWED_ORIGINS` | _See list of trusted local addresses._           | Comma-separated list of accepted CORS origin domains (with protocol).  |
+| `SECURE_CSRF_ORIGINS`    | _See list of trusted local addresses._           | Comma-separated list of accepted CSRF origin domains (with protocol).  |
+| `SECURE_SSL_TOKENS`      | `False`                                          | Only issue session/CSRF tokens over secure connections.                |
+| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                              | Number of seconds before session tokens expire.                        |
 
 ## General Configuration
 
@@ -49,7 +60,7 @@ By default, these files are stored in subdirectories of the installed applicatio
 |----------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
 | `CONFIG_TIMEZONE`          | `UTC`                | The timezone to use when rendering date/time values.                                                        |
 | `CONFIG_STATIC_DIR`        | `<app>/static_files` | Where to store internal static files required by the application.                                           |
-| `CONFIG_UPLOAD_DIR`        | `<app>/upload_files` | Where to store file data uploaded by users.                                                                 |
+| `CONFIG_UPLOAD_DIR`        | `<app>/media`        | Where to store file data uploaded by users.                                                                 |
 | `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)   | Maximum allowed file upload size in bytes.                                                                  |
 | `CONFIG_LOG_LEVEL`         | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
 | `CONFIG_LOG_RETENTION`     | `2592000` (30 days)  | How long to store application logs in seconds. Set to 0 to keep all records.                                |
@@ -64,7 +75,7 @@ Limits are specified as the maximum number of requests per `day`, `minute`, `hou
 | Setting Name        | Default Value | Description                                          |
 |---------------------|---------------|------------------------------------------------------|
 | `API_THROTTLE_ANON` | `120/min`     | Rate limiting for anonymous (unauthenticated) users. |
-| `API_THROTTLE_USER` | `240/min`     | Rate limiting for authenticated users.               |
+| `API_THROTTLE_USER` | `300/min`     | Rate limiting for authenticated users.               |
 
 ## Database Connection
 
