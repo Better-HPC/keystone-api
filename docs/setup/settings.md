@@ -11,17 +11,19 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### Core Security
 
-!!! note
-
-    Secret keys are conventionally 50 characters long.
-    The `openssl` utility provides a convenient method for generating secure key values:
-    `openssl rand -base64 48 | cut -c1-50`
+Keystone-API requires a random secret key to sign and verify requests.
+Secret keys are conventionally 50 characters long and can be generated using common unities like `openssl`.
+For example: `openssl rand -base64 48 | cut -c1-50`
 
 | Setting Name        | Default Value      | Description                                      |
 |---------------------|--------------------|--------------------------------------------------|
 | `SECURE_SECRET_KEY` | Randomly generated | Key value used to enforce cryptographic signing. |
 
 ### SSL/TLS
+
+Enabling TLS is strongly recommended in production.
+Enabling HSTS is also recommended, but only when TLS is already fully configured.
+Administrators are cautioned to consider the potentially irreversible side effects of HSTS before enabling it.
 
 | Setting Name             | Default Value  | Description                                       |
 |--------------------------|----------------|---------------------------------------------------|
@@ -32,13 +34,26 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 
 ### CORS/CSRF
 
-| Setting Name             | Default Value                                                                                                                                          | Description                                                            |
-|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
-| `SECURE_ALLOWED_HOSTS`   | <code>localhost</code><br><code>127.0.0.1</code>                                                                                                       | Comma-separated list of accepted host/domain names (without protocol). |
-| `SECURE_ALLOWED_ORIGINS` | <code>http://localhost:4200</code><br><code>https://localhost:4200</code><br><code>http://127.0.0.1:4200</code><br><code>https://127.0.0.1:4200</code> | Comma-separated list of accepted CORS origin domains (with protocol).  |
-| `SECURE_CSRF_ORIGINS`    | <code>http://localhost:4200</code><br><code>https://localhost:4200</code><br><code>http://127.0.0.1:4200</code><br><code>https://127.0.0.1:4200</code> | Comma-separated list of accepted CSRF origin domains (with protocol).  |
-| `SECURE_SSL_TOKENS`      | `False`                                                                                                                                                | Only issue session/CSRF tokens over secure connections.                |
-| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                                                                                                                                    | Number of seconds before session tokens expire.                        |
+CORS and CSRF settings define which domains are allowed to interact with the Keystone-API.
+
+| Setting Name             | Default Value                        <br/><br/> | Description                                                                |
+|--------------------------|-------------------------------------------------|----------------------------------------------------------------------------|
+| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of accepted host/domain names (**without** protocol). |
+| `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted CORS origin domains (**with** protocol).  |
+| `SECURE_CSRF_ORIGINS`    | _See default local addresses._                  | Comma-separated list of accepted CSRF origin domains (**with** protocol).  |
+| `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                    |
+| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                             | Number of seconds before session tokens expire.                            |
+
+Default values are defined relative to the following list of _default local addresses_:
+
+- `http://localhost:80`
+- `https://localhost:443`
+- `http://localhost:4200`
+- `http://localhost:8000`
+- `http://127.0.0.1:80`
+- `https://127.0.0.1:443`
+- `http://127.0.0.1:4200`
+- `http://127.0.0.1:8000`
 
 ## General Configuration
 
@@ -49,7 +64,7 @@ By default, these files are stored in subdirectories of the installed applicatio
 |----------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
 | `CONFIG_TIMEZONE`          | `UTC`                | The timezone to use when rendering date/time values.                                                        |
 | `CONFIG_STATIC_DIR`        | `<app>/static_files` | Where to store internal static files required by the application.                                           |
-| `CONFIG_UPLOAD_DIR`        | `<app>/upload_files` | Where to store file data uploaded by users.                                                                 |
+| `CONFIG_UPLOAD_DIR`        | `<app>/media`        | Where to store file data uploaded by users.                                                                 |
 | `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)   | Maximum allowed file upload size in bytes.                                                                  |
 | `CONFIG_LOG_LEVEL`         | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
 | `CONFIG_LOG_RETENTION`     | `2592000` (30 days)  | How long to store application logs in seconds. Set to 0 to keep all records.                                |
@@ -64,7 +79,7 @@ Limits are specified as the maximum number of requests per `day`, `minute`, `hou
 | Setting Name        | Default Value | Description                                          |
 |---------------------|---------------|------------------------------------------------------|
 | `API_THROTTLE_ANON` | `120/min`     | Rate limiting for anonymous (unauthenticated) users. |
-| `API_THROTTLE_USER` | `240/min`     | Rate limiting for authenticated users.               |
+| `API_THROTTLE_USER` | `300/min`     | Rate limiting for authenticated users.               |
 
 ## Database Connection
 
