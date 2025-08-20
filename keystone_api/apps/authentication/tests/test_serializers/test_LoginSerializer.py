@@ -18,7 +18,7 @@ class Validation(TestCase):
         """Create a user account to test authentication with."""
 
         self.password = 'securepass'
-        self.user = UserFactory(username='testuser', password=self.password)
+        self.user = UserFactory(password=self.password)
         self.request = Request(RequestFactory().post('/login/'))
 
     def test_valid_credentials(self) -> None:

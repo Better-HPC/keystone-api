@@ -64,9 +64,7 @@ class GetUsageThresholdMethod(TestCase):
     def setUp(self) -> None:
         """Set up test data."""
 
-        self.user = UserFactory(username="testuser", password="foobar123")
         self.preference = PreferenceFactory(
-            user=self.user,
             request_expiry_thresholds=[10, 20, 30, 50, 75]
         )
 

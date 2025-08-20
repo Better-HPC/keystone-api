@@ -6,7 +6,7 @@ from django.test import TestCase
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
-from apps.users.models import Membership, Team
+from apps.users.models import Membership
 from apps.users.serializers import PrivilegedUserSerializer
 
 User = get_user_model()
@@ -18,8 +18,8 @@ class CreateMethod(TestCase):
     def setUp(self) -> None:
         """Define test users and teams."""
 
-        self.team1 = TeamFactory(name="Team Alpha")
-        self.team2 = TeamFactory(name="Team Beta")
+        self.team1 = TeamFactory()
+        self.team2 = TeamFactory()
 
         self.user_data = {
             "username": "testuser",
@@ -71,8 +71,8 @@ class UpdateMethod(TestCase):
         """Define dummy team and membership data."""
 
         self.user = UserFactory(username="old_username", email="old@example.com", password="old_password")
-        self.team1 = TeamFactory(name="Team Alpha")
-        self.team2 = TeamFactory(name="Team Beta")
+        self.team1 = TeamFactory()
+        self.team2 = TeamFactory()
 
         MembershipFactory(user=self.user, team=self.team1, role=Membership.Role.OWNER)
 

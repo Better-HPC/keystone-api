@@ -2,10 +2,8 @@
 
 from django.test import TestCase
 
-from apps.allocations.factories import AllocationFactory, AllocationRequestFactory, ClusterFactory
-from apps.allocations.models import Allocation, AllocationRequest, Cluster
-from apps.users.factories import TeamFactory, UserFactory
-from apps.users.models import Team, User
+from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
+from apps.users.factories import TeamFactory
 
 
 class GetTeamMethod(TestCase):
@@ -14,14 +12,9 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        self.user = UserFactory(username='pi', password='foobar123!')
-        self.team = TeamFactory(name='Test Team')
-        self.cluster = ClusterFactory(name='Test Cluster')
-        self.allocation_request = AllocationRequestFactory(team=self.team)
+        self.team = TeamFactory()
         self.allocation = AllocationFactory(
-            requested=100,
-            cluster=self.cluster,
-            request=self.allocation_request
+            request=AllocationRequestFactory(team=self.team)
         )
 
     def test_get_team(self) -> None:

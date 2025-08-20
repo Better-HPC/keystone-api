@@ -6,9 +6,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
 from apps.allocations.factories import AllocationRequestFactory, AttachmentFactory
-from apps.allocations.models import AllocationRequest, Attachment
+from apps.allocations.models import Attachment
 from apps.users.factories import TeamFactory, UserFactory
-from apps.users.models import Team, User
 
 
 class GetTeamMethod(TestCase):
@@ -17,17 +16,11 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        self.user = UserFactory(username='pi', password='foobar123!')
-        self.team = TeamFactory(name='Test Team')
-        self.allocation_request = AllocationRequestFactory(
-            title='Test Request',
-            description='A test description',
-            team=self.team
-        )
+        self.team = TeamFactory()
+        self.allocation_request = AllocationRequestFactory(team=self.team)
 
+        # Create an attachment linked to a request submitted by `self.team`
         self.attachment = AttachmentFactory(
-            file='dummy.file',
-            name='dummy.name',
             request=self.allocation_request,
         )
 
@@ -43,13 +36,9 @@ class SaveMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user and related records."""
 
-        self.user = UserFactory(username='pi', password='foobar123!')
-        self.team = TeamFactory(name='Test Team')
-        self.allocation_request = AllocationRequestFactory(
-            title='Test Request',
-            description='A test description',
-            team=self.team
-        )
+        self.user = UserFactory()
+        self.team = TeamFactory()
+        self.allocation_request = AllocationRequestFactory(team=self.team)
 
     def test_sets_default_name_file(self) -> None:
         """Verify the attachment name is defaults to the upload path basename."""

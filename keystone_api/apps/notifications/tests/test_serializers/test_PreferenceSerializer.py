@@ -15,9 +15,9 @@ class ValidateUserMethod(TestCase):
     def setUp(self) -> None:
         """Create dummy user accounts and test data."""
 
-        self.user1 = UserFactory(username='testuser1', password='foobar123!')
-        self.user2 = UserFactory(username='testuser2', password='foobar123!')
-        self.staff_user = UserFactory(username='staff', password='foobar123!', is_staff=True)
+        self.user1 = UserFactory()
+        self.user2 = UserFactory()
+        self.staff_user = UserFactory(is_staff=True)
 
     @staticmethod
     def _create_serializer(requesting_user: User, data: dict) -> PreferenceSerializer:

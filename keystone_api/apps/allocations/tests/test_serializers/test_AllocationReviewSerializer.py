@@ -4,10 +4,10 @@ from django.test import RequestFactory, TestCase
 from rest_framework.exceptions import ValidationError
 
 from apps.allocations.factories import AllocationRequestFactory
-from apps.allocations.models import AllocationRequest, AllocationReview
+from apps.allocations.models import AllocationReview
 from apps.allocations.serializers import AllocationReviewSerializer
 from apps.users.factories import TeamFactory, UserFactory
-from apps.users.models import Team, User
+from apps.users.models import User
 
 
 class ValidateReviewerMethod(TestCase):
@@ -16,15 +16,11 @@ class ValidateReviewerMethod(TestCase):
     def setUp(self) -> None:
         """Create dummy user accounts and test data."""
 
-        self.user = UserFactory(username='testuser', password='foobar123!')
-        self.another_user = UserFactory(username='anotheruser', password='foobar123!')
+        self.user = UserFactory()
+        self.different_user = UserFactory()
 
-        self.team = TeamFactory(name='Test Team')
-        self.request = AllocationRequestFactory(
-            title='Test Allocation Request',
-            description="This is a test.",
-            team=self.team
-        )
+        self.team = TeamFactory()
+        self.request = AllocationRequestFactory(team=self.team)
 
     @staticmethod
     def _create_serializer_with_post(requesting_user: User, data: dict) -> AllocationReviewSerializer:
@@ -64,7 +60,7 @@ class ValidateReviewerMethod(TestCase):
             'status': AllocationReview.StatusChoices.APPROVED
         }
 
-        serializer = self._create_serializer_with_post(self.another_user, post_data)
+        serializer = self._create_serializer_with_post(self.different_user, post_data)
         with self.assertRaisesRegex(ValidationError, "Reviewer cannot be set to a different user"):
             serializer.is_valid(raise_exception=True)
 

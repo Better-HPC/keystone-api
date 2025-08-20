@@ -3,9 +3,7 @@
 from django.test import TestCase
 
 from apps.allocations.factories import JobStatsFactory
-from apps.allocations.models import JobStats
 from apps.users.factories import TeamFactory
-from apps.users.models import Team
 
 
 class GetTeamMethod(TestCase):
@@ -14,7 +12,7 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock database records"""
 
-        self.team = TeamFactory(name='Test Team')
+        self.team = TeamFactory()
         self.jobstat = JobStatsFactory(team=self.team)
 
     def test_get_team(self) -> None:
