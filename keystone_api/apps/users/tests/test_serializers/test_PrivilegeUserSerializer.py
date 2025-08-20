@@ -70,11 +70,11 @@ class UpdateMethod(TestCase):
     def setUp(self) -> None:
         """Define dummy team and membership data."""
 
-        self.user = UserFactory(username="old_username", email="old@example.com", password="old_password")
         self.team1 = TeamFactory()
         self.team2 = TeamFactory()
 
-        MembershipFactory(user=self.user, team=self.team1, role=Membership.Role.OWNER)
+        self.user = UserFactory(username="old_username", email="old@example.com", password="old_password")
+        self.team1.add_or_update_member(user=self.user, role=Membership.Role.OWNER)
 
     def test_update_user(self) -> None:
         """Verify a user is updated with correct attributes and nested memberships."""

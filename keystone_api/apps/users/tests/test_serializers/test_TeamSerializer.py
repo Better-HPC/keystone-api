@@ -60,8 +60,8 @@ class UpdateMethod(TestCase):
         self.user2 = UserFactory()
         self.user3 = UserFactory()
 
-        MembershipFactory(team=self.team, user=self.user1, role=Membership.Role.OWNER)
-        MembershipFactory(team=self.team, user=self.user2, role=Membership.Role.MEMBER)
+        self.team.add_or_update_member(user=self.user1, role=Membership.Role.OWNER)
+        self.team.add_or_update_member(user=self.user2, role=Membership.Role.MEMBER)
 
     def test_update_team(self) -> None:
         """Verify a team is updated correctly with new members and name."""
