@@ -18,7 +18,8 @@ from django.test import override_settings
 
 from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
 from apps.allocations.models import AllocationRequest
-from apps.notifications.tasks import send_past_expiration_notice, send_upcoming_expiration_notice
+from apps.notifications.tasks import send_past_expiration_notice
+from apps.notifications.tasks.upcoming_expirations import send_upcoming_expiration_notice
 
 
 class Command(BaseCommand):
@@ -107,10 +108,22 @@ class Command(BaseCommand):
         allocations = AllocationFactory.build_batch(3, request=alloc_request)
 
         send_upcoming_expiration_notice(
-            user=alloc_request.submitter,
-            request=alloc_request,
-            allocations=allocations,
-            save=False)
+            save=False,
+            user_name=alloc_request.submitter.username,
+            user_first=alloc_request.submitter.first_name,
+            user_last=alloc_request.submitter.last_name,
+            req_id=alloc_request.id,
+            req_title=alloc_request.title,
+            req_team=alloc_request.team.name,
+            req_active=alloc_request.active,
+            req_expire=alloc_request.expire,
+            req_submitted=alloc_request.submitted,
+            allocations=[{
+                'alloc_cluster': alloc.cluster.name,
+                'alloc_requested': alloc.requested or 0,
+                'alloc_awarded': alloc.awarded or 0,
+            } for alloc in allocations],
+        )
 
     @staticmethod
     def _render_past_expiration() -> None:

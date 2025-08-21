@@ -6,8 +6,6 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
-from datetime import date, timedelta
-
 from django.conf import settings
 from django.db import models
 
@@ -117,43 +115,3 @@ class Preference(models.Model):
             filter(lambda x: x <= usage_percentage, self.request_expiry_thresholds),
             default=None
         )
-
-    def should_notify_upcoming_expiration(self, request_id: int, expire_date: date | None) -> bool:
-        """Check if user should be notified about upcoming expiration."""
-
-        if not expire_date:
-            return False
-
-        if expire_date <= date.today():
-            return False
-
-        days_until_expire = (expire_date - date.today()).days
-        next_threshold = self.get_expiration_threshold(days_until_expire)
-        if next_threshold is None:
-            return False
-
-        user_join_date = self.user.date_joined.date()
-        if user_join_date >= date.today() - timedelta(days=next_threshold):
-            return False
-
-        if Notification.objects.filter(
-            user=self.user,
-            metadata__request_id=request_id,
-            metadata__days_to_expire__lte=next_threshold,
-            notification_type=Notification.NotificationType.request_expiring,
-        ).exists():
-            return False
-
-        return True
-
-    def should_notify_past_expiration(self, request_id: int) -> bool:
-        """Check if user should be notified about past expiration."""
-
-        if Notification.objects.filter(
-            user=self.user,
-            metadata__request_id=request_id,
-            notification_type=Notification.NotificationType.request_expired,
-        ).exists():
-            return False
-
-        return self.notify_on_expiration
