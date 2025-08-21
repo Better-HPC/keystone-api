@@ -9,7 +9,7 @@ from datetime import date, timedelta
 
 from celery import shared_task
 
-from apps.allocations.models import Allocation, AllocationRequest
+from apps.allocations.models import AllocationRequest
 from apps.users.models import User
 from .models import Notification, Preference
 from .shortcuts import send_notification_template
@@ -19,7 +19,6 @@ __all__ = [
     'notify_upcoming_expirations',
     'send_past_expiration_notice',
     'send_upcoming_expiration_notice',
-
 ]
 
 log = logging.getLogger(__name__)
@@ -33,25 +32,55 @@ def notify_upcoming_expirations() -> None:
     active_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,
         expire__gt=date.today()
-    ).all()
+    ).select_related(
+        "team"
+    ).prefetch_related(
+        "allocation_set",
+        "team__users",
+    )
 
     for request in active_requests:
         allocations = request.allocation_set.all()
-        team_members = request.team.get_all_members().filter(is_active=True)
+        team_members = request.team.users.filter(is_active=True)
 
         for user in team_members:
             user_preferences = Preference.get_user_preference(user)
-            should_notify = user_preferences.should_notify_upcoming_expiration(request_id=request.id, expire_date=request.expire)
+            should_notify = user_preferences.should_notify_upcoming_expiration(
+                request_id=request.id, expire_date=request.expire)
 
             if should_notify:
-                send_upcoming_expiration_notice.delay(user, request, allocations)
+                send_upcoming_expiration_notice.delay(
+                    user_name=user.username,
+                    user_first=user.first_name,
+                    user_last=user.last_name,
+                    req_id=request.id,
+                    req_title=request.title,
+                    req_team=request.team.name,
+                    req_submitted=request.submitted,
+                    req_active=request.active,
+                    req_expire=request.expire,
+                    allocations=tuple(
+                        {
+                            'alloc_cluster': alloc.cluster.name,
+                            'alloc_requested': alloc.requested or 0,
+                            'alloc_awarded': alloc.awarded or 0,
+                        } for alloc in allocations
+                    )
+                )
 
 
 @shared_task()
 def send_upcoming_expiration_notice(
-    user: User,
-    request: AllocationRequest,
-    allocations: list[Allocation],
+    user_name: str,
+    user_first: str,
+    user_last: str,
+    req_id: int,
+    req_title: str,
+    req_team: str,
+    req_submitted: date,
+    req_active: date | None = None,
+    req_expire: date | None = None,
+    allocations: tuple[dict] = tuple(),
     save=True
 ) -> None:
     """Send a notification to alert a user their allocation request will expire soon.
@@ -60,46 +89,50 @@ def send_upcoming_expiration_notice(
     ID and the days remaining until the expiration date are saved as notification metadata.
 
     Args:
-        user: The user to notify.
-        request: The allocation request to notify the user about.
-        allocations: The allocated resources tied to the request.
+        user_name: The username of the user.
+        user_first: The first name of the user.
+        user_last: The last name of the user.
+        req_id: The ID of the allocation request.
+        req_title: The title of the allocation request.
+        req_team: The name of the team the allocation request belongs to.
+        req_active: The date the allocation request became active.
+        req_expire: The date the allocation request expires.
+        req_submitted: The date the allocation request was submitted.
+        allocations: A list of allocations tied to the allocation request.
         save: Whether to save the notification to the application database.
     """
 
-    log.info(f'Sending notification to user "{user.username}" on upcoming expiration for request {request.id}.')
+    log.info(f'Sending notification to user "{user_name}" on upcoming expiration for request {req_id}.')
 
-    days_until_expire = (request.expire - date.today()).days if request.expire else None
+    user = User.objects.get(username=user_name)
+    days_until_expire = (req_expire - date.today()).days if req_expire else None
+
+    metadata = {
+        'request_id': req_id,
+        'days_to_expire': days_until_expire
+    }
+
     context = {
-        'user_name': user.username,
-        'user_first': user.first_name,
-        'user_last': user.last_name,
-        'req_id': request.id,
-        'req_title': request.title,
-        'req_team': request.team.name,
-        'req_active': request.active,
-        'req_expire': request.expire,
-        'req_submitted': request.submitted,
+        'user_name': user_name,
+        'user_first': user_first,
+        'user_last': user_last,
+        'req_id': req_id,
+        'req_title': req_title,
+        'req_team': req_team,
+        'req_active': req_active,
+        'req_expire': req_expire,
+        'req_submitted': req_submitted,
         'req_days_left': days_until_expire,
-        'allocations': [
-            {
-                'alloc_cluster': alloc.cluster.name,
-                'alloc_requested': alloc.requested or 0,
-                'alloc_awarded': alloc.awarded or 0,
-            }
-            for alloc in allocations
-        ]
+        'allocations': allocations
     }
 
     send_notification_template(
         user=user,
-        subject=f'Your HPC allocation #{request.id} is expiring soon',
+        subject=f'Your HPC allocation #{req_id} is expiring soon',
         template='upcoming_expiration.html',
         context=context,
         notification_type=Notification.NotificationType.request_expiring,
-        notification_metadata={
-            'request_id': request.id,
-            'days_to_expire': days_until_expire
-        },
+        notification_metadata=metadata,
         save=save
     )
 
@@ -113,25 +146,55 @@ def notify_past_expirations() -> None:
         status=AllocationRequest.StatusChoices.APPROVED,
         expire__lte=date.today(),
         expire__gt=date.today() - timedelta(days=3),
-    ).all()
+    ).select_related(
+        "team"
+    ).prefetch_related(
+        "allocation_set",
+        "team__users",
+    )
 
     for request in active_requests:
         allocations = request.allocation_set.all()
-        team_members = request.team.get_all_members().filter(is_active=True)
+        team_members = request.team.users.filter(is_active=True)
 
         for user in team_members:
             user_preferences = Preference.get_user_preference(user)
             should_notify = user_preferences.should_notify_past_expiration(request_id=request.id)
 
             if should_notify:
-                send_past_expiration_notice.delay(user, request, allocations)
+                send_past_expiration_notice.delay(
+                    user_name=user.username,
+                    user_first=user.first_name,
+                    user_last=user.last_name,
+                    req_id=request.id,
+                    req_title=request.title,
+                    req_team=request.team.name,
+                    req_submitted=request.submitted,
+                    req_active=request.active,
+                    req_expire=request.expire,
+                    allocations=tuple(
+                        {
+                            'alloc_cluster': alloc.cluster.name,
+                            'alloc_requested': alloc.requested or 0,
+                            'alloc_awarded': alloc.awarded or 0,
+                            'alloc_final': alloc.final or 0,
+                        } for alloc in allocations
+                    )
+                )
 
 
 @shared_task()
 def send_past_expiration_notice(
-    user: User,
-    request: AllocationRequest,
-    allocations: list[Allocation],
+    user_name: str,
+    user_first: str,
+    user_last: str,
+    req_id: int,
+    req_title: str,
+    req_team: str,
+    req_submitted: date,
+    req_active: date | None = None,
+    req_expire: date | None = None,
+    allocations: tuple[dict] = tuple(),
     save=True
 ) -> None:
     """Send a notification to alert a user their allocation request has expired.
@@ -140,43 +203,43 @@ def send_past_expiration_notice(
     ID is saved as notification metadata.
 
     Args:
-        user: The user to notify.
-        request: The allocation request to notify the user about.
-        allocations: The allocated resources tied to the request.
+        user_name: The username of the user.
+        user_first: The first name of the user.
+        user_last: The last name of the user.
+        req_id: The ID of the allocation request.
+        req_title: The title of the allocation request.
+        req_team: The name of the team the allocation request belongs to.
+        req_active: The date the allocation request became active.
+        req_expire: The date the allocation request expires.
+        req_submitted: The date the allocation request was submitted.
+        allocations: A list of allocations tied to the allocation request.
         save: Whether to save the notification to the application database.
     """
 
-    log.info(f'Sending notification to user "{user.username}" on expiration of request {request.id}.')
+    log.info(f'Sending notification to user "{user_name}" on expiration of request {req_id}.')
+
+    user = User.objects.get(username=user_name)
+    metadata = {'request_id': req_id}
 
     context = {
-        'user_name': user.username,
-        'user_first': user.first_name,
-        'user_last': user.last_name,
-        'req_id': request.id,
-        'req_title': request.title,
-        'req_team': request.team.name,
-        'req_active': request.active,
-        'req_expire': request.expire,
-        'req_submitted': request.submitted,
-        'allocations': [
-            {
-                'alloc_cluster': alloc.cluster.name,
-                'alloc_requested': alloc.requested or 0,
-                'alloc_awarded': alloc.awarded or 0,
-                'alloc_final': alloc.final or 0,
-            }
-            for alloc in allocations
-        ]
+        'user_name': user_name,
+        'user_first': user_first,
+        'user_last': user_last,
+        'req_id': req_id,
+        'req_title': req_title,
+        'req_team': req_team,
+        'req_active': req_active,
+        'req_expire': req_expire,
+        'req_submitted': req_submitted,
+        'allocations': allocations
     }
 
     send_notification_template(
         user=user,
-        subject=f'Your HPC allocation #{request.id} has expired',
+        subject=f'Your HPC allocation #{req_id} has expired',
         template='past_expiration.html',
         context=context,
         notification_type=Notification.NotificationType.request_expired,
-        notification_metadata={
-            'request_id': request.id
-        },
+        notification_metadata=metadata,
         save=save
     )
