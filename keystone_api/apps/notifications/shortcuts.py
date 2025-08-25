@@ -104,7 +104,6 @@ def send_notification(
     html_text: str,
     notification_type: Notification.NotificationType,
     notification_metadata: dict | None = None,
-    save=True
 ) -> None:
     """Send a notification email to a specified user with both plain text and HTML content.
 
@@ -125,14 +124,13 @@ def send_notification(
         recipient_list=[user.email],
         html_message=html_text)
 
-    if save:
-        Notification.objects.create(
-            user=user,
-            subject=subject,
-            message=plain_text,
-            notification_type=notification_type,
-            metadata=notification_metadata
-        )
+    Notification.objects.create(
+        user=user,
+        subject=subject,
+        message=plain_text,
+        notification_type=notification_type,
+        metadata=notification_metadata
+    )
 
 
 def send_notification_template(
@@ -142,7 +140,6 @@ def send_notification_template(
     context: dict,
     notification_type: Notification.NotificationType,
     notification_metadata: dict | None = None,
-    save=True
 ) -> None:
     """Render an email template and send it to a specified user.
 
@@ -153,7 +150,6 @@ def send_notification_template(
         context: Variable definitions used to populate the template.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
-        save: Whether to save the notification to the application database.
 
     Raises:
         UndefinedError: When template variables are not defined in the notification metadata
@@ -169,5 +165,4 @@ def send_notification_template(
         html_content,
         notification_type,
         notification_metadata,
-        save=save
     )

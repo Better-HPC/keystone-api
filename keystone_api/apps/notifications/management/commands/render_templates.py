@@ -18,8 +18,7 @@ from django.test import override_settings
 
 from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
 from apps.allocations.models import AllocationRequest
-from apps.notifications.tasks import send_past_expiration_notice
-from apps.notifications.tasks.upcoming_expirations import send_upcoming_expiration_notice
+from apps.notifications.tasks import send_past_expiration_notice, send_upcoming_expiration_notice
 
 
 class Command(BaseCommand):
@@ -87,8 +86,9 @@ class Command(BaseCommand):
             EMAIL_FILE_PATH=output_dir,
             EMAIL_TEMPLATE_DIR=input_dir
         ):
+
             self._render_upcoming_expiration()
-            self._render_past_expiration()
+            #self._render_past_expiration()
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 

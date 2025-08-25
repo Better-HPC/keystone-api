@@ -109,7 +109,6 @@ def send_upcoming_expiration_notice(
     req_active: date | None = None,
     req_expire: date | None = None,
     allocations: tuple[dict] = tuple(),
-    save=True
 ) -> None:
     """Send a notification to alert a user their allocation request will expire soon.
 
@@ -127,7 +126,6 @@ def send_upcoming_expiration_notice(
         req_expire: The date the allocation request expires.
         req_submitted: The date the allocation request was submitted.
         allocations: A list of allocations tied to the allocation request.
-        save: Whether to save the notification to the application database.
     """
 
     log.info(f'Sending notification to user "{user_name}" on upcoming expiration for request {req_id}.')
@@ -161,5 +159,4 @@ def send_upcoming_expiration_notice(
         context=context,
         notification_type=Notification.NotificationType.request_expiring,
         notification_metadata=metadata,
-        save=save
     )
