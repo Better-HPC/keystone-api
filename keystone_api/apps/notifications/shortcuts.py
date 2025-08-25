@@ -13,9 +13,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
+from jinja2.sandbox import SandboxedEnvironment
 
 from apps.users.models import User
-from plugins.email import SecureSandboxedEnvironment
 from .models import Notification
 
 __all__ = [
@@ -44,7 +44,7 @@ def get_template(template_name: str) -> Template:
     """
 
     loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR])
-    environment = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
+    environment = SandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
     # Get resolved path from the loader
     try:
