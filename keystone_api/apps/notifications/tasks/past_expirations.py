@@ -16,11 +16,11 @@ __all__ = [
 log = logging.getLogger(__name__)
 
 
-def should_notify_past_expiration(preference: Preference, request: AllocationRequest) -> bool:
+def should_notify_past_expiration(user: User, request: AllocationRequest) -> bool:
     """Determine whether a user should be notified about an expired allocation request.
 
     Args:
-        preference: The user's notification preferences.
+        user: The user to check notification preferences for.
         request: The expired allocation request.
 
     Returns:
@@ -28,13 +28,13 @@ def should_notify_past_expiration(preference: Preference, request: AllocationReq
     """
 
     if Notification.objects.filter(
-        user=preference.user,
+        user=user,
         metadata__request_id=request.id,
         notification_type=Notification.NotificationType.request_expired,
     ).exists():
         return False
 
-    return preference.notify_on_expiration
+    return Preference.get_user_preference(user).notify_on_expiration
 
 
 @shared_task()

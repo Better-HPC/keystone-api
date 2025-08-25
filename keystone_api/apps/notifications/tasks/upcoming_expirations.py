@@ -16,11 +16,11 @@ __all__ = [
 log = logging.getLogger(__name__)
 
 
-def should_notify_upcoming_expiration(preference: Preference, request: AllocationRequest) -> bool:
+def should_notify_upcoming_expiration(user: User, request: AllocationRequest) -> bool:
     """Determine whether a user should be notified about an upcoming request expiration.
 
     Args:
-        preference: The user's notification preferences.
+        user: The user to check notification preferences for.
         request: The allocation request that will expire soon.
 
     Returns:
@@ -32,6 +32,8 @@ def should_notify_upcoming_expiration(preference: Preference, request: Allocatio
 
     if request.expire <= date.today():
         return False
+
+    preference = Preference.get_user_preference(user)
 
     days_until_expire = (request.expire - date.today()).days
     next_threshold = preference.get_expiration_threshold(days_until_expire)
