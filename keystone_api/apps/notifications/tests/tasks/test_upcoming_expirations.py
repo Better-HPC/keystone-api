@@ -14,6 +14,29 @@ from apps.users.factories import UserFactory
 class ShouldNotifyUpcomingExpirationMethod(TestCase):
     """Test the determination of whether a notification should be issued for an upcoming expiration."""
 
+    @patch('apps.notifications.models.Notification.objects.filter')
+    def test_false_if_duplicate_notification(self, mock_filter: Mock) -> None:
+        """Verify the return value is `False` if a notification has already been issued."""
+
+        mock_filter.return_value.exists.return_value = True
+
+        request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
+        PreferenceFactory(user=request.submitter, request_expiry_thresholds=[5])
+
+        self.assertFalse(
+            should_notify_upcoming_expiration(request.submitter, request)
+        )
+
+    def test_true_if_new_notification(self) -> None:
+        """Verify the return value is `True` if a notification threshold has been hit."""
+
+        request = AllocationRequestFactory(expire=date.today() + timedelta(days=5))
+        PreferenceFactory(user=request.submitter, request_expiry_thresholds=[15])
+
+        self.assertTrue(
+            should_notify_upcoming_expiration(request.submitter, request)
+        )
+
     def test_false_if_request_does_not_expire(self) -> None:
         """Verify the return value is `False` if the request does not expire."""
 
@@ -53,27 +76,4 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
 
         self.assertFalse(
             should_notify_upcoming_expiration(user, request)
-        )
-
-    @patch('apps.notifications.models.Notification.objects.filter')
-    def test_false_if_duplicate_notification(self, mock_filter: Mock) -> None:
-        """Verify the return value is `False` if a notification has already been issued."""
-
-        mock_filter.return_value.exists.return_value = True
-
-        request = AllocationRequestFactory(expire=date.today() + timedelta(days=15))
-        PreferenceFactory(user=request.submitter, request_expiry_thresholds=[5])
-
-        self.assertFalse(
-            should_notify_upcoming_expiration(request.submitter, request)
-        )
-
-    def test_true_if_new_notification(self) -> None:
-        """Verify the return value is `True` if a notification threshold has been hit."""
-
-        request = AllocationRequestFactory(expire=date.today() + timedelta(days=5))
-        PreferenceFactory(user=request.submitter, request_expiry_thresholds=[15])
-
-        self.assertTrue(
-            should_notify_upcoming_expiration(request.submitter, request)
         )

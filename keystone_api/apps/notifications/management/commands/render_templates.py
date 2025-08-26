@@ -25,23 +25,6 @@ class Command(BaseCommand):
 
     help = __doc__
 
-    def _validate_args(self, *args, **options) -> (Path, Path):
-        """Validate and return command line arguments.
-
-        Returns:
-            A tuple containing the input and directories.
-        """
-
-        input_dir = options['templates']
-        output_dir = options['out']
-
-        for path in (input_dir, output_dir):
-            if not path.exists():
-                self.stderr.write(f'No such file or directory: {path.resolve()}')
-                exit(1)
-
-        return input_dir, output_dir
-
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command-line arguments to the parser.
 
@@ -62,20 +45,21 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
-        input_dir, output_dir = self._validate_args(*args, **options)
+        input_dir = options['templates']
+        output_dir = options['out']
+
+        # Ensure in/out directories exist
+        for path in (input_dir, output_dir):
+            if not path.exists():
+                self.stderr.write(f'No such file or directory: {path.resolve()}')
+                exit(1)
+
+        # Write example notifications to disk
         with override_settings(EMAIL_TEMPLATE_DIR=input_dir):
             self._render_upcoming_expiration(output_dir)
             self._render_past_expiration(output_dir)
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
-
-    def _render_templates(self, input_dir: Path, output_dir: Path) -> None:
-        """Render a copy of user notification templates and write them to disk.
-
-        Args:
-            input_dir: Optional input directory with custom templates.
-            output_dir: The output directory where rendered templates are written.
-        """
 
     @staticmethod
     def _render_upcoming_expiration(output_dir: Path) -> None:

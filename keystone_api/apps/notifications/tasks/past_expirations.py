@@ -1,4 +1,3 @@
-import logging
 from datetime import date, timedelta
 
 from celery import shared_task
@@ -12,8 +11,6 @@ __all__ = [
     'notify_past_expirations',
     'send_past_expiration_notice',
 ]
-
-log = logging.getLogger(__name__)
 
 
 def should_notify_past_expiration(user: User, request: AllocationRequest) -> bool:
@@ -113,8 +110,6 @@ def send_past_expiration_notice(
         req_expire: The date the allocation request expires.
         allocations: A list of allocations tied to the allocation request.
     """
-
-    log.info(f'Sending notification to user "{user_name}" on expiration of request {req_id}.')
 
     user = User.objects.get(username=user_name)
     metadata = {'request_id': req_id}

@@ -52,7 +52,7 @@ class SendNotificationMethod(TestCase):
         self.assertEqual([(self.html_text, 'text/html')], email.alternatives)
 
     def test_saved_to_database(self) -> None:
-        """Verify a record of the email is stored in the database by default."""
+        """Verify a record of the email is stored in the database."""
 
         notification = Notification.objects.get(user=self.user)
         self.assertEqual(self.plain_text, notification.message)

@@ -22,15 +22,9 @@ class ShouldNotifyPastExpirationMethod(TestCase):
         request = AllocationRequestFactory(expire=date.today())
         PreferenceFactory(user=request.submitter, notify_on_expiration=True)
 
-        self.assertFalse(should_notify_past_expiration(request.submitter, request))
-
-    def test_false_if_disabled_in_preferences(self) -> None:
-        """Verify the return value is `False` if expiry notifications are disabled in preferences."""
-
-        request = AllocationRequestFactory(expire=date.today())
-        PreferenceFactory(user=request.submitter, notify_on_expiration=False)
-
-        self.assertFalse(should_notify_past_expiration(request.submitter, request))
+        self.assertFalse(
+            should_notify_past_expiration(request.submitter, request)
+        )
 
     def test_true_if_new_notification(self) -> None:
         """Verify the return value is `True` if a notification has not been issued yet."""
@@ -38,4 +32,16 @@ class ShouldNotifyPastExpirationMethod(TestCase):
         request = AllocationRequestFactory(expire=date.today())
         PreferenceFactory(user=request.submitter, notify_on_expiration=True)
 
-        self.assertTrue(should_notify_past_expiration(request.submitter, request))
+        self.assertTrue(
+            should_notify_past_expiration(request.submitter, request)
+        )
+
+    def test_false_if_disabled_in_preferences(self) -> None:
+        """Verify the return value is `False` if expiry notifications are disabled in preferences."""
+
+        request = AllocationRequestFactory(expire=date.today())
+        PreferenceFactory(user=request.submitter, notify_on_expiration=False)
+
+        self.assertFalse(
+            should_notify_past_expiration(request.submitter, request)
+        )
