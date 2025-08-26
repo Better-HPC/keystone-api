@@ -114,7 +114,6 @@ def send_notification(
         html_text: The HTML version of the email content.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
-        save: Whether to save the notification to the application database.
     """
 
     send_mail(

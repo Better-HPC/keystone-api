@@ -124,9 +124,9 @@ def send_upcoming_expiration_notice(
         req_id: The ID of the allocation request.
         req_title: The title of the allocation request.
         req_team: The name of the team the allocation request belongs to.
+        req_submitted: The date the allocation request was submitted.
         req_active: The date the allocation request became active.
         req_expire: The date the allocation request expires.
-        req_submitted: The date the allocation request was submitted.
         allocations: A list of allocations tied to the allocation request.
     """
 
@@ -147,9 +147,9 @@ def send_upcoming_expiration_notice(
         'req_id': req_id,
         'req_title': req_title,
         'req_team': req_team,
+        'req_submitted': req_submitted,
         'req_active': req_active,
         'req_expire': req_expire,
-        'req_submitted': req_submitted,
         'req_days_left': days_until_expire,
         'allocations': allocations
     }
