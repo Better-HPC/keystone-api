@@ -1,7 +1,6 @@
 """Top level URL configuration."""
 
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
@@ -20,6 +19,3 @@ urlpatterns = [
     path('users/', include('apps.users.urls', namespace='users')),
     path('version/', include('apps.version.urls', namespace='version')),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
