@@ -9,7 +9,7 @@ associated model class called `objects`.
 from datetime import date
 from typing import TYPE_CHECKING
 
-from django.db.models import Manager, QuerySet, Sum
+from django.db.models import Manager, Q, QuerySet, Sum
 
 from apps.users.models import Team
 
@@ -53,7 +53,9 @@ class AllocationManager(Manager):
         """
 
         return self.approved_allocations(account, cluster).filter(
-            request__active__lte=date.today(), request__expire__gt=date.today()
+            request__active__lte=date.today()
+        ).filter(
+            Q(request__expire__gt=date.today()) | Q(request__expire__isnull=True)
         )
 
     def expiring_allocations(self, account: Team, cluster: 'Cluster') -> QuerySet:
