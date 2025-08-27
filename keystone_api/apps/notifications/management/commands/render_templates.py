@@ -65,8 +65,9 @@ class Command(BaseCommand):
     def _render_upcoming_expiration(output_dir: Path) -> None:
         """Render a sample notification for an allocation request with an upcoming expiration."""
 
-        next_week = date.today() + timedelta(days=7)
-        last_year = next_week - timedelta(days=365)
+        expired = date.today() + timedelta(days=7)
+        active = expired - timedelta(days=358)
+        submitted = active - timedelta(days=7)
 
         template = get_template("upcoming_expiration.html")
         subject = "Your HPC allocation 1234 is expiring soon"
@@ -77,9 +78,9 @@ class Command(BaseCommand):
             'req_id': 1234,
             'req_title': "Project Title",
             'req_team': "Team Name",
-            'req_submitted': last_year,
-            'req_active': last_year,
-            'req_expire': next_week,
+            'req_submitted': submitted,
+            'req_active': active,
+            'req_expire': expired,
             'req_days_left': 7,
             'allocations': (
                 {
@@ -104,8 +105,9 @@ class Command(BaseCommand):
     def _render_past_expiration(output_dir: Path) -> None:
         """Render a sample notification for an allocation request that has expired."""
 
-        today = date.today()
-        last_year = today - timedelta(days=365)
+        expired = date.today()
+        active = expired - timedelta(days=358)
+        submitted = active - timedelta(days=7)
 
         template = get_template("past_expiration.html")
         subject = "Your HPC allocation 1234 has expired"
@@ -116,9 +118,9 @@ class Command(BaseCommand):
             'req_id': 1234,
             'req_title': "Project Title",
             'req_team': "Team Name",
-            'req_active': last_year,
-            'req_expire': today,
-            'req_submitted': last_year,
+            'req_submitted': submitted,
+            'req_active': active,
+            'req_expire': expired,
             'allocations': (
                 {
                     'alloc_cluster': "Cluster 1",
