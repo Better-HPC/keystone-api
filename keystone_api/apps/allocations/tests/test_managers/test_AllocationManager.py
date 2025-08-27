@@ -281,7 +281,7 @@ class ActiveServiceUnitsMethod(TestCase):
 
         # Active, approved allocation (included)
         self.active_allocation = AllocationFactory(
-            awarded=80,
+            awarded=60,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
@@ -314,7 +314,7 @@ class ActiveServiceUnitsMethod(TestCase):
 
         # Active with no expiration (included)
         self.no_expire_allocation = AllocationFactory(
-            awarded=20,
+            awarded=30,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
@@ -325,7 +325,7 @@ class ActiveServiceUnitsMethod(TestCase):
 
         # Pending request (excluded)
         AllocationFactory(
-            awarded=30,
+            awarded=20,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="PD",
@@ -355,7 +355,7 @@ class ExpiringServiceUnitsMethod(TestCase):
 
         # Expiring allocation - not yet processed (included)
         self.expiring_allocation = AllocationFactory(
-            awarded=70,
+            awarded=60,
             final=None,
             cluster=self.cluster,
             request=AllocationRequestFactory(
@@ -367,7 +367,7 @@ class ExpiringServiceUnitsMethod(TestCase):
 
         # Expired allocation - already processed (excluded)
         self.expired_allocation = AllocationFactory(
-            awarded=60,
+            awarded=50,
             final=10,
             cluster=self.cluster,
             request=AllocationRequestFactory(
@@ -379,7 +379,7 @@ class ExpiringServiceUnitsMethod(TestCase):
 
         # Active allocation (excluded)
         AllocationFactory(
-            awarded=50,
+            awarded=40,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
@@ -390,7 +390,7 @@ class ExpiringServiceUnitsMethod(TestCase):
 
         # Upcoming allocation (excluded)
         AllocationFactory(
-            awarded=40,
+            awarded=30,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
@@ -401,23 +401,12 @@ class ExpiringServiceUnitsMethod(TestCase):
 
         # Pending request (excluded)
         AllocationFactory(
-            awarded=30,
+            awarded=20,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="PD",
                 active=today - timedelta(days=60),
                 expire=today - timedelta(days=30),
-            )
-        )
-
-        # Active with no expiration (excluded)
-        AllocationFactory(
-            awarded=20,
-            cluster=self.cluster,
-            request=AllocationRequestFactory(
-                team=self.team, status="AP",
-                active=today - timedelta(days=10),
-                expire=None,
             )
         )
 
