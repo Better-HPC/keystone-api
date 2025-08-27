@@ -20,7 +20,7 @@ class ApprovedAllocationsMethod(TestCase):
         self.cluster = ClusterFactory()
 
     def test_includes_active_approved_allocations(self) -> None:
-        """Verify active, approved allocations are included in the returned query."""
+        """Verify active, approved allocations are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -35,7 +35,7 @@ class ApprovedAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_includes_expired_approved_allocations(self) -> None:
-        """Verify expired, approved allocations are included in the returned query."""
+        """Verify expired, approved allocations are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -50,7 +50,7 @@ class ApprovedAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_includes_upcoming_approved_allocations(self) -> None:
-        """Verify upcoming, approved allocations are included in the returned query."""
+        """Verify upcoming, approved allocations are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -65,7 +65,7 @@ class ApprovedAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_includes_approved_allocations_with_no_dates(self) -> None:
-        """Verify allocations with no start/end date are included in the returned query."""
+        """Verify allocations with no start/end date are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -80,7 +80,7 @@ class ApprovedAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_excludes_pending_allocations(self) -> None:
-        """Verify pending allocations are not included in the returned query."""
+        """Verify pending allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -105,7 +105,7 @@ class ActiveAllocationsMethod(TestCase):
         self.cluster = ClusterFactory()
 
     def test_includes_active_approved_allocations(self) -> None:
-        """Verify currently active allocations are included in the returned query."""
+        """Verify currently active allocations are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -120,7 +120,7 @@ class ActiveAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_excludes_expired_approved_allocations(self) -> None:
-        """Verify expired, approved allocations are not included in the returned query."""
+        """Verify expired, approved allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -135,7 +135,7 @@ class ActiveAllocationsMethod(TestCase):
         self.assertQuerySetEqual([], results, ordered=False)
 
     def test_excludes_upcoming_approved_allocations(self) -> None:
-        """Verify upcoming, approved allocations are not included in the returned query."""
+        """Verify upcoming, approved allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -150,7 +150,7 @@ class ActiveAllocationsMethod(TestCase):
         self.assertQuerySetEqual([], results, ordered=False)
 
     def test_includes_approved_allocations_with_no_expiration(self) -> None:
-        """Verify allocations with no end date are included in the returned query."""
+        """Verify allocations with no end date are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -166,7 +166,7 @@ class ActiveAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_excludes_pending_allocations(self) -> None:
-        """Verify pending allocations are not included in the returned query."""
+        """Verify pending allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -191,7 +191,7 @@ class ExpiringAllocationsMethod(TestCase):
         self.cluster = ClusterFactory()
 
     def test_includes_expiring_allocations(self) -> None:
-        """Verify expiring allocations are included in the returned query."""
+        """Verify expiring allocations are included in the returned queryset."""
 
         allocation = AllocationFactory(
             cluster=self.cluster,
@@ -207,7 +207,7 @@ class ExpiringAllocationsMethod(TestCase):
         self.assertQuerySetEqual([allocation], results, ordered=False)
 
     def test_excludes_allocations_with_final_usage(self) -> None:
-        """Verify expired allocations with a known final usage are not included in the returned query."""
+        """Verify expired allocations with a known final usage are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -223,7 +223,7 @@ class ExpiringAllocationsMethod(TestCase):
         self.assertQuerySetEqual([], results, ordered=False)
 
     def test_excludes_active_approved_allocations(self) -> None:
-        """Verify active, approved allocations are not included in the returned query."""
+        """Verify active, approved allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -237,8 +237,8 @@ class ExpiringAllocationsMethod(TestCase):
         results = Allocation.objects.expiring_allocations(self.team, self.cluster)
         self.assertQuerySetEqual([], results, ordered=False)
 
-    def test_excludes_upcoming_approved_allocation(self) -> None:
-        """Verify upcoming, approved allocations are not included in the returned query."""
+    def test_excludes_upcoming_approved_allocations(self) -> None:
+        """Verify upcoming, approved allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -253,7 +253,7 @@ class ExpiringAllocationsMethod(TestCase):
         self.assertQuerySetEqual([], results, ordered=False)
 
     def test_excludes_pending_request(self) -> None:
-        """Verify pending allocations are not included in the returned query."""
+        """Verify pending allocations are not included in the returned queryset."""
 
         AllocationFactory(
             cluster=self.cluster,
@@ -337,7 +337,9 @@ class ActiveServiceUnitsMethod(TestCase):
     def test_service_unit_calculation(self) -> None:
         """Verify active service units only sum from currently active, approved allocations."""
 
-        expected_su = sum(a.awarded for a in [self.active_allocation, self.no_expire_allocation])
+        included_allocations = [self.active_allocation, self.no_expire_allocation]
+
+        expected_su = sum(a.awarded for a in included_allocations)
         returned_su = Allocation.objects.active_service_units(self.team, self.cluster)
         self.assertEqual(expected_su, returned_su)
 
@@ -413,7 +415,9 @@ class ExpiringServiceUnitsMethod(TestCase):
     def test_service_unit_calculation(self) -> None:
         """Verify expiring service units only sum from expiring, approved allocations."""
 
-        expected_su = sum(a.awarded for a in [self.expiring_allocation])
+        included_allocations = [self.expiring_allocation, ]
+
+        expected_su = sum(a.awarded for a in included_allocations)
         returned_su = Allocation.objects.expiring_service_units(self.team, self.cluster)
         self.assertEqual(expected_su, returned_su)
 
@@ -504,6 +508,8 @@ class HistoricalUsageMethod(TestCase):
     def test_service_unit_calculation(self) -> None:
         """Verify historical usage only sums the final values of expired allocations."""
 
-        expected_usage = sum(a.final for a in [self.expired_with_final])
+        included_allocations = [self.expired_with_final, ]
+
+        expected_usage = sum(a.final for a in included_allocations)
         returned_usage = Allocation.objects.historical_usage(self.team, self.cluster)
         self.assertEqual(expected_usage, returned_usage)

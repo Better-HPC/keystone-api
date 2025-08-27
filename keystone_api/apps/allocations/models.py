@@ -45,7 +45,7 @@ class Allocation(TeamModelInterface, models.Model):
     """User service unit allocation.
 
     Allocations are marked as "expired" when their `final` field is populated.
-    If this field is `None`, the allocation has yet been processed as "expired".
+    If this field is `None`, the allocation has not yet been processed as "expired".
     """
 
     class Meta:
