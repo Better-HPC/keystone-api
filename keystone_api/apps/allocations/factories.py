@@ -179,7 +179,7 @@ class AllocationFactory(DjangoModelFactory):
         if not is_approved:
             return None
 
-        is_expired = self.request.expire <= date.today()
+        is_expired = (self.request.expire is not None) and (self.request.expire <= date.today())
         if is_approved and is_expired:
             return randgen.randint(0, self.awarded // 100) * 100
 
