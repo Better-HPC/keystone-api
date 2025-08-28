@@ -116,13 +116,7 @@ def send_notification(
         notification_metadata: Metadata to store alongside the notification.
     """
 
-    send_mail(
-        subject=subject,
-        message=plain_text,
-        from_email=settings.EMAIL_FROM_ADDRESS,
-        recipient_list=[user.email],
-        html_message=html_text)
-
+    # Create db record first so uniqueness constraints are evaluated before sending mail
     Notification.objects.create(
         user=user,
         subject=subject,
@@ -130,6 +124,13 @@ def send_notification(
         notification_type=notification_type,
         metadata=notification_metadata
     )
+
+    send_mail(
+        subject=subject,
+        message=plain_text,
+        from_email=settings.EMAIL_FROM_ADDRESS,
+        recipient_list=[user.email],
+        html_message=html_text)
 
 
 def send_notification_template(

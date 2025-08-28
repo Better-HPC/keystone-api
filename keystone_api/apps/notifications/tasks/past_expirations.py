@@ -97,7 +97,8 @@ def send_past_expiration_notice(user_id: int, req_id: int) -> None:
         )
     }
 
-    # Check a duplicate notification does not exist to ensure idempotency
+    # Perform check in case user preferences or database state
+    # changed since the task was scheduled
     if not should_notify_past_expiration(user, request):
         return
 
