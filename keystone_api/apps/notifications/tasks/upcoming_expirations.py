@@ -76,7 +76,7 @@ def notify_upcoming_expirations() -> None:
 
 @shared_task()
 def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
-    """Send a notification to alert a user their allocation request will expire soon.
+    """Notify a user their allocation request will expire soon.
 
     When persisting the notification record to the database, the allocation request
     ID and the days remaining until the expiration date are saved as notification metadata.
