@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from celery import shared_task
+from django.db.models import Prefetch
 
 from apps.allocations.models import AllocationRequest
 from apps.users.models import User
@@ -63,72 +64,36 @@ def notify_upcoming_expirations() -> None:
     ).select_related(
         "team"
     ).prefetch_related(
-        "allocation_set",
-        "team__users",
+        # Prefetch active team members and assign to the `active_users` attribute
+        Prefetch("team__users", queryset=User.objects.filter(is_active=True), to_attr="active_users")
     )
 
     for request in active_requests:
-        allocations = request.allocation_set.all()
-        team_members = request.team.users.filter(is_active=True)
-
-        for user in team_members:
-            user_preferences = Preference.get_user_preference(user)
-            should_notify = should_notify_upcoming_expiration(user_preferences, request)
-
-            if should_notify:
-                send_upcoming_expiration_notice.delay(
-                    user_name=user.username,
-                    user_first=user.first_name,
-                    user_last=user.last_name,
-                    req_id=request.id,
-                    req_title=request.title,
-                    req_team=request.team.name,
-                    req_submitted=request.submitted,
-                    req_active=request.active,
-                    req_expire=request.expire,
-                    allocations=tuple(
-                        {
-                            'alloc_cluster': alloc.cluster.name,
-                            'alloc_requested': alloc.requested or 0,
-                            'alloc_awarded': alloc.awarded or 0,
-                        } for alloc in allocations
-                    )
-                )
+        for user in request.team.active_users:
+            if should_notify_upcoming_expiration(user, request):
+                send_upcoming_expiration_notice.delay(user.id, request.id)
 
 
 @shared_task()
-def send_upcoming_expiration_notice(
-    user_name: str,
-    user_first: str,
-    user_last: str,
-    req_id: int,
-    req_title: str,
-    req_team: str,
-    req_submitted: date,
-    req_active: date | None = None,
-    req_expire: date | None = None,
-    allocations: tuple[dict] = tuple(),
-) -> None:
+def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
     """Send a notification to alert a user their allocation request will expire soon.
 
     When persisting the notification record to the database, the allocation request
     ID and the days remaining until the expiration date are saved as notification metadata.
 
     Args:
-        user_name: The username of the user.
-        user_first: The first name of the user.
-        user_last: The last name of the user.
-        req_id: The ID of the allocation request.
-        req_title: The title of the allocation request.
-        req_team: The name of the team the allocation request belongs to.
-        req_submitted: The date the allocation request was submitted.
-        req_active: The date the allocation request became active.
-        req_expire: The date the allocation request expires.
-        allocations: A list of allocations tied to the allocation request.
+        user_id: ID for the user to notify.
+        req_id: ID for the allocation request to notify about.
     """
 
-    user = User.objects.get(username=user_name)
-    days_until_expire = (req_expire - date.today()).days if req_expire else None
+    user = User.objects.get(id=user_id)
+    request = AllocationRequest.objects \
+        .select_related("team") \
+        .prefetch_related("allocation_set__cluster") \
+        .only("id", "title", "team__name", "submitted", "active", "expire") \
+        .get(id=req_id)
+
+    days_until_expire = (request.expire - date.today()).days if request.expire else None
 
     metadata = {
         'request_id': req_id,
@@ -136,18 +101,28 @@ def send_upcoming_expiration_notice(
     }
 
     context = {
-        'user_name': user_name,
-        'user_first': user_first,
-        'user_last': user_last,
-        'req_id': req_id,
-        'req_title': req_title,
-        'req_team': req_team,
-        'req_submitted': req_submitted,
-        'req_active': req_active,
-        'req_expire': req_expire,
+        'user_name': user.username,
+        'user_first': user.first_name,
+        'user_last': user.last_name,
+        'req_id': request.id,
+        'req_title': request.title,
+        'req_team': request.team.name,
+        'req_submitted': request.submitted,
+        'req_active': request.active,
+        'req_expire': request.expire,
         'req_days_left': days_until_expire,
-        'allocations': allocations
+        'allocations': tuple(
+            {
+                'alloc_cluster': alloc.cluster.name,
+                'alloc_requested': alloc.requested or 0,
+                'alloc_awarded': alloc.awarded or 0,
+            } for alloc in request.allocation_set.all()
+        )
     }
+
+    # Check a duplicate notification does not exist to ensure idempotency
+    if not should_notify_upcoming_expiration(user, request):
+        return
 
     send_notification_template(
         user=user,
