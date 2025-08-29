@@ -97,7 +97,6 @@ LOGIN_REDIRECT_URL = '/'
 SITE_ID = 1
 
 INSTALLED_APPS = [
-    'scout_apm.django',
     'jazzmin',
     'auditlog',
     'corsheaders',
