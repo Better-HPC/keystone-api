@@ -97,6 +97,7 @@ LOGIN_REDIRECT_URL = '/'
 SITE_ID = 1
 
 INSTALLED_APPS = [
+    'scout_apm.django',
     'jazzmin',
     'auditlog',
     'corsheaders',
@@ -127,7 +128,6 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.health',
     'apps.logging',
-    'apps.metrics',
     'apps.notifications',
     'apps.openapi',
     'apps.research_products',
@@ -342,6 +342,10 @@ USE_TZ = True
 CELERY_ENABLE_UTC = True
 DJANGO_CELERY_BEAT_TZ_AWARE = True
 TIME_ZONE = env.str('CONFIG_TIMEZONE', 'UTC')
+
+# Prometheus Metrics
+
+PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=range(9101, 9150), cast=int)
 
 # Logging
 
