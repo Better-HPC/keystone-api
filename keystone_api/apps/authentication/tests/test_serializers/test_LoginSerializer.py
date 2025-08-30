@@ -1,11 +1,12 @@
 """Unit tests for the `LoginSerializer` class."""
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from rest_framework.exceptions import ValidationError
-from rest_framework.test import APIRequestFactory
+from rest_framework.request import Request
 
 from apps.authentication.serializers import LoginSerializer
+from apps.users.factories import UserFactory
 
 User = get_user_model()
 
@@ -17,8 +18,8 @@ class Validation(TestCase):
         """Create a user account to test authentication with."""
 
         self.password = 'securepass'
-        self.user = User.objects.create_user(username='testuser', password=self.password)
-        self.request = APIRequestFactory().post('/login/')
+        self.user = UserFactory(password=self.password)
+        self.request = Request(RequestFactory().post('/login/'))
 
     def test_valid_credentials(self) -> None:
         """Verify valid user credentials pass validation."""
@@ -52,7 +53,7 @@ class Validation(TestCase):
 
         # Create a user with whitespace in the password
         password_with_spaces = '  spacedpass  '
-        user_with_spaces = User.objects.create_user(username='whitespaceuser', password=password_with_spaces)
+        user_with_spaces = UserFactory(username='whitespaceuser', password=password_with_spaces)
 
         # Attempt login with exact password (should succeed)
         data = {'username': user_with_spaces.username, 'password': password_with_spaces}

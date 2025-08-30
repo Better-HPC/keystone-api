@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
@@ -38,7 +38,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.team_admin = MembershipFactory(team=membership.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=membership.team, role=Membership.Role.OWNER).user
 
-        self.non_team_member = UserFactory(is_staff=False)
+        self.non_team_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
         self.member1_endpoint = self.endpoint_pattern.format(pk=membership.pk)

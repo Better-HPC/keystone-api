@@ -35,6 +35,13 @@ class Notification(models.Model):
             models.Index(fields=['user', 'time', 'notification_type']),
         ]
 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'notification_type', 'metadata'],
+                name='unique_user_type_metadata'
+            )
+        ]
+
     class NotificationType(models.TextChoices):
         """Enumerated choices for the `notification_type` field."""
 

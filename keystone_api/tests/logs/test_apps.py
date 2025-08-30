@@ -2,10 +2,14 @@
 
 from rest_framework.test import APITestCase
 
-from .common import BaseEndpointPermissionTests
+from .common import LogEndpointPermissionTestMixin
 
 
-class EndpointPermissions(BaseEndpointPermissionTests, APITestCase):
-    """Test endpoint user permissions."""
+class EndpointPermissions(LogEndpointPermissionTestMixin, APITestCase):
+    """Test endpoint user permissions.
+
+    See the `LogEndpointPermissionTests` class docstring for details on the
+    tested endpoint permissions.
+    """
 
     endpoint = '/logs/apps/'

@@ -1,15 +1,39 @@
 {% extends "base.html" %}
 
 {% block main %}
-  {% if user.first_name and user.last_name %}
-    <p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+  {% if user_first and user_last %}
+    <p>Dear {{ user_first }} {{ user_last }},</p>
   {% else %}
-    <p>Dear {{ user.username }},</p>
+    <p>Dear {{ user_name }},</p>
   {% endif %}
+
   <p>
-    This notification is to remind you your HPC compute allocation <strong>"{{ request.title }}"</strong>
-    is set to expire in {{ days_to_expire }} days on {{ request.expire.isoformat() }}.
+    This is an automated notification that the HPC allocation request <strong>"{{ req_title }}"</strong>
+    (ID: {{ req_id }}) is scheduled to expire in {{ req_days_left }} days on {{ req_expire.strftime('%B %d, %Y') }}.
   </p>
-  <p>Sincerely,</p>
-  <p>The keystone HPC utility</p>
+
+  <p style="padding-top: 10px">
+    <strong>What Does This Mean</strong>
+  </p>
+
+  <p>
+    On {{ req_active.strftime('%B %d, %Y') }} the <em>{{ req_team }}</em> team was granted computational time across one
+    or more HPC clusters.
+    These allocated resources are set to expire on {{ req_expire.strftime('%B %d, %Y') }},
+    after which any unused service units will no longer be available to your team.
+  </p>
+
+  <p style="padding-top: 10px">
+    <strong>What Happens Now</strong>
+  </p>
+
+  <p>
+    Your team may continue to submit jobs and utilize any remaining service units up to the expiration date.
+    If you require additional compute time after expiration, an administrator for the <em>{{ req_team }}</em> team
+    will need to submit a request for additional resources.
+  </p>
+
+  <p style="padding-top: 10px">
+    Sincerely,<br>The Keystone HPC Utility
+  </p>
 {% endblock %}

@@ -5,11 +5,15 @@ from datetime import date
 from rest_framework.test import APITestCase
 
 from apps.research_products.factories import PublicationFactory
-from .common import RecordEndpointPermissionsTests
+from .common import ResearchDetailEndpointPermissionsTestMixin
 
 
-class EndpointPermissions(RecordEndpointPermissionsTests, APITestCase):
-    """Test endpoint user permissions."""
+class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCase):
+    """Test endpoint user permissions.
+
+    See the `ResearchDetailEndpointPermissionsTests` class docstring for details on the
+    tested endpoint permissions.
+    """
 
     factory = PublicationFactory
     endpoint_pattern = '/research/publications/{pk}/'

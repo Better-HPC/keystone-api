@@ -8,7 +8,6 @@ the associated table/fields/records are presented by parent interfaces.
 
 import abc
 import os
-from datetime import date
 
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
@@ -43,7 +42,11 @@ class TeamModelInterface:
 
 @auditlog.register()
 class Allocation(TeamModelInterface, models.Model):
-    """User service unit allocation."""
+    """User service unit allocation.
+
+    Allocations are marked as "expired" when their `final` field is populated.
+    If this field is `None`, the allocation has not yet been processed as "expired".
+    """
 
     class Meta:
         """Database model settings."""
@@ -131,11 +134,6 @@ class AllocationRequest(TeamModelInterface, models.Model):
         """Return the user team tied to the current record."""
 
         return self.team
-
-    def get_days_until_expire(self) -> int | None:
-        """Calculate the number of days until this request expires."""
-
-        return (self.expire - date.today()).days if self.expire else None
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the request title as a string."""

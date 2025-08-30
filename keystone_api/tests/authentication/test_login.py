@@ -23,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user = UserFactory(username='user', is_staff=False)
+        self.user = UserFactory(username='user')
         self.user.set_password('foobar123')
         self.user.save()
 
@@ -71,7 +71,7 @@ class UserAuthentication(APITestCase):
         """Create test fixtures using mock data."""
 
         self.password = 'foobar123'
-        self.user = UserFactory(username='user', password=self.password, is_staff=False)
+        self.user = UserFactory(username='user', password=self.password)
 
     def test_invalid_credentials(self) -> None:
         """Verify user authentication fails with invalid credentials."""

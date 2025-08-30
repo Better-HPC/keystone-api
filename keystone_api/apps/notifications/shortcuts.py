@@ -13,10 +13,10 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
+from jinja2.sandbox import SandboxedEnvironment
 
-from apps.notifications.models import Notification
 from apps.users.models import User
-from plugins.email import SecureSandboxedEnvironment
+from .models import Notification
 
 __all__ = [
     'get_template',
@@ -44,7 +44,7 @@ def get_template(template_name: str) -> Template:
     """
 
     loader = FileSystemLoader([settings.EMAIL_TEMPLATE_DIR, settings.EMAIL_DEFAULT_DIR])
-    environment = SecureSandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
+    environment = SandboxedEnvironment(undefined=StrictUndefined, autoescape=True, loader=loader)
 
     # Get resolved path from the loader
     try:
@@ -104,7 +104,6 @@ def send_notification(
     html_text: str,
     notification_type: Notification.NotificationType,
     notification_metadata: dict | None = None,
-    save=True
 ) -> None:
     """Send a notification email to a specified user with both plain text and HTML content.
 
@@ -115,8 +114,16 @@ def send_notification(
         html_text: The HTML version of the email content.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
-        save: Whether to save the notification to the application database.
     """
+
+    # Create db record first so uniqueness constraints are evaluated before sending mail
+    Notification.objects.create(
+        user=user,
+        subject=subject,
+        message=plain_text,
+        notification_type=notification_type,
+        metadata=notification_metadata
+    )
 
     send_mail(
         subject=subject,
@@ -124,15 +131,6 @@ def send_notification(
         from_email=settings.EMAIL_FROM_ADDRESS,
         recipient_list=[user.email],
         html_message=html_text)
-
-    if save:
-        Notification.objects.create(
-            user=user,
-            subject=subject,
-            message=plain_text,
-            notification_type=notification_type,
-            metadata=notification_metadata
-        )
 
 
 def send_notification_template(
@@ -142,7 +140,6 @@ def send_notification_template(
     context: dict,
     notification_type: Notification.NotificationType,
     notification_metadata: dict | None = None,
-    save=True
 ) -> None:
     """Render an email template and send it to a specified user.
 
@@ -153,7 +150,6 @@ def send_notification_template(
         context: Variable definitions used to populate the template.
         notification_type: Optionally categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
-        save: Whether to save the notification to the application database.
 
     Raises:
         UndefinedError: When template variables are not defined in the notification metadata
@@ -169,5 +165,4 @@ def send_notification_template(
         html_content,
         notification_type,
         notification_metadata,
-        save=save
     )

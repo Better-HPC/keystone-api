@@ -25,7 +25,7 @@ class FormatTemplateMethod(TestCase):
         self.assertEqual(expected_text, text)
 
     def test_template_with_special_chars(self) -> None:
-        """Verify special characters are properly fomratted in HTML and plain text."""
+        """Verify special characters are properly formatted in HTML and plain text."""
 
         template = Template("<p>Use &lt;code&gt; tags for code.</p>")
         html, text = format_template(template, {})
@@ -77,7 +77,7 @@ class FormatTemplateMethod(TestCase):
             format_template(Template(""), {})
 
     def test_respects_strict_mode(self) -> None:
-        """Verify an error is raised when rendering a StrictUndefined template with missing variables."""
+        """Verify an error is raised when rendering a `StrictUndefined` template with missing variables."""
 
         env = Environment(undefined=StrictUndefined, autoescape=True)
         template = env.from_string("Hello {{ name }}")

@@ -1,11 +1,10 @@
 """Unit tests for the `Preference` class."""
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from apps.notifications.factories import PreferenceFactory
 from apps.notifications.models import default_expiry_thresholds, Preference
-
-User = get_user_model()
+from apps.users.factories import UserFactory
 
 
 class GetExpirationThresholdMethod(TestCase):
@@ -14,8 +13,8 @@ class GetExpirationThresholdMethod(TestCase):
     def setUp(self) -> None:
         """Set up test data."""
 
-        self.user = get_user_model().objects.create_user(username="testuser", password="foobar123")
-        self.preference = Preference.objects.create(
+        self.user = UserFactory(username="testuser", password="foobar123")
+        self.preference = PreferenceFactory(
             user=self.user,
             request_expiry_thresholds=[7, 14, 30]
         )
@@ -58,9 +57,7 @@ class GetUsageThresholdMethod(TestCase):
     def setUp(self) -> None:
         """Set up test data."""
 
-        self.user = get_user_model().objects.create_user(username="testuser", password="foobar123")
-        self.preference = Preference.objects.create(
-            user=self.user,
+        self.preference = PreferenceFactory(
             request_expiry_thresholds=[10, 20, 30, 50, 75]
         )
 
@@ -102,7 +99,7 @@ class GetUserPreferenceMethod(TestCase):
     def setUp(self) -> None:
         """Create a test user."""
 
-        self.user = User.objects.create_user(username='testuser', password='foobar123!')
+        self.user = UserFactory(username='testuser', password='foobar123!')
 
     def test_get_user_preference_creates_new_preference(self) -> None:
         """Verify a new Preference object is created if one does not exist."""
@@ -119,7 +116,7 @@ class GetUserPreferenceMethod(TestCase):
     def test_get_user_preference_returns_existing_preference(self) -> None:
         """Verify an existing Preference object is returned if it already exists."""
 
-        existing_preference = Preference.objects.create(user=self.user)
+        existing_preference = PreferenceFactory(user=self.user)
         preference = Preference.get_user_preference(user=self.user)
         self.assertEqual(existing_preference, preference)
 
@@ -130,7 +127,7 @@ class SetUserPreferenceMethod(TestCase):
     def setUp(self) -> None:
         """Create a test user."""
 
-        self.user = User.objects.create_user(username='testuser', password='foobar123!')
+        self.user = UserFactory(username='testuser', password='foobar123!')
 
     def test_set_user_preference_creates_preference(self) -> None:
         """Verify a new Preference object is created with specified values."""
@@ -144,7 +141,7 @@ class SetUserPreferenceMethod(TestCase):
     def test_set_user_preference_updates_existing_preference(self) -> None:
         """Verify an existing Preference object is updated with specified values."""
 
-        preference = Preference.objects.create(user=self.user, notify_on_expiration=True)
+        preference = PreferenceFactory(user=self.user, notify_on_expiration=True)
         self.assertTrue(Preference.objects.filter(user=self.user).exists())
 
         Preference.set_user_preference(user=self.user, notify_on_expiration=False)

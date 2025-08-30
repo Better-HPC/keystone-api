@@ -38,8 +38,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_permissions(self) -> None:
         """Verify authenticated users can submit post requests."""
 
-        user = UserFactory(is_staff=False)
-        self.client.force_authenticate(user=user)
+        self.client.force_authenticate(user=UserFactory())
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_405_METHOD_NOT_ALLOWED,
@@ -64,7 +63,7 @@ class UserAuthentication(APITestCase):
         """Create test fixtures using mock data."""
 
         self.password = 'foobar123'
-        self.user = UserFactory(username='user', password=self.password, is_staff=False)
+        self.user = UserFactory(username='user', password=self.password)
 
     def assert_authentication(self, auth_status: bool) -> None:
         """Assert whether the current client session is authenticated.

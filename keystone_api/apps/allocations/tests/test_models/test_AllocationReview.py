@@ -2,8 +2,9 @@
 
 from django.test import TestCase
 
-from apps.allocations.models import AllocationRequest, AllocationReview
-from apps.users.models import Team, User
+from apps.allocations.factories import AllocationRequestFactory, AllocationReviewFactory
+from apps.allocations.models import AllocationReview
+from apps.users.factories import TeamFactory
 
 
 class GetTeamMethod(TestCase):
@@ -12,27 +13,16 @@ class GetTeamMethod(TestCase):
     def setUp(self) -> None:
         """Create mock user records"""
 
-        # Create a Team instance
-        self.user = User.objects.create_user(username='pi', password='foobar123!')
-        self.team = Team.objects.create(name='Test Team')
+        self.team = TeamFactory()
+        self.allocation_request = AllocationRequestFactory(team=self.team)
 
-        # Create an AllocationRequest instance linked to the team
-        self.allocation_request = AllocationRequest.objects.create(
-            title='Test Request',
-            description='A test description',
-            team=self.team
-        )
-
-        # Create an AllocationReview instance linked to the AllocationRequest
-        self.reviewer = User.objects.create_user(username='reviewer', password='foobar123!')
-        self.allocation_review = AllocationReview.objects.create(
+        # Create a review linked to a request submitted by `self.team`
+        self.allocation_review = AllocationReviewFactory(
             status=AllocationReview.StatusChoices.APPROVED,
             request=self.allocation_request,
-            reviewer=self.reviewer
         )
 
     def test_get_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""
 
         self.assertEqual(self.team, self.allocation_review.get_team())
-

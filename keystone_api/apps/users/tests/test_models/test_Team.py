@@ -2,7 +2,8 @@
 
 from django.test import TestCase
 
-from apps.users.models import Membership, Team, User
+from apps.users.factories import TeamFactory, UserFactory
+from apps.users.models import Membership
 
 
 class AddOrUpdateMemberMethod(TestCase):
@@ -11,9 +12,9 @@ class AddOrUpdateMemberMethod(TestCase):
     def setUp(self) -> None:
         """Set up test users and teams."""
 
-        self.test_user1 = User.objects.create(username='user1')
-        self.test_user2 = User.objects.create(username='user2')
-        self.team = Team.objects.create(name='Test Team')
+        self.test_user1 = UserFactory()
+        self.test_user2 = UserFactory()
+        self.team = TeamFactory()
 
     def test_default_permissions(self) -> None:
         """Verify new members default to the `MEMBER` role."""
@@ -52,7 +53,7 @@ class AddOrUpdateMemberMethod(TestCase):
         """Verify member addition is idempotent."""
 
         # Create a second team
-        team2 = Team.objects.create(name='Second Team')
+        team2 = TeamFactory(name='Second Team')
 
         # Add user1 to both teams with different roles
         membership1 = self.team.add_or_update_member(self.test_user1, role=Membership.Role.MEMBER)
@@ -74,12 +75,12 @@ class GetMemberMethods(TestCase):
     def setUp(self) -> None:
         """Create temporary user accounts for use in tests."""
 
-        self.owner = User.objects.create(username='owner')
-        self.admin = User.objects.create(username='admin')
-        self.member1 = User.objects.create(username='unprivileged1')
-        self.member2 = User.objects.create(username='unprivileged2')
+        self.owner = UserFactory()
+        self.admin = UserFactory()
+        self.member1 = UserFactory()
+        self.member2 = UserFactory()
 
-        self.team = Team.objects.create(name="Test Team")
+        self.team = TeamFactory()
         self.team.add_or_update_member(self.owner, role=Membership.Role.OWNER)
         self.team.add_or_update_member(self.admin, role=Membership.Role.ADMIN)
         self.team.add_or_update_member(self.member1, role=Membership.Role.MEMBER)

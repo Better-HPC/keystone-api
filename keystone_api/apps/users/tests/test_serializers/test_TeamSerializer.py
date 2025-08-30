@@ -2,7 +2,8 @@
 
 from django.test import TestCase
 
-from apps.users.models import Membership, Team, User
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.models import Membership
 from apps.users.serializers import TeamSerializer
 
 
@@ -12,8 +13,8 @@ class CreateMethod(TestCase):
     def setUp(self) -> None:
         """Define dummy team data."""
 
-        self.user1 = User.objects.create(username="user1")
-        self.user2 = User.objects.create(username="user2")
+        self.user1 = UserFactory()
+        self.user2 = UserFactory()
 
     def test_create_team_with_members(self) -> None:
         """Verify a team is created with the correct members."""
@@ -54,13 +55,13 @@ class UpdateMethod(TestCase):
     def setUp(self) -> None:
         """Define dummy team and membership data."""
 
-        self.team = Team.objects.create(name="Old Team Name")
-        self.user1 = User.objects.create(username="user1")
-        self.user2 = User.objects.create(username="user2")
-        self.user3 = User.objects.create(username="user3")
+        self.team = TeamFactory(name="Old Team Name")
+        self.user1 = UserFactory()
+        self.user2 = UserFactory()
+        self.user3 = UserFactory()
 
-        Membership.objects.create(team=self.team, user=self.user1, role=Membership.Role.OWNER)
-        Membership.objects.create(team=self.team, user=self.user2, role=Membership.Role.MEMBER)
+        self.team.add_or_update_member(user=self.user1, role=Membership.Role.OWNER)
+        self.team.add_or_update_member(user=self.user2, role=Membership.Role.MEMBER)
 
     def test_update_team(self) -> None:
         """Verify a team is updated correctly with new members and name."""

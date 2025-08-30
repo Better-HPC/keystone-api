@@ -24,7 +24,8 @@ class IsTeamMember(permissions.BasePermission):
         - Grants read and write access to staff.
     """
 
-    def get_team(self, request: Request) -> Team | None:
+    @staticmethod
+    def get_team(request: Request) -> Team | None:
         """Return the team indicated in the `team` field of an incoming request.
 
         Args:

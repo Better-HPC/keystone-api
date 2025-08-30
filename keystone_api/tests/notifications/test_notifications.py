@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.notifications.factories import NotificationFactory
 from apps.users.factories import UserFactory
-from tests.utils import CustomAsserts, UserScopedListFilteringTests
+from tests.utils import CustomAsserts, UserScopedListFilteringTestMixin
 
 ENDPOINT = '/notifications/notifications/'
 
@@ -27,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
     def test_unauthenticated_user_permissions(self) -> None:
@@ -78,7 +78,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(UserScopedListFilteringTests, APITestCase):
+class RecordFiltering(UserScopedListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
     endpoint = ENDPOINT

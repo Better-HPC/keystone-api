@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 from apps.allocations.factories import AllocationRequestFactory, AllocationReviewFactory
 from apps.allocations.models import AllocationReview
 from apps.users.factories import UserFactory
-from tests.utils import CustomAsserts, TeamScopedListFilteringTests
+from tests.utils import CustomAsserts, TeamScopedListFilteringTestMixin
 
 ENDPOINT = '/allocations/reviews/'
 
@@ -28,7 +28,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
         self.review = AllocationReviewFactory()
 
@@ -92,7 +92,7 @@ class ReviewerAssignment(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.generic_user = UserFactory(is_staff=False)
+        self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
         self.request = AllocationRequestFactory()
 
@@ -136,7 +136,7 @@ class ReviewerAssignment(APITestCase):
         self.assertEqual('reviewer cannot be set to a different user than the submitter', response.data['reviewer'][0].lower())
 
 
-class RecordFiltering(TeamScopedListFilteringTests, APITestCase):
+class RecordFiltering(TeamScopedListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = ENDPOINT

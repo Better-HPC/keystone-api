@@ -7,9 +7,8 @@ appropriately rendered HTML template or other HTTP response.
 import re
 from abc import ABC, abstractmethod
 
+from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiExample
 from health_check.mixins import CheckMixin
@@ -27,17 +26,29 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
     desired format of rendered health check results.
     """
 
+    @property
+    @abstractmethod
+    def cache_key(self) -> str:
+        """Cache key used to store and retrieve the view's health check response."""
+
     @staticmethod
     @abstractmethod
     def render_response(plugins: dict) -> HttpResponse:
         """Render the response based on the view's specific format."""
 
-    @method_decorator(cache_page(60))
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Check system health and return the appropriate response."""
 
+        cached_response = cache.get(self.cache_key)
+        if cached_response:
+            return cached_response
+
         self.check()
-        return self.render_response(self.plugins)
+        response = self.render_response(self.plugins)
+
+        # Cache the full HttpResponse object for 60 seconds
+        cache.set(self.cache_key, response, 60)
+        return response
 
 
 @extend_schema_view(
@@ -56,6 +67,7 @@ class HealthCheckView(BaseHealthCheckView):
     """Return a 200 status code if all health checks pass and 500 otherwise."""
 
     permission_classes = []
+    cache_key = 'healthcheck_cache'
 
     @staticmethod
     def render_response(plugins: dict) -> HttpResponse:
@@ -123,6 +135,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
     """API endpoints for fetching application health checks in JSON format."""
 
     permission_classes = []
+    cache_key = 'healthcheck_json_cache'
 
     @staticmethod
     def render_response(plugins: dict) -> JsonResponse:
@@ -184,6 +197,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
     """API endpoints for fetching application health checks in Prometheus format."""
 
     permission_classes = []
+    cache_key = 'healthcheck_prom_cache'
 
     @staticmethod
     def sanitize_metric_name(name: str) -> str:
