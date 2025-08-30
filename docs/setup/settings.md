@@ -60,16 +60,17 @@ Default values are defined relative to the following list of _default local addr
 Keystone uses various static files and user content to facilitate operation.
 By default, these files are stored in subdirectories of the installed application directory (`<app>`).
 
-| Setting Name               | Default Value        | Description                                                                                                 |
-|----------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
-| `CONFIG_TIMEZONE`          | `UTC`                | The timezone to use when rendering date/time values.                                                        |
-| `CONFIG_STATIC_DIR`        | `<app>/static_files` | Where to store internal static files required by the application.                                           |
-| `CONFIG_UPLOAD_DIR`        | `<app>/media`        | Where to store file data uploaded by users.                                                                 |
-| `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)   | Maximum allowed file upload size in bytes.                                                                  |
-| `CONFIG_LOG_LEVEL`         | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
-| `CONFIG_LOG_RETENTION`     | `2592000` (30 days)  | How long to store application logs in seconds. Set to 0 to keep all records.                                |
-| `CONFIG_REQUEST_RETENTION` | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
-| `CONFIG_AUDIT_RETENTION`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
+| Setting Name               | Default Value         | Description                                                                                                 |
+|----------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------|
+| `CONFIG_TIMEZONE`          | `UTC`                 | The timezone to use when rendering date/time values.                                                        |
+| `CONFIG_STATIC_DIR`        | `<app>/static_files`  | Where to store internal static files required by the application.                                           |
+| `CONFIG_UPLOAD_DIR`        | `<app>/media`         | Where to store file data uploaded by users.                                                                 |
+| `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)    | Maximum allowed file upload size in bytes.                                                                  |
+| `CONFIG_LOG_LEVEL`         | `WARNING`             | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
+| `CONFIG_LOG_RETENTION`     | `2592000` (30 days)   | How long to store application logs in seconds. Set to 0 to keep all records.                                |
+| `CONFIG_REQUEST_RETENTION` | `2592000` (30 days)   | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `CONFIG_AUDIT_RETENTION`   | `2592000` (30 days)   | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
+| `CONFIG_METRICS_PORTS`     | `9101` through `9150` | Port numbers used to expose prometheus metrics (e.g., `9101,9102,9103`).                                    |
 
 ## API Throttling
 

@@ -12,7 +12,6 @@ urlpatterns = [
     path('authentication/', include('apps.authentication.urls', namespace='authentication')),
     path('health/', include('apps.health.urls', namespace='health')),
     path('logs/', include('apps.logging.urls', namespace='logs')),
-    path("metrics/", include('apps.metrics.urls', namespace='metrics')),
     path("notifications/", include('apps.notifications.urls', namespace="notifications")),
     path('openapi/', include('apps.openapi.urls', namespace='openapi')),
     path('research/', include('apps.research_products.urls', namespace='research')),
