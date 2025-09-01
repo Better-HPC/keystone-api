@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -31,7 +31,7 @@ jobs:
         run: poetry version "${{ inputs.version }}"
 
       - name: Fetch image artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: keystone-api-docker
           path: /tmp
@@ -103,7 +103,7 @@ jobs:
           virtualenvs-create: false
 
       - name: Fetch build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: keystone-api-python
           path: dist
