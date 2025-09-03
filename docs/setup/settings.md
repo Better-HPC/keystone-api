@@ -68,7 +68,7 @@ By default, these files are stored in subdirectories of the installed applicatio
 | `CONFIG_UPLOAD_SIZE`   | `2621440` (2.5 MB)    | Maximum allowed file upload size in bytes.                               |
 | `CONFIG_METRICS_PORTS` | `9101` through `9150` | Port numbers used to expose prometheus metrics (e.g., `9101,9102,9103`). |
 
-# Logging
+## Logging
 
 In addition to writing application logs to disk, Keystone stores audit logs and request history in the application database.
 All log values are automatically rotated and purged by the application.
