@@ -66,12 +66,12 @@ class ClearLogRecordsMethod(TestCase):
 
         self.assert_log_counts(request=log_count, audit=log_count)
 
-    @override_settings(LOG_REQ_RETENTION_DAYS=4)
-    @override_settings(LOG_AUD_RETENTION_DAYS=0)
+    @override_settings(LOG_REQ_RETENTION_SEC=4)
+    @override_settings(LOG_AUD_RETENTION_SEC=0)
     def test_request_log_rotation(self, mock_now: Mock) -> None:
-        """Verify the `LOG_AUD_RETENTION_DAYS` setting enables request log rotation."""
+        """Verify the `LOG_AUD_RETENTION_SEC` setting enables request log rotation."""
 
-        later_time = self.now + timedelta(seconds=settings.LOG_REQ_RETENTION_DAYS)
+        later_time = self.now + timedelta(seconds=settings.LOG_REQ_RETENTION_SEC)
         self.create_dummy_records(mock_now, self.now, later_time)
 
         mock_now.return_value = later_time
@@ -80,12 +80,12 @@ class ClearLogRecordsMethod(TestCase):
         self.assert_log_counts(request=1, audit=2)
         self.assertEqual(later_time, RequestLog.objects.first().timestamp)
 
-    @override_settings(LOG_REQ_RETENTION_DAYS=0)
-    @override_settings(LOG_AUD_RETENTION_DAYS=4)
+    @override_settings(LOG_REQ_RETENTION_SEC=0)
+    @override_settings(LOG_AUD_RETENTION_SEC=4)
     def test_audit_log_rotation(self, mock_now: Mock) -> None:
-        """Verify the `LOG_AUD_RETENTION_DAYS` setting enables audit log rotation."""
+        """Verify the `LOG_AUD_RETENTION_SEC` setting enables audit log rotation."""
 
-        later_time = self.now + timedelta(seconds=settings.LOG_AUD_RETENTION_DAYS)
+        later_time = self.now + timedelta(seconds=settings.LOG_AUD_RETENTION_SEC)
         self.create_dummy_records(mock_now, self.now, later_time)
 
         mock_now.return_value = later_time
@@ -94,8 +94,8 @@ class ClearLogRecordsMethod(TestCase):
         self.assert_log_counts(request=2, audit=1)
         self.assertEqual(later_time, AuditLog.objects.first().timestamp)
 
-    @override_settings(LOG_REQ_RETENTION_DAYS=0)
-    @override_settings(LOG_AUD_RETENTION_DAYS=0)
+    @override_settings(LOG_REQ_RETENTION_SEC=0)
+    @override_settings(LOG_AUD_RETENTION_SEC=0)
     def test_deletion_disabled(self, mock_now: Mock) -> None:
         """Verify log files are not deleted when log clearing is disabled."""
 
