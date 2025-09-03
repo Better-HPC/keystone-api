@@ -57,8 +57,8 @@ Default values are defined relative to the following list of _default local addr
 
 ## General Configuration
 
-By default, these files are stored in subdirectories of the installed application directory (`<app>`).
 Keystone uses various static files and user content to facilitate operation.
+By default, these files are stored in subdirectories of the installed application directory (`<app>`).
 
 | Setting Name           | Default Value         | Description                                                              |
 |------------------------|-----------------------|--------------------------------------------------------------------------|
