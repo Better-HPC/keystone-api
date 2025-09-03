@@ -34,8 +34,9 @@ RUN groupadd --gid 900 keystone \
 USER keystone
 WORKDIR /app
 
-# Install the application
+# Install the application and add it to $PATH
 COPY --chown=keystone:keystone . src
+ENV PATH=/home/keystone/.local/bin:$PATH
 RUN pip install --user ./src[all] && rm -rf src
 
 # Configure the application with container friendly defaults
@@ -47,6 +48,6 @@ RUN mkdir $CONFIG_UPLOAD_DIR && touch LOG_APP_FILE
 HEALTHCHECK CMD curl --fail --location localhost/health/ || exit 1
 
 # Setup the container to launch the application
-COPY --chmod=755 conf/entrypoint.sh /app/entrypoint.sh
+COPY --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["quickstart", "--all"]
