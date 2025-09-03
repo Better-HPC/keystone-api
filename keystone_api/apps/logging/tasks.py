@@ -21,8 +21,8 @@ def clear_log_records() -> None:
     from .models import RequestLog, AuditLog
 
     log_configs = [
-        (RequestLog, settings.LOG_REQ_RETENTION_DAYS),
-        (AuditLog, settings.LOG_AUD_RETENTION_DAYS),
+        (RequestLog, settings.LOG_REQ_RETENTION_SEC),
+        (AuditLog, settings.LOG_AUD_RETENTION_SEC),
     ]
 
     now = timezone.now()

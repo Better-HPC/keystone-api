@@ -79,8 +79,8 @@ All log values are automatically rotated and purged by the application.
 | `LOG_APP_FILE`            | `<app>/keystone.log` | Destination file path for application logs.                                                                 |
 | `LOG_APP_RETENTION_BYTES` | `10485760` (10 MB)   | Maximum log file size before rotating log files.                                                            |
 | `LOG_APP_RETENTION_FILES` | `5`                  | Maximum rotated log files to keep.                                                                          |
-| `LOG_REQ_RETENTION_DAYS`  | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
-| `LOG_AUD_RETENTION_DAYS`  | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
+| `LOG_REQ_RETENTION_SEC`   | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `LOG_AUD_RETENTION_SEC`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
 
 ## API Throttling
 
