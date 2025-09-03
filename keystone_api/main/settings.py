@@ -348,12 +348,12 @@ PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=
 
 # Logging
 
-CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
-CONFIG_AUDIT_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
+LOG_REQ_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_DAYS', timedelta(days=30).total_seconds())
+LOG_AUD_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_DAYS', timedelta(days=30).total_seconds())
 
 _default_log_dir = BASE_DIR / 'keystone.log'
-CONFIG_LOG_FILE_PATH = Path(os.getenv('CONFIG_LOG_FILE', _default_log_dir))
-CONFIG_LOG_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+_log_file_path = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
+_log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
 LOGGING = {
     "version": 1,
@@ -365,22 +365,22 @@ LOGGING = {
     },
     "handlers": {
         "file": {
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": str(CONFIG_LOG_FILE_PATH),
-            "maxBytes": env.int('CONFIG_LOG_MAX_BYTES', 10 * 1024 * 1024),  # Default 10 MB
-            "backupCount": env.int('CONFIG_LOG_BACKUP_COUNT', 5),  # Default 5 backups
+            "filename": str(_log_file_path),
+            "maxBytes": env.int('LOG_APP_RETENTION_BYTES', 10 * 1024 * 1024),  # Default 10 MB
+            "backupCount": env.int('LOG_APP_RETENTION_FILES', 5),  # Default 5 backups
             "formatter": "verbose",
         },
     },
     "loggers": {
         "": {
             "handlers": ["file"],
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
         },
         "apps": {
             "handlers": ["file"],
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
             "propagate": False,
         },
     }
