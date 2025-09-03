@@ -348,26 +348,39 @@ PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=
 
 # Logging
 
-CONFIG_LOG_RETENTION = env.int('CONFIG_LOG_RETENTION', timedelta(days=30).total_seconds())
-CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
-CONFIG_AUDIT_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
+LOG_REQ_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_DAYS', timedelta(days=30).total_seconds())
+LOG_AUD_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_DAYS', timedelta(days=30).total_seconds())
+
+_default_log_dir = BASE_DIR / 'keystone.log'
+_log_file_path = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
+_log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+        },
+    },
     "handlers": {
-        "db": {
-            "class": "apps.logging.handlers.DBHandler",
-        }
+        "file": {
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": str(_log_file_path),
+            "maxBytes": env.int('LOG_APP_RETENTION_BYTES', 10 * 1024 * 1024),  # Default 10 MB
+            "backupCount": env.int('LOG_APP_RETENTION_FILES', 5),  # Default 5 backups
+            "formatter": "verbose",
+        },
     },
     "loggers": {
         "": {
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
-            "handlers": ["db"],
+            "handlers": ["file"],
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
         },
         "apps": {
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
-            "handlers": ["db"],
+            "handlers": ["file"],
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
             "propagate": False,
         },
     }

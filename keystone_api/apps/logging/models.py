@@ -12,29 +12,7 @@ from django.db import models
 
 from apps.users.models import User
 
-__all__ = ['AppLog', 'AuditLog', 'RequestLog', 'TaskResult']
-
-
-class AppLog(models.Model):
-    """An application log entry."""
-
-    class Meta:
-        """Database model settings."""
-
-        indexes = [
-            models.Index(fields=['timestamp']),
-            models.Index(fields=['level', 'timestamp']),
-            models.Index(fields=['pathname', 'lineno']),
-        ]
-
-    name = models.CharField(max_length=100)
-    level = models.CharField(max_length=10)
-    pathname = models.CharField(max_length=260)
-    lineno = models.IntegerField()
-    message = models.TextField()
-    func = models.CharField(max_length=80, blank=True, null=True)
-    sinfo = models.TextField(blank=True, null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+__all__ = ['AuditLog', 'RequestLog', 'TaskResult']
 
 
 class RequestLog(models.Model):

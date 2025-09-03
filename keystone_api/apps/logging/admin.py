@@ -50,22 +50,6 @@ class ReadOnlyModelAdminMixin:
         return False
 
 
-@admin.register(AppLog)
-class AppLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
-    """Admin interface for viewing application logs."""
-
-    readonly_fields = [field.name for field in AppLog._meta.fields]
-    list_display = ['timestamp', 'level', 'name']
-    search_fields = ['timestamp', 'level', 'name']
-    ordering = ['-timestamp']
-    actions = []
-    list_filter = [
-        ('timestamp', admin.DateFieldListFilter),
-        ('level', admin.AllValuesFieldListFilter),
-        ('name', admin.AllValuesFieldListFilter),
-    ]
-
-
 @admin.register(RequestLog)
 class RequestLogAdmin(ReadOnlyModelAdminMixin, admin.ModelAdmin):
     """Admin interface for viewing request logs."""
