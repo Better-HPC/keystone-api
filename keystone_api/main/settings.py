@@ -348,8 +348,8 @@ PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=
 
 # Logging
 
-LOG_REQ_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_DAYS', timedelta(days=30).total_seconds())
-LOG_AUD_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_DAYS', timedelta(days=30).total_seconds())
+LOG_REQ_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
+LOG_AUD_RETENTION_DAYS = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
 
 _default_log_dir = BASE_DIR / 'keystone.log'
 _log_file_path = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
