@@ -355,19 +355,12 @@ CONFIG_AUDIT_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {
-        "db": {
-            "class": "apps.logging.handlers.DBHandler",
-        }
-    },
     "loggers": {
         "": {
             "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
-            "handlers": ["db"],
         },
         "apps": {
             "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
-            "handlers": ["db"],
             "propagate": False,
         },
     }
