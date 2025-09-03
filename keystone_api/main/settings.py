@@ -329,11 +329,11 @@ MAX_FILE_SIZE = env.int('CONFIG_UPLOAD_SIZE', 2.5 * 1024 * 1024)  # 2.5 MB
 
 STATIC_URL = '/static/'
 STATIC_ROOT = Path(env.path('CONFIG_STATIC_DIR', BASE_DIR / 'static_files'))
-STATIC_ROOT.mkdir(parents=True, exist_ok=True)
+STATIC_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = Path(env.path('CONFIG_UPLOAD_DIR', BASE_DIR / 'media'))
-MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+MEDIA_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 # Timezones
 
@@ -353,7 +353,7 @@ LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).tota
 
 _default_log_dir = BASE_DIR / 'keystone.log'
 _log_file_path = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
-_log_file_path.parent.mkdir(parents=True, exist_ok=True)
+_log_file_path.parent.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 LOGGING = {
     "version": 1,
