@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
         parser.add_argument('--templates',
             type=Path,
-            default=settings.EMAIL_DEFAULT_DIR,
+            default=settings.EMAIL_TEMPLATE_DIR,
             help='An optional directory of custom HTML templates to render.')
 
     def handle(self, *args, **options) -> None:
