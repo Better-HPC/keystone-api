@@ -93,7 +93,7 @@ jobs:
             --source $PACKAGE_DIR/keystone_api \
             /usr/local/bin/keystone-api test apps plugins
           
-          ls -al /tmp/test/
+          ls -al $(pwd)/coverage
 
           # Report coverage to the console
           coverage report \
