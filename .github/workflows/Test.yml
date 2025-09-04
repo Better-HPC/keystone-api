@@ -77,7 +77,7 @@ jobs:
           # Dynamically determine the installed package directory
           PACKAGE_DIR=$(docker run --entrypoint python --rm keystone-api -c 'import site; print(site.getsitepackages()[0])')
 
-          # Define common runtime settings for tests
+          # Common runtime settings for tests
           OUTPUT_FILE="/tmp/test/.coverage"
           OMIT_PATHS="*/tests/*,*/migrations/*"
           INCLUDE_PATHS="*/keystone_api/apps/*,*/keystone_api/plugins/*"
@@ -92,6 +92,8 @@ jobs:
             --data-file $OUTPUT_FILE \
             --source $PACKAGE_DIR/keystone_api \
             /usr/local/bin/keystone-api test apps plugins
+          
+          ls -al /tmp/test/
 
           # Report coverage to the console
           coverage report \
