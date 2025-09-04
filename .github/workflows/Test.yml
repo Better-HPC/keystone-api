@@ -73,37 +73,37 @@ jobs:
       - name: Run tests
         run: |
           docker load --input /tmp/keystone-api.tar
-      
-          # Dynamically determine the Python package directory
+
+          # Dynamically determine the installed package directory
           PACKAGE_DIR=$(docker run --entrypoint python --rm keystone-api -c 'import site; print(site.getsitepackages()[0])')
-      
-          # Common options for coverage commands
-          COVERAGE_DATA="/tmp/test/.coverage"
+
+          # Common runtime settings for tests
           OMIT_PATHS="*/tests/*,*/migrations/*"
           INCLUDE_PATHS="*/keystone_api/apps/*,*/keystone_api/plugins/*"
-          VOLUME_MAPPING="-v $(pwd)/coverage:/tmp/test"
-      
+
+          # Helper function to run the coverage utility from inside the container
+          coverage() {
+            docker run -v $(pwd):/app/keystone --entrypoint coverage keystone-api "$@"
+          }
+
           # Run tests and collect coverage
-          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api run \
-            --data-file $COVERAGE_DATA \
+          coverage run \
             --source $PACKAGE_DIR/keystone_api \
             /usr/local/bin/keystone-api test apps plugins
-      
+
           # Report coverage to the console
-          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api report \
-            --data-file $COVERAGE_DATA \
+          coverage report \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS"
-      
+
           # Write coverage report to disk in XML format
-          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api xml \
-            --data-file $COVERAGE_DATA \
+          coverage xml \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS" \
-            -o /tmp/test/report.xml
+            -o report.xml
 
       - name: Report coverage results
-        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r coverage/report.xml
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r report.xml
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
