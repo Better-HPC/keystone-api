@@ -91,7 +91,7 @@ jobs:
           coverage run \
             --data-file $OUTPUT_FILE \
             --source $PACKAGE_DIR/keystone_api \
-            /home/keystone/.local/bin/keystone-api test apps plugins
+            /usr/local/bin/keystone-api test apps plugins
 
           # Report coverage to the console
           coverage report \

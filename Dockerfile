@@ -1,4 +1,4 @@
-FROM python:3.11.4-slim
+FROM python:3.13.7-slim
 
 EXPOSE 80
 
@@ -21,33 +21,32 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-# Configure the Nginx proxy
-RUN groupadd nginx && useradd -m -g nginx nginx
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+# Install the application
+COPY . src
+RUN pip install --no-cache-dir ./src[all] && rm -rf src
 
-# Create an unprivliged user/directory for running services
+# Create unprivliged users/directories for running services
 RUN groupadd --gid 900 keystone \
     && useradd -m -u 900 -g keystone keystone \
-    && mkdir -p /app \
-    && chown keystone:keystone /app
+    && mkdir -p /app/keystone /app/nginx \
+    && chown -R keystone:keystone /app /var/lib/nginx/
 
 USER keystone
-WORKDIR /app
-
-# Install the application and add it to $PATH
-COPY --chown=keystone:keystone . src
-ENV PATH=/home/keystone/.local/bin:$PATH
-RUN pip install --user ./src[all] && rm -rf src
+WORKDIR /app/keystone
 
 # Configure the application with container friendly defaults
 ENV CONFIG_UPLOAD_DIR=/app/media
-ENV LOG_APP_FILE=/app/app.log
-RUN mkdir $CONFIG_UPLOAD_DIR && touch LOG_APP_FILE
+ENV CONFIG_STATIC_DIR=/app/static
+ENV DB_NAME=/app/keystone.db
+ENV LOG_APP_FILE=/app/keystone.log
+
+# Copy config files for internal services
+COPY --chown=keystone:keystone --chmod=770 conf/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=keystone:keystone --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
 
 # Use the API health checks to report container health
 HEALTHCHECK CMD curl --fail --location localhost/health/ || exit 1
 
 # Setup the container to launch the application
-COPY --chown=keystone:keystone --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["quickstart", "--all"]
