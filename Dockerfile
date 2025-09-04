@@ -26,8 +26,8 @@ COPY . src
 RUN pip install --no-cache-dir ./src[all] && rm -rf src
 
 # Create unprivliged users/directories for running services
-RUN groupadd --gid 900 keystone \
-    && useradd -m -u 900 -g keystone keystone \
+RUN groupadd --gid 1001 keystone \
+    && useradd -m -u 1001 -g keystone keystone \
     && mkdir -p /app/keystone /app/nginx \
     && chown -R keystone:keystone /app /var/lib/nginx/
 
