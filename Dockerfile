@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-# Configure the NGINX proxy
+# Configure the Nginx proxy
 RUN groupadd nginx && useradd -m -g nginx nginx
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
