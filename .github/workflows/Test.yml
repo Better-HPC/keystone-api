@@ -91,16 +91,16 @@ jobs:
           coverage run \
             --data-file $OUTPUT_FILE \
             --source $PACKAGE_DIR/keystone_api \
-            keystone-api test apps plugins
+            /home/keystone/.local/bin/keystone-api test apps plugins
 
           # Report coverage to the console
-          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api report \
+          coverage report \
             --data-file $OUTPUT_FILE \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS"
 
           # Write coverage report to disk in XML format
-          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api xml \
+          coverage xml \
             --data-file $OUTPUT_FILE \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS" \
