@@ -73,35 +73,31 @@ jobs:
       - name: Run tests
         run: |
           docker load --input /tmp/keystone-api.tar
-
-          # Dynamically determine the installed package directory
+      
+          # Dynamically determine the Python package directory
           PACKAGE_DIR=$(docker run --entrypoint python --rm keystone-api -c 'import site; print(site.getsitepackages()[0])')
-
-          # Common runtime settings for tests
-          OUTPUT_FILE="/tmp/.coverage"
+      
+          # Common options for coverage commands
+          COVERAGE_DATA="/tmp/.coverage"
           OMIT_PATHS="*/tests/*,*/migrations/*"
           INCLUDE_PATHS="*/keystone_api/apps/*,*/keystone_api/plugins/*"
-
-          # Helper function to run the coverage utility inside the container
-          coverage() {
-            docker run -v $(pwd)/coverage:/tmp/test --entrypoint coverage keystone-api "$@"
-          }
-
+          VOLUME_MAPPING="-v $(pwd)/coverage:/tmp/test"
+      
           # Run tests and collect coverage
-          coverage run \
-            --data-file $OUTPUT_FILE \
+          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api run \
+            --data-file $COVERAGE_DATA \
             --source $PACKAGE_DIR/keystone_api \
             /usr/local/bin/keystone-api test apps plugins
-
+      
           # Report coverage to the console
-          coverage report \
-            --data-file $OUTPUT_FILE \
+          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api report \
+            --data-file $COVERAGE_DATA \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS"
-
+      
           # Write coverage report to disk in XML format
-          coverage xml \
-            --data-file $OUTPUT_FILE \
+          docker run $VOLUME_MAPPING --entrypoint coverage keystone-api xml \
+            --data-file $COVERAGE_DATA \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS" \
             -o /tmp/test/report.xml
