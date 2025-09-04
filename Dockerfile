@@ -48,6 +48,6 @@ RUN mkdir $CONFIG_UPLOAD_DIR && touch LOG_APP_FILE
 HEALTHCHECK CMD curl --fail --location localhost/health/ || exit 1
 
 # Setup the container to launch the application
-COPY --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
+COPY --chown=keystone:keystone --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["quickstart", "--all"]
