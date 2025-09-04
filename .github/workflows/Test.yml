@@ -76,36 +76,31 @@ jobs:
 
           # Dynamically determine the installed package directory
           PACKAGE_DIR=$(docker run --entrypoint python --rm keystone-api -c 'import site; print(site.getsitepackages()[0])')
-          echo "Running tests against install dir $PACKAGE_DIR"
 
           # Common runtime settings for tests
-          OUTPUT_FILE="/tmp/.coverage"
           OMIT_PATHS="*/tests/*,*/migrations/*"
           INCLUDE_PATHS="*/keystone_api/apps/*,*/keystone_api/plugins/*"
 
-          # Helper function to run the coverage utility inside the container
+          # Helper function to run the coverage utility from inside the container
           coverage() {
-            docker run -v $(pwd)/coverage:/tmp/ --entrypoint coverage keystone-api "$@"
+            docker run -v $(pwd):/app/keystone --entrypoint coverage keystone-api "$@"
           }
 
           # Run tests and collect coverage
           coverage run \
-            --data-file $OUTPUT_FILE \
             --source $PACKAGE_DIR/keystone_api \
             /usr/local/bin/keystone-api test apps plugins
 
           # Report coverage to the console
           coverage report \
-            --data-file $OUTPUT_FILE \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS"
 
           # Write coverage report to disk in XML format
           coverage xml \
-            --data-file $OUTPUT_FILE \
             --omit "$OMIT_PATHS" \
             --include "$INCLUDE_PATHS" \
-            -o /tmp/report.xml
+            -o report.xml
 
       - name: Report coverage results
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r coverage/report.xml
