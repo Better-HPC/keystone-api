@@ -16,6 +16,12 @@ The selected template is then rendered using the context data outlined below.
 For security reasons, data is sanitized before being injected into the template.
 Certain Jinja features — such as access to application internals — are also disabled.
 
+!!! note 
+
+    Email notification templates can be rendered and written to disk using the `keystone-api render_templates` command.
+    It is strongly recommended to develop and test templates locally before deploying them to a production environment.
+    See `keystone-api render_templates --help` for details.
+
 ### Base Template
 
 **Template file:** `base.html`
