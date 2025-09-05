@@ -1,9 +1,10 @@
 """Tests for the `tasks.upcoming_expirations` module."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
+from django.utils import timezone
 
 from apps.allocations.factories import AllocationRequestFactory
 from apps.notifications.factories import PreferenceFactory
@@ -70,7 +71,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
     def test_false_if_user_recently_joined(self) -> None:
         """Verify the return value is `False` if the user is new."""
 
-        user = UserFactory(date_joined=datetime.now())
+        user = UserFactory(date_joined=timezone.now())
         request = AllocationRequestFactory(submitter=user, expire=date.today() + timedelta(days=15))
         PreferenceFactory(user=user, request_expiry_thresholds=[15])
 
