@@ -3,11 +3,8 @@
 import logging
 import re
 from datetime import datetime, timedelta
-from multiprocessing.pool import job_counter
 from shlex import split
 from subprocess import PIPE, Popen
-
-from scout_apm.rq import job_instrumented
 
 log = logging.getLogger(__name__)
 
