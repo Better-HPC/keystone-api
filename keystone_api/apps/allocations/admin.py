@@ -179,6 +179,7 @@ class AllocationRequestAdmin(admin.ModelAdmin):
         ('active', admin.DateFieldListFilter),
         ('expire', admin.DateFieldListFilter),
         ('status', admin.ChoicesFieldListFilter),
+        ('assignees', admin.RelatedOnlyFieldListFilter)
     ]
     inlines = [AllocationInline, AllocationReviewInline, AttachmentInline, CommentInline]
 
