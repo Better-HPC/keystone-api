@@ -30,6 +30,7 @@ class PublicationAdmin(admin.ModelAdmin):
     list_display = ['team', 'title', 'submitted', 'published', 'preparation']
     list_display_links = list_display
     search_fields = ['title', 'team__name']
+    autocomplete_fields = ['team']
     list_filter = [
         ('submitted', admin.DateFieldListFilter),
         ('published', admin.DateFieldListFilter),
@@ -52,6 +53,7 @@ class GrantAdmin(admin.ModelAdmin):
     list_display_links = list_display
     ordering = ['team', '-fiscal_year']
     search_fields = ['title', 'agency', 'fiscal_year', 'team__name']
+    autocomplete_fields = ['team']
     list_filter = [
         ('start_date', admin.DateFieldListFilter),
         ('end_date', admin.DateFieldListFilter),
