@@ -40,6 +40,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _grants = GrantSummarySerializer(source='grants', many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
+    _comments = CommentSummarySerializer(source='comments', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""

@@ -7532,6 +7532,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
         title:
           type: string
           maxLength: 250
@@ -7572,6 +7578,7 @@ components:
       required:
       - _allocations
       - _assignees
+      - _comments
       - _grants
       - _history
       - _publications
@@ -7911,6 +7918,30 @@ components:
       - created
       - id
       - request
+    CommentSummary:
+      type: object
+      description: Serializer for user comments in nested responses.
+      properties:
+        user:
+          type: integer
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+      required:
+      - _user
+      - content
+      - created
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -8340,6 +8371,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
         title:
           type: string
           maxLength: 250
@@ -9299,6 +9336,14 @@ components:
           format: email
           nullable: true
           maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
       required:
       - id
       - username
