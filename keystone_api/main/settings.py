@@ -352,8 +352,8 @@ LOG_REQ_RETENTION_SEC = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).tota
 LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).total_seconds())
 
 _default_log_dir = BASE_DIR / 'keystone.log'
-_log_file_path = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
-_log_file_path.parent.mkdir(mode=0o770, parents=True, exist_ok=True)
+LOG_FILE_PATH = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
+LOG_FILE_PATH.parent.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 LOGGING = {
     "version": 1,
@@ -367,7 +367,7 @@ LOGGING = {
         "file": {
             "level": env.str('LOG_APP_LEVEL', 'WARNING'),
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": str(_log_file_path),
+            "filename": str(LOG_FILE_PATH),
             "maxBytes": env.int('LOG_APP_RETENTION_BYTES', 10 * 1024 * 1024),  # Default 10 MB
             "backupCount": env.int('LOG_APP_RETENTION_FILES', 5),  # Default 5 backups
             "formatter": "verbose",
