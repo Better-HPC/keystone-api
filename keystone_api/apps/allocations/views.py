@@ -96,9 +96,10 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     queryset = AllocationRequest.objects.prefetch_related(
         'history',
         'assignees',
-        Prefetch('publications', queryset=Publication.objects.select_related('team')),
-        Prefetch('grants', queryset=Grant.objects.select_related('team')),
-        Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster')),
+        Prefetch('publications', queryset=Publication.objects.select_related('team').order_by('title')),
+        Prefetch('grants', queryset=Grant.objects.select_related('team').order_by('title')),
+        Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster').order_by('cluster__name')),
+        Prefetch('comments', queryset=Comment.objects.select_related('user').order_by('created')),
     ).select_related(
         'submitter',
         'team',
