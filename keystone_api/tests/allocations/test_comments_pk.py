@@ -24,6 +24,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Team owner                    | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Staff user                    | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     | Team member (private comment) | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team owner (private comment)  | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Staff user  (private comment) | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
@@ -162,6 +163,22 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
     def test_team_member_private_permissions(self) -> None:
         """Verify team members cannot access private comments."""
+
+        self.client.force_authenticate(user=self.team_member)
+        self.assert_http_responses(
+            self.private_endpoint,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def test_team_owner_private_permissions(self) -> None:
+        """Verify team owners cannot access private comments."""
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
