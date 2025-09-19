@@ -66,6 +66,8 @@ class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
         if self.user_is_staff(request) or self.is_read_only(request):
             return True
 
+        # For create/update: only allow if user is privileged member of the target team.
+        # Deny creation if team can't be resolved.
         try:
             team_id = request.data.get('team')
             team = Team.objects.get(pk=team_id)
@@ -78,6 +80,7 @@ class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
     def has_object_permission(self, request: Request, view: View, obj: AllocationRequest) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
+        # Allow if staff or if user is a team member accessing via a read-only method.
         return self.user_is_staff(request) or (self.is_read_only(request) and self.user_in_team(request, obj))
 
 
@@ -114,6 +117,8 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
         if self.user_is_staff(request) or self.is_read_only(request):
             return True
 
+        # For create/update: only allow if user is in the target allocation's team.
+        # Deny creation if allocation request can't be resolved.
         try:
             alloc_request_id = request.data.get('request')
             alloc_request = AllocationRequest.objects.get(pk=alloc_request_id)
