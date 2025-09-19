@@ -160,7 +160,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs: dict) -> dict:
-        """Enforce only staff users can create private comments.
+        """Limit modification of the `private` field to staff users.
 
         Args:
             attrs: The record attributes to validate.
@@ -172,7 +172,7 @@ class CommentSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         user = getattr(request, 'user', None)
 
-        # Determine if the comment is or will be  private
+        # Determine if the comment is or will be private
         private_value = attrs.get('private', False)
         if self.instance:
             private_value = self.instance.private or private_value

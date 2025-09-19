@@ -373,7 +373,7 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     )
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership for list actions."""
+        """Return the base queryset filtered to only list private comments for staff users."""
 
         queryset = super().get_queryset()
 

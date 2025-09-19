@@ -10,8 +10,8 @@ from apps.allocations.serializers import CommentSerializer
 from apps.users.factories import UserFactory
 
 
-class CommentSerializerValidationTests(TestCase):
-    """Unit tests for CommentSerializer private field validation."""
+class ValidateMethod(TestCase):
+    """Test the validation of record values."""
 
     def setUp(self) -> None:
         """Initialize test fixtures."""
