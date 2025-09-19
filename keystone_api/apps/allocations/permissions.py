@@ -124,10 +124,10 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
 
         return not self.is_create(view) or request.user in team.get_all_members()
 
-    def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
+    def has_object_permission(self, request: Request, view: View, obj: Comment) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        return self.user_is_staff(request) or self.user_in_team(request, obj)
+        return self.user_is_staff(request) or (self.user_in_team(request, obj) and not obj.private)
 
 
 class MemberReadOnly(PermissionUtils, permissions.BasePermission):
