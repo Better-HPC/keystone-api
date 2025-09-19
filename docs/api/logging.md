@@ -40,6 +40,7 @@ CID values must be a valid UUIDv4 string, including dashes (e.g. `d61eef0b-258d-
 
 ## Performance Metrics
 
-Keystone exposes comprehensive health and performance metrics compatible with Prometheus.
-In accordance with Prometheus conventions, these metrics are accessible via the `/metrics/` endpoint.
-No authentication is required to access this endpoint.
+Keystone exposes comprehensive health and performance metrics using the Prometheus format.
+Each webserver worker exposes metrics on a different port selected from the port range defined by application settings.
+In accordance with Prometheus conventions, these metrics are accessible via the `/metrics/` endpoint on each port.
+No authentication is required to access these endpoints.

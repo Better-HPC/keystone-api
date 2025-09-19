@@ -218,6 +218,9 @@ def get_cluster_usage(account_name: str, cluster_name: str) -> int:
 def get_cluster_jobs(cluster_name: str) -> list[dict]:
     """Retrieve SLURM job information for a given cluster.
 
+    This function returns data as presented by Slurm with no manipulation
+    except typecasting common data types (int, date, etc.) into Python types.
+
     Args:
         cluster_name: Name of the SLURM cluster to query jobs for.
 
@@ -233,17 +236,20 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
     )
 
     cmd = split(
-        f"sacct --allusers --allocations --noheader --parsable2 "
+        f"sacct --allusers --allocations --parsable2 "
         f"--clusters={cluster_name} --format={','.join(fields)}"
     )
 
+    header_row, *job_rows = subprocess_call(cmd).splitlines()
+    header_values = [col_name.lower() for col_name in header_row.split()]
+
     job_list = []
-    for line in subprocess_call(cmd).splitlines():
-        parsed_line = line.split('|')
-        job_data: dict[str, any] = {field.lower(): value for field, value in zip(fields, parsed_line)}
+    for row in job_rows:
+        job_values = row.split('|')
+        job_data: dict[str, any] = {col_name: value for col_name, value in zip(header_values, job_values)}
 
         # Cast select values into Python objects
-        job_data['priority'] = int(job_data['priority']) if job_data['priority'] else None
+        job_data['priority'] = int(job_data['priority']) if job_data.get('priority') else None
         job_data['submit'] = parse_slurm_date(job_data['submit'])
         job_data['start'] = parse_slurm_date(job_data['start'])
         job_data['end'] = parse_slurm_date(job_data['end'])

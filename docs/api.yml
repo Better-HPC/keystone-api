@@ -7,7 +7,8 @@ paths:
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Retrieve all resource allocations visible to the current user.
+      description: Returns resource allocations granted to the current user's teams.
+        Staff users are returned all allocations regardless of the parent team.
       summary: List all resource allocations
       parameters:
       - name: _order
@@ -204,8 +205,10 @@ paths:
           description: ''
     post:
       operationId: allocations_allocations_create
-      description: Create a new resource allocation.
-      summary: Create an resource allocation
+      description: Creates a new resource allocation. General users can only create
+        allocations granted to teams they belong to. Staff users can create allocations
+        for any request.
+      summary: Create a resource allocation.
       tags:
       - Allocations - Allocated Resources
       requestBody:
@@ -233,8 +236,10 @@ paths:
   /allocations/allocations/{id}/:
     get:
       operationId: allocations_allocations_retrieve
-      description: Retrieve a single resource allocation by ID.
-      summary: Retrieve an resource allocation
+      description: Returns a single resource allocation by its ID. General users can
+        only access allocations granted to teams they belong to. Staff users can access
+        any allocation.
+      summary: Retrieve a resource allocation.
       parameters:
       - in: path
         name: id
@@ -256,8 +261,10 @@ paths:
           description: ''
     put:
       operationId: allocations_allocations_update
-      description: Replace an existing resource allocation with new values.
-      summary: Update an resource allocation
+      description: Replaces an existing resource allocation with new values. General
+        users can only modify allocations granted to teams they belong to. Staff users
+        can modify any allocation.
+      summary: Update a resource allocation.
       parameters:
       - in: path
         name: id
@@ -291,8 +298,10 @@ paths:
           description: ''
     patch:
       operationId: allocations_allocations_partial_update
-      description: Apply a partial update to an existing resource allocation.
-      summary: Partially update an resource allocation
+      description: Partially updates an existing resource allocation with new values.
+        General users can only modify allocations granted to teams they belong to.
+        Staff users can modify any allocation.
+      summary: Partially update a resource allocation.
       parameters:
       - in: path
         name: id
@@ -325,8 +334,9 @@ paths:
           description: ''
     delete:
       operationId: allocations_allocations_destroy
-      description: Delete an resource allocation by ID.
-      summary: Delete an resource allocation
+      description: Deletes a resource allocation by its ID. Users can only delete
+        allocations granted to teams they belong to. Staff can delete any allocation.
+      summary: Delete a resource allocation.
       parameters:
       - in: path
         name: id
@@ -963,9 +973,9 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Returns a list of comments made on allocation requests from teams
-        the user belongs to. Staff users are returned all comments regardless of the
-        parent team.
+      description: Returns comments made on allocation requests from teams the user
+        belongs to. Staff users are returned all comments regardless of the parent
+        team.
       summary: List all comments.
       parameters:
       - name: _order
@@ -1330,9 +1340,8 @@ paths:
   /allocations/jobs/:
     get:
       operationId: allocations_jobs_list
-      description: Returns a list of all Slurm jobs belonging to teams where the user
-        is a member. Staff users are returned all records regardless of the parent
-        team.
+      description: Returns Slurm jobs belonging to teams where the user is a member.
+        Staff users are returned all records regardless of the parent team.
       summary: List all user Slurm jobs.
       parameters:
       - name: _order
@@ -2229,10 +2238,9 @@ paths:
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Returns a list of all allocation requests belonging to teams where
-        the user is a member. Administrators are returned all records regardless of
-        the parent team.
-      summary: List all allocation requests
+      description: Returns allocation requests belonging to teams where the user is
+        a member. Staff users can access all requests regardless of team.
+      summary: List all allocation requests.
       parameters:
       - name: _order
         required: false
@@ -2615,9 +2623,10 @@ paths:
           description: ''
     post:
       operationId: allocations_requests_create
-      description: Create a new allocation request. Users can only create records
-        for teams where they are an administrator.
-      summary: Create an allocation request
+      description: Creates a new allocation request. General users can only create
+        requests for teams where they are administrators. Staff users can create requests
+        for any team.
+      summary: Create an allocation request.
       tags:
       - Allocations - Requests
       requestBody:
@@ -2645,9 +2654,10 @@ paths:
   /allocations/requests/{id}/:
     get:
       operationId: allocations_requests_retrieve
-      description: Returns a single allocation request by its ID. Users can only access
-        records for teams they belong to.
-      summary: Retrieve an allocation request
+      description: Returns a single allocation request by its ID. General users can
+        only access requests from teams they belong to. Staff users can access any
+        request.
+      summary: Retrieve an allocation request.
       parameters:
       - in: path
         name: id
@@ -2669,9 +2679,10 @@ paths:
           description: ''
     put:
       operationId: allocations_requests_update
-      description: Replaces an existing allocation request with new values. Users
-        can only modify records for teams where they are an administrator.
-      summary: Update an allocation request
+      description: Replaces an existing allocation request with new values. General
+        users can only modify requests for teams where they are administrators. Staff
+        users can modify any request.
+      summary: Update an allocation request.
       parameters:
       - in: path
         name: id
@@ -2705,9 +2716,10 @@ paths:
           description: ''
     patch:
       operationId: allocations_requests_partial_update
-      description: Partially update an existing research grant with new values. Users
-        can only modify records for teams where they are an administrator.
-      summary: Partially update an allocation request
+      description: Partially updates an existing allocation request with new values.
+        General users can only modify requests for teams where they are administrators.
+        Administrators can modify any request.
+      summary: Partially update an allocation request.
       parameters:
       - in: path
         name: id
@@ -2740,9 +2752,10 @@ paths:
           description: ''
     delete:
       operationId: allocations_requests_destroy
-      description: Deletes a single research grant by its ID. Users can only delete
-        records for teams where they are an administrator.
-      summary: Delete an allocation request
+      description: Deletes a single allocation request by its ID. General users can
+        only delete requests for teams where they are administrators. Staff users
+        can delete any request.
+      summary: Delete an allocation request.
       parameters:
       - in: path
         name: id
@@ -2779,8 +2792,9 @@ paths:
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Retrieve all allocation reviews visible to the current user.
-      summary: List all allocation reviews
+      description: Returns allocation reviews for requests belonging to teams where
+        the user is a member. Staff users can access all reviews.
+      summary: List all allocation reviews.
       parameters:
       - name: _order
         required: false
@@ -2985,8 +2999,10 @@ paths:
           description: ''
     post:
       operationId: allocations_reviews_create
-      description: Create a new allocation review.
-      summary: Create an allocation review
+      description: Creates a new allocation review. General users can only create
+        reviews for requests from teams they belong to. Staff users can create reviews
+        for any request.
+      summary: Create an allocation review.
       tags:
       - Allocations - Reviews
       requestBody:
@@ -3014,8 +3030,10 @@ paths:
   /allocations/reviews/{id}/:
     get:
       operationId: allocations_reviews_retrieve
-      description: Retrieve a single allocation review by ID.
-      summary: Retrieve an allocation review
+      description: Returns a single allocation review by its ID. General users can
+        only access reviews for requests from teams they belong to. Staff users can
+        access any review.
+      summary: Retrieve an allocation review.
       parameters:
       - in: path
         name: id
@@ -3037,8 +3055,10 @@ paths:
           description: ''
     put:
       operationId: allocations_reviews_update
-      description: Replace an existing allocation review with new values.
-      summary: Update an allocation review
+      description: Replaces an existing allocation review with new values. General
+        users can only modify reviews for requests from teams they belong to. Staff
+        users can modify any review.
+      summary: Update an allocation review.
       parameters:
       - in: path
         name: id
@@ -3072,8 +3092,10 @@ paths:
           description: ''
     patch:
       operationId: allocations_reviews_partial_update
-      description: Apply a partial update to an existing allocation review.
-      summary: Partially update an allocation review
+      description: Partially updates an existing allocation review with new values.
+        General users can only modify reviews for requests from teams they belong
+        to. Staff users can modify any review.
+      summary: Partially update an allocation review.
       parameters:
       - in: path
         name: id
@@ -3106,8 +3128,10 @@ paths:
           description: ''
     delete:
       operationId: allocations_reviews_destroy
-      description: Delete an allocation review by ID.
-      summary: Delete an allocation review
+      description: Deletes a single allocation review by its ID. General users can
+        only delete reviews for requests from teams they belong to. Staff users can
+        delete any review.
+      summary: Delete an allocation review.
       parameters:
       - in: path
         name: id
@@ -3228,377 +3252,6 @@ paths:
             text/plain:
               schema:
                 type: string
-          description: ''
-  /logs/apps/:
-    get:
-      operationId: logs_apps_list
-      description: Returns a list of application logs. Application logs capture internal
-        system messages used to debug application behavior. Access to log records
-        is restricted to staff users.
-      summary: List all application logs.
-      parameters:
-      - name: _order
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
-      - name: _search
-        required: false
-        in: query
-        description: A search term.
-        schema:
-          type: string
-      - in: query
-        name: func
-        schema:
-          type: string
-      - in: query
-        name: func__contains
-        schema:
-          type: string
-      - in: query
-        name: func__endswith
-        schema:
-          type: string
-      - in: query
-        name: func__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: func__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: func__startswith
-        schema:
-          type: string
-      - in: query
-        name: id
-        schema:
-          type: integer
-      - in: query
-        name: id__gt
-        schema:
-          type: integer
-      - in: query
-        name: id__gte
-        schema:
-          type: integer
-      - in: query
-        name: id__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: id__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: id__lt
-        schema:
-          type: integer
-      - in: query
-        name: id__lte
-        schema:
-          type: integer
-      - in: query
-        name: level
-        schema:
-          type: string
-      - in: query
-        name: level__contains
-        schema:
-          type: string
-      - in: query
-        name: level__endswith
-        schema:
-          type: string
-      - in: query
-        name: level__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: level__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: level__startswith
-        schema:
-          type: string
-      - in: query
-        name: lineno
-        schema:
-          type: integer
-      - in: query
-        name: lineno__gt
-        schema:
-          type: integer
-      - in: query
-        name: lineno__gte
-        schema:
-          type: integer
-      - in: query
-        name: lineno__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: lineno__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: lineno__lt
-        schema:
-          type: integer
-      - in: query
-        name: lineno__lte
-        schema:
-          type: integer
-      - in: query
-        name: message
-        schema:
-          type: string
-      - in: query
-        name: message__contains
-        schema:
-          type: string
-      - in: query
-        name: message__endswith
-        schema:
-          type: string
-      - in: query
-        name: message__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: message__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: message__startswith
-        schema:
-          type: string
-      - in: query
-        name: name
-        schema:
-          type: string
-      - in: query
-        name: name__contains
-        schema:
-          type: string
-      - in: query
-        name: name__endswith
-        schema:
-          type: string
-      - in: query
-        name: name__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: name__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: name__startswith
-        schema:
-          type: string
-      - in: query
-        name: pathname
-        schema:
-          type: string
-      - in: query
-        name: pathname__contains
-        schema:
-          type: string
-      - in: query
-        name: pathname__endswith
-        schema:
-          type: string
-      - in: query
-        name: pathname__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: pathname__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: pathname__startswith
-        schema:
-          type: string
-      - in: query
-        name: sinfo
-        schema:
-          type: string
-      - in: query
-        name: sinfo__contains
-        schema:
-          type: string
-      - in: query
-        name: sinfo__endswith
-        schema:
-          type: string
-      - in: query
-        name: sinfo__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: sinfo__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: sinfo__startswith
-        schema:
-          type: string
-      - in: query
-        name: timestamp
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__day
-        schema:
-          type: number
-      - in: query
-        name: timestamp__gt
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__gte
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__hour
-        schema:
-          type: number
-      - in: query
-        name: timestamp__in
-        schema:
-          type: array
-          items:
-            type: string
-            format: date-time
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: timestamp__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: timestamp__lt
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__lte
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__minute
-        schema:
-          type: number
-      - in: query
-        name: timestamp__month
-        schema:
-          type: number
-      - in: query
-        name: timestamp__second
-        schema:
-          type: number
-      - in: query
-        name: timestamp__week
-        schema:
-          type: number
-      - in: query
-        name: timestamp__week_day
-        schema:
-          type: number
-      - in: query
-        name: timestamp__year
-        schema:
-          type: number
-      tags:
-      - Admin - Logging
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AppLog'
-          description: ''
-  /logs/apps/{id}/:
-    get:
-      operationId: logs_apps_retrieve
-      description: Returns a single application log by its ID. Application logs capture
-        internal system messages used to debug application behavior. Access to log
-        records is restricted to staff users.
-      summary: Retrieve a single application log.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this app log.
-        required: true
-      tags:
-      - Admin - Logging
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppLog'
           description: ''
   /logs/audit/:
     get:
@@ -5052,20 +4705,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TaskResult'
-          description: ''
-  /metrics/:
-    get:
-      operationId: metrics_retrieve
-      description: Returns Prometheus-formatted metrics for application monitoring.
-      summary: Retrieve application metrics.
-      tags:
-      - Admin - Metrics
-      responses:
-        '200':
-          content:
-            text/plain:
-              schema:
-                type: string
           description: ''
   /notifications/notification-choices/type:
     get:
@@ -7970,6 +7609,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
         title:
           type: string
           maxLength: 250
@@ -8010,6 +7655,7 @@ components:
       required:
       - _allocations
       - _assignees
+      - _comments
       - _grants
       - _history
       - _publications
@@ -8148,48 +7794,6 @@ components:
       - cluster
       - id
       - requested
-    AppLog:
-      type: object
-      description: Object serializer for the `AppLog` class.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          maxLength: 100
-        level:
-          type: string
-          maxLength: 10
-        pathname:
-          type: string
-          maxLength: 260
-        lineno:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-        message:
-          type: string
-        func:
-          type: string
-          nullable: true
-          maxLength: 80
-        sinfo:
-          type: string
-          nullable: true
-        timestamp:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - id
-      - level
-      - lineno
-      - message
-      - name
-      - pathname
-      - timestamp
     Attachment:
       type: object
       description: Object serializer for the `Attachment` class.
@@ -8391,6 +7995,30 @@ components:
       - created
       - id
       - request
+    CommentSummary:
+      type: object
+      description: Serializer for user comments in nested responses.
+      properties:
+        user:
+          type: integer
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+      required:
+      - _user
+      - content
+      - created
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -8820,6 +8448,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
         title:
           type: string
           maxLength: 250
@@ -9779,6 +9413,14 @@ components:
           format: email
           nullable: true
           maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
       required:
       - id
       - username

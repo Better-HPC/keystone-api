@@ -14,40 +14,10 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
-    'AppLogViewSet',
     'AuditLogViewSet',
     'RequestLogViewSet',
     'TaskResultViewSet',
 ]
-
-
-@extend_schema_view(
-    list=extend_schema(
-        summary="List all application logs.",
-        description=(
-            "Returns a list of application logs. "
-            "Application logs capture internal system messages used to debug application behavior. "
-            "Access to log records is restricted to staff users."
-        ),
-        tags=["Admin - Logging"],
-    ),
-    retrieve=extend_schema(
-        summary="Retrieve a single application log.",
-        description=(
-            "Returns a single application log by its ID. "
-            "Application logs capture internal system messages used to debug application behavior. "
-            "Access to log records is restricted to staff users."
-        ),
-        tags=["Admin - Logging"],
-    )
-)
-class AppLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """API endpoints for fetching application logs."""
-
-    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ['name', 'level', 'pathname', 'message', 'func', 'sinfo']
-    serializer_class = AppLogSerializer
-    queryset = AppLog.objects.all()
 
 
 @extend_schema_view(

@@ -127,7 +127,6 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.health',
     'apps.logging',
-    'apps.metrics',
     'apps.notifications',
     'apps.openapi',
     'apps.research_products',
@@ -330,11 +329,11 @@ MAX_FILE_SIZE = env.int('CONFIG_UPLOAD_SIZE', 2.5 * 1024 * 1024)  # 2.5 MB
 
 STATIC_URL = '/static/'
 STATIC_ROOT = Path(env.path('CONFIG_STATIC_DIR', BASE_DIR / 'static_files'))
-STATIC_ROOT.mkdir(parents=True, exist_ok=True)
+STATIC_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = Path(env.path('CONFIG_UPLOAD_DIR', BASE_DIR / 'media'))
-MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+MEDIA_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 # Timezones
 
@@ -343,28 +342,45 @@ CELERY_ENABLE_UTC = True
 DJANGO_CELERY_BEAT_TZ_AWARE = True
 TIME_ZONE = env.str('CONFIG_TIMEZONE', 'UTC')
 
+# Prometheus Metrics
+
+PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=range(9101, 9150), cast=int)
+
 # Logging
 
-CONFIG_LOG_RETENTION = env.int('CONFIG_LOG_RETENTION', timedelta(days=30).total_seconds())
-CONFIG_REQUEST_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
-CONFIG_AUDIT_RETENTION = env.int('CONFIG_REQUEST_RETENTION', timedelta(days=30).total_seconds())
+LOG_REQ_RETENTION_SEC = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
+LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).total_seconds())
+
+_default_log_dir = BASE_DIR / 'keystone.log'
+LOG_FILE_PATH = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
+LOG_FILE_PATH.parent.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+        },
+    },
     "handlers": {
-        "db": {
-            "class": "apps.logging.handlers.DBHandler",
-        }
+        "file": {
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": str(LOG_FILE_PATH),
+            "maxBytes": env.int('LOG_APP_RETENTION_BYTES', 10 * 1024 * 1024),  # Default 10 MB
+            "backupCount": env.int('LOG_APP_RETENTION_FILES', 5),  # Default 5 backups
+            "formatter": "verbose",
+        },
     },
     "loggers": {
         "": {
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
-            "handlers": ["db"],
+            "handlers": ["file"],
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
         },
         "apps": {
-            "level": env.str('CONFIG_LOG_LEVEL', 'WARNING'),
-            "handlers": ["db"],
+            "handlers": ["file"],
+            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
             "propagate": False,
         },
     }

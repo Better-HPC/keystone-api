@@ -47,7 +47,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = User
-        fields = ["id", "username", "first_name", "last_name", "email"]
+        fields = ["id", "username", "first_name", "last_name", "email", "department", "role"]
 
 
 class UserRoleSerializer(serializers.ModelSerializer):

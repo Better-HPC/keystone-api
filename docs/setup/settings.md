@@ -60,16 +60,27 @@ Default values are defined relative to the following list of _default local addr
 Keystone uses various static files and user content to facilitate operation.
 By default, these files are stored in subdirectories of the installed application directory (`<app>`).
 
-| Setting Name               | Default Value        | Description                                                                                                 |
-|----------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
-| `CONFIG_TIMEZONE`          | `UTC`                | The timezone to use when rendering date/time values.                                                        |
-| `CONFIG_STATIC_DIR`        | `<app>/static_files` | Where to store internal static files required by the application.                                           |
-| `CONFIG_UPLOAD_DIR`        | `<app>/media`        | Where to store file data uploaded by users.                                                                 |
-| `CONFIG_UPLOAD_SIZE`       | `2621440` (2.5 MB)   | Maximum allowed file upload size in bytes.                                                                  |
-| `CONFIG_LOG_LEVEL`         | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
-| `CONFIG_LOG_RETENTION`     | `2592000` (30 days)  | How long to store application logs in seconds. Set to 0 to keep all records.                                |
-| `CONFIG_REQUEST_RETENTION` | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
-| `CONFIG_AUDIT_RETENTION`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
+| Setting Name           | Default Value         | Description                                                              |
+|------------------------|-----------------------|--------------------------------------------------------------------------|
+| `CONFIG_TIMEZONE`      | `UTC`                 | The timezone to use when rendering date/time values.                     |
+| `CONFIG_STATIC_DIR`    | `<app>/static_files`  | Where to store internal static files required by the application.        |
+| `CONFIG_UPLOAD_DIR`    | `<app>/media`         | Where to store file data uploaded by users.                              |
+| `CONFIG_UPLOAD_SIZE`   | `2621440` (2.5 MB)    | Maximum allowed file upload size in bytes.                               |
+| `CONFIG_METRICS_PORTS` | `9101` through `9150` | Port numbers used to expose prometheus metrics (e.g., `9101,9102,9103`). |
+
+## Logging
+
+In addition to writing application logs to disk, Keystone stores audit logs and request history in the application database.
+All log values are automatically rotated and purged by the application.
+
+| Setting Name              | Default Value        | Description                                                                                                 |
+|---------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
+| `LOG_APP_LEVEL`           | `WARNING`            | Only record application logs above this level (accepts `CRITICAL`, `ERROR`, `WARNING`, `INFO`, or `DEBUG`). |
+| `LOG_APP_FILE`            | `<app>/keystone.log` | Destination file path for application logs.                                                                 |
+| `LOG_APP_RETENTION_BYTES` | `10485760` (10 MB)   | Maximum log file size before rotating log files.                                                            |
+| `LOG_APP_RETENTION_FILES` | `5`                  | Maximum rotated log files to keep.                                                                          |
+| `LOG_REQ_RETENTION_SEC`   | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
+| `LOG_AUD_RETENTION_SEC`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
 
 ## API Throttling
 
@@ -116,9 +127,9 @@ Securing your production email server with a username/password is recommended, b
 | Setting Name          | Default Value             | Description                                             |
 |-----------------------|---------------------------|---------------------------------------------------------|
 | `EMAIL_HOST`          | `localhost`               | The host server to use for sending email.               |
-| `EMAIL_PORT`          | `25`                      | Port to use for the SMTP server.                        |
 | `EMAIL_HOST_USER`     |                           | Username to use for the SMTP server.                    |
 | `EMAIL_HOST_PASSWORD` |                           | Password to use for the SMTP server.                    |
+| `EMAIL_PORT`          | `25`                      | Port to use for the SMTP server.                        |
 | `EMAIL_USE_TLS`       | `False`                   | Use a TLS connection to the SMTP server.                |
 | `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot`    | The default "from" address used in email notifications. |
 | `EMAIL_TEMPLATE_DIR`  | `/etc/keystone/templates` | Directory to search for customized email templates.     |

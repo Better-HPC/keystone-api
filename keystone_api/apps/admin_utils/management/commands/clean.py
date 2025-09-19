@@ -36,6 +36,7 @@ class Command(StdOutUtils, BaseCommand):
         group.add_argument('--static', action='store_true', help='Delete the static root directory')
         group.add_argument('--uploads', action='store_true', help='Delete all user uploaded file data')
         group.add_argument('--sqlite', action='store_true', help='Delete all SQLite database files')
+        group.add_argument('--log', action='store_true', help='Delete the application log file')
         group.add_argument('--all', action='store_true', help='Shorthand for deleting all targets')
 
     def handle(self, *args, **options) -> None:
@@ -54,6 +55,9 @@ class Command(StdOutUtils, BaseCommand):
 
         if options['sqlite'] or options['all']:
             self._clean_sqlite()
+
+        if options['log'] or options['all']:
+            self._clean_logfile()
 
     def _clean_static(self) -> None:
         """Remove static application files."""
@@ -81,4 +85,11 @@ class Command(StdOutUtils, BaseCommand):
                 db_path.unlink(missing_ok=True)
                 journal_path.unlink(missing_ok=True)
 
+        self._write('OK', self.style.SUCCESS)
+
+    def _clean_logfile(self) -> None:
+        """Remove the default application log file."""
+
+        self._write('  Removing app log file...', ending=' ')
+        settings.LOG_FILE_PATH.unlink(missing_ok=True)
         self._write('OK', self.style.SUCCESS)

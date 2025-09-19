@@ -6,7 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status, viewsets
 from rest_framework.generics import GenericAPIView
@@ -119,9 +119,10 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     queryset = AllocationRequest.objects.prefetch_related(
         'history',
         'assignees',
-        Prefetch('publications', queryset=Publication.objects.select_related('team')),
-        Prefetch('grants', queryset=Grant.objects.select_related('team')),
-        Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster')),
+        Prefetch('publications', queryset=Publication.objects.select_related('team').order_by('title')),
+        Prefetch('grants', queryset=Grant.objects.select_related('team').order_by('title')),
+        Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster').order_by('cluster__name')),
+        Prefetch('comments', queryset=Comment.objects.select_related('user').order_by('created')),
     ).select_related(
         'submitter',
         'team',
@@ -497,6 +498,17 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         'request',
         'user'
     )
+
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset filtered to only list private comments for staff users."""
+
+        queryset = super().get_queryset()
+
+        # Only include private comments for admin users
+        if self.action == 'list' and not self.request.user.is_staff:
+            return queryset.filter(private=False)
+
+        return queryset
 
 
 @extend_schema_view(

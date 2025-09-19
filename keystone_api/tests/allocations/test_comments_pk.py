@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import CommentFactory
+from apps.allocations.factories import AllocationRequestFactory, CommentFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
@@ -15,14 +15,17 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     Endpoint permissions are tested against the following matrix of HTTP responses.
     Permissions depend on the user's role within the team owning the accessed record.
 
-    | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team member                | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Team admin                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Team owner                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | User Status                   | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |-------------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated user          | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated non-member      | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member                   | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Team admin                    | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Team owner                    | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Staff user                    | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Team member (private comment) | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team owner (private comment)  | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Staff user  (private comment) | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
     endpoint_pattern = '/allocations/comments/{pk}/'
@@ -30,18 +33,28 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.comment = CommentFactory()
-        self.request = self.comment.request
+        # Create an allocation request to which comments will be assigned
+        self.request = AllocationRequestFactory()
 
+        # Create users with different levels of group membership/permissions
         self.team = self.request.team
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
+        # Create non-team members
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = self.endpoint_pattern.format(pk=self.comment.pk)
+        # Create a public comment
+        self.public_comment = CommentFactory(request=self.request)
+        self.endpoint = self.endpoint_pattern.format(pk=self.public_comment.pk)
+
+        # Create a public comment
+        self.private_comment = CommentFactory(private=True, request=self.request)
+        self.private_endpoint = self.endpoint_pattern.format(pk=self.private_comment.pk)
+
+        # Valid record data used to test write operations
         self.record_data = {'content': 'foobar', 'request': self.request.pk}
 
     def test_unauthenticated_user_permissions(self) -> None:
@@ -134,6 +147,56 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.staff_user)
 
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_200_OK,
+            patch=status.HTTP_200_OK,
+            delete=status.HTTP_204_NO_CONTENT,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put_body=self.record_data,
+            patch_data=self.record_data
+        )
+
+    def test_team_member_private_permissions(self) -> None:
+        """Verify team members cannot access private comments."""
+
+        self.client.force_authenticate(user=self.team_member)
+        self.assert_http_responses(
+            self.private_endpoint,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def test_team_owner_private_permissions(self) -> None:
+        """Verify team owners cannot access private comments."""
+
+        self.client.force_authenticate(user=self.team_member)
+        self.assert_http_responses(
+            self.private_endpoint,
+            get=status.HTTP_403_FORBIDDEN,
+            head=status.HTTP_403_FORBIDDEN,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def test_staff_user_private_permissions(self) -> None:
+        """Verify staff members can access private comments."""
+
+        self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
             self.endpoint,
             get=status.HTTP_200_OK,

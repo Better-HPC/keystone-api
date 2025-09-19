@@ -29,7 +29,14 @@ class AllocationInline(admin.TabularInline):
 
     model = Allocation
     show_change_link = True
+    autocomplete_fields = ['cluster']
     extra = 1
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records."""
+
+        qs = super().get_queryset(request)
+        return qs.select_related('cluster', 'request')
 
 
 class AllocationReviewInline(admin.StackedInline):
@@ -39,7 +46,14 @@ class AllocationReviewInline(admin.StackedInline):
     verbose_name = 'Review'
     show_change_link = True
     readonly_fields = ['submitted']
+    autocomplete_fields = ['reviewer']
     extra = 1
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records."""
+
+        qs = super().get_queryset(request)
+        return qs.select_related('reviewer', 'request')
 
 
 class AttachmentInline(admin.TabularInline):
@@ -50,6 +64,12 @@ class AttachmentInline(admin.TabularInline):
     readonly_fields = ['name']
     extra = 1
 
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records."""
+
+        qs = super().get_queryset(request)
+        return qs.select_related('request')
+
 
 class CommentInline(admin.StackedInline):
     """Inline admin interface for the `Comment` model."""
@@ -58,7 +78,14 @@ class CommentInline(admin.StackedInline):
     verbose_name = 'Comment'
     show_change_link = True
     readonly_fields = ['created']
+    autocomplete_fields = ['user']
     extra = 1
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        """Define the base database query used for fetching displayed records."""
+
+        qs = super().get_queryset(request)
+        return qs.select_related('user', 'request')
 
 
 @admin.register(Allocation)
@@ -66,13 +93,10 @@ class AllocationAdmin(admin.ModelAdmin):
     """Admin interface for the `Allocation` model."""
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        """Define the base database query used for fetching displayed records.
-
-        Optimizes database interactions by prefetching related data.
-        """
+        """Define the base database query used for fetching displayed records."""
 
         qs = super().get_queryset(request)
-        return qs.select_related('request__team', 'cluster', 'request')
+        return qs.select_related('cluster', 'request')
 
     @staticmethod
     @admin.display(ordering='request__team__name')
@@ -116,13 +140,18 @@ class AllocationRequestAdmin(admin.ModelAdmin):
     """Admin interface for the `AllocationRequest` model."""
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
-        """Define the base database query used for fetching displayed records.
-
-        Optimizes database interactions by prefetching related data.
-        """
+        """Define the base database query used for fetching displayed records."""
 
         qs = super().get_queryset(request)
-        return qs.select_related('team').annotate(review_count=Count('allocationreview'))
+        return qs.prefetch_related(
+            'grants',
+            'publications'
+        ).select_related(
+            'team',
+            'submitter'
+        ).annotate(
+            review_count=Count('allocationreview')
+        )
 
     @staticmethod
     @admin.display(ordering='team__name')
@@ -140,14 +169,17 @@ class AllocationRequestAdmin(admin.ModelAdmin):
 
     list_display = ['team', 'title', 'submitted', 'active', 'expire', 'reviews', 'status']
     list_display_links = list_display
+    list_select_related = True
     search_fields = ['title', 'description', 'team__name']
     readonly_fields = ['submitted']
+    autocomplete_fields = ['submitter', 'team']
     ordering = ['submitted']
     list_filter = [
         ('submitted', admin.DateFieldListFilter),
         ('active', admin.DateFieldListFilter),
         ('expire', admin.DateFieldListFilter),
         ('status', admin.ChoicesFieldListFilter),
+        ('assignees', admin.RelatedOnlyFieldListFilter)
     ]
     inlines = [AllocationInline, AllocationReviewInline, AttachmentInline, CommentInline]
 
