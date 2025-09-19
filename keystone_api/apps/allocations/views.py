@@ -6,7 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status, viewsets
 from rest_framework.generics import GenericAPIView
@@ -371,6 +371,17 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         'request',
         'user'
     )
+
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset filtered to only list private comments for staff users."""
+
+        queryset = super().get_queryset()
+
+        # Only include private comments for admin users
+        if self.action == 'list' and not self.request.user.is_staff:
+            return queryset.filter(private=False)
+
+        return queryset
 
 
 @extend_schema_view(

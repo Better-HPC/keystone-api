@@ -71,7 +71,7 @@ class CustomAsserts:
         return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
 
 
-class TeamScopedListFilteringTestMixin(ABC):
+class TeamListFilteringTestMixin(ABC):
     """Test the filtering of returned records based on user team membership."""
 
     # Test configuration
@@ -141,7 +141,7 @@ class TeamScopedListFilteringTestMixin(ABC):
         self.assertEqual(0, len(response.json()))
 
 
-class UserScopedListFilteringTestMixin:
+class UserListFilteringTestMixin:
     """Test the filtering of returned records based on user ownership."""
 
     # Test configuration

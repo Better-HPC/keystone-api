@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.factories import JobStatsFactory
 from apps.users.factories import UserFactory
-from tests.utils import CustomAsserts, TeamScopedListFilteringTestMixin
+from tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -77,7 +77,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(TeamScopedListFilteringTestMixin, APITestCase):
+class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/jobs/'
