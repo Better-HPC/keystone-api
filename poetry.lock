@@ -690,6 +690,18 @@ files = [
 ]
 
 [[package]]
+name = "iso4217"
+version = "1.14.20250512"
+description = "ISO 4217 currency data package for Python"
+optional = false
+python-versions = ">=3.6"
+groups = ["main"]
+files = [
+    {file = "iso4217-1.14.20250512-py2.py3-none-any.whl", hash = "sha256:f23974b5b6eb264709f6d764703d5c03f168807305077cb76d7cdfcca87d7d76"},
+    {file = "iso4217-1.14.20250512.tar.gz", hash = "sha256:f036bd5460f1d371f2df253e90be5032930c8f76512f3a02ecfa5ad1e9fb164b"},
+]
+
+[[package]]
 name = "jinja2"
 version = "3.1.6"
 description = "A very fast and expressive template engine."
@@ -1604,4 +1616,4 @@ tests = ["coverage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "9c4aca272683f3ec667f27083e1e88dbc4d7a4692bb1985fae446d1a1f67cb4d"
+content-hash = "94550c5ecfc372dafda6f0b1adc4b9e68e13b1f46f1f119066fcc990c7d11d0e"

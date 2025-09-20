@@ -53,6 +53,7 @@ dependencies = [
     "tqdm==4.67.1",
     "uritemplate==4.2.0",
     "uvicorn==0.35.0",
+    "iso4217 (>=1.14.20250512,<2.0.0)",
 ]
 
 [project.optional-dependencies]

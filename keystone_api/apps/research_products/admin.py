@@ -49,10 +49,10 @@ class GrantAdmin(admin.ModelAdmin):
 
         return f'${int(obj.amount):,}'
 
-    list_display = ['team', 'fiscal_year', amount, 'agency', 'start_date', 'end_date']
+    list_display = ['team', amount, 'agency', 'start_date', 'end_date']
     list_display_links = list_display
-    ordering = ['team', '-fiscal_year']
-    search_fields = ['title', 'agency', 'fiscal_year', 'team__name']
+    ordering = ['team', '-start_date']
+    search_fields = ['title', 'agency', 'team__name']
     autocomplete_fields = ['team']
     list_filter = [
         ('start_date', admin.DateFieldListFilter),
