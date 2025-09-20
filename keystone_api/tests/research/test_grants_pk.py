@@ -25,7 +25,7 @@ class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCas
             'title': "Grant (Team 2)",
             'agency': "Agency Name",
             'amount': 1000,
-            'fiscal_year': 2001,
+            'currency': 'USD',
             'start_date': date(2000, 1, 1),
             'end_date': date(2000, 1, 31),
             'grant_number': 'abc-123',
