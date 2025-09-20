@@ -72,7 +72,6 @@ class PublicationFactory(DjangoModelFactory):
     abstract = factory.Faker("paragraph", nb_sentences=5)
     journal = factory.Faker("catch_phrase")
     doi = factory.Faker('doi')
-    preparation = factory.Faker("pybool", truth_probability=20)
 
     team = factory.SubFactory(TeamFactory)
 
