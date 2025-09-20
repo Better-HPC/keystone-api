@@ -87,7 +87,6 @@ class Publication(models.Model):
     submitted = models.DateField(null=True, blank=True)
     journal = models.CharField(max_length=100, null=True, blank=True)
     doi = models.CharField(max_length=50, unique=True, null=True, blank=True)
-    preparation = models.BooleanField(default=False)
     volume = models.CharField(max_length=20, null=True, blank=True)
     issue = models.CharField(max_length=20, null=True, blank=True)
     history = AuditlogHistoryField()

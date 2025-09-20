@@ -56,7 +56,7 @@ class GrantFactory(DjangoModelFactory):
 class PublicationFactory(DjangoModelFactory):
     """Factory for creating mock `Publication` instances.
 
-    Publications have a 20% chance of being in preparation, resulting in
+    Publications have a 20% chance of being "in preparation", resulting in
     no `submitted` or `published` date being set on the record. If a publication
     is not in preparation, it is assigned a random submitted date within the
     past five years. Submitted applications have an 85% chance of being published,
@@ -72,7 +72,6 @@ class PublicationFactory(DjangoModelFactory):
     abstract = factory.Faker("paragraph", nb_sentences=5)
     journal = factory.Faker("catch_phrase")
     doi = factory.Faker('doi')
-    preparation = factory.Faker("pybool", truth_probability=20)
 
     team = factory.SubFactory(TeamFactory)
 
@@ -80,14 +79,16 @@ class PublicationFactory(DjangoModelFactory):
     def submitted(self: Publication) -> date | None:
         """Generate a random submission date.
 
-        Returns `None` for publications still in preparation. Otherwise,
-        returns a random date within the last five years that is at least
-        two months prior to today. This leave room for time between the
+        Returns a random date within the last five years that is at least
+        two months prior to today. This leaves room for time between the
         `submitted` and `published` dates.
+
+        Has a 20% chance of returning `None`, indicating a pulication that
+        is still in preparation.
         """
 
         five_years_in_days = 365 * 5
-        if not self.preparation:
+        if randgen.random() > .2:
             days = randgen.randint(60, five_years_in_days)
             return date.today() - timedelta(days=days)
 
@@ -96,7 +97,7 @@ class PublicationFactory(DjangoModelFactory):
         """Generate a random publication date.
 
         Submitted publications have an 85% chance of returning a random date
-        within 30 days after the `submitted` date. Otherwise, returns `None`.
+        20–60 days after the `submitted` date. Otherwise, returns `None`.
         """
 
         if self.submitted and randgen.random() < 0.85:
