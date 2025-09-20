@@ -5888,23 +5888,6 @@ paths:
         schema:
           type: string
       - in: query
-        name: preparation
-        schema:
-          type: boolean
-      - in: query
-        name: preparation__in
-        schema:
-          type: array
-          items:
-            type: boolean
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: preparation__isnull
-        schema:
-          type: boolean
-      - in: query
         name: published
         schema:
           type: string
@@ -8694,8 +8677,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -8882,8 +8863,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -8929,8 +8908,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
