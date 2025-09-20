@@ -6,6 +6,7 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
+import iso4217
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 from django.db import models
@@ -27,7 +28,6 @@ class Grant(models.Model):
             models.Index(fields=['title']),
             models.Index(fields=['agency']),
             models.Index(fields=['grant_number']),
-            models.Index(fields=['fiscal_year']),
             models.Index(fields=['start_date']),
             models.Index(fields=['end_date']),
             models.Index(fields=['team']),
@@ -36,11 +36,20 @@ class Grant(models.Model):
             models.Index(fields=['team', 'agency', 'start_date', 'end_date']),
         ]
 
+    class IsoCurrency(models.TextChoices):
+        """ISO 4217 currency codes from the iso4217 package."""
+
+        # Dynamically build enum members from iso4217
+        locals().update({
+            cur.code: (cur.code, cur.currency_name)
+            for cur in iso4217.Currency
+        })
+
     title = models.CharField(max_length=250)
     agency = models.CharField(max_length=100)
     amount = models.DecimalField(decimal_places=2, max_digits=14)
+    currency = models.CharField(max_length=3, choices=IsoCurrency.choices)
     grant_number = models.CharField(max_length=250)
-    fiscal_year = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
     history = AuditlogHistoryField()
