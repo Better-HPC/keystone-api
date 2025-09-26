@@ -1,18 +1,21 @@
-FROM python:3.11.13 AS builder
+# --- Build image ---
+FROM python:3.11.13-alpine AS builder
 
-# Install compile tools and build dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    build-essential \
-    libsasl2-dev \
-    libldap2-dev \
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
     gcc \
-  && rm -rf /var/lib/apt/lists/*
+    musl-dev \
+    openldap-dev \
+    cyrus-sasl-dev
 
-# Compile application installer
+WORKDIR /src
 COPY . .
 RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[all]
 
-FROM python:3.11.13-slim
+
+# --- Runtime image ---
+FROM python:3.11.13-alpine
 
 EXPOSE 80
 
@@ -26,25 +29,25 @@ ENV CONFIG_STATIC_DIR=/app/static
 ENV DB_NAME=/app/keystone.db
 ENV LOG_APP_FILE=/app/keystone.log
 
-# Install system dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \
+# Install runtime dependencies only
+RUN apk add --no-cache \
     redis \
     curl \
     nginx \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+    openldap \
+    cyrus-sasl
 
-# Install the application
+# Install application wheels
 COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
 
-# Create unprivliged users/directories for running services
-RUN groupadd --gid 121 keystone \
-    && useradd -m -u 1001 -g keystone keystone \
+# Create unprivileged users/directories for running services
+RUN addgroup -g 121 keystone \
+    && adduser -D -u 1001 -G keystone keystone \
     && mkdir -p /app/keystone /app/nginx \
     && chown -R keystone:keystone /app /var/lib/nginx/
 
-# Set unprivliged user as default
+# Switch to non-root user
 USER keystone
 WORKDIR /app/keystone
 
