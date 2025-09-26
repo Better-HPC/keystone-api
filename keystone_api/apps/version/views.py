@@ -7,7 +7,7 @@ appropriately rendered HTML template or other HTTP response.
 from django.conf import settings
 from django.http import HttpResponse
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
@@ -21,20 +21,12 @@ class VersionView(GenericAPIView):
 
     @extend_schema(
         auth=[],
-        summary="Retrieve the application version number",
-        description="Retrieve the application version number as a plain text response.",
-        tags=["Application Version"],
+        summary="Retrieve the application version number.",
+        description="Returns the application version number as a plain text response.",
+        tags=["Version"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
-        },
-        examples=[
-            OpenApiExample(
-                name="Version Number",
-                media_type="text/plain",
-                response_only=True,
-                value="1.2.3"
-            )
-        ]
+        }
     )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return the API version number."""

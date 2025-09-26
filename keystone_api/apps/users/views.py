@@ -28,9 +28,9 @@ __all__ = [
 
 @extend_schema_view(  # pragma: nocover
     get=extend_schema(
-        summary="Retrieve valid team role options",
-        description="Retrieve valid team `role` options with human-readable labels.",
-        tags=["Team Membership"],
+        summary="Retrieve valid team role options.",
+        description="Returns valid choices for the team `role` field mapped to human-readable labels.",
+        tags=["Users - Team Membership"],
         responses=inline_serializer(
             name="MembershipRoleChoices",
             fields={k: serializers.CharField(default=v) for k, v in Membership.Role.choices}
@@ -52,34 +52,34 @@ class MembershipRoleChoicesView(APIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all team memberships",
-        description="Retrieve all team membership accounts.",
-        tags=["Team Membership"],
+        summary="List team memberships.",
+        description="Returns a filtered list of team memberships.",
+        tags=["Users - Team Membership"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a team membership",
-        description="Retrieve a single team membership account by ID.",
-        tags=["Team Membership"],
+        summary="Retrieve a team membership.",
+        description="Returns a single team membership ID.",
+        tags=["Users - Team Membership"],
     ),
     create=extend_schema(
-        summary="Create a team membership",
-        description="Create a new team membership account.",
-        tags=["Team Membership"],
+        summary="Create a team membership.",
+        description="Creates a new team membership.",
+        tags=["Users - Team Membership"],
     ),
     update=extend_schema(
-        summary="Update a team membership",
-        description="Replace an existing team membership account with new values.",
-        tags=["Team Membership"],
+        summary="Update a team membership.",
+        description="Replaces an existing team membership with new values.",
+        tags=["Users - Team Membership"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a team membership",
-        description="Apply a partial update to an existing team membership account.",
-        tags=["Team Membership"],
+        summary="Partially update a team membership.",
+        description="Partially updates an existing team membership with new values.",
+        tags=["Users - Team Membership"],
     ),
     destroy=extend_schema(
-        summary="Delete a team membership",
-        description="Delete a team membership account by ID.",
-        tags=["Team Membership"],
+        summary="Delete a team membership.",
+        description="Deletes a team membership by ID.",
+        tags=["Users - Team Membership"],
     )
 )
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -97,34 +97,34 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all teams",
-        description="Retrieve all teams visible to the current user.",
-        tags=["Teams"],
+        summary="List teams.",
+        description="Returns a filtered list of user teams.",
+        tags=["Users - Teams"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a team",
-        description="Retrieve a single team by ID.",
-        tags=["Teams"],
+        summary="Retrieve a team.",
+        description="Returns a single team by ID.",
+        tags=["Users - Teams"],
     ),
     create=extend_schema(
-        summary="Create a team",
-        description="Create a new team.",
-        tags=["Teams"],
+        summary="Create a team.",
+        description="Creates a new team.",
+        tags=["Users - Teams"],
     ),
     update=extend_schema(
-        summary="Update a team",
-        description="Replace an existing team with new values.",
-        tags=["Teams"],
+        summary="Update a team.",
+        description="Replaces an existing team with new values.",
+        tags=["Users - Teams"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a team",
-        description="Apply a partial update to an existing team.",
-        tags=["Teams"],
+        summary="Partially update a team.",
+        description="Partially updates an existing team with new values.",
+        tags=["Users - Teams"],
     ),
     destroy=extend_schema(
-        summary="Delete a team",
-        description="Delete a team by ID.",
-        tags=["Teams"],
+        summary="Delete a team.",
+        description="Deletes a team by ID.",
+        tags=["Users - Teams"],
     ),
 )
 class TeamViewSet(viewsets.ModelViewSet):
@@ -142,34 +142,34 @@ class TeamViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all users",
-        description="Retrieve all user accounts.",
-        tags=["Users"],
+        summary="List user accounts.",
+        description="Returns a filtered list of user accounts.",
+        tags=["Users - Accounts"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a user",
-        description="Retrieve a single user account by ID.",
-        tags=["Users"],
+        summary="Retrieve a user account.",
+        description="Returns a single user account by ID.",
+        tags=["Users - Accounts"],
     ),
     create=extend_schema(
-        summary="Create a user",
-        description="Create a new user account.",
-        tags=["Users"],
+        summary="Create a user account.",
+        description="Creates a new user account.",
+        tags=["Users - Accounts"],
     ),
     update=extend_schema(
-        summary="Update a user",
-        description="Replace an existing user account with new values.",
-        tags=["Users"],
+        summary="Update a user account.",
+        description="Replaces an existing user account with new values.",
+        tags=["Users - Accounts"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a user",
-        description="Apply a partial update to an existing user account.",
-        tags=["Users"],
+        summary="Partially update a user account.",
+        description="Partially updates an existing user account with new values.",
+        tags=["Users - Accounts"],
     ),
     destroy=extend_schema(
-        summary="Delete a user",
-        description="Delete a user account by ID.",
-        tags=["Users"],
+        summary="Delete a user.",
+        description="Deletes a user account by ID.",
+        tags=["Users - Accounts"],
     )
 )
 class UserViewSet(viewsets.ModelViewSet):

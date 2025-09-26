@@ -8,7 +8,7 @@ from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 from .common import GetResponseContentTests
 
-ENDPOINT = '/allocations/allocation-review/status-choices/'
+ENDPOINT = '/allocations/review-choices/status/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):

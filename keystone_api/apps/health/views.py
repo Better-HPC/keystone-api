@@ -54,9 +54,12 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve the current application health status",
-        description="Return a 200 status if all application health checks pass and a 500 status otherwise.",
-        tags=["Application Health"],
+        summary="Retrieve the current application health status.",
+        description=(
+            "Returns a 200 status if all application health checks pass and a 500 status otherwise. "
+            "Health checks are performed on demand and cached for 60 seconds."
+        ),
+        tags=["Admin - Health Checks"],
         responses={
             '200': inline_serializer('health_ok', fields=dict()),
             '500': inline_serializer('health_error', fields=dict()),
@@ -90,12 +93,13 @@ class HealthCheckView(BaseHealthCheckView):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve application health checks in JSON format",
+        summary="Retrieve health check results in JSON format.",
         description=(
-            "Retrieve results from individual application health checks in JSON format. "
-            "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
+            "Returns individual health check results in JSON format. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+            "A `200` status code is returned regardless of whether individual health checks are passing."
         ),
-        tags=["Application Health"],
+        tags=["Admin - Health Checks"],
         responses={
             '200': inline_serializer('health_json_ok', fields={
                 'healthCheckName': inline_serializer(
@@ -107,28 +111,6 @@ class HealthCheckView(BaseHealthCheckView):
                     })
             })
         },
-        examples=[
-            OpenApiExample(
-                name='Passing JSON Health Check',
-                value={
-                    "DatabaseBackend": {
-                        "status": 200,
-                        "message": "working",
-                        "critical_service": True
-                    }
-                }
-            ),
-            OpenApiExample(
-                name='Failing JSON Health Check',
-                value={
-                    "DatabaseBackend": {
-                        "status": 500,
-                        "message": "database unreachable",
-                        "critical_service": True
-                    }
-                },
-            )
-        ]
     )
 )
 class HealthCheckJsonView(BaseHealthCheckView):
@@ -162,35 +144,16 @@ class HealthCheckJsonView(BaseHealthCheckView):
 @extend_schema_view(
     get=extend_schema(
         auth=[],
-        summary="Retrieve application health checks in Prometheus format",
+        summary="Retrieve health check results in Prometheus format.",
         description=(
-            "Retrieve results from individual application health checks in Prometheus format. "
-            "This endpoint returns a `200` status code regardless of whether individual health checks are passing."
+            "Returns individual health check results in Prometheus format. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+            "A `200` status code is returned regardless of whether individual health checks are passing."
         ),
-        tags=["Application Health"],
+        tags=["Admin - Health Checks"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
         },
-        examples=[
-            OpenApiExample(
-                name="Passing Prometheus Health Check",
-                media_type="text/plain",
-                value=(
-                    "# HELP DatabaseBackend health_check.db.backendsDatabaseBackend\n"
-                    "# TYPE DatabaseBackend gauge\n"
-                    "DatabaseBackend{critical_service=\"True\",message=\"working\"} 200.0"
-                )
-            ),
-            OpenApiExample(
-                name="Failing Prometheus Health Check",
-                media_type="text/plain",
-                value=(
-                    "# HELP DatabaseBackend health_check.db.backendsDatabaseBackend\n"
-                    "# TYPE DatabaseBackend gauge\n"
-                    "DatabaseBackend{critical_service=\"True\",message=\"database unreachable\"} 500.0"
-                )
-            )
-        ]
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):

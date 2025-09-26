@@ -22,20 +22,22 @@ __all__ = [
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all audit logs",
+        summary="List audit logs.",
         description=(
-            "Retrieve all application audit logs. "
-            "These log entries track changes to database records and are used for compliance and security auditing."
+            "Returns a list of audit logs. "
+            "Audit logs track changes to database records and are used for compliance and security auditing. "
+            "Access to log records is restricted to staff users."
         ),
-        tags=["Logging"],
+        tags=["Admin - Logging"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve an audit log record",
+        summary="Retrieve a single audit log.",
         description=(
-            "Retrieve an audit log by ID. "
-            "These log entries track changes to database records and are used for compliance and security auditing."
+            "Returns a single audit log by its ID. "
+            "Audit logs track changes to database records and are used for compliance and security auditing. "
+            "Access to log records is restricted to staff users."
         ),
-        tags=["Logging"],
+        tags=["Admin - Logging"],
     )
 )
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -49,20 +51,22 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all HTTP request logs",
+        summary="List HTTP request logs.",
         description=(
-            "Retrieve a list of HTTP request logs. "
-            "These logs track incoming API requests and their resulting HTTP responses."
+            "Returns a list of HTTP request logs. "
+            "Request logs track incoming API requests and their resulting HTTP responses. "
+            "Access to log records is restricted to staff users."
         ),
-        tags=["Logging"],
+        tags=["Admin - Logging"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve an HTTP request log record",
+        summary="Retrieve a single HTTP request log.",
         description=(
-            "Retrieve a single HTTP request log by ID. "
-            "These logs track incoming API requests and their resulting HTTP responses."
+            "Returns a single HTTP request log by its ID. "
+            "Request logs track incoming API requests and their resulting HTTP responses. "
+            "Access to log records is restricted to staff users."
         ),
-        tags=["Logging"],
+        tags=["Admin - Logging"],
     )
 )
 class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -76,20 +80,22 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all background task results",
+        summary="List background task results.",
         description=(
-            "Retrieve a list of background task results. "
-            "These logs are collected from the Celery backend to track background task outcomes and failures."
+            "Returns a list of task logs. "
+            "Task logs are collected from the Celery backend to track background task outcomes. "
+            "Access to log records is restricted to staff users."
         ),
-        tags=["Logging"],
+        tags=["Admin - Logging"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a background task result",
+        summary="Retrieve a single background task result.",
         description=(
-            "Retrieve a single background task result by ID. "
-            "These logs are collected from the Celery backend to track background task outcomes and failures."
+            "Returns a single task log by its ID. "
+            "Task logs are collected from the Celery backend to track background task outcomes. "
+            "Access to log records is restricted to staff users."
         ),
-        tags=["Logging"],
+        tags=["Admin - Logging"],
     )
 )
 class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
