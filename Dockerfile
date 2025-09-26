@@ -25,10 +25,10 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Configure the application with container friendly defaults
-ENV CONFIG_UPLOAD_DIR=/app/media
-ENV CONFIG_STATIC_DIR=/app/static
-ENV DB_NAME=/app/keystone.db
-ENV LOG_APP_FILE=/app/keystone.log
+ENV CONFIG_UPLOAD_DIR=/app/keystone/media
+ENV CONFIG_STATIC_DIR=/app/keystone/static
+ENV DB_NAME=/app/keystone/keystone.db
+ENV LOG_APP_FILE=/app/keystone/keystone.log
 
 # Install runtime dependencies only
 RUN apk add --no-cache \
@@ -46,7 +46,9 @@ RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
 RUN addgroup -g 121 keystone \
     && adduser -D -u 1001 -G keystone keystone \
     && mkdir -p /app/keystone /app/nginx \
-    && chown -R keystone:keystone /app /var/lib/nginx/
+    && chown -R keystone:keystone /app /var/lib/nginx \
+    && mkdir -p /var/lib/nginx/logs /var/log/nginx \
+    && chown -R keystone:keystone /var/lib/nginx /var/log/nginx
 
 # Switch to non-root user
 USER keystone

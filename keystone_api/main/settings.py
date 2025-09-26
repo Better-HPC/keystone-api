@@ -270,6 +270,7 @@ DATABASES = dict()
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 _db_name = env.str('DB_NAME', 'keystone')
+_db_path = (BASE_DIR / _db_name).with_suffix('.db')
 if env.bool('DB_POSTGRES_ENABLE', False):
     DATABASES['default'] = {
         'ENGINE': 'django_prometheus.db.backends.postgresql',
@@ -283,7 +284,7 @@ if env.bool('DB_POSTGRES_ENABLE', False):
 else:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / f'{_db_name}.db',
+        'NAME': _db_path,
         'timeout': 30,
         'PRAGMA': {
             'journal_mode': 'wal',
