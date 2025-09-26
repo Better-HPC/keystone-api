@@ -27,7 +27,6 @@ class Grant(models.Model):
             models.Index(fields=['title']),
             models.Index(fields=['agency']),
             models.Index(fields=['grant_number']),
-            models.Index(fields=['fiscal_year']),
             models.Index(fields=['start_date']),
             models.Index(fields=['end_date']),
             models.Index(fields=['team']),
@@ -40,7 +39,6 @@ class Grant(models.Model):
     agency = models.CharField(max_length=100)
     amount = models.DecimalField(decimal_places=2, max_digits=14)
     grant_number = models.CharField(max_length=250)
-    fiscal_year = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
     history = AuditlogHistoryField()
@@ -78,7 +76,6 @@ class Publication(models.Model):
     submitted = models.DateField(null=True, blank=True)
     journal = models.CharField(max_length=100, null=True, blank=True)
     doi = models.CharField(max_length=50, unique=True, null=True, blank=True)
-    preparation = models.BooleanField(default=False)
     volume = models.CharField(max_length=20, null=True, blank=True)
     issue = models.CharField(max_length=20, null=True, blank=True)
     history = AuditlogHistoryField()

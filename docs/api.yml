@@ -5425,39 +5425,6 @@ paths:
         schema:
           type: number
       - in: query
-        name: fiscal_year
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__gt
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__gte
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: fiscal_year__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: fiscal_year__lt
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__lte
-        schema:
-          type: integer
-      - in: query
         name: grant_number
         schema:
           type: string
@@ -5956,23 +5923,6 @@ paths:
         name: journal__startswith
         schema:
           type: string
-      - in: query
-        name: preparation
-        schema:
-          type: boolean
-      - in: query
-        name: preparation__in
-        schema:
-          type: array
-          items:
-            type: boolean
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: preparation__isnull
-        schema:
-          type: boolean
       - in: query
         name: published
         schema:
@@ -8050,11 +8000,6 @@ components:
         grant_number:
           type: string
           maxLength: 250
-        fiscal_year:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
         start_date:
           type: string
           format: date
@@ -8069,7 +8014,6 @@ components:
       - agency
       - amount
       - end_date
-      - fiscal_year
       - grant_number
       - id
       - start_date
@@ -8095,11 +8039,6 @@ components:
         grant_number:
           type: string
           maxLength: 250
-        fiscal_year:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
         start_date:
           type: string
           format: date
@@ -8112,7 +8051,6 @@ components:
       - agency
       - amount
       - end_date
-      - fiscal_year
       - grant_number
       - id
       - start_date
@@ -8642,11 +8580,6 @@ components:
         grant_number:
           type: string
           maxLength: 250
-        fiscal_year:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
         start_date:
           type: string
           format: date
@@ -8771,8 +8704,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -8959,8 +8890,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -9006,8 +8935,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
