@@ -20,8 +20,8 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all funding grants.",
-        description="Returns a list of all funding grants.",
+        summary="List funding grants.",
+        description="Returns a filtered list of funding grants.",
         tags=["Research - Grants"],
     ),
     retrieve=extend_schema(
@@ -41,7 +41,7 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
     ),
     partial_update=extend_schema(
         summary="Partially update a funding grant.",
-        description="Partially update an existing funding grant with new values.",
+        description="Partially updates an existing funding grant with new values.",
         tags=["Research - Grants"],
     ),
     destroy=extend_schema(
@@ -68,8 +68,8 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all publications.",
-        description="Returns a list of all publications.",
+        summary="List publications.",
+        description="Returns a filtered list of publications.",
         tags=["Research - Publications"],
     ),
     retrieve=extend_schema(
@@ -89,7 +89,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
     partial_update=extend_schema(
         summary="Partially update a publication.",
-        description="Partially update an existing publication with new values.",
+        description="Partially updates an existing publication with new values.",
         tags=["Research - Publications"],
     ),
     destroy=extend_schema(

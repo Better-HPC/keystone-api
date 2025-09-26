@@ -22,7 +22,7 @@ __all__ = [
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all audit logs.",
+        summary="List audit logs.",
         description=(
             "Returns a list of audit logs. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
@@ -51,7 +51,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all HTTP request logs.",
+        summary="List HTTP request logs.",
         description=(
             "Returns a list of HTTP request logs. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
@@ -80,7 +80,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all background task results.",
+        summary="List background task results.",
         description=(
             "Returns a list of task logs. "
             "Task logs are collected from the Celery backend to track background task outcomes. "

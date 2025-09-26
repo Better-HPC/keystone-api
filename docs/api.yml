@@ -7,9 +7,8 @@ paths:
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Returns resource allocations granted to the current user's teams.
-        Staff users are returned all allocations regardless of the parent team.
-      summary: List all resource allocations
+      description: Returns a filtered list of resource allocations.
+      summary: List resource allocations.
       parameters:
       - name: _order
         required: false
@@ -205,9 +204,7 @@ paths:
           description: ''
     post:
       operationId: allocations_allocations_create
-      description: Creates a new resource allocation. General users can only create
-        allocations granted to teams they belong to. Staff users can create allocations
-        for any request.
+      description: Creates a new resource allocation.
       summary: Create a resource allocation.
       tags:
       - Allocations - Allocated Resources
@@ -236,9 +233,7 @@ paths:
   /allocations/allocations/{id}/:
     get:
       operationId: allocations_allocations_retrieve
-      description: Returns a single resource allocation by its ID. General users can
-        only access allocations granted to teams they belong to. Staff users can access
-        any allocation.
+      description: Returns a single resource allocation by ID.
       summary: Retrieve a resource allocation.
       parameters:
       - in: path
@@ -261,9 +256,7 @@ paths:
           description: ''
     put:
       operationId: allocations_allocations_update
-      description: Replaces an existing resource allocation with new values. General
-        users can only modify allocations granted to teams they belong to. Staff users
-        can modify any allocation.
+      description: Replaces an existing resource allocation with new values.
       summary: Update a resource allocation.
       parameters:
       - in: path
@@ -299,8 +292,6 @@ paths:
     patch:
       operationId: allocations_allocations_partial_update
       description: Partially updates an existing resource allocation with new values.
-        General users can only modify allocations granted to teams they belong to.
-        Staff users can modify any allocation.
       summary: Partially update a resource allocation.
       parameters:
       - in: path
@@ -334,8 +325,7 @@ paths:
           description: ''
     delete:
       operationId: allocations_allocations_destroy
-      description: Deletes a resource allocation by its ID. Users can only delete
-        allocations granted to teams they belong to. Staff can delete any allocation.
+      description: Deletes a resource allocation by ID.
       summary: Delete a resource allocation.
       parameters:
       - in: path
@@ -355,10 +345,8 @@ paths:
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Returns a list of file attachments on allocation requests from
-        teams the user belongs to. Staff users are returned all attachments regardless
-        of the parent team.
-      summary: List all file attachments
+      description: Returns a filtered list of file attachments.
+      summary: List file attachments.
       parameters:
       - name: _order
         required: false
@@ -538,10 +526,8 @@ paths:
           description: ''
     post:
       operationId: allocations_attachments_create
-      description: Creates a new file attachment on an allocation request. General
-        users can only create attachments on requests from teams they belong to. Staff
-        users can create attachments on any request.
-      summary: Create a file attachment
+      description: Creates a new file attachment on an allocation request.
+      summary: Create a file attachment.
       tags:
       - Allocations - Request Attachments
       requestBody:
@@ -569,10 +555,8 @@ paths:
   /allocations/attachments/{id}/:
     get:
       operationId: allocations_attachments_retrieve
-      description: Returns a single file attachment by its ID. General users can only
-        access attachments on requests from teams they belong to. Staff users can
-        access any attachment.
-      summary: Retrieve a file attachment
+      description: Returns a single file attachment by ID.
+      summary: Retrieve a file attachment.
       parameters:
       - in: path
         name: id
@@ -594,10 +578,8 @@ paths:
           description: ''
     put:
       operationId: allocations_attachments_update
-      description: Replaces an existing file attachment with new values. General users
-        can only modify attachments on requests from teams they belong to. Staff users
-        can modify any attachment.
-      summary: Update a file attachment
+      description: Replaces an existing file attachment with new values.
+      summary: Update a file attachment.
       parameters:
       - in: path
         name: id
@@ -632,9 +614,7 @@ paths:
     patch:
       operationId: allocations_attachments_partial_update
       description: Partially updates an existing file attachment with new values.
-        General users can only modify attachments on requests from teams they belong
-        to. Staff users can modify any attachment.
-      summary: Partially update a file attachment
+      summary: Partially update a file attachment.
       parameters:
       - in: path
         name: id
@@ -667,10 +647,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_attachments_destroy
-      description: Deletes a file attachment by its ID. General users only delete
-        attachments on requests from teams they belong to. Staff users can delete
-        any attachment.
-      summary: Delete a file attachment
+      description: Deletes a file attachment by ID.
+      summary: Delete a file attachment.
       parameters:
       - in: path
         name: id
@@ -689,8 +667,8 @@ paths:
   /allocations/clusters/:
     get:
       operationId: allocations_clusters_list
-      description: Retrieve all HPC clusters.
-      summary: List all HPC clusters
+      description: Returns a filtered list of HPC clusters.
+      summary: List HPC clusters.
       parameters:
       - name: _order
         required: false
@@ -828,9 +806,8 @@ paths:
           description: ''
     post:
       operationId: allocations_clusters_create
-      description: Create a new HPC cluster. New HPC clusters can only be created
-        by staff users.
-      summary: Create an HPC cluster
+      description: Creates a new HPC cluster.
+      summary: Create an HPC cluster.
       tags:
       - Allocations - Clusters
       requestBody:
@@ -858,8 +835,8 @@ paths:
   /allocations/clusters/{id}/:
     get:
       operationId: allocations_clusters_retrieve
-      description: Retrieve a single HPC cluster by ID.
-      summary: Retrieve an HPC cluster
+      description: Returns a single HPC cluster by ID.
+      summary: Retrieve an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -881,9 +858,8 @@ paths:
           description: ''
     put:
       operationId: allocations_clusters_update
-      description: Replace an existing HPC cluster with new values. HPC clusters can
-        only be modified by staff users.
-      summary: Update an HPC cluster
+      description: Replaces an existing HPC cluster with new values.
+      summary: Update an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -917,9 +893,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_clusters_partial_update
-      description: Apply a partial update to an existing HPC cluster. HPC clusters
-        can only be modified by staff users.
-      summary: Partially update an HPC cluster
+      description: Partially updates an existing HPC cluster with new values.
+      summary: Partially update an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -952,9 +927,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_clusters_destroy
-      description: Delete an HPC cluster by ID. HPC clusters can only be deleted by
-        staff users.
-      summary: Delete an HPC cluster
+      description: Deletes an HPC cluster by ID.
+      summary: Delete an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -973,10 +947,8 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Returns comments made on allocation requests from teams the user
-        belongs to. Staff users are returned all comments regardless of the parent
-        team.
-      summary: List all comments.
+      description: Returns a filtered list of comments made on allocation requests.
+      summary: List comments.
       parameters:
       - name: _order
         required: false
@@ -1190,9 +1162,7 @@ paths:
           description: ''
     post:
       operationId: allocations_comments_create
-      description: Creates a new comment on an allocation request. General users can
-        only create comments on requests from teams they belong to. Staff users can
-        create comments on any request.
+      description: Creates a new comment on an allocation request.
       summary: Create a comment.
       tags:
       - Allocations - Request Comments
@@ -1221,9 +1191,7 @@ paths:
   /allocations/comments/{id}/:
     get:
       operationId: allocations_comments_retrieve
-      description: Returns a single comment by its ID. General users can only access
-        comments on requests from teams they belong to. Staff users can access any
-        comment.
+      description: Returns a single comment by ID.
       summary: Retrieve a comment.
       parameters:
       - in: path
@@ -1246,9 +1214,7 @@ paths:
           description: ''
     put:
       operationId: allocations_comments_update
-      description: Replaces an existing comment with new values. General users can
-        only modify comments on requests from teams they belong to. Staff users can
-        modify any comment.
+      description: Replaces an existing comment with new values.
       summary: Update a comment.
       parameters:
       - in: path
@@ -1283,10 +1249,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_comments_partial_update
-      description: Partially updates an existing comment with new values. General
-        users can only modify comments on requests from teams they belong to. Staff
-        users can modify any comment.
-      summary: Partially update a comment
+      description: Partially updates an existing comment with new values.
+      summary: Partially update a comment.
       parameters:
       - in: path
         name: id
@@ -1319,9 +1283,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_comments_destroy
-      description: Deletes a comment by its ID. General users only delete comments
-        on requests from teams they belong to. Staff users can delete any comment.
-      summary: Delete a comment
+      description: Deletes a comment by ID.
+      summary: Delete a comment.
       parameters:
       - in: path
         name: id
@@ -1340,9 +1303,8 @@ paths:
   /allocations/jobs/:
     get:
       operationId: allocations_jobs_list
-      description: Returns Slurm jobs belonging to teams where the user is a member.
-        Staff users are returned all records regardless of the parent team.
-      summary: List all user Slurm jobs.
+      description: Returns a filtered list of Slurm jobs.
+      summary: List user Slurm jobs.
       parameters:
       - name: _order
         required: false
@@ -2195,8 +2157,7 @@ paths:
   /allocations/jobs/{id}/:
     get:
       operationId: allocations_jobs_retrieve
-      description: Returns a single Slurm job by its ID. Users can only access records
-        for teams they belong to. Staff users can access all records.
+      description: Returns a single Slurm job by Keystone ID.
       summary: Retrieve a user Slurm job.
       parameters:
       - in: path
@@ -2238,9 +2199,8 @@ paths:
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Returns allocation requests belonging to teams where the user is
-        a member. Staff users can access all requests regardless of team.
-      summary: List all allocation requests.
+      description: Returns a filtered list of allocation requests.
+      summary: List allocation requests.
       parameters:
       - name: _order
         required: false
@@ -2623,9 +2583,7 @@ paths:
           description: ''
     post:
       operationId: allocations_requests_create
-      description: Creates a new allocation request. General users can only create
-        requests for teams where they are administrators. Staff users can create requests
-        for any team.
+      description: Creates a new allocation request.
       summary: Create an allocation request.
       tags:
       - Allocations - Requests
@@ -2654,9 +2612,7 @@ paths:
   /allocations/requests/{id}/:
     get:
       operationId: allocations_requests_retrieve
-      description: Returns a single allocation request by its ID. General users can
-        only access requests from teams they belong to. Staff users can access any
-        request.
+      description: Returns a single allocation request by ID.
       summary: Retrieve an allocation request.
       parameters:
       - in: path
@@ -2679,9 +2635,7 @@ paths:
           description: ''
     put:
       operationId: allocations_requests_update
-      description: Replaces an existing allocation request with new values. General
-        users can only modify requests for teams where they are administrators. Staff
-        users can modify any request.
+      description: Replaces an existing allocation request with new values.
       summary: Update an allocation request.
       parameters:
       - in: path
@@ -2717,8 +2671,6 @@ paths:
     patch:
       operationId: allocations_requests_partial_update
       description: Partially updates an existing allocation request with new values.
-        General users can only modify requests for teams where they are administrators.
-        Administrators can modify any request.
       summary: Partially update an allocation request.
       parameters:
       - in: path
@@ -2752,9 +2704,7 @@ paths:
           description: ''
     delete:
       operationId: allocations_requests_destroy
-      description: Deletes a single allocation request by its ID. General users can
-        only delete requests for teams where they are administrators. Staff users
-        can delete any request.
+      description: Deletes a single allocation request by ID.
       summary: Delete an allocation request.
       parameters:
       - in: path
@@ -2774,9 +2724,9 @@ paths:
   /allocations/review-choices/status/:
     get:
       operationId: allocations_review_choices_status_retrieve
-      description: Retrieve valid allocation review `status` options with human-readable
+      description: Returns valid choices for the review `status` field mapped to human-readable
         labels.
-      summary: Retrieve valid review status options
+      summary: Retrieve valid review status options.
       tags:
       - Allocations - Reviews
       security:
@@ -2792,9 +2742,8 @@ paths:
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Returns allocation reviews for requests belonging to teams where
-        the user is a member. Staff users can access all reviews.
-      summary: List all allocation reviews.
+      description: Returns a filtered list of allocation reviews.
+      summary: List allocation reviews.
       parameters:
       - name: _order
         required: false
@@ -2999,9 +2948,7 @@ paths:
           description: ''
     post:
       operationId: allocations_reviews_create
-      description: Creates a new allocation review. General users can only create
-        reviews for requests from teams they belong to. Staff users can create reviews
-        for any request.
+      description: Creates a new allocation review.
       summary: Create an allocation review.
       tags:
       - Allocations - Reviews
@@ -3030,9 +2977,7 @@ paths:
   /allocations/reviews/{id}/:
     get:
       operationId: allocations_reviews_retrieve
-      description: Returns a single allocation review by its ID. General users can
-        only access reviews for requests from teams they belong to. Staff users can
-        access any review.
+      description: Returns a single allocation review by ID.
       summary: Retrieve an allocation review.
       parameters:
       - in: path
@@ -3055,9 +3000,7 @@ paths:
           description: ''
     put:
       operationId: allocations_reviews_update
-      description: Replaces an existing allocation review with new values. General
-        users can only modify reviews for requests from teams they belong to. Staff
-        users can modify any review.
+      description: Replaces an existing allocation review with new values.
       summary: Update an allocation review.
       parameters:
       - in: path
@@ -3093,8 +3036,6 @@ paths:
     patch:
       operationId: allocations_reviews_partial_update
       description: Partially updates an existing allocation review with new values.
-        General users can only modify reviews for requests from teams they belong
-        to. Staff users can modify any review.
       summary: Partially update an allocation review.
       parameters:
       - in: path
@@ -3128,9 +3069,7 @@ paths:
           description: ''
     delete:
       operationId: allocations_reviews_destroy
-      description: Deletes a single allocation review by its ID. General users can
-        only delete reviews for requests from teams they belong to. Staff users can
-        delete any review.
+      description: Deletes a single allocation review by ID.
       summary: Delete an allocation review.
       parameters:
       - in: path
@@ -3177,7 +3116,7 @@ paths:
   /authentication/logout/:
     post:
       operationId: authentication_logout_create
-      description: Terminates the authenticated user session and invalidates associated
+      description: Terminates the authenticated user session and invalidates the associated
         tokens.
       summary: Terminate an active user session.
       tags:
@@ -3259,7 +3198,7 @@ paths:
       description: Returns a list of audit logs. Audit logs track changes to database
         records and are used for compliance and security auditing. Access to log records
         is restricted to staff users.
-      summary: List all audit logs.
+      summary: List audit logs.
       parameters:
       - name: _order
         required: false
@@ -3728,7 +3667,7 @@ paths:
       description: Returns a list of HTTP request logs. Request logs track incoming
         API requests and their resulting HTTP responses. Access to log records is
         restricted to staff users.
-      summary: List all HTTP request logs.
+      summary: List HTTP request logs.
       parameters:
       - name: _order
         required: false
@@ -4058,7 +3997,7 @@ paths:
       description: Returns a list of task logs. Task logs are collected from the Celery
         backend to track background task outcomes. Access to log records is restricted
         to staff users.
-      summary: List all background task results.
+      summary: List background task results.
       parameters:
       - name: _order
         required: false
@@ -4727,9 +4666,8 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Returns a list of notifications for the current user. Staff users
-        are returned all notifications regardless of recipient.
-      summary: List all notifications.
+      description: Returns a filtered list of user notifications.
+      summary: List notifications.
       parameters:
       - name: _order
         required: false
@@ -4993,9 +4931,7 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Returns a single notification by its ID. General users can only
-        access their own notifications. Staff users can access notifications for any
-        user.
+      description: Returns a single notification by its ID.
       summary: Retrieve a notification.
       parameters:
       - in: path
@@ -5018,9 +4954,7 @@ paths:
           description: ''
     patch:
       operationId: notifications_notifications_partial_update
-      description: Updates the `read` status of a notification. General users can
-        only modify their own notifications. Staff users can modify notifications
-        for any user.
+      description: Updates the `read` status of a notification.
       summary: Partially update a notification.
       parameters:
       - in: path
@@ -5055,9 +4989,8 @@ paths:
   /notifications/preferences/:
     get:
       operationId: notifications_preferences_list
-      description: Returns all notification preferences for the current user. Staff
-        users are returned all user preferences.
-      summary: List all notification preferences
+      description: Returns a filtered list of notification preferences.
+      summary: List notification preferences.
       parameters:
       - name: _order
         required: false
@@ -5137,9 +5070,8 @@ paths:
           description: ''
     post:
       operationId: notifications_preferences_create
-      description: Creates a custom notification preference in leu of application
-        defaults. General users can only create preferences for themselves. Staff
-        users can create preferences for any user.
+      description: Creates a custom notification preference in lieu of application
+        defaults.
       summary: Create a custom notification preference.
       tags:
       - Notifications - Preferences
@@ -5167,9 +5099,7 @@ paths:
   /notifications/preferences/{id}/:
     get:
       operationId: notifications_preferences_retrieve
-      description: Returns a single notification preference by its ID. General users
-        can only access their own preferences. Staff users can access preferences
-        for any user.
+      description: Returns a single notification preference by its ID.
       summary: Retrieve a notification preference.
       parameters:
       - in: path
@@ -5192,9 +5122,7 @@ paths:
           description: ''
     put:
       operationId: notifications_preferences_update
-      description: Replaces an existing notification preference with new values. General
-        users can only modify their own preferences. Staff users can modify preferences
-        for any user.
+      description: Replaces an existing notification preference with new values.
       summary: Update a notification preference.
       parameters:
       - in: path
@@ -5229,8 +5157,7 @@ paths:
     patch:
       operationId: notifications_preferences_partial_update
       description: Partially updates an existing notification preference with new
-        values. General users can only modify their own preferences. Staff users can
-        modify preferences for any user.
+        values.
       summary: Partially update a notification preference.
       parameters:
       - in: path
@@ -5264,9 +5191,8 @@ paths:
           description: ''
     delete:
       operationId: notifications_preferences_destroy
-      description: 'Deletes a single notification preference by its ID, restoring
-        default settings. General users can only delete their own preferences. Staff
-        users can delete preferences for any user. '
+      description: Deletes a single notification preference by ID, restoring default
+        settings.
       summary: Delete a notification preference.
       parameters:
       - in: path
@@ -5286,8 +5212,8 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Returns a list of all funding grants.
-      summary: List all funding grants.
+      description: Returns a filtered list of funding grants.
+      summary: List funding grants.
       parameters:
       - name: _order
         required: false
@@ -5692,7 +5618,7 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Partially update an existing funding grant with new values.
+      description: Partially updates an existing funding grant with new values.
       summary: Partially update a funding grant.
       parameters:
       - in: path
@@ -5746,8 +5672,8 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Returns a list of all publications.
-      summary: List all publications.
+      description: Returns a filtered list of publications.
+      summary: List publications.
       parameters:
       - name: _order
         required: false
@@ -6206,7 +6132,7 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Partially update an existing publication with new values.
+      description: Partially updates an existing publication with new values.
       summary: Partially update a publication.
       parameters:
       - in: path
@@ -6278,8 +6204,8 @@ paths:
   /users/memberships/:
     get:
       operationId: users_memberships_list
-      description: Retrieve all team memberships.
-      summary: List all team memberships.
+      description: Returns a filtered list of team memberships.
+      summary: List team memberships.
       parameters:
       - name: _order
         required: false
@@ -6413,7 +6339,7 @@ paths:
           description: ''
     post:
       operationId: users_memberships_create
-      description: Create a new team membership.
+      description: Creates a new team membership.
       summary: Create a team membership.
       tags:
       - Users - Team Membership
@@ -6442,7 +6368,7 @@ paths:
   /users/memberships/{id}/:
     get:
       operationId: users_memberships_retrieve
-      description: Retrieve a single team membership by ID.
+      description: Returns a single team membership ID.
       summary: Retrieve a team membership.
       parameters:
       - in: path
@@ -6465,7 +6391,7 @@ paths:
           description: ''
     put:
       operationId: users_memberships_update
-      description: Replace an existing team membership with new values.
+      description: Replaces an existing team membership with new values.
       summary: Update a team membership.
       parameters:
       - in: path
@@ -6500,7 +6426,7 @@ paths:
           description: ''
     patch:
       operationId: users_memberships_partial_update
-      description: Apply a partial update to an existing team membership.
+      description: Partially updates an existing team membership with new values.
       summary: Partially update a team membership.
       parameters:
       - in: path
@@ -6534,7 +6460,7 @@ paths:
           description: ''
     delete:
       operationId: users_memberships_destroy
-      description: Delete a team membership by ID.
+      description: Deletes a team membership by ID.
       summary: Delete a team membership.
       parameters:
       - in: path
@@ -6554,8 +6480,8 @@ paths:
   /users/teams/:
     get:
       operationId: users_teams_list
-      description: Retrieve all teams visible to the current user.
-      summary: List all teams.
+      description: Returns a filtered list of user teams.
+      summary: List teams.
       parameters:
       - name: _order
         required: false
@@ -6664,7 +6590,7 @@ paths:
           description: ''
     post:
       operationId: users_teams_create
-      description: Create a new team.
+      description: Creates a new team.
       summary: Create a team.
       tags:
       - Users - Teams
@@ -6693,7 +6619,7 @@ paths:
   /users/teams/{id}/:
     get:
       operationId: users_teams_retrieve
-      description: Retrieve a single team by ID.
+      description: Returns a single team by ID.
       summary: Retrieve a team.
       parameters:
       - in: path
@@ -6716,7 +6642,7 @@ paths:
           description: ''
     put:
       operationId: users_teams_update
-      description: Replace an existing team with new values.
+      description: Replaces an existing team with new values.
       summary: Update a team.
       parameters:
       - in: path
@@ -6751,7 +6677,7 @@ paths:
           description: ''
     patch:
       operationId: users_teams_partial_update
-      description: Apply a partial update to an existing team.
+      description: Partially updates an existing team with new values.
       summary: Partially update a team.
       parameters:
       - in: path
@@ -6785,7 +6711,7 @@ paths:
           description: ''
     delete:
       operationId: users_teams_destroy
-      description: Delete a team by ID.
+      description: Deletes a team by ID.
       summary: Delete a team.
       parameters:
       - in: path
@@ -6805,8 +6731,8 @@ paths:
   /users/users/:
     get:
       operationId: users_users_list
-      description: Returns a list of all user accounts.
-      summary: List all user accounts.
+      description: Returns a filtered list of user accounts.
+      summary: List user accounts.
       parameters:
       - name: _order
         required: false
@@ -7282,7 +7208,7 @@ paths:
           description: ''
     post:
       operationId: users_users_create
-      description: Create a new user account.
+      description: Creates a new user account.
       summary: Create a user account.
       tags:
       - Users - Accounts
@@ -7311,7 +7237,7 @@ paths:
   /users/users/{id}/:
     get:
       operationId: users_users_retrieve
-      description: Returns a single user account by its ID.
+      description: Returns a single user account by ID.
       summary: Retrieve a user account.
       parameters:
       - in: path
@@ -7334,7 +7260,7 @@ paths:
           description: ''
     put:
       operationId: users_users_update
-      description: Replace an existing user account with new values.
+      description: Replaces an existing user account with new values.
       summary: Update a user account.
       parameters:
       - in: path
@@ -7369,7 +7295,7 @@ paths:
           description: ''
     patch:
       operationId: users_users_partial_update
-      description: Apply a partial update to an existing user account.
+      description: Partially updates an existing user account with new values.
       summary: Partially update a user account.
       parameters:
       - in: path
@@ -7403,7 +7329,7 @@ paths:
           description: ''
     delete:
       operationId: users_users_destroy
-      description: Delete a user account by ID.
+      description: Deletes a user account by ID.
       summary: Delete a user.
       parameters:
       - in: path

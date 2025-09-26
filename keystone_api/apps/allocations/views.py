@@ -54,13 +54,13 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all allocation requests.",
-        description="Returns allocation requests belonging to teams where the user is a member.",
+        summary="List allocation requests.",
+        description="Returns a filtered list of allocation requests.",
         tags=["Allocations - Requests"],
     ),
     retrieve=extend_schema(
         summary="Retrieve an allocation request.",
-        description="Returns a single allocation request by its ID.",
+        description="Returns a single allocation request by ID.",
         tags=["Allocations - Requests"],
     ),
     create=extend_schema(
@@ -80,7 +80,7 @@ class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
     ),
     destroy=extend_schema(
         summary="Delete an allocation request.",
-        description="Deletes a single allocation request by its ID.",
+        description="Deletes a single allocation request by ID.",
         tags=["Allocations - Requests"],
     ),
 )
@@ -108,8 +108,8 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Retrieve valid review status options",
-        description="Retrieve valid allocation review `status` options with human-readable labels.",
+        summary="Retrieve valid review status options.",
+        description="Returns valid choices for the review `status` field mapped to human-readable labels.",
         tags=["Allocations - Reviews"],
         responses=inline_serializer(
             name="AllocationReviewStatusChoices",
@@ -126,13 +126,13 @@ class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all allocation reviews.",
-        description="Returns all allocation reviews.",
+        summary="List allocation reviews.",
+        description="Returns a filtered list of allocation reviews.",
         tags=["Allocations - Reviews"],
     ),
     retrieve=extend_schema(
         summary="Retrieve an allocation review.",
-        description="Returns a single allocation review by its ID.",
+        description="Returns a single allocation review by ID.",
         tags=["Allocations - Reviews"],
     ),
     create=extend_schema(
@@ -152,7 +152,7 @@ class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
     ),
     destroy=extend_schema(
         summary="Delete an allocation review.",
-        description="Deletes a single allocation review by its ID.",
+        description="Deletes a single allocation review by ID.",
         tags=["Allocations - Reviews"],
     ),
 )
@@ -188,13 +188,13 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all resource allocations",
-        description="Returns all resource allocations.",
+        summary="List resource allocations.",
+        description="Returns a filtered list of resource allocations.",
         tags=["Allocations - Allocated Resources"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a resource allocation.",
-        description="Returns a single resource allocation by its ID.",
+        description="Returns a single resource allocation by ID.",
         tags=["Allocations - Allocated Resources"],
     ),
     create=extend_schema(
@@ -214,7 +214,7 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
     destroy=extend_schema(
         summary="Delete a resource allocation.",
-        description="Deletes a resource allocation by its ID.",
+        description="Deletes a resource allocation by ID.",
         tags=["Allocations - Allocated Resources"],
     ),
 )
@@ -237,22 +237,22 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all file attachments",
-        description="Returns a list of file attachments.",
+        summary="List file attachments.",
+        description="Returns a filtered list of file attachments.",
         tags=["Allocations - Request Attachments"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a file attachment",
-        description="Returns a single file attachment by its ID.",
+        summary="Retrieve a file attachment.",
+        description="Returns a single file attachment by ID.",
         tags=["Allocations - Request Attachments"],
     ),
     create=extend_schema(
-        summary="Create a file attachment",
+        summary="Create a file attachment.",
         description="Creates a new file attachment on an allocation request.",
         tags=["Allocations - Request Attachments"],
     ),
     update=extend_schema(
-        summary="Update a file attachment",
+        summary="Update a file attachment.",
         description="Replaces an existing file attachment with new values.",
         tags=["Allocations - Request Attachments"],
     ),
@@ -263,7 +263,7 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     ),
     destroy=extend_schema(
         summary="Delete a file attachment.",
-        description="Deletes a file attachment by its ID.",
+        description="Deletes a file attachment by ID.",
         tags=["Allocations - Request Attachments"],
     ),
 )
@@ -285,33 +285,33 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all HPC clusters.",
-        description="Retrieve all HPC clusters.",
+        summary="List HPC clusters.",
+        description="Returns a filtered list of HPC clusters.",
         tags=["Allocations - Clusters"],
     ),
     retrieve=extend_schema(
         summary="Retrieve an HPC cluster.",
-        description="Retrieve a single HPC cluster by ID.",
+        description="Returns a single HPC cluster by ID.",
         tags=["Allocations - Clusters"],
     ),
     create=extend_schema(
         summary="Create an HPC cluster.",
-        description="Create a new HPC cluster.",
+        description="Creates a new HPC cluster.",
         tags=["Allocations - Clusters"],
     ),
     update=extend_schema(
         summary="Update an HPC cluster.",
-        description="Replace an existing HPC cluster with new values.",
+        description="Replaces an existing HPC cluster with new values.",
         tags=["Allocations - Clusters"],
     ),
     partial_update=extend_schema(
         summary="Partially update an HPC cluster.",
-        description="Apply a partial update to an existing HPC cluster.",
+        description="Partially updates an existing HPC cluster with new values.",
         tags=["Allocations - Clusters"],
     ),
     destroy=extend_schema(
         summary="Delete an HPC cluster.",
-        description="Delete an HPC cluster by ID.",
+        description="Deletes an HPC cluster by ID.",
         tags=["Allocations - Clusters"],
     ),
 )
@@ -326,13 +326,13 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all comments.",
-        description="Returns all comments made on allocation requests.",
+        summary="List comments.",
+        description="Returns a filtered list of comments made on allocation requests.",
         tags=["Allocations - Request Comments"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a comment.",
-        description="Returns a single comment by its ID.",
+        description="Returns a single comment by ID.",
         tags=["Allocations - Request Comments"],
     ),
     create=extend_schema(
@@ -352,7 +352,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     ),
     destroy=extend_schema(
         summary="Delete a comment.",
-        description="Deletes a comment by its ID.",
+        description="Deletes a comment by ID.",
         tags=["Allocations - Request Comments"],
     ),
 )
@@ -386,13 +386,13 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all user Slurm jobs.",
-        description="Returns a list of all Slurm jobs.",
+        summary="List user Slurm jobs.",
+        description="Returns a filtered list of Slurm jobs.",
         tags=["Allocations - User Jobs"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a user Slurm job.",
-        description="Returns a single Slurm job by its ID.",
+        description="Returns a single Slurm job by Keystone ID.",
         tags=["Allocations - User Jobs"],
     )
 )

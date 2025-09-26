@@ -50,8 +50,8 @@ class NotificationTypeChoicesView(GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all notifications.",
-        description="Returns a list of user notifications.",
+        summary="List notifications.",
+        description="Returns a filtered list of user notifications.",
         tags=["Notifications - Notifications"],
     ),
     retrieve=extend_schema(
@@ -77,8 +77,8 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all notification preferences",
-        description="Returns all notification preferences for the current user.",
+        summary="List notification preferences.",
+        description="Returns a filtered list of notification preferences.",
         tags=["Notifications - Preferences"],
     ),
     retrieve=extend_schema(
@@ -88,7 +88,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     ),
     create=extend_schema(
         summary="Create a custom notification preference.",
-        description="Creates a custom notification preference in leu of application defaults.",
+        description="Creates a custom notification preference in lieu of application defaults.",
         tags=["Notifications - Preferences"],
     ),
     update=extend_schema(
@@ -103,7 +103,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     ),
     destroy=extend_schema(
         summary="Delete a notification preference.",
-        description="Deletes a single notification preference by its ID, restoring default settings.",
+        description="Deletes a single notification preference by ID, restoring default settings.",
         tags=["Notifications - Preferences"],
     ),
 )
