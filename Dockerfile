@@ -1,4 +1,18 @@
-FROM python:3.11.13
+FROM python:3.11.13 AS builder
+
+# Install compile tools and build dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    libsasl2-dev \
+    libldap2-dev \
+    gcc \
+  && rm -rf /var/lib/apt/lists/*
+
+# Compile application installer
+COPY . .
+RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[all]
+
+FROM python:3.11.13-slim
 
 EXPOSE 80
 
@@ -6,24 +20,23 @@ EXPOSE 80
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Configure the application with container friendly defaults
+ENV CONFIG_UPLOAD_DIR=/app/media
+ENV CONFIG_STATIC_DIR=/app/static
+ENV DB_NAME=/app/keystone.db
+ENV LOG_APP_FILE=/app/keystone.log
+
 # Install system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    # Required for LDAP support
-    build-essential \
-    libsasl2-dev \
-    libldap2-dev \
-    # Required for running Celery
     redis \
-    # Required for Docker HEALTHCHECK
     curl \
-    # Required for static file serving
     nginx \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
 # Install the application
-COPY . src
-RUN pip install --no-cache-dir ./src[all] && rm -rf src
+COPY --from=builder /wheels /wheels
+RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
 
 # Create unprivliged users/directories for running services
 RUN groupadd --gid 121 keystone \
@@ -31,14 +44,9 @@ RUN groupadd --gid 121 keystone \
     && mkdir -p /app/keystone /app/nginx \
     && chown -R keystone:keystone /app /var/lib/nginx/
 
+# Set unprivliged user as default
 USER keystone
 WORKDIR /app/keystone
-
-# Configure the application with container friendly defaults
-ENV CONFIG_UPLOAD_DIR=/app/media
-ENV CONFIG_STATIC_DIR=/app/static
-ENV DB_NAME=/app/keystone.db
-ENV LOG_APP_FILE=/app/keystone.log
 
 # Copy config files for internal services
 COPY --chown=keystone:keystone --chmod=770 conf/nginx.conf /etc/nginx/nginx.conf
