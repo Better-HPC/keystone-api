@@ -46,7 +46,9 @@ RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
 RUN addgroup -g 121 keystone \
     && adduser -D -u 1001 -G keystone keystone \
     && mkdir -p /app/keystone /app/nginx \
-    && chown -R keystone:keystone /app /var/lib/nginx/
+    && chown -R keystone:keystone /app /var/lib/nginx \
+    && mkdir -p /var/lib/nginx/logs /var/log/nginx \
+    && chown -R keystone:keystone /var/lib/nginx /var/log/nginx
 
 # Switch to non-root user
 USER keystone
