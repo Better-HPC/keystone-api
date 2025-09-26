@@ -52,33 +52,33 @@ class MembershipRoleChoicesView(APIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all team memberships",
-        description="Retrieve all team membership accounts.",
+        summary="List all team memberships.",
+        description="Retrieve all team memberships.",
         tags=["Users - Team Membership"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a team membership",
-        description="Retrieve a single team membership account by ID.",
+        summary="Retrieve a team membership.",
+        description="Retrieve a single team membership by ID.",
         tags=["Users - Team Membership"],
     ),
     create=extend_schema(
-        summary="Create a team membership",
-        description="Create a new team membership account.",
+        summary="Create a team membership.",
+        description="Create a new team membership.",
         tags=["Users - Team Membership"],
     ),
     update=extend_schema(
-        summary="Update a team membership",
-        description="Replace an existing team membership account with new values.",
+        summary="Update a team membership.",
+        description="Replace an existing team membership with new values.",
         tags=["Users - Team Membership"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a team membership",
-        description="Apply a partial update to an existing team membership account.",
+        summary="Partially update a team membership.",
+        description="Apply a partial update to an existing team membership.",
         tags=["Users - Team Membership"],
     ),
     destroy=extend_schema(
-        summary="Delete a team membership",
-        description="Delete a team membership account by ID.",
+        summary="Delete a team membership.",
+        description="Delete a team membership by ID.",
         tags=["Users - Team Membership"],
     )
 )
@@ -97,32 +97,32 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all teams",
+        summary="List all teams.",
         description="Retrieve all teams visible to the current user.",
         tags=["Users - Teams"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a team",
+        summary="Retrieve a team.",
         description="Retrieve a single team by ID.",
         tags=["Users - Teams"],
     ),
     create=extend_schema(
-        summary="Create a team",
+        summary="Create a team.",
         description="Create a new team.",
         tags=["Users - Teams"],
     ),
     update=extend_schema(
-        summary="Update a team",
+        summary="Update a team.",
         description="Replace an existing team with new values.",
         tags=["Users - Teams"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a team",
+        summary="Partially update a team.",
         description="Apply a partial update to an existing team.",
         tags=["Users - Teams"],
     ),
     destroy=extend_schema(
-        summary="Delete a team",
+        summary="Delete a team.",
         description="Delete a team by ID.",
         tags=["Users - Teams"],
     ),
@@ -142,36 +142,32 @@ class TeamViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all users.",
+        summary="List all user accounts.",
         description="Returns a list of all user accounts.",
         tags=["Users - Accounts"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a user.",
+        summary="Retrieve a user account.",
         description="Returns a single user account by its ID.",
         tags=["Users - Accounts"],
     ),
     create=extend_schema(
-        summary="Create a user.",
-        description="Create a new user account. This action is limited to admin users.",
+        summary="Create a user account.",
+        description="Create a new user account.",
         tags=["Users - Accounts"],
     ),
     update=extend_schema(
-        summary="Update a user.",
-        description=(
-            "Replace an existing user account with new values. "
-            "This action is limited to admin users and users modifying their own user record. "
-            "General users are limited to modifying "
-        ),
+        summary="Update a user account.",
+        description="Replace an existing user account with new values.",
         tags=["Users - Accounts"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a user",
+        summary="Partially update a user account.",
         description="Apply a partial update to an existing user account.",
         tags=["Users - Accounts"],
     ),
     destroy=extend_schema(
-        summary="Delete a user",
+        summary="Delete a user.",
         description="Delete a user account by ID.",
         tags=["Users - Accounts"],
     )

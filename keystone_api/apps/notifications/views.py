@@ -51,28 +51,17 @@ class NotificationTypeChoicesView(GenericAPIView):
 @extend_schema_view(
     list=extend_schema(
         summary="List all notifications.",
-        description=(
-            "Returns a list of notifications for the current user. "
-            "Staff users are returned all notifications regardless of recipient."
-        ),
+        description="Returns a list of user notifications.",
         tags=["Notifications - Notifications"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a notification.",
-        description=(
-            "Returns a single notification by its ID. "
-            "General users can only access their own notifications. "
-            "Staff users can access notifications for any user."
-        ),
+        description="Returns a single notification by its ID.",
         tags=["Notifications - Notifications"],
     ),
     partial_update=extend_schema(
         summary="Partially update a notification.",
-        description=(
-            "Updates the `read` status of a notification. "
-            "General users can only modify their own notifications. "
-            "Staff users can modify notifications for any user."
-        ),
+        description="Updates the `read` status of a notification.",
         tags=["Notifications - Notifications"],
     ),
 )
@@ -89,55 +78,32 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(
         summary="List all notification preferences",
-        description=(
-            "Returns all notification preferences for the current user. "
-            "Staff users are returned all user preferences."
-        ),
+        description="Returns all notification preferences for the current user.",
         tags=["Notifications - Preferences"],
     ),
     retrieve=extend_schema(
         summary="Retrieve a notification preference.",
-        description=(
-            "Returns a single notification preference by its ID. "
-            "General users can only access their own preferences. "
-            "Staff users can access preferences for any user."
-        ),
+        description="Returns a single notification preference by its ID.",
         tags=["Notifications - Preferences"],
     ),
     create=extend_schema(
         summary="Create a custom notification preference.",
-        description=(
-            "Creates a custom notification preference in leu of application defaults. "
-            "General users can only create preferences for themselves. "
-            "Staff users can create preferences for any user."
-        ),
+        description="Creates a custom notification preference in leu of application defaults.",
         tags=["Notifications - Preferences"],
     ),
     update=extend_schema(
         summary="Update a notification preference.",
-        description=(
-            "Replaces an existing notification preference with new values. "
-            "General users can only modify their own preferences. "
-            "Staff users can modify preferences for any user."
-        ),
+        description="Replaces an existing notification preference with new values.",
         tags=["Notifications - Preferences"],
     ),
     partial_update=extend_schema(
         summary="Partially update a notification preference.",
-        description=(
-            "Partially updates an existing notification preference with new values. "
-            "General users can only modify their own preferences. "
-            "Staff users can modify preferences for any user."
-        ),
+        description="Partially updates an existing notification preference with new values.",
         tags=["Notifications - Preferences"],
     ),
     destroy=extend_schema(
         summary="Delete a notification preference.",
-        description=(
-            "Deletes a single notification preference by its ID, restoring default settings. "
-            "General users can only delete their own preferences. "
-            "Staff users can delete preferences for any user. "
-        ),
+        description="Deletes a single notification preference by its ID, restoring default settings.",
         tags=["Notifications - Preferences"],
     ),
 )

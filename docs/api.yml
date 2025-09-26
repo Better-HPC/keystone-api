@@ -5286,9 +5286,7 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Returns a list of all funding grants belonging to teams where the
-        user is a member. Administrators are returned all records regardless of the
-        parent team.
+      description: Returns a list of all funding grants.
       summary: List all funding grants.
       parameters:
       - name: _order
@@ -5607,8 +5605,7 @@ paths:
           description: ''
     post:
       operationId: research_grants_create
-      description: Create a new funding grant. General users can only create records
-        for teams they belong to. Staff users can create records for any team.
+      description: Create a new funding grant.
       summary: Create a funding grant.
       tags:
       - Research - Grants
@@ -5637,9 +5634,7 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Returns a single funding grant by its ID. General users can only
-        access records for teams they belong to. Staff users can access records for
-        any team.
+      description: Returns a single funding grant by its ID.
       summary: Retrieve a funding grant.
       parameters:
       - in: path
@@ -5662,9 +5657,7 @@ paths:
           description: ''
     put:
       operationId: research_grants_update
-      description: Replaces an existing funding grant with new values. General users
-        can only modify records for teams they belong to. Staff users can modify records
-        for any team.
+      description: Replaces an existing funding grant with new values.
       summary: Update a funding grant.
       parameters:
       - in: path
@@ -5699,9 +5692,7 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Partially update an existing funding grant with new values. General
-        users can only modify records for teams they belong to. Staff users can modify
-        records for any team.
+      description: Partially update an existing funding grant with new values.
       summary: Partially update a funding grant.
       parameters:
       - in: path
@@ -5735,9 +5726,7 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Deletes a single funding grant by its ID. General users can only
-        delete records for teams they belong to. Staff users can delete records for
-        any team.
+      description: Deletes a single funding grant by its ID.
       summary: Delete a funding grant.
       parameters:
       - in: path
@@ -5757,9 +5746,7 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Returns a list of all publications belonging to teams where the
-        user is a member. Staff users are returned all records regardless of the parent
-        team.
+      description: Returns a list of all publications.
       summary: List all publications.
       parameters:
       - name: _order
@@ -6132,8 +6119,7 @@ paths:
           description: ''
     post:
       operationId: research_publications_create
-      description: Create a new publication. General users can only create records
-        for teams they belong to. Staff users can create records for any team.
+      description: Create a new publication.
       summary: Create a publication.
       tags:
       - Research - Publications
@@ -6162,9 +6148,7 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Returns a single publication by its ID. General users can only
-        access records for teams they belong to. Staff users can access records for
-        any team.
+      description: Returns a single publication by its ID.
       summary: Retrieve a publication.
       parameters:
       - in: path
@@ -6187,9 +6171,7 @@ paths:
           description: ''
     put:
       operationId: research_publications_update
-      description: Replaces an existing publication with new values. General users
-        can only modify records for teams they belong to. Staff users can modify records
-        for any team.
+      description: Replaces an existing publication with new values.
       summary: Update a publication.
       parameters:
       - in: path
@@ -6224,9 +6206,7 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Partially update an existing publication with new values. General
-        users can only modify records for teams they belong to. Staff users can modify
-        records for any team.
+      description: Partially update an existing publication with new values.
       summary: Partially update a publication.
       parameters:
       - in: path
@@ -6260,9 +6240,7 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Deletes a single publication by its ID. General users can only
-        delete records for teams they belong to. Staff users can delete records for
-        any team.
+      description: Deletes a single publication by its ID.
       summary: Delete a publication.
       parameters:
       - in: path
@@ -6300,8 +6278,8 @@ paths:
   /users/memberships/:
     get:
       operationId: users_memberships_list
-      description: Retrieve all team membership accounts.
-      summary: List all team memberships
+      description: Retrieve all team memberships.
+      summary: List all team memberships.
       parameters:
       - name: _order
         required: false
@@ -6435,8 +6413,8 @@ paths:
           description: ''
     post:
       operationId: users_memberships_create
-      description: Create a new team membership account.
-      summary: Create a team membership
+      description: Create a new team membership.
+      summary: Create a team membership.
       tags:
       - Users - Team Membership
       requestBody:
@@ -6464,8 +6442,8 @@ paths:
   /users/memberships/{id}/:
     get:
       operationId: users_memberships_retrieve
-      description: Retrieve a single team membership account by ID.
-      summary: Retrieve a team membership
+      description: Retrieve a single team membership by ID.
+      summary: Retrieve a team membership.
       parameters:
       - in: path
         name: id
@@ -6487,8 +6465,8 @@ paths:
           description: ''
     put:
       operationId: users_memberships_update
-      description: Replace an existing team membership account with new values.
-      summary: Update a team membership
+      description: Replace an existing team membership with new values.
+      summary: Update a team membership.
       parameters:
       - in: path
         name: id
@@ -6522,8 +6500,8 @@ paths:
           description: ''
     patch:
       operationId: users_memberships_partial_update
-      description: Apply a partial update to an existing team membership account.
-      summary: Partially update a team membership
+      description: Apply a partial update to an existing team membership.
+      summary: Partially update a team membership.
       parameters:
       - in: path
         name: id
@@ -6556,8 +6534,8 @@ paths:
           description: ''
     delete:
       operationId: users_memberships_destroy
-      description: Delete a team membership account by ID.
-      summary: Delete a team membership
+      description: Delete a team membership by ID.
+      summary: Delete a team membership.
       parameters:
       - in: path
         name: id
@@ -6577,7 +6555,7 @@ paths:
     get:
       operationId: users_teams_list
       description: Retrieve all teams visible to the current user.
-      summary: List all teams
+      summary: List all teams.
       parameters:
       - name: _order
         required: false
@@ -6687,7 +6665,7 @@ paths:
     post:
       operationId: users_teams_create
       description: Create a new team.
-      summary: Create a team
+      summary: Create a team.
       tags:
       - Users - Teams
       requestBody:
@@ -6716,7 +6694,7 @@ paths:
     get:
       operationId: users_teams_retrieve
       description: Retrieve a single team by ID.
-      summary: Retrieve a team
+      summary: Retrieve a team.
       parameters:
       - in: path
         name: id
@@ -6739,7 +6717,7 @@ paths:
     put:
       operationId: users_teams_update
       description: Replace an existing team with new values.
-      summary: Update a team
+      summary: Update a team.
       parameters:
       - in: path
         name: id
@@ -6774,7 +6752,7 @@ paths:
     patch:
       operationId: users_teams_partial_update
       description: Apply a partial update to an existing team.
-      summary: Partially update a team
+      summary: Partially update a team.
       parameters:
       - in: path
         name: id
@@ -6808,7 +6786,7 @@ paths:
     delete:
       operationId: users_teams_destroy
       description: Delete a team by ID.
-      summary: Delete a team
+      summary: Delete a team.
       parameters:
       - in: path
         name: id
@@ -6828,7 +6806,7 @@ paths:
     get:
       operationId: users_users_list
       description: Returns a list of all user accounts.
-      summary: List all users.
+      summary: List all user accounts.
       parameters:
       - name: _order
         required: false
@@ -7304,8 +7282,8 @@ paths:
           description: ''
     post:
       operationId: users_users_create
-      description: Create a new user account. This action is limited to admin users.
-      summary: Create a user.
+      description: Create a new user account.
+      summary: Create a user account.
       tags:
       - Users - Accounts
       requestBody:
@@ -7334,7 +7312,7 @@ paths:
     get:
       operationId: users_users_retrieve
       description: Returns a single user account by its ID.
-      summary: Retrieve a user.
+      summary: Retrieve a user account.
       parameters:
       - in: path
         name: id
@@ -7356,10 +7334,8 @@ paths:
           description: ''
     put:
       operationId: users_users_update
-      description: 'Replace an existing user account with new values. This action
-        is limited to admin users and users modifying their own user record. General
-        users are limited to modifying '
-      summary: Update a user.
+      description: Replace an existing user account with new values.
+      summary: Update a user account.
       parameters:
       - in: path
         name: id
@@ -7394,7 +7370,7 @@ paths:
     patch:
       operationId: users_users_partial_update
       description: Apply a partial update to an existing user account.
-      summary: Partially update a user
+      summary: Partially update a user account.
       parameters:
       - in: path
         name: id
@@ -7428,7 +7404,7 @@ paths:
     delete:
       operationId: users_users_destroy
       description: Delete a user account by ID.
-      summary: Delete a user
+      summary: Delete a user.
       parameters:
       - in: path
         name: id
