@@ -9,6 +9,7 @@ RUN apk add --no-cache \
     openldap-dev \
     cyrus-sasl-dev
 
+# Compile application wheels
 WORKDIR /src
 COPY . .
 RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[all]
