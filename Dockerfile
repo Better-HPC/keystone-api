@@ -1,4 +1,22 @@
-FROM python:3.11.13
+# --- Build image ---
+FROM python:3.11.13-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    gcc \
+    musl-dev \
+    openldap-dev \
+    cyrus-sasl-dev
+
+# Compile application wheels
+WORKDIR /src
+COPY . .
+RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[all]
+
+
+# --- Runtime image ---
+FROM python:3.11.13-alpine
 
 EXPOSE 80
 
@@ -6,39 +24,33 @@ EXPOSE 80
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    # Required for LDAP support
-    build-essential \
-    libsasl2-dev \
-    libldap2-dev \
-    # Required for running Celery
-    redis \
-    # Required for Docker HEALTHCHECK
-    curl \
-    # Required for static file serving
-    nginx \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
-# Install the application
-COPY . src
-RUN pip install --no-cache-dir ./src[all] && rm -rf src
-
-# Create unprivliged users/directories for running services
-RUN groupadd --gid 121 keystone \
-    && useradd -m -u 1001 -g keystone keystone \
-    && mkdir -p /app/keystone /app/nginx \
-    && chown -R keystone:keystone /app /var/lib/nginx/
-
-USER keystone
-WORKDIR /app/keystone
-
 # Configure the application with container friendly defaults
 ENV CONFIG_UPLOAD_DIR=/app/media
 ENV CONFIG_STATIC_DIR=/app/static
 ENV DB_NAME=/app/keystone.db
 ENV LOG_APP_FILE=/app/keystone.log
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
+    redis \
+    curl \
+    nginx \
+    openldap \
+    cyrus-sasl
+
+# Install application wheels
+COPY --from=builder /wheels /wheels
+RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
+
+# Create unprivileged users/directories for running services
+RUN addgroup -g 121 keystone \
+    && adduser -D -u 1001 -G keystone keystone \
+    && mkdir -p /app/keystone /app/nginx \
+    && chown -R keystone:keystone /app /var/lib/nginx/
+
+# Switch to non-root user
+USER keystone
+WORKDIR /app/keystone
 
 # Copy config files for internal services
 COPY --chown=keystone:keystone --chmod=770 conf/nginx.conf /etc/nginx/nginx.conf
