@@ -25,10 +25,10 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Configure the application with container friendly defaults
-ENV CONFIG_UPLOAD_DIR=/app/media
-ENV CONFIG_STATIC_DIR=/app/static
-ENV DB_NAME=/app/keystone.db
-ENV LOG_APP_FILE=/app/keystone.log
+ENV CONFIG_UPLOAD_DIR=/app/keystone/media
+ENV CONFIG_STATIC_DIR=/app/keystone/static
+ENV DB_NAME=/app/keystone/keystone.db
+ENV LOG_APP_FILE=/app/keystone/keystone.log
 
 # Install runtime dependencies only
 RUN apk add --no-cache \
