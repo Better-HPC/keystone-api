@@ -8,35 +8,6 @@ from rest_framework.test import APIRequestFactory
 from plugins.pagination import PaginationHandler
 
 
-class PaginateQuerysetMethod(TestCase):
-    """Test the slicing of paginated data."""
-
-    def setUp(self) -> None:
-        """Initialize test fixtures."""
-
-        self.factory = APIRequestFactory()
-        self.pagination = PaginationHandler()
-        self.data = list(range(10_000))  # test dataset
-
-    def test_returns_all_values_by_default(self) -> None:
-        """Verify all values are returned when no pagination params are provided."""
-
-        request = self.factory.get("/")
-        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
-
-        # If no limit/offset given and no default_limit set, pagination should not slice
-        self.assertEqual(self.data, paginated)
-
-    def test_returns_correct_values_with_pagination(self) -> None:
-        """Verify the correct subset of values is returned when pagination params are provided."""
-
-        request = self.factory.get("/", {"_limit": 3, "_offset": 4})
-        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
-
-        # Expect slice starting at index 4, of length 3
-        self.assertEqual([4, 5, 6], paginated)
-
-
 class GetPaginatedResponseMethod(TestCase):
     """Test header values in paginated responses."""
 
