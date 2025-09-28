@@ -16,7 +16,7 @@ class PaginateQuerysetMethod(TestCase):
 
         self.factory = APIRequestFactory()
         self.pagination = PaginationHandler()
-        self.data = list(range(10))  # test dataset
+        self.data = list(range(10_000))  # test dataset
 
     def test_returns_all_values_by_default(self) -> None:
         """Verify all values are returned when no pagination params are provided."""
