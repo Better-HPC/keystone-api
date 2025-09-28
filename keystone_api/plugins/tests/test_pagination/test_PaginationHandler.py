@@ -37,7 +37,7 @@ class PaginateQuerysetMethod(TestCase):
         self.assertEqual([4, 5, 6], paginated)
 
 
-class Test(TestCase):
+class GetPaginatedResponseMethod(TestCase):
     """Test header values in paginated responses."""
 
     def setUp(self) -> None:
