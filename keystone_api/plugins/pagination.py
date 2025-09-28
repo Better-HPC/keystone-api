@@ -21,7 +21,11 @@ class PaginationHandler(LimitOffsetPagination):
     def paginate_queryset(self, queryset, request, view=None):
         """If no limit param is provided, return the full queryset unpaginated."""
 
-        # Return all data if no pagination limit is set
+        self.request = request
+        self.limit = self.get_limit(request)
+        self.offset = self.get_offset(request)
+        self.count = self.get_count(queryset)
+
         if self.get_limit(request) is None:
             return list(queryset)
 
@@ -38,9 +42,7 @@ class PaginationHandler(LimitOffsetPagination):
         """
 
         response = Response(data)
-        response['X-Total-Count'] = self.count
         response['X-Limit'] = self.limit
         response['X-Offset'] = self.offset
-        response['X-Next-Page'] = self.get_next_link() or ''
-        response['X-Previous-Page'] = self.get_previous_link() or ''
+        response['X-Total-Count'] = self.count
         return response

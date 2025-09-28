@@ -62,20 +62,8 @@ class Test(TestCase):
         self.assertIn("X-Total-Count", response)
         self.assertIn("X-Limit", response)
         self.assertIn("X-Offset", response)
-        self.assertIn("X-Next-Page", response)
-        self.assertIn("X-Previous-Page", response)
 
         # Verify header values
         self.assertEqual('10', response["X-Total-Count"])
         self.assertEqual('2', response["X-Limit"])
         self.assertEqual('1', response["X-Offset"])
-
-    def test_no_next_or_previous_links(self) -> None:
-        """Verify next/previous page headers are empty when no next/previous pages exist."""
-
-        request = self.factory.get("/", {"_limit": len(self.data), "_offset": 0})
-        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
-        response = self.pagination.get_paginated_response(paginated)
-
-        self.assertEqual('', response["X-Next-Page"])
-        self.assertEqual('', response["X-Previous-Page"])
