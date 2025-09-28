@@ -18,6 +18,15 @@ class PaginationHandler(LimitOffsetPagination):
     limit_query_param = '_limit'
     offset_query_param = '_offset'
 
+    def paginate_queryset(self, queryset, request, view=None):
+        """If no limit param is provided, return the full queryset unpaginated."""
+
+        # Return all data if no pagination limit is set
+        if self.get_limit(request) is None:
+            return list(queryset)
+
+        return super().paginate_queryset(queryset, request, view)
+
     def get_paginated_response(self, data: list) -> Response:
         """Format response data as a paginated HTTP response object.
 

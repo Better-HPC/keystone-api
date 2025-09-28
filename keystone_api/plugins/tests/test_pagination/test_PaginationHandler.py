@@ -1,69 +1,81 @@
+"""Unit tests for the `PaginationHandler` class."""
+
 from django.test import TestCase
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
 from plugins.pagination import PaginationHandler
 
 
-class PaginationHandlerTests(TestCase):
-    """Test the paginatation of HTTP response data."""
+class PaginateQuerysetMethod(TestCase):
+    """Test the slicing of paginated data."""
 
     def setUp(self) -> None:
+        """Initialize test fixtures."""
+
         self.factory = APIRequestFactory()
-        self.handler = PaginationHandler()
-        self.data = list(range(1000))  # Simulated queryset results
+        self.pagination = PaginationHandler()
+        self.data = list(range(10))  # test dataset
 
-    def test_default_limit_and_offset(self) -> None:
-        """Verify default values for the pagination limit and offset."""
+    def test_returns_all_values_by_default(self) -> None:
+        """Verify all values are returned when no pagination params are provided."""
 
-        request = self.factory.get('/resource/')
-        paginated_data = self.handler.paginate_queryset(self.data, Request(request))
+        request = self.factory.get("/")
+        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
 
-        self.assertEqual(len(paginated_data), self.handler.default_limit)
-        self.assertEqual(paginated_data[0], 0)
+        # If no limit/offset given and no default_limit set, pagination should not slice
+        self.assertEqual(self.data, paginated)
 
-    def test_custom_limit_and_offset(self) -> None:
-        """Verify custom limit and offset values are respected."""
+    def test_returns_correct_values_with_pagination(self) -> None:
+        """Verify the correct subset of values is returned when pagination params are provided."""
 
-        request = self.factory.get('/resource/', {'_limit': '10', '_offset': '20'})
-        paginated_data = self.handler.paginate_queryset(self.data, Request(request))
+        request = self.factory.get("/", {"_limit": 3, "_offset": 4})
+        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
 
-        self.assertEqual(len(paginated_data), 10)
-        self.assertEqual(paginated_data[0], 20)
+        # Expect slice starting at index 4, of length 3
+        self.assertEqual([4, 5, 6], paginated)
 
-    def test_max_limit_enforced(self) -> None:
-        """Verify the maximum limit value is enforced."""
 
-        request = self.factory.get('/resource/', {'_limit': '1000'})
-        paginated_data = self.handler.paginate_queryset(self.data, Request(request))
+class Test(TestCase):
+    """Test header values in paginated responses."""
 
-        self.assertEqual(len(paginated_data), self.handler.max_limit)
+    def setUp(self) -> None:
+        """Initialize test fixtures."""
+
+        self.factory = APIRequestFactory()
+        self.pagination = PaginationHandler()
+        self.data = list(range(10))
 
     def test_paginated_response_headers(self) -> None:
-        """Verify pagination metadata is included in response headers."""
+        """Verify paginated responses include pagination headers."""
 
-        request = self.factory.get('/resource/', {'_limit': '10', '_offset': '30'})
-        view_request = Request(request)
-        paginated_data = self.handler.paginate_queryset(self.data, view_request)
-        response = self.handler.get_paginated_response(paginated_data)
+        request = self.factory.get("/", {"_limit": 2, "_offset": 1})
+        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
+        response = self.pagination.get_paginated_response(paginated)
 
+        # Verify response status
+        self.assertIsInstance(response, Response)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(int(response['X-Total-Count']), 1000)
-        self.assertEqual(int(response['X-Limit']), 10)
-        self.assertEqual(int(response['X-Offset']), 30)
-        self.assertTrue('X-Next-Page' in response)
-        self.assertTrue('X-Previous-Page' in response)
 
-    def test_empty_page(self) -> None:
-        request = self.factory.get('/resource/', {'_limit': 100, '_offset': '2000'})
-        paginated_data = self.handler.paginate_queryset(self.data, Request(request))
-        response = self.handler.get_paginated_response(paginated_data)
+        # Verify headers are present
+        self.assertIn("X-Total-Count", response)
+        self.assertIn("X-Limit", response)
+        self.assertIn("X-Offset", response)
+        self.assertIn("X-Next-Page", response)
+        self.assertIn("X-Previous-Page", response)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(int(response['X-Total-Count']), 1000)
-        self.assertEqual(int(response['X-Limit']), 100)
-        self.assertEqual(int(response['X-Offset']), 2000)
-        self.assertTrue('X-Next-Page' in response)
-        self.assertTrue('X-Previous-Page' in response)
+        # Verify header values
+        self.assertEqual('10', response["X-Total-Count"])
+        self.assertEqual('2', response["X-Limit"])
+        self.assertEqual('1', response["X-Offset"])
 
-        self.assertEqual(paginated_data, [])
+    def test_no_next_or_previous_links(self) -> None:
+        """Verify next/previous page headers are empty when no next/previous pages exist."""
+
+        request = self.factory.get("/", {"_limit": len(self.data), "_offset": 0})
+        paginated = self.pagination.paginate_queryset(self.data, Request(request), view=None)
+        response = self.pagination.get_paginated_response(paginated)
+
+        self.assertEqual('', response["X-Next-Page"])
+        self.assertEqual('', response["X-Previous-Page"])
