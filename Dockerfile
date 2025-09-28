@@ -1,4 +1,22 @@
-FROM python:3.11.4-slim
+# --- Build image ---
+FROM python:3.11.13-alpine AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    gcc \
+    musl-dev \
+    openldap-dev \
+    cyrus-sasl-dev
+
+# Compile application wheels
+WORKDIR /src
+COPY . .
+RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[all]
+
+
+# --- Runtime image ---
+FROM python:3.11.13-alpine
 
 EXPOSE 80
 
@@ -6,41 +24,43 @@ EXPOSE 80
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    # Required for LDAP support
-    build-essential \
-    libsasl2-dev \
-    libldap2-dev \
-    # Required for running Celery
+# Configure the application with container friendly defaults
+ENV CONFIG_UPLOAD_DIR=/app/keystone/media
+ENV CONFIG_STATIC_DIR=/app/keystone/static
+ENV DB_NAME=/app/keystone/keystone.db
+ENV LOG_APP_FILE=/app/keystone/keystone.log
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
     redis \
-    # Required for Docker HEALTHCHECK
     curl \
-    # Required for static file serving
     nginx \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+    openldap \
+    cyrus-sasl
 
-# Create an unprivliged user for running background services
-RUN groupadd --gid 900 keystone && useradd -m -u 900 -g keystone keystone
+# Install application wheels
+COPY --from=builder /wheels /wheels
+RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
 
-# Install the application
-WORKDIR /app
-COPY . src
-RUN pip install ./src[all] && rm -rf src
+# Create unprivileged users/directories for running services
+RUN addgroup -g 121 keystone \
+    && adduser -D -u 1001 -G keystone keystone \
+    && mkdir -p /app/keystone /app/nginx \
+    && chown -R keystone:keystone /app /var/lib/nginx \
+    && mkdir -p /var/lib/nginx/logs /var/log/nginx \
+    && chown -R keystone:keystone /var/lib/nginx /var/log/nginx
 
-# Configure media file storage
-ENV CONFIG_UPLOAD_DIR=/app/media
-RUN mkdir $CONFIG_UPLOAD_DIR
+# Switch to non-root user
+USER keystone
+WORKDIR /app/keystone
 
-# Configure the NGINX proxy
-RUN groupadd nginx && useradd -m -g nginx nginx
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+# Copy config files for internal services
+COPY --chown=keystone:keystone --chmod=770 conf/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=keystone:keystone --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
 
 # Use the API health checks to report container health
 HEALTHCHECK CMD curl --fail --location localhost/health/ || exit 1
 
 # Setup the container to launch the application
-COPY --chmod=755 conf/entrypoint.sh /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["quickstart", "--all"]

@@ -4,47 +4,11 @@ info:
   version: 0.0.0
   description: A REST API for managing user resource allocations on HPC systems.
 paths:
-  /allocations/allocation-request/status-choices/:
-    get:
-      operationId: allocations_allocation_request_status_choices_retrieve
-      description: Retrieve valid allocation request `status` options with human-readable
-        labels.
-      summary: Retrieve valid request status options
-      tags:
-      - Resource Allocation Requests
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AllocationRequestStatusChoices'
-          description: ''
-  /allocations/allocation-review/status-choices/:
-    get:
-      operationId: allocations_allocation_review_status_choices_retrieve
-      description: Retrieve valid allocation review `status` options with human-readable
-        labels.
-      summary: Retrieve valid review status options
-      tags:
-      - Resource Allocation Reviews
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AllocationReviewStatusChoices'
-          description: ''
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Retrieve all resource allocations visible to the current user.
-      summary: List all resource allocations
+      description: Returns a filtered list of resource allocations.
+      summary: List resource allocations.
       parameters:
       - name: _limit
         required: false
@@ -237,7 +201,7 @@ paths:
         schema:
           type: integer
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -250,10 +214,10 @@ paths:
           description: ''
     post:
       operationId: allocations_allocations_create
-      description: Create a new resource allocation.
-      summary: Create an resource allocation
+      description: Creates a new resource allocation.
+      summary: Create a resource allocation.
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       requestBody:
         content:
           application/json:
@@ -279,8 +243,8 @@ paths:
   /allocations/allocations/{id}/:
     get:
       operationId: allocations_allocations_retrieve
-      description: Retrieve a single resource allocation by ID.
-      summary: Retrieve an resource allocation
+      description: Returns a single resource allocation by ID.
+      summary: Retrieve a resource allocation.
       parameters:
       - in: path
         name: id
@@ -289,7 +253,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -302,8 +266,8 @@ paths:
           description: ''
     put:
       operationId: allocations_allocations_update
-      description: Replace an existing resource allocation with new values.
-      summary: Update an resource allocation
+      description: Replaces an existing resource allocation with new values.
+      summary: Update a resource allocation.
       parameters:
       - in: path
         name: id
@@ -312,7 +276,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       requestBody:
         content:
           application/json:
@@ -337,8 +301,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_allocations_partial_update
-      description: Apply a partial update to an existing resource allocation.
-      summary: Partially update an resource allocation
+      description: Partially updates an existing resource allocation with new values.
+      summary: Partially update a resource allocation.
       parameters:
       - in: path
         name: id
@@ -347,7 +311,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       requestBody:
         content:
           application/json:
@@ -371,8 +335,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_allocations_destroy
-      description: Delete an resource allocation by ID.
-      summary: Delete an resource allocation
+      description: Deletes a resource allocation by ID.
+      summary: Delete a resource allocation.
       parameters:
       - in: path
         name: id
@@ -381,7 +345,7 @@ paths:
         description: A unique integer value identifying this allocation.
         required: true
       tags:
-      - Resource Allocations
+      - Allocations - Allocated Resources
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -391,9 +355,8 @@ paths:
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Retrieve metadata for all file attachments visible to the current
-        user.
-      summary: List all file attachments
+      description: Returns a filtered list of file attachments.
+      summary: List file attachments.
       parameters:
       - name: _limit
         required: false
@@ -570,7 +533,7 @@ paths:
         schema:
           type: number
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -583,10 +546,10 @@ paths:
           description: ''
     post:
       operationId: allocations_attachments_create
-      description: Create a new file attachment.
-      summary: Create a file attachment
+      description: Creates a new file attachment on an allocation request.
+      summary: Create a file attachment.
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       requestBody:
         content:
           application/json:
@@ -612,8 +575,8 @@ paths:
   /allocations/attachments/{id}/:
     get:
       operationId: allocations_attachments_retrieve
-      description: Retrieve metadata for a single file attachment by ID.
-      summary: Retrieve a file attachment
+      description: Returns a single file attachment by ID.
+      summary: Retrieve a file attachment.
       parameters:
       - in: path
         name: id
@@ -622,7 +585,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -635,8 +598,8 @@ paths:
           description: ''
     put:
       operationId: allocations_attachments_update
-      description: Replace metadata for an existing file attachment with new values.
-      summary: Update a file attachment
+      description: Replaces an existing file attachment with new values.
+      summary: Update a file attachment.
       parameters:
       - in: path
         name: id
@@ -645,7 +608,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       requestBody:
         content:
           application/json:
@@ -670,8 +633,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_attachments_partial_update
-      description: Apply a partial update to metadata for an existing file attachment.
-      summary: Partially update a file attachment
+      description: Partially updates an existing file attachment with new values.
+      summary: Partially update a file attachment.
       parameters:
       - in: path
         name: id
@@ -680,7 +643,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       requestBody:
         content:
           application/json:
@@ -704,8 +667,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_attachments_destroy
-      description: Delete a file attachment and its metadata by ID.
-      summary: Delete a file attachment
+      description: Deletes a file attachment by ID.
+      summary: Delete a file attachment.
       parameters:
       - in: path
         name: id
@@ -714,7 +677,7 @@ paths:
         description: A unique integer value identifying this attachment.
         required: true
       tags:
-      - Resource Allocation Attachments
+      - Allocations - Request Attachments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -724,8 +687,8 @@ paths:
   /allocations/clusters/:
     get:
       operationId: allocations_clusters_list
-      description: Retrieve all HPC clusters.
-      summary: List all HPC clusters
+      description: Returns a filtered list of HPC clusters.
+      summary: List HPC clusters.
       parameters:
       - name: _limit
         required: false
@@ -860,7 +823,7 @@ paths:
         schema:
           type: string
       tags:
-      - Clusters
+      - Allocations - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -873,10 +836,10 @@ paths:
           description: ''
     post:
       operationId: allocations_clusters_create
-      description: Create a new HPC cluster.
-      summary: Create an HPC cluster
+      description: Creates a new HPC cluster.
+      summary: Create an HPC cluster.
       tags:
-      - Clusters
+      - Allocations - Clusters
       requestBody:
         content:
           application/json:
@@ -902,8 +865,8 @@ paths:
   /allocations/clusters/{id}/:
     get:
       operationId: allocations_clusters_retrieve
-      description: Retrieve a single HPC cluster by ID.
-      summary: Retrieve an HPC cluster
+      description: Returns a single HPC cluster by ID.
+      summary: Retrieve an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -912,7 +875,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -925,8 +888,8 @@ paths:
           description: ''
     put:
       operationId: allocations_clusters_update
-      description: Replace an existing HPC cluster with new values.
-      summary: Update an HPC cluster
+      description: Replaces an existing HPC cluster with new values.
+      summary: Update an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -935,7 +898,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       requestBody:
         content:
           application/json:
@@ -960,8 +923,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_clusters_partial_update
-      description: Apply a partial update to an existing HPC cluster.
-      summary: Partially update an HPC cluster
+      description: Partially updates an existing HPC cluster with new values.
+      summary: Partially update an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -970,7 +933,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       requestBody:
         content:
           application/json:
@@ -994,8 +957,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_clusters_destroy
-      description: Delete an HPC cluster by ID.
-      summary: Delete an HPC cluster
+      description: Deletes an HPC cluster by ID.
+      summary: Delete an HPC cluster.
       parameters:
       - in: path
         name: id
@@ -1004,7 +967,7 @@ paths:
         description: A unique integer value identifying this cluster.
         required: true
       tags:
-      - Clusters
+      - Allocations - Clusters
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1014,8 +977,8 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Retrieve all comments visible to the current user.
-      summary: List all comments
+      description: Returns a filtered list of comments made on allocation requests.
+      summary: List comments.
       parameters:
       - name: _limit
         required: false
@@ -1226,7 +1189,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1239,10 +1202,10 @@ paths:
           description: ''
     post:
       operationId: allocations_comments_create
-      description: Create a new comment.
-      summary: Create a comment
+      description: Creates a new comment on an allocation request.
+      summary: Create a comment.
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       requestBody:
         content:
           application/json:
@@ -1268,8 +1231,8 @@ paths:
   /allocations/comments/{id}/:
     get:
       operationId: allocations_comments_retrieve
-      description: Retrieve a single comment by ID.
-      summary: Retrieve a comment
+      description: Returns a single comment by ID.
+      summary: Retrieve a comment.
       parameters:
       - in: path
         name: id
@@ -1278,7 +1241,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1291,8 +1254,8 @@ paths:
           description: ''
     put:
       operationId: allocations_comments_update
-      description: Replace an existing comment with new values.
-      summary: Update a comment
+      description: Replaces an existing comment with new values.
+      summary: Update a comment.
       parameters:
       - in: path
         name: id
@@ -1301,7 +1264,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       requestBody:
         content:
           application/json:
@@ -1326,8 +1289,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_comments_partial_update
-      description: Apply a partial update to an existing comment.
-      summary: Partially update a comment
+      description: Partially updates an existing comment with new values.
+      summary: Partially update a comment.
       parameters:
       - in: path
         name: id
@@ -1336,7 +1299,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       requestBody:
         content:
           application/json:
@@ -1360,8 +1323,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_comments_destroy
-      description: Delete a comment and its metadata by ID.
-      summary: Delete a comment
+      description: Deletes a comment by ID.
+      summary: Delete a comment.
       parameters:
       - in: path
         name: id
@@ -1370,7 +1333,7 @@ paths:
         description: A unique integer value identifying this comment.
         required: true
       tags:
-      - Resource Allocation Comments
+      - Allocations - Request Comments
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1380,9 +1343,8 @@ paths:
   /allocations/jobs/:
     get:
       operationId: allocations_jobs_list
-      description: Retrieve status information for all Slurm jobs visible to the current
-        user.
-      summary: List all Slurm jobs
+      description: Returns a filtered list of Slurm jobs.
+      summary: List user Slurm jobs.
       parameters:
       - name: _limit
         required: false
@@ -2231,7 +2193,7 @@ paths:
         schema:
           type: string
       tags:
-      - Slurm Jobs
+      - Allocations - User Jobs
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2245,8 +2207,8 @@ paths:
   /allocations/jobs/{id}/:
     get:
       operationId: allocations_jobs_retrieve
-      description: Retrieve status information for a single slurm job by ID.
-      summary: Retrieve a Slurm job
+      description: Returns a single Slurm job by Keystone ID.
+      summary: Retrieve a user Slurm job.
       parameters:
       - in: path
         name: id
@@ -2255,7 +2217,7 @@ paths:
         description: A unique integer value identifying this job stats.
         required: true
       tags:
-      - Slurm Jobs
+      - Allocations - User Jobs
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2266,11 +2228,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/JobStats'
           description: ''
+  /allocations/request-choices/status/:
+    get:
+      operationId: allocations_request_choices_status_retrieve
+      description: Returns valid choices for the request `status` field mapped to
+        human-readable labels.
+      summary: Retrieve valid request status options.
+      tags:
+      - Allocations - Requests
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationRequestStatusChoices'
+          description: ''
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Retrieve all allocation requests visible to the current user.
-      summary: List all allocation requests
+      description: Returns a filtered list of allocation requests.
+      summary: List allocation requests.
       parameters:
       - name: _limit
         required: false
@@ -2650,7 +2630,7 @@ paths:
         schema:
           type: string
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2663,10 +2643,10 @@ paths:
           description: ''
     post:
       operationId: allocations_requests_create
-      description: Create a new allocation request for review.
-      summary: Create an allocation request
+      description: Creates a new allocation request.
+      summary: Create an allocation request.
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       requestBody:
         content:
           application/json:
@@ -2692,8 +2672,8 @@ paths:
   /allocations/requests/{id}/:
     get:
       operationId: allocations_requests_retrieve
-      description: Retrieve a single allocation request by ID.
-      summary: Retrieve an allocation request
+      description: Returns a single allocation request by ID.
+      summary: Retrieve an allocation request.
       parameters:
       - in: path
         name: id
@@ -2702,7 +2682,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -2715,8 +2695,8 @@ paths:
           description: ''
     put:
       operationId: allocations_requests_update
-      description: Replace an existing allocation request with new values.
-      summary: Update an allocation request
+      description: Replaces an existing allocation request with new values.
+      summary: Update an allocation request.
       parameters:
       - in: path
         name: id
@@ -2725,7 +2705,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       requestBody:
         content:
           application/json:
@@ -2750,8 +2730,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_requests_partial_update
-      description: Apply a partial update to an existing allocation request.
-      summary: Partially update an allocation request
+      description: Partially updates an existing allocation request with new values.
+      summary: Partially update an allocation request.
       parameters:
       - in: path
         name: id
@@ -2760,7 +2740,7 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       requestBody:
         content:
           application/json:
@@ -2784,8 +2764,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_requests_destroy
-      description: Delete an allocation request by ID.
-      summary: Delete an allocation request
+      description: Deletes a single allocation request by ID.
+      summary: Delete an allocation request.
       parameters:
       - in: path
         name: id
@@ -2794,18 +2774,36 @@ paths:
         description: A unique integer value identifying this allocation request.
         required: true
       tags:
-      - Resource Allocation Requests
+      - Allocations - Requests
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
         '204':
           description: No response body
+  /allocations/review-choices/status/:
+    get:
+      operationId: allocations_review_choices_status_retrieve
+      description: Returns valid choices for the review `status` field mapped to human-readable
+        labels.
+      summary: Retrieve valid review status options.
+      tags:
+      - Allocations - Reviews
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllocationReviewStatusChoices'
+          description: ''
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Retrieve all allocation reviews visible to the current user.
-      summary: List all allocation reviews
+      description: Returns a filtered list of allocation reviews.
+      summary: List allocation reviews.
       parameters:
       - name: _limit
         required: false
@@ -3007,7 +3005,7 @@ paths:
         schema:
           type: number
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3020,10 +3018,10 @@ paths:
           description: ''
     post:
       operationId: allocations_reviews_create
-      description: Create a new allocation review.
-      summary: Create an allocation review
+      description: Creates a new allocation review.
+      summary: Create an allocation review.
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       requestBody:
         content:
           application/json:
@@ -3049,8 +3047,8 @@ paths:
   /allocations/reviews/{id}/:
     get:
       operationId: allocations_reviews_retrieve
-      description: Retrieve a single allocation review by ID.
-      summary: Retrieve an allocation review
+      description: Returns a single allocation review by ID.
+      summary: Retrieve an allocation review.
       parameters:
       - in: path
         name: id
@@ -3059,7 +3057,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3072,8 +3070,8 @@ paths:
           description: ''
     put:
       operationId: allocations_reviews_update
-      description: Replace an existing allocation review with new values.
-      summary: Update an allocation review
+      description: Replaces an existing allocation review with new values.
+      summary: Update an allocation review.
       parameters:
       - in: path
         name: id
@@ -3082,7 +3080,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       requestBody:
         content:
           application/json:
@@ -3107,8 +3105,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_reviews_partial_update
-      description: Apply a partial update to an existing allocation review.
-      summary: Partially update an allocation review
+      description: Partially updates an existing allocation review with new values.
+      summary: Partially update an allocation review.
       parameters:
       - in: path
         name: id
@@ -3117,7 +3115,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       requestBody:
         content:
           application/json:
@@ -3141,8 +3139,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_reviews_destroy
-      description: Delete an allocation review by ID.
-      summary: Delete an allocation review
+      description: Deletes a single allocation review by ID.
+      summary: Delete an allocation review.
       parameters:
       - in: path
         name: id
@@ -3151,7 +3149,7 @@ paths:
         description: A unique integer value identifying this allocation review.
         required: true
       tags:
-      - Resource Allocation Reviews
+      - Allocations - Reviews
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3161,8 +3159,9 @@ paths:
   /authentication/login/:
     post:
       operationId: authentication_login_create
-      description: Validate the provided credentials and start a new user session.
-      summary: Authenticate a user and start a new session
+      description: Validates user provided credentials and returns new session/CSRF
+        tokens as cookie data.
+      summary: Authenticate a new user session.
       tags:
       - Authentication
       requestBody:
@@ -3187,8 +3186,9 @@ paths:
   /authentication/logout/:
     post:
       operationId: authentication_logout_create
-      description: Logout an authenticated user and terminate their active session.
-      summary: Logout an authenticated user
+      description: Terminates the authenticated user session and invalidates the associated
+        tokens.
+      summary: Terminate an active user session.
       tags:
       - Authentication
       security:
@@ -3200,9 +3200,10 @@ paths:
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
-      description: Retrieve metadata for the currently authenticated user, including
-        personal data and team memberships.
-      summary: Retrieve metadata for the currently authenticated user
+      description: Returns metadata for the currently authenticated user, including
+        personal data and team memberships. This endpoint can also be used to verify
+        general authentication status.
+      summary: Retrieve metadata for the authenticated user.
       tags:
       - Authentication
       security:
@@ -3218,11 +3219,12 @@ paths:
   /health/:
     get:
       operationId: health_retrieve
-      description: Return a 200 status if all application health checks pass and a
-        500 status otherwise.
-      summary: Retrieve the current application health status
+      description: Returns a 200 status if all application health checks pass and
+        a 500 status otherwise. Health checks are performed on demand and cached for
+        60 seconds.
+      summary: Retrieve the current application health status.
       tags:
-      - Application Health
+      - Admin - Health Checks
       responses:
         '200':
           description: No response body
@@ -3231,449 +3233,42 @@ paths:
   /health/json/:
     get:
       operationId: health_json_retrieve
-      description: Retrieve results from individual application health checks in JSON
-        format. This endpoint returns a `200` status code regardless of whether individual
-        health checks are passing.
-      summary: Retrieve application health checks in JSON format
+      description: Returns individual health check results in JSON format. Health
+        checks are performed on demand and cached for 60 seconds. A `200` status code
+        is returned regardless of whether individual health checks are passing.
+      summary: Retrieve health check results in JSON format.
       tags:
-      - Application Health
+      - Admin - Health Checks
       responses:
         '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/health_json_ok'
-              examples:
-                PassingJSONHealthCheck:
-                  value:
-                    DatabaseBackend:
-                      status: 200
-                      message: working
-                      critical_service: true
-                  summary: Passing JSON Health Check
-                FailingJSONHealthCheck:
-                  value:
-                    DatabaseBackend:
-                      status: 500
-                      message: database unreachable
-                      critical_service: true
-                  summary: Failing JSON Health Check
           description: ''
   /health/prom/:
     get:
       operationId: health_prom_retrieve
-      description: Retrieve results from individual application health checks in Prometheus
-        format. This endpoint returns a `200` status code regardless of whether individual
-        health checks are passing.
-      summary: Retrieve application health checks in Prometheus format
+      description: Returns individual health check results in Prometheus format. Health
+        checks are performed on demand and cached for 60 seconds. A `200` status code
+        is returned regardless of whether individual health checks are passing.
+      summary: Retrieve health check results in Prometheus format.
       tags:
-      - Application Health
+      - Admin - Health Checks
       responses:
         '200':
           content:
             text/plain:
               schema:
                 type: string
-              examples:
-                PassingPrometheusHealthCheck:
-                  value: |-
-                    # HELP DatabaseBackend health_check.db.backendsDatabaseBackend
-                    # TYPE DatabaseBackend gauge
-                    DatabaseBackend{critical_service="True",message="working"} 200.0
-                  summary: Passing Prometheus Health Check
-                FailingPrometheusHealthCheck:
-                  value: |-
-                    # HELP DatabaseBackend health_check.db.backendsDatabaseBackend
-                    # TYPE DatabaseBackend gauge
-                    DatabaseBackend{critical_service="True",message="database unreachable"} 500.0
-                  summary: Failing Prometheus Health Check
-          description: ''
-  /logs/apps/:
-    get:
-      operationId: logs_apps_list
-      description: Retrieve internal application logs generated by the application
-        runtime. These logs capture internal messages for use when debugging internal
-        system behavior.
-      summary: List all application logs
-      parameters:
-      - name: _limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: _offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - name: _order
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
-      - name: _search
-        required: false
-        in: query
-        description: A search term.
-        schema:
-          type: string
-      - in: query
-        name: func
-        schema:
-          type: string
-      - in: query
-        name: func__contains
-        schema:
-          type: string
-      - in: query
-        name: func__endswith
-        schema:
-          type: string
-      - in: query
-        name: func__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: func__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: func__startswith
-        schema:
-          type: string
-      - in: query
-        name: id
-        schema:
-          type: integer
-      - in: query
-        name: id__gt
-        schema:
-          type: integer
-      - in: query
-        name: id__gte
-        schema:
-          type: integer
-      - in: query
-        name: id__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: id__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: id__lt
-        schema:
-          type: integer
-      - in: query
-        name: id__lte
-        schema:
-          type: integer
-      - in: query
-        name: level
-        schema:
-          type: string
-      - in: query
-        name: level__contains
-        schema:
-          type: string
-      - in: query
-        name: level__endswith
-        schema:
-          type: string
-      - in: query
-        name: level__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: level__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: level__startswith
-        schema:
-          type: string
-      - in: query
-        name: lineno
-        schema:
-          type: integer
-      - in: query
-        name: lineno__gt
-        schema:
-          type: integer
-      - in: query
-        name: lineno__gte
-        schema:
-          type: integer
-      - in: query
-        name: lineno__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: lineno__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: lineno__lt
-        schema:
-          type: integer
-      - in: query
-        name: lineno__lte
-        schema:
-          type: integer
-      - in: query
-        name: message
-        schema:
-          type: string
-      - in: query
-        name: message__contains
-        schema:
-          type: string
-      - in: query
-        name: message__endswith
-        schema:
-          type: string
-      - in: query
-        name: message__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: message__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: message__startswith
-        schema:
-          type: string
-      - in: query
-        name: name
-        schema:
-          type: string
-      - in: query
-        name: name__contains
-        schema:
-          type: string
-      - in: query
-        name: name__endswith
-        schema:
-          type: string
-      - in: query
-        name: name__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: name__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: name__startswith
-        schema:
-          type: string
-      - in: query
-        name: pathname
-        schema:
-          type: string
-      - in: query
-        name: pathname__contains
-        schema:
-          type: string
-      - in: query
-        name: pathname__endswith
-        schema:
-          type: string
-      - in: query
-        name: pathname__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: pathname__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: pathname__startswith
-        schema:
-          type: string
-      - in: query
-        name: sinfo
-        schema:
-          type: string
-      - in: query
-        name: sinfo__contains
-        schema:
-          type: string
-      - in: query
-        name: sinfo__endswith
-        schema:
-          type: string
-      - in: query
-        name: sinfo__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: sinfo__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: sinfo__startswith
-        schema:
-          type: string
-      - in: query
-        name: timestamp
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__day
-        schema:
-          type: number
-      - in: query
-        name: timestamp__gt
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__gte
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__hour
-        schema:
-          type: number
-      - in: query
-        name: timestamp__in
-        schema:
-          type: array
-          items:
-            type: string
-            format: date-time
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: timestamp__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: timestamp__lt
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__lte
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: timestamp__minute
-        schema:
-          type: number
-      - in: query
-        name: timestamp__month
-        schema:
-          type: number
-      - in: query
-        name: timestamp__second
-        schema:
-          type: number
-      - in: query
-        name: timestamp__week
-        schema:
-          type: number
-      - in: query
-        name: timestamp__week_day
-        schema:
-          type: number
-      - in: query
-        name: timestamp__year
-        schema:
-          type: number
-      tags:
-      - Logging
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAppLogList'
-          description: ''
-  /logs/apps/{id}/:
-    get:
-      operationId: logs_apps_retrieve
-      description: Retrieve a single application log record by ID. These logs capture
-        internal messages for use when debugging internal system behavior.
-      summary: Retrieve an application log record
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this app log.
-        required: true
-      tags:
-      - Logging
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AppLog'
           description: ''
   /logs/audit/:
     get:
       operationId: logs_audit_list
-      description: Retrieve all application audit logs. These log entries track changes
-        to database records and are used for compliance and security auditing.
-      summary: List all audit logs
+      description: Returns a list of audit logs. Audit logs track changes to database
+        records and are used for compliance and security auditing. Access to log records
+        is restricted to staff users.
+      summary: List audit logs.
       parameters:
       - name: _limit
         required: false
@@ -4109,7 +3704,7 @@ paths:
         schema:
           type: number
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4123,9 +3718,10 @@ paths:
   /logs/audit/{id}/:
     get:
       operationId: logs_audit_retrieve
-      description: Retrieve an audit log by ID. These log entries track changes to
-        database records and are used for compliance and security auditing.
-      summary: Retrieve an audit log record
+      description: Returns a single audit log by its ID. Audit logs track changes
+        to database records and are used for compliance and security auditing. Access
+        to log records is restricted to staff users.
+      summary: Retrieve a single audit log.
       parameters:
       - in: path
         name: id
@@ -4134,7 +3730,7 @@ paths:
         description: A unique integer value identifying this audit log.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4148,9 +3744,10 @@ paths:
   /logs/requests/:
     get:
       operationId: logs_requests_list
-      description: Retrieve a list of HTTP request logs. These logs track incoming
-        API requests and their resulting HTTP responses.
-      summary: List all HTTP request logs
+      description: Returns a list of HTTP request logs. Request logs track incoming
+        API requests and their resulting HTTP responses. Access to log records is
+        restricted to staff users.
+      summary: List HTTP request logs.
       parameters:
       - name: _limit
         required: false
@@ -4447,7 +4044,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4461,9 +4058,10 @@ paths:
   /logs/requests/{id}/:
     get:
       operationId: logs_requests_retrieve
-      description: Retrieve a single HTTP request log by ID. These logs track incoming
-        API requests and their resulting HTTP responses.
-      summary: Retrieve an HTTP request log record
+      description: Returns a single HTTP request log by its ID. Request logs track
+        incoming API requests and their resulting HTTP responses. Access to log records
+        is restricted to staff users.
+      summary: Retrieve a single HTTP request log.
       parameters:
       - in: path
         name: id
@@ -4472,7 +4070,7 @@ paths:
         description: A unique integer value identifying this request log.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4486,9 +4084,10 @@ paths:
   /logs/tasks/:
     get:
       operationId: logs_tasks_list
-      description: Retrieve a list of background task results. These logs are collected
-        from the Celery backend to track background task outcomes and failures.
-      summary: List all background task results
+      description: Returns a list of task logs. Task logs are collected from the Celery
+        backend to track background task outcomes. Access to log records is restricted
+        to staff users.
+      summary: List background task results.
       parameters:
       - name: _limit
         required: false
@@ -5109,7 +4708,7 @@ paths:
         schema:
           type: string
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5123,9 +4722,10 @@ paths:
   /logs/tasks/{id}/:
     get:
       operationId: logs_tasks_retrieve
-      description: Retrieve a single background task result by ID. These logs are
-        collected from the Celery backend to track background task outcomes and failures.
-      summary: Retrieve a background task result
+      description: Returns a single task log by its ID. Task logs are collected from
+        the Celery backend to track background task outcomes. Access to log records
+        is restricted to staff users.
+      summary: Retrieve a single background task result.
       parameters:
       - in: path
         name: id
@@ -5134,7 +4734,7 @@ paths:
         description: A unique integer value identifying this task result.
         required: true
       tags:
-      - Logging
+      - Admin - Logging
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5145,13 +4745,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskResult'
           description: ''
-  /notifications/allocation-request/status-choices/:
+  /notifications/notification-choices/type:
     get:
-      operationId: notifications_allocation_request_status_choices_retrieve
-      description: Retrieve valid notification types with human-readable labels.
-      summary: Retrieve valid notification types
+      operationId: notifications_notification_choices_type_retrieve
+      description: Returns valid choices for the notification `type` field mapped
+        to human-readable labels.
+      summary: Retrieve valid notification types.
       tags:
-      - Notifications
+      - Notifications - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5165,8 +4766,8 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Retrieve all notifications visible to the current user.
-      summary: List all notifications
+      description: Returns a filtered list of user notifications.
+      summary: List notifications.
       parameters:
       - name: _limit
         required: false
@@ -5426,7 +5027,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Notifications
+      - Notifications - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5440,8 +5041,8 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Retrieve a single notification by ID.
-      summary: Retrieve a notification
+      description: Returns a single notification by its ID.
+      summary: Retrieve a notification.
       parameters:
       - in: path
         name: id
@@ -5450,7 +5051,7 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - Notifications
+      - Notifications - Notifications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5463,9 +5064,8 @@ paths:
           description: ''
     patch:
       operationId: notifications_notifications_partial_update
-      description: Update a notifications `read` status. All other fields are read
-        only.
-      summary: Update a notification's read status
+      description: Updates the `read` status of a notification.
+      summary: Partially update a notification.
       parameters:
       - in: path
         name: id
@@ -5474,7 +5074,7 @@ paths:
         description: A unique integer value identifying this notification.
         required: true
       tags:
-      - Notifications
+      - Notifications - Notifications
       requestBody:
         content:
           application/json:
@@ -5499,8 +5099,8 @@ paths:
   /notifications/preferences/:
     get:
       operationId: notifications_preferences_list
-      description: Retrieve all notification preferences visible to the current user.
-      summary: List all notification preferences
+      description: Returns a filtered list of notification preferences.
+      summary: List notification preferences.
       parameters:
       - name: _limit
         required: false
@@ -5577,7 +5177,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5590,10 +5190,11 @@ paths:
           description: ''
     post:
       operationId: notifications_preferences_create
-      description: Create a new notification preference.
-      summary: Create a notification preference
+      description: Creates a custom notification preference in lieu of application
+        defaults.
+      summary: Create a custom notification preference.
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       requestBody:
         content:
           application/json:
@@ -5618,8 +5219,8 @@ paths:
   /notifications/preferences/{id}/:
     get:
       operationId: notifications_preferences_retrieve
-      description: Retrieve a user's notification preference by ID.
-      summary: Retrieve a user's notification preferences
+      description: Returns a single notification preference by its ID.
+      summary: Retrieve a notification preference.
       parameters:
       - in: path
         name: id
@@ -5628,7 +5229,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5641,8 +5242,8 @@ paths:
           description: ''
     put:
       operationId: notifications_preferences_update
-      description: Replace a user's existing notification preference with new values.
-      summary: Update a user's notification preferences
+      description: Replaces an existing notification preference with new values.
+      summary: Update a notification preference.
       parameters:
       - in: path
         name: id
@@ -5651,7 +5252,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       requestBody:
         content:
           application/json:
@@ -5675,8 +5276,9 @@ paths:
           description: ''
     patch:
       operationId: notifications_preferences_partial_update
-      description: Apply a partial update to a user's notification preference.
-      summary: Partially update a user's notification preferences
+      description: Partially updates an existing notification preference with new
+        values.
+      summary: Partially update a notification preference.
       parameters:
       - in: path
         name: id
@@ -5685,7 +5287,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       requestBody:
         content:
           application/json:
@@ -5709,9 +5311,9 @@ paths:
           description: ''
     delete:
       operationId: notifications_preferences_destroy
-      description: Delete a user's notification preference, and resort to default
-        notification preferences.
-      summary: Delete a user's notification preferences
+      description: Deletes a single notification preference by ID, restoring default
+        settings.
+      summary: Delete a notification preference.
       parameters:
       - in: path
         name: id
@@ -5720,7 +5322,7 @@ paths:
         description: A unique integer value identifying this preference.
         required: true
       tags:
-      - Notification Preferences
+      - Notifications - Preferences
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -5730,8 +5332,8 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Retrieve all research grants visible to the current user.
-      summary: List all research grants
+      description: Returns a filtered list of funding grants.
+      summary: List funding grants.
       parameters:
       - name: _limit
         required: false
@@ -5878,39 +5480,6 @@ paths:
         name: end_date__year
         schema:
           type: number
-      - in: query
-        name: fiscal_year
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__gt
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__gte
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: fiscal_year__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: fiscal_year__lt
-        schema:
-          type: integer
-      - in: query
-        name: fiscal_year__lte
-        schema:
-          type: integer
       - in: query
         name: grant_number
         schema:
@@ -6079,7 +5648,7 @@ paths:
         schema:
           type: string
       tags:
-      - Grants
+      - Research - Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6092,10 +5661,10 @@ paths:
           description: ''
     post:
       operationId: research_grants_create
-      description: Create a new research grant for review.
-      summary: Create a research grant
+      description: Create a new funding grant.
+      summary: Create a funding grant.
       tags:
-      - Grants
+      - Research - Grants
       requestBody:
         content:
           application/json:
@@ -6121,8 +5690,8 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Retrieve a single research grant by ID.
-      summary: Retrieve a research grant
+      description: Returns a single funding grant by its ID.
+      summary: Retrieve a funding grant.
       parameters:
       - in: path
         name: id
@@ -6131,7 +5700,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6144,8 +5713,8 @@ paths:
           description: ''
     put:
       operationId: research_grants_update
-      description: Replace an existing research grant with new values.
-      summary: Update a research grant
+      description: Replaces an existing funding grant with new values.
+      summary: Update a funding grant.
       parameters:
       - in: path
         name: id
@@ -6154,7 +5723,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       requestBody:
         content:
           application/json:
@@ -6179,8 +5748,8 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Apply a partial update to an existing research grant.
-      summary: Partially update a research grant
+      description: Partially updates an existing funding grant with new values.
+      summary: Partially update a funding grant.
       parameters:
       - in: path
         name: id
@@ -6189,7 +5758,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       requestBody:
         content:
           application/json:
@@ -6213,8 +5782,8 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Delete a research grant by ID.
-      summary: Delete a research grant
+      description: Deletes a single funding grant by its ID.
+      summary: Delete a funding grant.
       parameters:
       - in: path
         name: id
@@ -6223,7 +5792,7 @@ paths:
         description: A unique integer value identifying this grant.
         required: true
       tags:
-      - Grants
+      - Research - Grants
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6233,8 +5802,8 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Retrieve all research publications visible to the current user.
-      summary: List all research publications
+      description: Returns a filtered list of publications.
+      summary: List publications.
       parameters:
       - name: _limit
         required: false
@@ -6409,23 +5978,6 @@ paths:
         name: journal__startswith
         schema:
           type: string
-      - in: query
-        name: preparation
-        schema:
-          type: boolean
-      - in: query
-        name: preparation__in
-        schema:
-          type: array
-          items:
-            type: boolean
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: preparation__isnull
-        schema:
-          type: boolean
       - in: query
         name: published
         schema:
@@ -6620,7 +6172,7 @@ paths:
         schema:
           type: string
       tags:
-      - Publications
+      - Research - Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6633,10 +6185,10 @@ paths:
           description: ''
     post:
       operationId: research_publications_create
-      description: Create a new research publication for review.
-      summary: Create a research publication
+      description: Create a new publication.
+      summary: Create a publication.
       tags:
-      - Publications
+      - Research - Publications
       requestBody:
         content:
           application/json:
@@ -6662,8 +6214,8 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Retrieve a single research publication by ID.
-      summary: Retrieve a research publication
+      description: Returns a single publication by its ID.
+      summary: Retrieve a publication.
       parameters:
       - in: path
         name: id
@@ -6672,7 +6224,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6685,8 +6237,8 @@ paths:
           description: ''
     put:
       operationId: research_publications_update
-      description: Replace an existing research publication with new values.
-      summary: Update a research publication
+      description: Replaces an existing publication with new values.
+      summary: Update a publication.
       parameters:
       - in: path
         name: id
@@ -6695,7 +6247,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       requestBody:
         content:
           application/json:
@@ -6720,8 +6272,8 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Apply a partial update to an existing research publication.
-      summary: Partially update a research publication
+      description: Partially updates an existing publication with new values.
+      summary: Partially update a publication.
       parameters:
       - in: path
         name: id
@@ -6730,7 +6282,7 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       requestBody:
         content:
           application/json:
@@ -6754,8 +6306,8 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Delete a research publication by ID.
-      summary: Delete a research publication
+      description: Deletes a single publication by its ID.
+      summary: Delete a publication.
       parameters:
       - in: path
         name: id
@@ -6764,18 +6316,36 @@ paths:
         description: A unique integer value identifying this publication.
         required: true
       tags:
-      - Publications
+      - Research - Publications
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
         '204':
           description: No response body
-  /users/membership/:
+  /users/membership-choices/role/:
     get:
-      operationId: users_membership_list
-      description: Retrieve all team membership accounts.
-      summary: List all team memberships
+      operationId: users_membership_choices_role_retrieve
+      description: Returns valid choices for the team `role` field mapped to human-readable
+        labels.
+      summary: Retrieve valid team role options.
+      tags:
+      - Users - Team Membership
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipRoleChoices'
+          description: ''
+  /users/memberships/:
+    get:
+      operationId: users_memberships_list
+      description: Returns a filtered list of team memberships.
+      summary: List team memberships.
       parameters:
       - name: _limit
         required: false
@@ -6906,7 +6476,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6918,11 +6488,11 @@ paths:
                 $ref: '#/components/schemas/PaginatedMembershipList'
           description: ''
     post:
-      operationId: users_membership_create
-      description: Create a new team membership account.
-      summary: Create a team membership
+      operationId: users_memberships_create
+      description: Creates a new team membership.
+      summary: Create a team membership.
       tags:
-      - Team Membership
+      - Users - Team Membership
       requestBody:
         content:
           application/json:
@@ -6945,11 +6515,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Membership'
           description: ''
-  /users/membership/{id}/:
+  /users/memberships/{id}/:
     get:
-      operationId: users_membership_retrieve
-      description: Retrieve a single team membership account by ID.
-      summary: Retrieve a team membership
+      operationId: users_memberships_retrieve
+      description: Returns a single team membership ID.
+      summary: Retrieve a team membership.
       parameters:
       - in: path
         name: id
@@ -6958,7 +6528,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6970,9 +6540,9 @@ paths:
                 $ref: '#/components/schemas/Membership'
           description: ''
     put:
-      operationId: users_membership_update
-      description: Replace an existing team membership account with new values.
-      summary: Update a team membership
+      operationId: users_memberships_update
+      description: Replaces an existing team membership with new values.
+      summary: Update a team membership.
       parameters:
       - in: path
         name: id
@@ -6981,7 +6551,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       requestBody:
         content:
           application/json:
@@ -7005,9 +6575,9 @@ paths:
                 $ref: '#/components/schemas/Membership'
           description: ''
     patch:
-      operationId: users_membership_partial_update
-      description: Apply a partial update to an existing team membership account.
-      summary: Partially update a team membership
+      operationId: users_memberships_partial_update
+      description: Partially updates an existing team membership with new values.
+      summary: Partially update a team membership.
       parameters:
       - in: path
         name: id
@@ -7016,7 +6586,7 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       requestBody:
         content:
           application/json:
@@ -7039,9 +6609,9 @@ paths:
                 $ref: '#/components/schemas/Membership'
           description: ''
     delete:
-      operationId: users_membership_destroy
-      description: Delete a team membership account by ID.
-      summary: Delete a team membership
+      operationId: users_memberships_destroy
+      description: Deletes a team membership by ID.
+      summary: Delete a team membership.
       parameters:
       - in: path
         name: id
@@ -7050,35 +6620,18 @@ paths:
         description: A unique integer value identifying this membership.
         required: true
       tags:
-      - Team Membership
+      - Users - Team Membership
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
         '204':
           description: No response body
-  /users/team-membership/role-choices/:
-    get:
-      operationId: users_team_membership_role_choices_retrieve
-      description: Retrieve valid team `role` options with human-readable labels.
-      summary: Retrieve valid team role options
-      tags:
-      - Team Membership
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MembershipRoleChoices'
-          description: ''
   /users/teams/:
     get:
       operationId: users_teams_list
-      description: Retrieve all teams visible to the current user.
-      summary: List all teams
+      description: Returns a filtered list of user teams.
+      summary: List teams.
       parameters:
       - name: _limit
         required: false
@@ -7184,7 +6737,7 @@ paths:
         schema:
           type: string
       tags:
-      - Teams
+      - Users - Teams
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7197,10 +6750,10 @@ paths:
           description: ''
     post:
       operationId: users_teams_create
-      description: Create a new team.
-      summary: Create a team
+      description: Creates a new team.
+      summary: Create a team.
       tags:
-      - Teams
+      - Users - Teams
       requestBody:
         content:
           application/json:
@@ -7226,8 +6779,8 @@ paths:
   /users/teams/{id}/:
     get:
       operationId: users_teams_retrieve
-      description: Retrieve a single team by ID.
-      summary: Retrieve a team
+      description: Returns a single team by ID.
+      summary: Retrieve a team.
       parameters:
       - in: path
         name: id
@@ -7236,7 +6789,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7249,8 +6802,8 @@ paths:
           description: ''
     put:
       operationId: users_teams_update
-      description: Replace an existing team with new values.
-      summary: Update a team
+      description: Replaces an existing team with new values.
+      summary: Update a team.
       parameters:
       - in: path
         name: id
@@ -7259,7 +6812,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       requestBody:
         content:
           application/json:
@@ -7284,8 +6837,8 @@ paths:
           description: ''
     patch:
       operationId: users_teams_partial_update
-      description: Apply a partial update to an existing team.
-      summary: Partially update a team
+      description: Partially updates an existing team with new values.
+      summary: Partially update a team.
       parameters:
       - in: path
         name: id
@@ -7294,7 +6847,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       requestBody:
         content:
           application/json:
@@ -7318,8 +6871,8 @@ paths:
           description: ''
     delete:
       operationId: users_teams_destroy
-      description: Delete a team by ID.
-      summary: Delete a team
+      description: Deletes a team by ID.
+      summary: Delete a team.
       parameters:
       - in: path
         name: id
@@ -7328,7 +6881,7 @@ paths:
         description: A unique integer value identifying this team.
         required: true
       tags:
-      - Teams
+      - Users - Teams
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7338,8 +6891,8 @@ paths:
   /users/users/:
     get:
       operationId: users_users_list
-      description: Retrieve all user accounts.
-      summary: List all users
+      description: Returns a filtered list of user accounts.
+      summary: List user accounts.
       parameters:
       - name: _limit
         required: false
@@ -7812,7 +7365,7 @@ paths:
         schema:
           type: string
       tags:
-      - Users
+      - Users - Accounts
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7825,10 +7378,10 @@ paths:
           description: ''
     post:
       operationId: users_users_create
-      description: Create a new user account.
-      summary: Create a user
+      description: Creates a new user account.
+      summary: Create a user account.
       tags:
-      - Users
+      - Users - Accounts
       requestBody:
         content:
           application/json:
@@ -7854,8 +7407,8 @@ paths:
   /users/users/{id}/:
     get:
       operationId: users_users_retrieve
-      description: Retrieve a single user account by ID.
-      summary: Retrieve a user
+      description: Returns a single user account by ID.
+      summary: Retrieve a user account.
       parameters:
       - in: path
         name: id
@@ -7864,7 +7417,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7877,8 +7430,8 @@ paths:
           description: ''
     put:
       operationId: users_users_update
-      description: Replace an existing user account with new values.
-      summary: Update a user
+      description: Replaces an existing user account with new values.
+      summary: Update a user account.
       parameters:
       - in: path
         name: id
@@ -7887,7 +7440,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       requestBody:
         content:
           application/json:
@@ -7912,8 +7465,8 @@ paths:
           description: ''
     patch:
       operationId: users_users_partial_update
-      description: Apply a partial update to an existing user account.
-      summary: Partially update a user
+      description: Partially updates an existing user account with new values.
+      summary: Partially update a user account.
       parameters:
       - in: path
         name: id
@@ -7922,7 +7475,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       requestBody:
         content:
           application/json:
@@ -7946,8 +7499,8 @@ paths:
           description: ''
     delete:
       operationId: users_users_destroy
-      description: Delete a user account by ID.
-      summary: Delete a user
+      description: Deletes a user account by ID.
+      summary: Delete a user.
       parameters:
       - in: path
         name: id
@@ -7956,7 +7509,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - Users
+      - Users - Accounts
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7966,20 +7519,16 @@ paths:
   /version/:
     get:
       operationId: version_retrieve
-      description: Retrieve the application version number as a plain text response.
-      summary: Retrieve the application version number
+      description: Returns the application version number as a plain text response.
+      summary: Retrieve the application version number.
       tags:
-      - Application Version
+      - Version
       responses:
         '200':
           content:
             text/plain:
               schema:
                 type: string
-              examples:
-                VersionNumber:
-                  value: 1.2.3
-                  summary: Version Number
           description: ''
 components:
   schemas:
@@ -8082,6 +7631,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
         title:
           type: string
           maxLength: 250
@@ -8122,6 +7677,7 @@ components:
       required:
       - _allocations
       - _assignees
+      - _comments
       - _grants
       - _history
       - _publications
@@ -8260,48 +7816,6 @@ components:
       - cluster
       - id
       - requested
-    AppLog:
-      type: object
-      description: Object serializer for the `AppLog` class.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          maxLength: 100
-        level:
-          type: string
-          maxLength: 10
-        pathname:
-          type: string
-          maxLength: 260
-        lineno:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-        message:
-          type: string
-        func:
-          type: string
-          nullable: true
-          maxLength: 80
-        sinfo:
-          type: string
-          nullable: true
-        timestamp:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - id
-      - level
-      - lineno
-      - message
-      - name
-      - pathname
-      - timestamp
     Attachment:
       type: object
       description: Object serializer for the `Attachment` class.
@@ -8503,6 +8017,30 @@ components:
       - created
       - id
       - request
+    CommentSummary:
+      type: object
+      description: Serializer for user comments in nested responses.
+      properties:
+        user:
+          type: integer
+        content:
+          type: string
+          maxLength: 2000
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        private:
+          type: boolean
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
+      required:
+      - _user
+      - content
+      - created
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -8534,11 +8072,6 @@ components:
         grant_number:
           type: string
           maxLength: 250
-        fiscal_year:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
         start_date:
           type: string
           format: date
@@ -8553,7 +8086,6 @@ components:
       - agency
       - amount
       - end_date
-      - fiscal_year
       - grant_number
       - id
       - start_date
@@ -8579,11 +8111,6 @@ components:
         grant_number:
           type: string
           maxLength: 250
-        fiscal_year:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
         start_date:
           type: string
           format: date
@@ -8596,7 +8123,6 @@ components:
       - agency
       - amount
       - end_date
-      - fiscal_year
       - grant_number
       - id
       - start_date
@@ -8910,29 +8436,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AllocationReview'
-    PaginatedAppLogList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AppLog'
     PaginatedAttachmentList:
       type: object
       required:
@@ -9346,6 +8849,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
         title:
           type: string
           maxLength: 250
@@ -9534,11 +9043,6 @@ components:
         grant_number:
           type: string
           maxLength: 250
-        fiscal_year:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
         start_date:
           type: string
           format: date
@@ -9663,8 +9167,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -9851,8 +9353,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -9898,8 +9398,6 @@ components:
           type: string
           nullable: true
           maxLength: 50
-        preparation:
-          type: boolean
         volume:
           type: string
           nullable: true
@@ -10305,6 +9803,14 @@ components:
           format: email
           nullable: true
           maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
       required:
       - id
       - username

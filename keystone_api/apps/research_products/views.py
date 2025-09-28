@@ -20,34 +20,34 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all research grants",
-        description="Retrieve all research grants visible to the current user.",
-        tags=["Grants"],
+        summary="List funding grants.",
+        description="Returns a filtered list of funding grants.",
+        tags=["Research - Grants"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a research grant",
-        description="Retrieve a single research grant by ID.",
-        tags=["Grants"],
+        summary="Retrieve a funding grant.",
+        description="Returns a single funding grant by its ID.",
+        tags=["Research - Grants"],
     ),
     create=extend_schema(
-        summary="Create a research grant",
-        description="Create a new research grant for review.",
-        tags=["Grants"],
+        summary="Create a funding grant.",
+        description="Create a new funding grant.",
+        tags=["Research - Grants"],
     ),
     update=extend_schema(
-        summary="Update a research grant",
-        description="Replace an existing research grant with new values.",
-        tags=["Grants"],
+        summary="Update a funding grant.",
+        description="Replaces an existing funding grant with new values.",
+        tags=["Research - Grants"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a research grant",
-        description="Apply a partial update to an existing research grant.",
-        tags=["Grants"],
+        summary="Partially update a funding grant.",
+        description="Partially updates an existing funding grant with new values.",
+        tags=["Research - Grants"],
     ),
     destroy=extend_schema(
-        summary="Delete a research grant",
-        description="Delete a research grant by ID.",
-        tags=["Grants"],
+        summary="Delete a funding grant.",
+        description="Deletes a single funding grant by its ID.",
+        tags=["Research - Grants"],
     ),
 )
 class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -68,34 +68,34 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List all research publications",
-        description="Retrieve all research publications visible to the current user.",
-        tags=["Publications"],
+        summary="List publications.",
+        description="Returns a filtered list of publications.",
+        tags=["Research - Publications"],
     ),
     retrieve=extend_schema(
-        summary="Retrieve a research publication",
-        description="Retrieve a single research publication by ID.",
-        tags=["Publications"],
+        summary="Retrieve a publication.",
+        description="Returns a single publication by its ID.",
+        tags=["Research - Publications"],
     ),
     create=extend_schema(
-        summary="Create a research publication",
-        description="Create a new research publication for review.",
-        tags=["Publications"],
+        summary="Create a publication.",
+        description="Create a new publication.",
+        tags=["Research - Publications"],
     ),
     update=extend_schema(
-        summary="Update a research publication",
-        description="Replace an existing research publication with new values.",
-        tags=["Publications"],
+        summary="Update a publication.",
+        description="Replaces an existing publication with new values.",
+        tags=["Research - Publications"],
     ),
     partial_update=extend_schema(
-        summary="Partially update a research publication",
-        description="Apply a partial update to an existing research publication.",
-        tags=["Publications"],
+        summary="Partially update a publication.",
+        description="Partially updates an existing publication with new values.",
+        tags=["Research - Publications"],
     ),
     destroy=extend_schema(
-        summary="Delete a research publication",
-        description="Delete a research publication by ID.",
-        tags=["Publications"],
+        summary="Delete a publication.",
+        description="Deletes a single publication by its ID.",
+        tags=["Research - Publications"],
     ),
 )
 class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):

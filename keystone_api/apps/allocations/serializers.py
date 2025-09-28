@@ -40,6 +40,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _grants = GrantSummarySerializer(source='grants', many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
+    _comments = CommentSummarySerializer(source='comments', many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -157,6 +158,32 @@ class CommentSerializer(serializers.ModelSerializer):
 
         model = Comment
         fields = '__all__'
+
+    def validate(self, attrs: dict) -> dict:
+        """Limit modification of the `private` field to staff users.
+
+        Args:
+            attrs: The record attributes to validate.
+
+        Returns:
+            The validated attributes.
+        """
+
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+
+        # Determine if the comment is or will be private
+        private_value = attrs.get('private', False)
+        if self.instance:
+            private_value = self.instance.private or private_value
+
+        # Reject if private is true and user is not staff
+        if private_value and (not user or not user.is_staff):
+            raise serializers.ValidationError({
+                'private': 'Only staff users can write comments marked as private.'
+            })
+
+        return attrs
 
 
 class JobStatsSerializer(serializers.ModelSerializer):

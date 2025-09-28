@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.notifications.factories import NotificationFactory
 from apps.users.factories import UserFactory
-from tests.utils import CustomAsserts, UserScopedListFilteringTestMixin
+from tests.utils import CustomAsserts, UserListFilteringTestMixin
 
 ENDPOINT = '/notifications/notifications/'
 
@@ -78,7 +78,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(UserScopedListFilteringTestMixin, APITestCase):
+class UserRecordFiltering(UserListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
     endpoint = ENDPOINT

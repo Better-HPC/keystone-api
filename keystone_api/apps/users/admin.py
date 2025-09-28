@@ -74,7 +74,7 @@ class MembershipInline(admin.TabularInline):
     """Inline interface for managing team membership."""
 
     model = Membership
-    raw_id_fields = ('user',)
+    autocomplete_fields = ['user']
     extra = 1
 
 

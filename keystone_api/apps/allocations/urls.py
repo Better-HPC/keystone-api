@@ -17,6 +17,6 @@ router.register('reviews', AllocationReviewViewSet)
 router.register('jobs', JobStatsViewSet)
 
 urlpatterns = router.urls + [
-    path('allocation-request/status-choices/', AllocationRequestStatusChoicesView.as_view()),
-    path('allocation-review/status-choices/', AllocationReviewStatusChoicesView.as_view()),
+    path('request-choices/status/', AllocationRequestStatusChoicesView.as_view()),
+    path('review-choices/status/', AllocationReviewStatusChoicesView.as_view()),
 ]

@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
+# Ensure all processes terminate when the container exits
 set -e
-trap "kill 0" SIGINT SIGTERM
+trap "kill 0" INT TERM
 
-nginx &
-exec keystone-api "$@"
+nginx -g 'daemon off;' -e /app/nginx/nginx.log &  # Start nginx in the background
+exec keystone-api "$@"  # Redirect commands to Keystone CLI
