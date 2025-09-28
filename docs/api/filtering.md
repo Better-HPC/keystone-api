@@ -11,7 +11,8 @@ Keystone uses limit/offset style pagination.
 .../endpoint/?limit=100&offset=400
 ```
 
-Both pagination arguments are optional and default to the values below:
+Both pagination arguments are optional and default to the values below.
+The number of returned records is limited to 1000 records in a single response.
 
 | Query Argument | Default Value    |
 |----------------|------------------|
