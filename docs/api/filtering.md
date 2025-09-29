@@ -1,23 +1,24 @@
 # Filtering Queries
 
-Keystone-API uses query parameters to sort and filter records in API responses.
-Since these operations are performed on the server, using query parameters is typically more performant than filtering data client-side.
+Keystone-API uses query parameters to sort and filter returned records.
+Query parameters with a preceding underscore (`_limit`, `_offset`, `_order`, `_search`) are used to control API
+behavior, while parameters without an underscore are used to filter returned values.
 
 ## Paginating Responses
 
 Keystone uses limit/offset style pagination.
 
 ```
-.../endpoint/?limit=100&offset=400
+.../endpoint/?_limit=100&_offset=400
 ```
 
 Both pagination arguments are optional and default to the values below.
-The number of returned records is limited to 1000 records in a single response.
+To prevent excessive request sizes, the API enforces an upper limit of 1,000 records per response.
 
 | Query Argument | Default Value    |
 |----------------|------------------|
-| `limit`        | `100`            |
-| `offset`       | `0` (First page) |
+| `_limit`       | `100`            |
+| `_offset`      | `0` (First page) |
 
 ## Ordering Responses
 
@@ -38,7 +39,7 @@ In the following example, `field1` is sorted in ascending order followed by `fie
 ## Searching Records
 
 Most API endpoints support semantic search via the `_search` parameter (see the [API specification](../../api) for specifics).
-When provided with search text, the API will compare the search value against the record fields and return any case-insensitive partial matches.
+When provided with search text, the API will compare the search value against the record fields and return case-insensitive partial matches.
 
 ```bash
 .../endpoint/?_search=user%20search%20input
