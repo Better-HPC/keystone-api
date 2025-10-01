@@ -1,7 +1,24 @@
 # Filtering Queries
 
-Keystone-API uses query parameters to sort and filter records in API responses.
-Since these operations are performed on the server, using query parameters is typically more performant than filtering data client-side.
+Keystone-API uses query parameters to sort and filter returned records.
+Query parameters with a preceding underscore (`_limit`, `_offset`, `_order`, `_search`) are used to control API
+behavior, while parameters without an underscore are used to filter returned values.
+
+## Paginating Responses
+
+Keystone uses limit/offset style pagination.
+
+```
+.../endpoint/?_limit=100&_offset=400
+```
+
+Both pagination arguments are optional and default to the values below.
+To prevent excessive request sizes, the API enforces an upper limit of 1,000 records per response.
+
+| Query Argument | Default Value    |
+|----------------|------------------|
+| `_limit`       | `100`            |
+| `_offset`      | `0` (First page) |
 
 ## Ordering Responses
 
@@ -22,7 +39,7 @@ In the following example, `field1` is sorted in ascending order followed by `fie
 ## Searching Records
 
 Most API endpoints support semantic search via the `_search` parameter (see the [API specification](../../api) for specifics).
-When provided with search text, the API will compare the search value against the record fields and return any case-insensitive partial matches.
+When provided with search text, the API will compare the search value against the record fields and return case-insensitive partial matches.
 
 ```bash
 .../endpoint/?_search=user%20search%20input
@@ -39,7 +56,7 @@ In the following example, returned records are limited to those where the `examp
 
 More advanced filtering is achieved by adding filter expressions.
 Query filters are specified using a double underscore (`__`) followed by a filter expression.
-For example, the following API call will return records when the `example` field is greater than `50` but less than `150`:
+In the following example the API will return records where the `example` field is greater than `50` but less than `150`:
 
 ```
 .../endpoint?example__gt=50&example__lt=150

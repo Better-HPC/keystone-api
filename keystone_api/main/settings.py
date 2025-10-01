@@ -211,6 +211,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter'
     ),
+    'DEFAULT_PAGINATION_CLASS': 'plugins.pagination.PaginationHandler',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
