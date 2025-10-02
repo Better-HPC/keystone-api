@@ -8368,396 +8368,73 @@ components:
         * `RE` - Upcoming Request Expiration
         * `RD` - Request Past Expiration
     PaginatedAllocationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Allocation'
+      type: array
+      items:
+        $ref: '#/components/schemas/Allocation'
     PaginatedAllocationRequestList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationRequest'
+      type: array
+      items:
+        $ref: '#/components/schemas/AllocationRequest'
     PaginatedAllocationReviewList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationReview'
+      type: array
+      items:
+        $ref: '#/components/schemas/AllocationReview'
     PaginatedAttachmentList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
     PaginatedAuditLogList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLog'
+      type: array
+      items:
+        $ref: '#/components/schemas/AuditLog'
     PaginatedClusterList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Cluster'
+      type: array
+      items:
+        $ref: '#/components/schemas/Cluster'
     PaginatedCommentList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Comment'
+      type: array
+      items:
+        $ref: '#/components/schemas/Comment'
     PaginatedGrantList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Grant'
+      type: array
+      items:
+        $ref: '#/components/schemas/Grant'
     PaginatedJobStatsList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobStats'
+      type: array
+      items:
+        $ref: '#/components/schemas/JobStats'
     PaginatedMembershipList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Membership'
+      type: array
+      items:
+        $ref: '#/components/schemas/Membership'
     PaginatedNotificationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Notification'
+      type: array
+      items:
+        $ref: '#/components/schemas/Notification'
     PaginatedPreferenceList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Preference'
+      type: array
+      items:
+        $ref: '#/components/schemas/Preference'
     PaginatedPublicationList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Publication'
+      type: array
+      items:
+        $ref: '#/components/schemas/Publication'
     PaginatedRequestLogList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/RequestLog'
+      type: array
+      items:
+        $ref: '#/components/schemas/RequestLog'
     PaginatedRestrictedUserList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/RestrictedUser'
+      type: array
+      items:
+        $ref: '#/components/schemas/RestrictedUser'
     PaginatedTaskResultList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaskResult'
+      type: array
+      items:
+        $ref: '#/components/schemas/TaskResult'
     PaginatedTeamList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Team'
+      type: array
+      items:
+        $ref: '#/components/schemas/Team'
     PatchedAllocation:
       type: object
       description: Object serializer for the `Allocation` class.
