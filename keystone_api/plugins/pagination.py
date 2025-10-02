@@ -33,3 +33,16 @@ class PaginationHandler(LimitOffsetPagination):
         response['X-Offset'] = self.offset
         response['X-Total-Count'] = self.count
         return response
+
+    def get_paginated_response_schema(self, schema: dict) -> dict:
+        """Return the schema representation for paginated responses.
+
+        Args:
+            schema: The schema describing the response payload.
+
+        Returns:
+            The schema object for paginated responses.
+        """
+
+        # The pagination makes no changes to the response schema
+        return schema
