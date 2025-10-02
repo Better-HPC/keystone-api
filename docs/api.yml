@@ -8145,6 +8145,9 @@ components:
           - $ref: '#/components/schemas/ClusterSummary'
           readOnly: true
           title: ' cluster'
+        jobid:
+          type: string
+          maxLength: 64
         account:
           type: string
           nullable: true
@@ -8171,9 +8174,6 @@ components:
           type: string
           nullable: true
           maxLength: 128
-        jobid:
-          type: string
-          maxLength: 64
         jobname:
           type: string
           nullable: true
