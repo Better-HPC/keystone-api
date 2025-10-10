@@ -73,15 +73,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish image
+      - name: Build image with multi-arch support
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           platforms: linux/amd64,linux/arm64
+          outputs: type=docker,dest=/tmp/publish.tar
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Publish image
+        uses: cloudsmith-io/action@master
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "docker"
+          owner: "better-hpc"
+          repo: "keystone-api"
+          file: "/tmp/publish.tar"
 
   publish-python:
     name: Python Distribution
