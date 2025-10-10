@@ -15,8 +15,8 @@ jobs:
     name: Docker Image
 
     environment:
-      name: ghcr
-      url: https://github.com/Better-HPC/keystone-api/pkgs/container/keystone-api
+      name: cloudsmith
+      url: https://app.cloudsmith.com/better-hpc/keystone-api
 
     steps:
       - name: Checkout source
