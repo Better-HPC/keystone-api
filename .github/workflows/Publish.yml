@@ -92,7 +92,7 @@ jobs:
           command: "push"
           format: "docker"
           owner: "better-hpc"
-          repo: "keystone-api"
+          repo: "keystone"
           file: "/tmp/publish.tar"
 
   publish-python:
@@ -117,7 +117,7 @@ jobs:
           command: "push"
           format: "python"
           owner: "better-hpc"
-          repo: "keystone-api"
+          repo: "keystone"
           file: "dist/keystone_api-${{ inputs.version }}.tar.gz"
 
   trigger-docs:
