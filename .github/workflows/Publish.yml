@@ -45,7 +45,7 @@ jobs:
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
-          images: docker.cloudsmith.io/better-hpc/keystone-api
+          images: docker.cloudsmith.io/better-hpc/keystone/keystone-api
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=latest
@@ -58,7 +58,7 @@ jobs:
             org.opencontainers.image.authors="Better HPC LLC"
             org.opencontainers.image.revision="${{ github.sha }}"
             org.opencontainers.image.vendor="Better HPC LLC"
-            org.opencontainers.image.ref.name="docker.cloudsmith.io/better-hpc/keystone-api:${{ inputs.version }}"
+            org.opencontainers.image.ref.name="docker.cloudsmith.io/better-hpc/keystone/keystone-api:${{ inputs.version }}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
