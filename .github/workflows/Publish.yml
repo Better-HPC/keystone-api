@@ -83,25 +83,15 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
           platforms: linux/amd64,linux/arm64
 
-  publish-pypi:
+  publish-python:
     name: Python Distribution
     runs-on: ubuntu-latest
 
     environment:
-      name: pypi
-      url: https://pypi.org/project/keystone-api/
+      name: cloudsmith
+      url: https://app.cloudsmith.com/better-hpc/keystone-api
 
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: false
-
       - name: Fetch build artifact
         uses: actions/download-artifact@v5
         with:
@@ -109,10 +99,14 @@ jobs:
           path: dist
 
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: cloudsmith-io/action@master
         with:
-          print-hash: true
-          attestations: false
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+          command: "push"
+          format: "python"
+          owner: "better-hpc"
+          repo: "keystone-api"
+          file: "dist/keystone_api-${{ inputs.version }}.tar.gz"
 
   trigger-docs:
     name: Trigger Docs
