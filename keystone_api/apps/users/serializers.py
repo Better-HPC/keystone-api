@@ -9,6 +9,7 @@ creation.
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
+from django.utils.text import slugify
 from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
@@ -141,6 +142,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
+    slug = serializers.SlugField(read_only=True)
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
@@ -155,6 +157,8 @@ class TeamSerializer(serializers.ModelSerializer):
         """Create and return a new Team from validated data."""
 
         members_data = validated_data.pop("membership", [])
+        validated_data['slug'] = slugify(validated_data['name'])
+
         team = Team.objects.create(**validated_data)
         for membership in members_data:
             Membership.objects.create(team=team, user=membership["user"], role=membership["role"])
@@ -166,6 +170,7 @@ class TeamSerializer(serializers.ModelSerializer):
         """Update and return an existing Team instance."""
 
         members_data = validated_data.pop("membership", [])
+        validated_data['slug'] = slugify(validated_data['name'])
 
         # Update team attributes
         instance.name = validated_data.get("name", instance.name)

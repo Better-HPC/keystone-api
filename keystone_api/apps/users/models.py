@@ -66,6 +66,7 @@ class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
     name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
     users = models.ManyToManyField('User', through=Membership)
     is_active = models.BooleanField(default=True)
     history = AuditlogHistoryField()
