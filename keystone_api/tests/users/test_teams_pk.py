@@ -151,7 +151,7 @@ class SlugHandling(APITestCase):
     def setUp(self) -> None:
         """Authenticate a team owner."""
 
-        self.team = TeamFactory(name="Original Name", slug="original-name")
+        self.team = TeamFactory(name="Original Name")
         self.owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
         self.client.force_authenticate(user=self.owner)
         self.endpoint = self.endpoint_pattern.format(pk=self.team.pk)
@@ -184,3 +184,15 @@ class SlugHandling(APITestCase):
 
         self.team.refresh_from_db()
         self.assertEqual(original_slug, self.team.slug)
+
+    def test_slug_uniqueness_enforced(self) -> None:
+        """Verify slug uniqueness is enforced when updating records."""
+
+        # Create two initial team records
+        TeamFactory(name="Team 1")
+        TeamFactory(name="Team 2")
+        endpoint2 = self.endpoint_pattern.format(pk=1)
+
+        # Rename second team so the name renames unique but the slug conflicts with the first team
+        response1 = self.client.patch(endpoint2, {"name": "Team-1"})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response1.status_code)

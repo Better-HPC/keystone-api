@@ -11,7 +11,6 @@ from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.utils.text import slugify
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 
 from apps.logging.nested import AuditLogSummarySerializer
 from .models import *
@@ -143,7 +142,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
-    slug = serializers.SlugField(read_only=True, validators=[UniqueValidator(queryset=Team.objects.all())])
+    slug = serializers.SlugField(read_only=True)
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
@@ -157,7 +156,11 @@ class TeamSerializer(serializers.ModelSerializer):
         """Ensure the slug generated from the team name is unique."""
 
         if name := attrs.get("name"):
-            attrs['slug'] = slugify(name)
+            slug = slugify(name)
+            if Team.objects.filter(slug=slug).exists():
+                raise serializers.ValidationError({"name": "A team with this name already exists."})
+
+            attrs['slug'] = slug
 
         return super().validate(attrs)
 
