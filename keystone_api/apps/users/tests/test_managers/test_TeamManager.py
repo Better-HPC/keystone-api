@@ -14,19 +14,19 @@ class TeamsForUserMethod(TestCase):
         self.test_user = User.objects.create(username='test_user')
 
         # Team where the test user is an owner
-        self.team1 = Team.objects.create(name='Team1')
+        self.team1 = Team.objects.create(name='Team 1')
         self.team1.add_or_update_member(self.test_user, role=Membership.Role.OWNER)
 
         # Team where the test user is an admin
-        self.team2 = Team.objects.create(name='Team2')
+        self.team2 = Team.objects.create(name='Team 2')
         self.team2.add_or_update_member(self.test_user, role=Membership.Role.ADMIN)
 
         # Team where the test user is an unprivileged member
-        self.team3 = Team.objects.create(name='Team3')
+        self.team3 = Team.objects.create(name='Team 3')
         self.team3.add_or_update_member(self.test_user, role=Membership.Role.MEMBER)
 
         # Team where the test user has no role
-        self.team4 = Team.objects.create(name='Team4')
+        self.team4 = Team.objects.create(name='Team 4')
 
     def test_teams_for_user(self) -> None:
         """Verify all teams are returned for a test user."""

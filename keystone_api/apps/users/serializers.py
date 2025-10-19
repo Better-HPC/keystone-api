@@ -11,6 +11,7 @@ from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.utils.text import slugify
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from apps.logging.nested import AuditLogSummarySerializer
 from .models import *
@@ -142,7 +143,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
-    slug = serializers.SlugField(read_only=True)
+    slug = serializers.SlugField(read_only=True, validators=[UniqueValidator(queryset=Team.objects.all())])
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
@@ -152,13 +153,19 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = "__all__"
 
+    def validate(self, attrs: dict) -> dict:
+        """Ensure the slug generated from the team name is unique."""
+
+        if name := attrs.get("name"):
+            attrs['slug'] = slugify(name)
+
+        return super().validate(attrs)
+
     @transaction.atomic
     def create(self, validated_data: dict) -> Team:
         """Create and return a new Team from validated data."""
 
         members_data = validated_data.pop("membership", [])
-        validated_data['slug'] = slugify(validated_data['name'])
-
         team = Team.objects.create(**validated_data)
         for membership in members_data:
             Membership.objects.create(team=team, user=membership["user"], role=membership["role"])
@@ -170,10 +177,6 @@ class TeamSerializer(serializers.ModelSerializer):
         """Update and return an existing Team instance."""
 
         members_data = validated_data.pop("membership", [])
-
-        # Update slug if name is provided
-        if name := validated_data.get("name"):
-            validated_data["slug"] = slugify(name)
 
         # Update remaining fields
         for attr, value in validated_data.items():
