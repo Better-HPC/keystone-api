@@ -49,8 +49,8 @@ class CreateMethod(TestCase):
         self.assertEqual(team_data["name"], team.name)
         self.assertEqual(0, team.membership.count())
 
-    def test_slug_created_dynamically(self) -> None:
-        """Verify dynamically generated slugs match to the team name."""
+    def test_slug_matches_team_name(self) -> None:
+        """Verify dynamically generated slugs match the team name."""
 
         serializer = TeamSerializer(data={"name": "My Unique Team"})
         self.assertTrue(serializer.is_valid(), serializer.errors)
@@ -136,8 +136,8 @@ class UpdateMethod(TestCase):
         self.assertEqual(Membership.Role.ADMIN, updated_team.membership.get(user=self.user2).role)
         self.assertEqual(Membership.Role.MEMBER, updated_team.membership.get(user=self.user3).role)
 
-    def test_slug_updated_dynamically(self) -> None:
-        """Verify slug values are updated to reflect the team name."""
+    def test_slug_updated_to_match_name(self) -> None:
+        """Verify slug values are automatically updated to reflect the team name."""
 
         update_data = {"name": "Completely New Team Name"}
         serializer = TeamSerializer(instance=self.team)
@@ -147,12 +147,11 @@ class UpdateMethod(TestCase):
         self.assertEqual(slugify("Completely New Team Name"), updated_team.slug)
 
     def test_manual_slug_ignored(self) -> None:
-        """Verify manually specified slugs are ignored."""
+        """Verify manually specified slug values are ignored."""
 
-        update_data = {"name": "Slug Ignored Team", "slug": "wrong-slug"}
+        update_data = {"name": "New Team Name", "slug": "wrong-slug"}
         serializer = TeamSerializer(instance=self.team)
         updated_team = serializer.update(self.team, update_data)
 
         # Ensure the manually provided slug was not used
-        self.assertEqual(slugify("Slug Ignored Team"), updated_team.slug)
-        self.assertNotEqual("wrong-slug", updated_team.slug)
+        self.assertEqual(slugify("New Team Name"), updated_team.slug)

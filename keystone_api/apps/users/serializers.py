@@ -170,19 +170,27 @@ class TeamSerializer(serializers.ModelSerializer):
         """Update and return an existing Team instance."""
 
         members_data = validated_data.pop("membership", [])
-        validated_data['slug'] = slugify(validated_data['name'])
 
-        # Update team attributes
-        instance.name = validated_data.get("name", instance.name)
+        # Update slug if name is provided
+        if name := validated_data.get("name"):
+            validated_data["slug"] = slugify(name)
+
+        # Update remaining fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         instance.save()
 
-        if self.partial is False:
+        # Replace or update memberships
+        if not self.partial:
             instance.membership.all().delete()
 
         # Update membership records
         for membership in members_data:
             Membership.objects.update_or_create(
-                team=instance, user=membership["user"], defaults={"role": membership["role"]}
+                team=instance,
+                user=membership["user"],
+                defaults={"role": membership["role"]},
             )
 
         return instance
