@@ -10,6 +10,7 @@ setup logic.
 import factory
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+from django.utils.text import slugify
 from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
@@ -33,6 +34,12 @@ class TeamFactory(DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Team {n + 1}")
     is_active = True
+
+    @factory.lazy_attribute
+    def slug(self: Team) -> str:
+        """Dynamically generate the team slug from the team name."""
+
+        return slugify(self.name)
 
     @factory.post_generation
     def users(self: Team, create: bool, extracted: list[User] | None, **kwargs) -> None:

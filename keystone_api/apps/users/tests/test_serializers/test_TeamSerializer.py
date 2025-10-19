@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import Membership
 from apps.users.serializers import TeamSerializer
 
