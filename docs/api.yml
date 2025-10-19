@@ -6736,6 +6736,35 @@ paths:
         name: name__startswith
         schema:
           type: string
+      - in: query
+        name: slug
+        schema:
+          type: string
+      - in: query
+        name: slug__contains
+        schema:
+          type: string
+      - in: query
+        name: slug__endswith
+        schema:
+          type: string
+      - in: query
+        name: slug__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: slug__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: slug__startswith
+        schema:
+          type: string
       tags:
       - Users - Teams
       security:
@@ -8950,6 +8979,10 @@ components:
         id:
           type: integer
           readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
         membership:
           type: array
           items:
@@ -9372,6 +9405,10 @@ components:
         id:
           type: integer
           readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
         membership:
           type: array
           items:
@@ -9397,6 +9434,7 @@ components:
       - _history
       - id
       - name
+      - slug
       - users
     TeamRole:
       type: object
