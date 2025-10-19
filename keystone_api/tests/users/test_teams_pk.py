@@ -7,6 +7,8 @@ from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
+ENDPOINT_PATTERN = '/users/teams/{pk}/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -24,7 +26,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/users/teams/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -139,3 +141,46 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put_body={'name': 'New Name', 'members': []},
             patch_body={'name': 'New Name'},
         )
+
+
+class SlugHandling(APITestCase):
+    """Test slug value handling on team updates."""
+
+    endpoint_pattern = ENDPOINT_PATTERN
+
+    def setUp(self) -> None:
+        """Authenticate a team owner."""
+
+        self.team = TeamFactory(name="Original Name", slug="original-name")
+        self.owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
+        self.client.force_authenticate(user=self.owner)
+        self.endpoint = self.endpoint_pattern.format(pk=self.team.pk)
+
+    def test_slug_updates_when_name_changes(self) -> None:
+        """Verify the slug value is automatically updated when the team name changes."""
+
+        response = self.client.patch(self.endpoint, {"name": "Renamed Team"})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        self.team.refresh_from_db()
+        self.assertEqual("renamed-team", self.team.slug)
+
+    def test_slug_not_overridden_manually(self) -> None:
+        """Verify manually specified slug values are ignored during update."""
+
+        response = self.client.patch(self.endpoint, {"name": "Another Name", "slug": "wrong-slug"})
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.team.refresh_from_db()
+        self.assertNotEqual("wrong-slug", self.team.slug)
+        self.assertEqual("another-name", self.team.slug)
+
+    def test_slug_unchanged_if_name_unchanged(self) -> None:
+        """Verify slug values remain unchanged if the name is not modified."""
+
+        original_slug = self.team.slug
+        response = self.client.patch(self.endpoint, {"membership": []})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        self.team.refresh_from_db()
+        self.assertEqual(original_slug, self.team.slug)
