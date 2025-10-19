@@ -172,7 +172,6 @@ class SlugHandling(APITestCase):
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.team.refresh_from_db()
-        self.assertNotEqual("wrong-slug", self.team.slug)
         self.assertEqual("another-name", self.team.slug)
 
     def test_slug_unchanged_if_name_unchanged(self) -> None:

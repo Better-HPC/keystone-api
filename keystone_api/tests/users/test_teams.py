@@ -103,13 +103,12 @@ class SlugHandling(APITestCase, CustomAsserts):
 
         response = self.client.post(self.endpoint, {"name": "Manual Slug Test", "slug": "wrong-slug"})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertNotEqual("wrong-slug", response.data["slug"])
         self.assertEqual("manual-slug-test", response.data["slug"])
 
     def test_slug_uniqueness_enforced(self) -> None:
         """Verify users cannot create teams with the different names but the same slug."""
 
-        # Create first team should succeed
+        # Creating the first team should succeed
         response1 = self.client.post(self.endpoint, {"name": "Team X"})
         self.assertEqual(status.HTTP_201_CREATED, response1.status_code)
 
