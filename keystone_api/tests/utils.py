@@ -115,7 +115,8 @@ class TeamListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -127,7 +128,8 @@ class TeamListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -137,8 +139,9 @@ class TeamListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.generic_user)
         response = self.client.get(self.endpoint)
 
+        response_data = response.json()['results']
         self.assertEqual(200, response.status_code)
-        self.assertEqual(0, len(response.json()))
+        self.assertEqual(0, len(response_data))
 
 
 class UserListFilteringTestMixin:
@@ -182,7 +185,8 @@ class UserListFilteringTestMixin:
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.user_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -194,7 +198,8 @@ class UserListFilteringTestMixin:
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -204,5 +209,6 @@ class UserListFilteringTestMixin:
         self.client.force_authenticate(self.other_user)
         response = self.client.get(self.endpoint)
 
+        response_data = response.json()['results']
         self.assertEqual(200, response.status_code)
-        self.assertEqual(0, len(response.json()))
+        self.assertEqual(0, len(response_data))

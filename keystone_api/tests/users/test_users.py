@@ -128,9 +128,10 @@ class CredentialHandling(APITestCase):
         response = self.client.get('/users/users/')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertTrue(response.json())
+        records = response.json()['results']
+        self.assertTrue(records)
 
-        for record in response.json():
+        for record in records:
             self.assertNotIn('password', record.keys(), f'Password field found in record: {record}')
 
     def test_passwords_are_validated(self) -> None:
