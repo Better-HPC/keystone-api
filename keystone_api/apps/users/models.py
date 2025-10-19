@@ -66,6 +66,13 @@ class Membership(models.Model):
 class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['slug']),
+        ]
+
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
     users = models.ManyToManyField('User', through=Membership)

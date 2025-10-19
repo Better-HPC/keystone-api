@@ -36,4 +36,8 @@ class Migration(migrations.Migration):
             name="slug",
             field=models.SlugField(max_length=255, unique=True),
         ),
+        migrations.AddIndex(
+            model_name='team',
+            index=models.Index(fields=['slug'], name='users_team_slug_7df463_idx'),
+        ),
     ]
