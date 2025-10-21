@@ -50,7 +50,7 @@ Keystone-API comes bundled with the `keystone-api` utility which wraps the stand
 The most common way to launch an API instance during development is with the runserver command:
 
 ```bash
-keystone-api runserver
+keystone-api runserver --noreload
 ```
 
 The `runserver` command launches a development server that automatically reloads when source files change.
