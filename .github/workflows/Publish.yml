@@ -16,7 +16,7 @@ jobs:
 
     environment:
       name: cloudsmith
-      url: https://app.cloudsmith.com/better-hpc/keystone-api
+      url: https://app.cloudsmith.com/better-hpc/keystone
 
     steps:
       - name: Checkout source
@@ -90,7 +90,7 @@ jobs:
 
     environment:
       name: cloudsmith
-      url: https://app.cloudsmith.com/better-hpc/keystone-api
+      url: https://app.cloudsmith.com/better-hpc/keystone
 
     steps:
       - name: Fetch build artifact
