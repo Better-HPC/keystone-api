@@ -167,7 +167,9 @@ class PrivateRecordFiltering(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get(self.endpoint)
-        returned_ids = [r['id'] for r in response.json()]
+
+        results = response.json()['results']
+        returned_ids = [r['id'] for r in results]
 
         expected_ids = [self.public_comment.id, self.private_comment.id]
         self.assertCountEqual(expected_ids, returned_ids)
@@ -177,7 +179,9 @@ class PrivateRecordFiltering(APITestCase):
 
         self.client.force_authenticate(user=self.team_member)
         response = self.client.get(self.endpoint)
-        returned_ids = [r['id'] for r in response.json()]
+
+        results = response.json()['results']
+        returned_ids = [r['id'] for r in results]
 
         expected_ids = [self.public_comment.id, ]
         self.assertCountEqual(expected_ids, returned_ids)
