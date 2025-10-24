@@ -15,6 +15,7 @@ urlpatterns = [
     path("notifications/", include('apps.notifications.urls', namespace="notifications")),
     path('openapi/', include('apps.openapi.urls', namespace='openapi')),
     path('research/', include('apps.research_products.urls', namespace='research')),
+    path('stats/', include('apps.stats.urls', namespace='stats')),
     path('users/', include('apps.users.urls', namespace='users')),
     path('version/', include('apps.version.urls', namespace='version')),
 ]

@@ -7,5 +7,7 @@ from .views import *
 app_name = 'stats'
 
 router = DefaultRouter()
-router.register('stats', GrantStatsViewSet)
-router.register('stats', PublicationStatsViewSet)
+router.register('grants', GrantStatsViewSet)
+router.register('publications', PublicationStatsViewSet)
+
+urlpatterns = router.urls

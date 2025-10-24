@@ -15,7 +15,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.research_products.models import Grant, Publication
-from apps.users.models import Team
+from apps.users.models import Team, User
 from .serializers import *
 
 __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
@@ -45,14 +45,15 @@ __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
 class GrantStatsViewSet(viewsets.ViewSet):
     """ViewSet providing aggregated grant statistics globally and per team."""
 
-    @staticmethod
-    def _summarize(user, team: Team = None) -> dict:
+    queryset = Grant.objects.all()
+
+    def _summarize(self, user: User, team: Team = None) -> dict:
         """Calculate summary statistics for team grants.
 
         Non-staff users are limited to teams where they are a member.
         """
 
-        qs = Grant.objects.all()
+        qs = self.queryset
 
         if not (team or user.is_staff):
             member_teams = Team.objects.filter(memberships__user=user)
@@ -121,14 +122,15 @@ class GrantStatsViewSet(viewsets.ViewSet):
 class PublicationStatsViewSet(viewsets.ViewSet):
     """ViewSet providing aggregated publication statistics globally and per team."""
 
-    @staticmethod
-    def _summarize(user, team=None):
+    queryset = Publication.objects.all()
+
+    def _summarize(self, user: User, team: Team = None) -> dict:
         """Calculate summary statistics for team publications.
 
         Non-staff users are limited to teams where they are a member.
         """
 
-        qs = Publication.objects.all()
+        qs = self.queryset
 
         if not (team or user.is_staff):
             member_teams = Team.objects.filter(memberships__user=user)
