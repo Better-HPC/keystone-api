@@ -13,10 +13,10 @@ __all__ = ['TeamScopedListMixin', 'UserScopedListMixin']
 
 
 class TeamScopedListMixin:
-    """Adds team-based filtering to list views based on user access.
+    """Adds team-based filtering to model viewsets.
 
-    Extends Model Viewset classes by filtering list response data
-    based on user team permissions.
+    Extends `ModelViewset` classes by filtering list response data based on user
+    team membership. Staff users are exempt from record filtering.
     """
 
     # Name of the model field that links an object to a team.
@@ -35,14 +35,14 @@ class TeamScopedListMixin:
 
 
 class UserScopedListMixin:
-    """Adds user-based filtering to list views based on the `user` field.
+    """Adds user-based filtering to model viewsets.
 
     Extends Model Viewset classes by filtering list response data
     to only include data where the `user` field matches the user submitting
-    the request. Staff users are returned all records in the database.
+    the request. Staff users are exempt from record filtering.
     """
 
-    # Name of the model field that links an object to a team.
+    # Name of the model field that links an object to a user.
     # Can be overwritten by subclasses to match the relevant ForeignKey field in a request.
     user_field = 'user'
 

@@ -6,17 +6,17 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
+from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, QuerySet, Sum, When
 from django.db.models.functions import Now
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.research_products.models import Grant, Publication
-from apps.users.models import Team, User
+from apps.users.models import Team
 from .serializers import *
+from ..users.mixins import TeamScopedListMixin
 
 __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
 
@@ -42,28 +42,25 @@ __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
         responses={200: GrantStatsSerializer},
     ),
 )
-class GrantStatsViewSet(viewsets.ViewSet):
+class GrantStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
     """ViewSet providing aggregated grant statistics globally and per team."""
 
-    queryset = Grant.objects.all()
+    def get_queryset(self) -> QuerySet:
+        """Returns the base queryset.
 
-    def _summarize(self, user: User, team: Team = None) -> dict:
+        Required by the `TeamScopedListMixin` mixin.
+        """
+
+        return Grant.objects.all()
+
+    def _summarize(self, team: Team = None) -> dict:
         """Calculate summary statistics for team grants.
 
         Non-staff users are limited to teams where they are a member.
         """
 
-        qs = self.queryset
-
-        if not (team or user.is_staff):
-            member_teams = Team.objects.filter(memberships__user=user)
-            qs = qs.filter(team__in=member_teams)
-
+        qs = self.get_queryset()
         if team:
-            # Enforce membership restriction
-            if not (user.is_staff or team.memberships.filter(user=user).exists()):
-                raise PermissionDenied("You do not have access to this team’s statistics.")
-
             qs = qs.filter(team=team)
 
         funding_total = qs.aggregate(Sum("amount"))["amount__sum"]
@@ -93,7 +90,7 @@ class GrantStatsViewSet(viewsets.ViewSet):
         """Return grant statistics for a specific team."""
 
         team = Team.objects.get(pk=pk)
-        stats = self._summarize(request.user, team)
+        stats = self._summarize(team)
         serializer = GrantStatsSerializer(stats)
         return Response(serializer.data)
 
@@ -119,26 +116,25 @@ class GrantStatsViewSet(viewsets.ViewSet):
         responses={200: PublicationStatsSerializer},
     ),
 )
-class PublicationStatsViewSet(viewsets.ViewSet):
+class PublicationStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
     """ViewSet providing aggregated publication statistics globally and per team."""
 
-    queryset = Publication.objects.all()
+    def get_queryset(self) -> QuerySet:
+        """Returns the base queryset.
 
-    def _summarize(self, user: User, team: Team = None) -> dict:
+        Required by the `TeamScopedListMixin` mixin.
+        """
+
+        return Publication.objects.all()
+
+    def _summarize(self, team: Team = None) -> dict:
         """Calculate summary statistics for team publications.
 
         Non-staff users are limited to teams where they are a member.
         """
 
-        qs = self.queryset
-
-        if not (team or user.is_staff):
-            member_teams = Team.objects.filter(memberships__user=user)
-            qs = qs.filter(team__in=member_teams)
-
+        qs = self.get_queryset()
         if team:
-            if not user.is_staff and not team.memberships.filter(user=user).exists():
-                raise PermissionDenied("You do not have access to this team’s statistics.")
             qs = qs.filter(team=team)
 
         publications_count = qs.count()
@@ -177,6 +173,6 @@ class PublicationStatsViewSet(viewsets.ViewSet):
         """Return grant statistics for a specific team."""
 
         team = Team.objects.get(pk=pk)
-        stats = self._summarize(request.user, team)
+        stats = self._summarize(team)
         serializer = PublicationStatsSerializer(stats)
         return Response(serializer.data)
