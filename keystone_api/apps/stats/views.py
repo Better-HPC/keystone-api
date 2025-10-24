@@ -10,6 +10,7 @@ from statistics import median
 
 from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Sum
 from django.db.models.functions import Now
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
@@ -22,6 +23,27 @@ from .serializers import *
 __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List aggregated grant statistics.",
+        description=(
+            "Returns cumulative grant statistics across all teams visible to the current user. "
+            "Staff users receive statistics for all teams; non-staff users are limited to teams "
+            "where they hold membership."
+        ),
+        tags=["Statistics"],
+        responses={200: GrantStatsSerializer},
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve aggregated grant statistics for a specific team.",
+        description=(
+            "Returns grant statistics scoped to a specific team. "
+            "Access is restricted to staff users or team members."
+        ),
+        tags=["Statistics"],
+        responses={200: GrantStatsSerializer},
+    ),
+)
 class GrantStatsViewSet(viewsets.ViewSet):
     """ViewSet providing aggregated grant statistics globally and per team."""
 
@@ -108,6 +130,27 @@ class GrantStatsViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List aggregated publication statistics.",
+        description=(
+            "Returns cumulative publication statistics across all teams visible to the current user. "
+            "Staff users receive statistics for all teams; non-staff users are limited to teams "
+            "where they hold membership."
+        ),
+        tags=["Statistics"],
+        responses={200: PublicationStatsSerializer},
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve aggregated publication statistics for a specific team.",
+        description=(
+            "Returns publication statistics scoped to a specific team. "
+            "Access is restricted to staff users or team members."
+        ),
+        tags=["Statistics"],
+        responses={200: PublicationStatsSerializer},
+    ),
+)
 class PublicationStatsViewSet(viewsets.ViewSet):
     """ViewSet providing aggregated publication statistics globally and per team."""
 
