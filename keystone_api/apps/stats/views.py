@@ -10,12 +10,14 @@ from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Que
 from django.db.models.functions import Now
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team
 from .serializers import *
+from ..research_products.permissions import IsTeamMember
 from ..users.mixins import TeamScopedListMixin
 
 __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
@@ -44,6 +46,8 @@ __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
 )
 class GrantStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
     """ViewSet providing aggregated grant statistics globally and per team."""
+
+    permission_classes = [IsAuthenticated, IsTeamMember]
 
     def get_queryset(self) -> QuerySet:
         """Returns the base queryset.
@@ -118,6 +122,8 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
 )
 class PublicationStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
     """ViewSet providing aggregated publication statistics globally and per team."""
+
+    permission_classes = [IsAuthenticated, IsTeamMember]
 
     def get_queryset(self) -> QuerySet:
         """Returns the base queryset.
