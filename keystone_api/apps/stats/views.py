@@ -25,9 +25,9 @@ __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
     list=extend_schema(
         summary="List aggregated grant statistics.",
         description=(
-            "Returns cumulative grant statistics across all teams visible to the current user. "
-            "Staff users receive statistics for all teams; non-staff users are limited to teams "
-            "where they hold membership."
+            "Returns cumulative grant statistics across all teams. "
+            "Staff users receive statistics for all teams. "
+            "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
         responses={200: GrantStatsSerializer},
@@ -54,13 +54,13 @@ class GrantStatsViewSet(viewsets.ViewSet):
 
         qs = Grant.objects.all()
 
-        if not user.is_staff:
+        if not (team or user.is_staff):
             member_teams = Team.objects.filter(memberships__user=user)
             qs = qs.filter(team__in=member_teams)
 
         if team:
             # Enforce membership restriction
-            if not user.is_staff and not team.memberships.filter(user=user).exists():
+            if not (user.is_staff or team.memberships.filter(user=user).exists()):
                 raise PermissionDenied("You do not have access to this team’s statistics.")
 
             qs = qs.filter(team=team)
@@ -101,9 +101,9 @@ class GrantStatsViewSet(viewsets.ViewSet):
     list=extend_schema(
         summary="List aggregated publication statistics.",
         description=(
-            "Returns cumulative publication statistics across all teams visible to the current user. "
-            "Staff users receive statistics for all teams; non-staff users are limited to teams "
-            "where they hold membership."
+            "Returns cumulative publication statistics across all teams. "
+            "Staff users receive statistics for all teams. "
+            "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
         responses={200: PublicationStatsSerializer},
@@ -130,7 +130,7 @@ class PublicationStatsViewSet(viewsets.ViewSet):
 
         qs = Publication.objects.all()
 
-        if not user.is_staff:
+        if not (team or user.is_staff):
             member_teams = Team.objects.filter(memberships__user=user)
             qs = qs.filter(team__in=member_teams)
 
