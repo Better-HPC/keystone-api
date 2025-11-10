@@ -40,7 +40,7 @@ RUN apk add --no-cache \
 
 # Install application wheels
 COPY --from=builder /wheels /wheels
-RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
+RUN pip install --no-compile --no-cache-dir /wheels/* && rm -rf /wheels
 
 # Create unprivileged users/directories for running services
 RUN addgroup -g 121 keystone \
