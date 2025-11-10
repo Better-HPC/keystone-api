@@ -31,7 +31,7 @@ ENV DB_NAME=/app/keystone/keystone.db
 ENV LOG_APP_FILE=/app/keystone/keystone.log
 
 # Install runtime dependencies only
-RUN apk add --no-cache \
+RUN apk add  --no-cache --virtual \
     redis \
     curl \
     nginx \
@@ -40,7 +40,7 @@ RUN apk add --no-cache \
 
 # Install application wheels
 COPY --from=builder /wheels /wheels
-RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
+RUN pip install --no-compile --no-cache-dir /wheels/* && rm -rf /wheels
 
 # Create unprivileged users/directories for running services
 RUN addgroup -g 121 keystone \
