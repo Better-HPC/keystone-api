@@ -36,6 +36,7 @@ class GrantFactory(DjangoModelFactory):
     amount = factory.Faker('pydecimal', left_digits=6, right_digits=2, positive=True)
     grant_number = factory.Sequence(lambda n: f"GRANT-{n + 1:05d}")
     start_date = factory.Faker('date_this_decade')
+    description = factory.Faker("paragraph", nb_sentences=10)
 
     team = factory.SubFactory(TeamFactory)
 
@@ -68,7 +69,7 @@ class PublicationFactory(DjangoModelFactory):
         model = Publication
 
     title = factory.Faker("sentence", nb_words=6)
-    abstract = factory.Faker("paragraph", nb_sentences=5)
+    abstract = factory.Faker("paragraph", nb_sentences=10)
     journal = factory.Faker("catch_phrase")
     doi = factory.Faker('doi')
 

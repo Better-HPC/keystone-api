@@ -5422,6 +5422,35 @@ paths:
         schema:
           type: number
       - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: description__contains
+        schema:
+          type: string
+      - in: query
+        name: description__endswith
+        schema:
+          type: string
+      - in: query
+        name: description__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: description__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: description__startswith
+        schema:
+          type: string
+      - in: query
         name: end_date
         schema:
           type: string
@@ -8107,6 +8136,10 @@ components:
         end_date:
           type: string
           format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
         team:
           type: integer
       required:
@@ -8114,7 +8147,6 @@ components:
       - _team
       - agency
       - amount
-      - end_date
       - grant_number
       - id
       - start_date
@@ -8146,12 +8178,15 @@ components:
         end_date:
           type: string
           format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
         team:
           type: integer
       required:
       - agency
       - amount
-      - end_date
       - grant_number
       - id
       - start_date
@@ -9078,6 +9113,10 @@ components:
         end_date:
           type: string
           format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
         team:
           type: integer
     PatchedMembership:
@@ -9180,6 +9219,7 @@ components:
           maxLength: 250
         abstract:
           type: string
+          nullable: true
         published:
           type: string
           format: date
@@ -9370,6 +9410,7 @@ components:
           maxLength: 250
         abstract:
           type: string
+          nullable: true
         published:
           type: string
           format: date
@@ -9399,7 +9440,6 @@ components:
       required:
       - _history
       - _team
-      - abstract
       - id
       - team
       - title
@@ -9415,6 +9455,7 @@ components:
           maxLength: 250
         abstract:
           type: string
+          nullable: true
         published:
           type: string
           format: date
@@ -9442,7 +9483,6 @@ components:
         team:
           type: integer
       required:
-      - abstract
       - id
       - team
       - title
