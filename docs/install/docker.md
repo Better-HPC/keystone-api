@@ -8,7 +8,7 @@ Multi-container deployments are strongly recommended for teams operating at scal
 
 !!! danger
 
-    The default container instance is **not** suitable for production out of the box.
+    The API container deploys with default settings that are **not** suitable for secure production use.
     See the [Settings](settings.md) page for a complete overview of configurable options and recommended settings.
 
 The following command will automatically pull and launch the latest API image.
