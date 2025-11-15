@@ -6359,6 +6359,336 @@ paths:
         receive statistics for all teams. Non-staff users are limited to teams where
         they hold membership.
       summary: List aggregated grant statistics.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: agency
+        schema:
+          type: string
+      - in: query
+        name: agency__contains
+        schema:
+          type: string
+      - in: query
+        name: agency__endswith
+        schema:
+          type: string
+      - in: query
+        name: agency__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: agency__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: agency__startswith
+        schema:
+          type: string
+      - in: query
+        name: amount
+        schema:
+          type: number
+      - in: query
+        name: amount__gt
+        schema:
+          type: number
+      - in: query
+        name: amount__gte
+        schema:
+          type: number
+      - in: query
+        name: amount__in
+        schema:
+          type: array
+          items:
+            type: number
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: amount__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: amount__lt
+        schema:
+          type: number
+      - in: query
+        name: amount__lte
+        schema:
+          type: number
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: description__contains
+        schema:
+          type: string
+      - in: query
+        name: description__endswith
+        schema:
+          type: string
+      - in: query
+        name: description__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: description__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: description__startswith
+        schema:
+          type: string
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__day
+        schema:
+          type: number
+      - in: query
+        name: end_date__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: end_date__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: end_date__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__month
+        schema:
+          type: number
+      - in: query
+        name: end_date__week
+        schema:
+          type: number
+      - in: query
+        name: end_date__week_day
+        schema:
+          type: number
+      - in: query
+        name: end_date__year
+        schema:
+          type: number
+      - in: query
+        name: grant_number
+        schema:
+          type: string
+      - in: query
+        name: grant_number__contains
+        schema:
+          type: string
+      - in: query
+        name: grant_number__endswith
+        schema:
+          type: string
+      - in: query
+        name: grant_number__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: grant_number__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: grant_number__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__day
+        schema:
+          type: number
+      - in: query
+        name: start_date__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: start_date__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: start_date__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__month
+        schema:
+          type: number
+      - in: query
+        name: start_date__week
+        schema:
+          type: number
+      - in: query
+        name: start_date__week_day
+        schema:
+          type: number
+      - in: query
+        name: start_date__year
+        schema:
+          type: number
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: title__contains
+        schema:
+          type: string
+      - in: query
+        name: title__endswith
+        schema:
+          type: string
+      - in: query
+        name: title__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: title__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title__startswith
+        schema:
+          type: string
       tags:
       - Statistics
       security:
@@ -6369,9 +6699,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GrantStats'
+                $ref: '#/components/schemas/PaginatedGrantStatsList'
           description: ''
   /stats/publications/:
     get:
@@ -6380,6 +6708,361 @@ paths:
         users receive statistics for all teams. Non-staff users are limited to teams
         where they hold membership.
       summary: List aggregated publication statistics.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: abstract
+        schema:
+          type: string
+      - in: query
+        name: abstract__contains
+        schema:
+          type: string
+      - in: query
+        name: abstract__endswith
+        schema:
+          type: string
+      - in: query
+        name: abstract__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: abstract__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: abstract__startswith
+        schema:
+          type: string
+      - in: query
+        name: doi
+        schema:
+          type: string
+      - in: query
+        name: doi__contains
+        schema:
+          type: string
+      - in: query
+        name: doi__endswith
+        schema:
+          type: string
+      - in: query
+        name: doi__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: doi__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: doi__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: issue
+        schema:
+          type: string
+      - in: query
+        name: issue__contains
+        schema:
+          type: string
+      - in: query
+        name: issue__endswith
+        schema:
+          type: string
+      - in: query
+        name: issue__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: issue__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: issue__startswith
+        schema:
+          type: string
+      - in: query
+        name: journal
+        schema:
+          type: string
+      - in: query
+        name: journal__contains
+        schema:
+          type: string
+      - in: query
+        name: journal__endswith
+        schema:
+          type: string
+      - in: query
+        name: journal__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: journal__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: journal__startswith
+        schema:
+          type: string
+      - in: query
+        name: published
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__day
+        schema:
+          type: number
+      - in: query
+        name: published__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: published__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: published__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__month
+        schema:
+          type: number
+      - in: query
+        name: published__week
+        schema:
+          type: number
+      - in: query
+        name: published__week_day
+        schema:
+          type: number
+      - in: query
+        name: published__year
+        schema:
+          type: number
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: title__contains
+        schema:
+          type: string
+      - in: query
+        name: title__endswith
+        schema:
+          type: string
+      - in: query
+        name: title__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: title__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title__startswith
+        schema:
+          type: string
+      - in: query
+        name: volume
+        schema:
+          type: string
+      - in: query
+        name: volume__contains
+        schema:
+          type: string
+      - in: query
+        name: volume__endswith
+        schema:
+          type: string
+      - in: query
+        name: volume__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: volume__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: volume__startswith
+        schema:
+          type: string
       tags:
       - Statistics
       security:
@@ -6390,9 +7073,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PublicationStats'
+                $ref: '#/components/schemas/PaginatedPublicationStatsList'
           description: ''
   /users/membership-choices/role/:
     get:
@@ -8686,6 +9367,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Grant'
+    PaginatedGrantStatsList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantStats'
     PaginatedJobStatsList:
       type: object
       required:
@@ -8801,6 +9505,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Publication'
+    PaginatedPublicationStatsList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicationStats'
     PaginatedRequestLogList:
       type: object
       required:
