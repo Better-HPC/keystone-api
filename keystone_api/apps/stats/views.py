@@ -17,7 +17,6 @@ from rest_framework.response import Response
 import plugins.filter
 from apps.research_products.models import Grant, Publication
 from .serializers import *
-from ..research_products.permissions import IsTeamMember
 from ..users.mixins import TeamScopedListMixin
 
 __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
@@ -27,7 +26,7 @@ __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
     list=extend_schema(
         summary="List aggregated grant statistics.",
         description=(
-            "Returns cumulative grant statistics across all teams. "
+            "Returns cumulative grant statistics. "
             "Staff users receive statistics for all teams. "
             "Non-staff users are limited to teams where they hold membership."
         ),
@@ -40,7 +39,7 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
 
     queryset = Grant.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
-    permission_classes = [IsAuthenticated, IsTeamMember]
+    permission_classes = [IsAuthenticated]
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -78,7 +77,7 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
     list=extend_schema(
         summary="List aggregated publication statistics.",
         description=(
-            "Returns cumulative publication statistics across all teams. "
+            "Returns cumulative publication statistics. "
             "Staff users receive statistics for all teams. "
             "Non-staff users are limited to teams where they hold membership."
         ),
@@ -91,7 +90,7 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
 
     queryset = Publication.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
-    permission_classes = [IsAuthenticated, IsTeamMember]
+    permission_classes = [IsAuthenticated]
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.
