@@ -40,7 +40,8 @@ class Grant(models.Model):
     amount = models.DecimalField(decimal_places=2, max_digits=14)
     grant_number = models.CharField(max_length=250)
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     history = AuditlogHistoryField()
 
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -71,7 +72,7 @@ class Publication(models.Model):
         ]
 
     title = models.CharField(max_length=250)
-    abstract = models.TextField()
+    abstract = models.TextField(null=True, blank=True)
     published = models.DateField(null=True, blank=True)
     submitted = models.DateField(null=True, blank=True)
     journal = models.CharField(max_length=100, null=True, blank=True)
