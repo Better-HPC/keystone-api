@@ -6352,6 +6352,48 @@ paths:
       responses:
         '204':
           description: No response body
+  /stats/grants/:
+    get:
+      operationId: stats_grants_list
+      description: Returns cumulative grant statistics across all teams. Staff users
+        receive statistics for all teams. Non-staff users are limited to teams where
+        they hold membership.
+      summary: List aggregated grant statistics.
+      tags:
+      - Statistics
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GrantStats'
+          description: ''
+  /stats/publications/:
+    get:
+      operationId: stats_publications_list
+      description: Returns cumulative publication statistics across all teams. Staff
+        users receive statistics for all teams. Non-staff users are limited to teams
+        where they hold membership.
+      summary: List aggregated publication statistics.
+      tags:
+      - Statistics
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicationStats'
+          description: ''
   /users/membership-choices/role/:
     get:
       operationId: users_membership_choices_role_retrieve
@@ -8152,6 +8194,35 @@ components:
       - start_date
       - team
       - title
+    GrantStats:
+      type: object
+      description: Serializer for aggregated grant statistics.
+      properties:
+        funding_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
+          nullable: true
+        funding_average:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
+          nullable: true
+        grant_count:
+          type: integer
+        active_count:
+          type: integer
+        expired_count:
+          type: integer
+        agency_count:
+          type: integer
+      required:
+      - active_count
+      - agency_count
+      - expired_count
+      - funding_average
+      - funding_total
+      - grant_count
     GrantSummary:
       type: object
       description: Serializer for summarizing grant information in nested representations.
@@ -9443,6 +9514,27 @@ components:
       - id
       - team
       - title
+    PublicationStats:
+      type: object
+      description: Serializer for aggregated publication statistics.
+      properties:
+        review_average:
+          type: string
+          nullable: true
+        publications_count:
+          type: integer
+        submitted_count:
+          type: integer
+        accepted_count:
+          type: integer
+        journals_count:
+          type: integer
+      required:
+      - accepted_count
+      - journals_count
+      - publications_count
+      - review_average
+      - submitted_count
     PublicationSummary:
       type: object
       description: Serializer for summarizing publication information in nested representations.

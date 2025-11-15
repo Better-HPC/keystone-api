@@ -34,15 +34,6 @@ __all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
         tags=["Statistics"],
         responses={200: GrantStatsSerializer},
     ),
-    retrieve=extend_schema(
-        summary="Retrieve aggregated grant statistics for a specific team.",
-        description=(
-            "Returns grant statistics scoped to a specific team. "
-            "Access is restricted to staff users or team members."
-        ),
-        tags=["Statistics"],
-        responses={200: GrantStatsSerializer},
-    ),
 )
 class GrantStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
     """ViewSet providing aggregated grant statistics globally and per team."""
@@ -90,14 +81,6 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
         serializer = GrantStatsSerializer(stats)
         return Response(serializer.data)
 
-    def retrieve(self, request: Request, pk: int) -> Response:
-        """Return grant statistics for a specific team."""
-
-        team = Team.objects.get(pk=pk)
-        stats = self._summarize(team)
-        serializer = GrantStatsSerializer(stats)
-        return Response(serializer.data)
-
 
 @extend_schema_view(
     list=extend_schema(
@@ -106,15 +89,6 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
             "Returns cumulative publication statistics across all teams. "
             "Staff users receive statistics for all teams. "
             "Non-staff users are limited to teams where they hold membership."
-        ),
-        tags=["Statistics"],
-        responses={200: PublicationStatsSerializer},
-    ),
-    retrieve=extend_schema(
-        summary="Retrieve aggregated publication statistics for a specific team.",
-        description=(
-            "Returns publication statistics scoped to a specific team. "
-            "Access is restricted to staff users or team members."
         ),
         tags=["Statistics"],
         responses={200: PublicationStatsSerializer},
@@ -172,13 +146,5 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.ViewSet):
         """Return global publication statistics across all teams where the user is a member."""
 
         stats = self._summarize(request.user)
-        serializer = PublicationStatsSerializer(stats)
-        return Response(serializer.data)
-
-    def retrieve(self, request: Request, pk: int) -> Response:
-        """Return grant statistics for a specific team."""
-
-        team = Team.objects.get(pk=pk)
-        stats = self._summarize(team)
         serializer = PublicationStatsSerializer(stats)
         return Response(serializer.data)
