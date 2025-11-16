@@ -14,6 +14,7 @@ from apps.users.models import Team
 from .models import *
 
 __all__ = [
+    'AllocationPermissions',
     'AllocationRequestPermissions',
     'ClusterPermissions',
     'CommentPermissions',
@@ -48,6 +49,25 @@ class PermissionUtils:
         """Return whether the requested operation was made by a team member."""
 
         return request.user in obj.get_team().get_all_members()
+
+
+class AllocationPermissions(PermissionUtils, permissions.BasePermission):
+    """RBAC permissions model for `Allocation` objects.
+
+    Permissions:
+        - Grants full access to staff users.
+        - Grants read-only access to team members.
+        - Grants write access to team members when the team passes the cluster access-list.
+    """
+
+    def has_object_permission(self, request: Request, view: View, obj: Allocation) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
+        return (
+            self.user_is_staff(request) or
+            (self.is_read_only(request) and self.user_in_team(request, obj)) or
+            (self.user_in_team(request, obj) and request.cluster.verify_access_list(obj.request.team))
+        )
 
 
 class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
@@ -106,7 +126,7 @@ class ClusterPermissions(PermissionUtils, permissions.BasePermission):
 
 class CommentPermissions(PermissionUtils, permissions.BasePermission):
     """Grant write permissions to users in the same team as the requested object.
-
+c
     Permissions:
         - Grants write access to team members and staff users.
     """

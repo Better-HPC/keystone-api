@@ -242,6 +242,24 @@ class Cluster(models.Model):
 
     history = AuditlogHistoryField()
 
+    def verify_access_list(self, team: Team) -> bool:
+        """Verify whether the provided team makes it past the cluster white/black list.
+
+        Args:
+            team: The team to verify access for.
+
+        Returns:
+            A boolean indicating whether the team has cluster access.
+        """
+
+        if self.access_mode == self.AccessChoices.WHITELIST:
+            return self.access_teams.filter(id=team.id).exists()
+
+        elif self.access_mode == self.AccessChoices.BLACKLIST:
+            return not self.access_teams.filter(id=team.id).exists()
+
+        return True
+
     def __str__(self) -> str:  # pragma: nocover
         """Return the cluster name as a string."""
 

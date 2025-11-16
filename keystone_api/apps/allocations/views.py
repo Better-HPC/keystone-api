@@ -226,7 +226,7 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     serializer_class = AllocationSerializer
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
-    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, AllocationPermissions]
     queryset = Allocation.objects.prefetch_related(
         'history'
     ).select_related(
@@ -321,6 +321,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ClusterPermissions]
     search_fields = ['name', 'description']
     serializer_class = ClusterSerializer
+    queryset = Cluster.objects.all()
 
     def get_queryset(self) -> QuerySet[Cluster]:
         """Return a queryset of clusters visible to the requesting user..
@@ -339,7 +340,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
             A queryset for filtered Cluster records.
         """
 
-        qs = Cluster.objects.all()
+        qs = super().get_queryset()
 
         # Only filter for list operations
         if self.action == 'list' and not self.request.user.is_superuser:
