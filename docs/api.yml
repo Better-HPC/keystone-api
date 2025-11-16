@@ -6355,9 +6355,8 @@ paths:
   /stats/grants/:
     get:
       operationId: stats_grants_list
-      description: Returns cumulative grant statistics across all teams. Staff users
-        receive statistics for all teams. Non-staff users are limited to teams where
-        they hold membership.
+      description: Returns cumulative grant statistics. Staff users receive statistics
+        for all teams. Non-staff users are limited to teams where they hold membership.
       summary: List aggregated grant statistics.
       parameters:
       - name: _limit
@@ -6704,9 +6703,9 @@ paths:
   /stats/publications/:
     get:
       operationId: stats_publications_list
-      description: Returns cumulative publication statistics across all teams. Staff
-        users receive statistics for all teams. Non-staff users are limited to teams
-        where they hold membership.
+      description: Returns cumulative publication statistics. Staff users receive
+        statistics for all teams. Non-staff users are limited to teams where they
+        hold membership.
       summary: List aggregated publication statistics.
       parameters:
       - name: _limit
