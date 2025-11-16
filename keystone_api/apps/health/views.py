@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiExample
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from health_check.mixins import CheckMixin
 from rest_framework import serializers
 from rest_framework.generics import GenericAPIView

@@ -7074,6 +7074,391 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedPublicationStatsList'
           description: ''
+  /stats/requests/:
+    get:
+      operationId: stats_requests_list
+      description: Returns cumulative statistics for allocation requests and awards.
+        Staff users receive statistics for all teams. Non-staff users are limited
+        to teams where they hold membership.
+      summary: List aggregated allocation request statistics.
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: active
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__day
+        schema:
+          type: number
+      - in: query
+        name: active__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: active__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: active__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__month
+        schema:
+          type: number
+      - in: query
+        name: active__week
+        schema:
+          type: number
+      - in: query
+        name: active__week_day
+        schema:
+          type: number
+      - in: query
+        name: active__year
+        schema:
+          type: number
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: description__contains
+        schema:
+          type: string
+      - in: query
+        name: description__endswith
+        schema:
+          type: string
+      - in: query
+        name: description__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: description__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: description__startswith
+        schema:
+          type: string
+      - in: query
+        name: expire
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__day
+        schema:
+          type: number
+      - in: query
+        name: expire__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: expire__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: expire__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__month
+        schema:
+          type: number
+      - in: query
+        name: expire__week
+        schema:
+          type: number
+      - in: query
+        name: expire__week_day
+        schema:
+          type: number
+      - in: query
+        name: expire__year
+        schema:
+          type: number
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - AP
+          - CR
+          - DC
+          - PD
+        description: |-
+          * `PD` - Pending
+          * `AP` - Approved
+          * `DC` - Declined
+          * `CR` - Changes Requested
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
+      - in: query
+        name: status__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: status__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: status__startswith
+        schema:
+          type: string
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__hour
+        schema:
+          type: number
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__minute
+        schema:
+          type: number
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__second
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
+      - in: query
+        name: submitter
+        schema:
+          type: integer
+      - in: query
+        name: submitter__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitter__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: title__contains
+        schema:
+          type: string
+      - in: query
+        name: title__endswith
+        schema:
+          type: string
+      - in: query
+        name: title__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: title__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title__startswith
+        schema:
+          type: string
+      tags:
+      - Statistics
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAllocationRequestStatsList'
+          description: ''
   /users/membership-choices/role/:
     get:
       operationId: users_membership_choices_role_retrieve
@@ -8468,6 +8853,80 @@ components:
       - submitted
       - team
       - title
+    AllocationRequestStats:
+      type: object
+      description: Aggregated statistics for allocation requests and awards.
+      properties:
+        request_count:
+          type: integer
+        request_pending_count:
+          type: integer
+        request_approved_count:
+          type: integer
+        request_declined_count:
+          type: integer
+        request_upcoming_count:
+          type: integer
+        request_active_count:
+          type: integer
+        request_expired_count:
+          type: integer
+        su_requested_total:
+          type: number
+          format: double
+        su_awarded_total:
+          type: number
+          format: double
+        su_awarded_upcoming:
+          type: number
+          format: double
+        su_awarded_active:
+          type: number
+          format: double
+        su_awarded_expired:
+          type: number
+          format: double
+        su_finalized_total:
+          type: number
+          format: double
+        per_cluster:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: number
+              format: double
+        approval_ratio:
+          type: number
+          format: double
+        utilization_ratio:
+          type: number
+          format: double
+        days_pending_average:
+          type: number
+          format: double
+        days_active_average:
+          type: number
+          format: double
+      required:
+      - approval_ratio
+      - days_active_average
+      - days_pending_average
+      - per_cluster
+      - request_active_count
+      - request_approved_count
+      - request_count
+      - request_declined_count
+      - request_expired_count
+      - request_pending_count
+      - request_upcoming_count
+      - su_awarded_active
+      - su_awarded_expired
+      - su_awarded_total
+      - su_awarded_upcoming
+      - su_finalized_total
+      - su_requested_total
+      - utilization_ratio
     AllocationRequestStatusChoices:
       type: object
       properties:
@@ -8878,6 +9337,14 @@ components:
       type: object
       description: Serializer for aggregated grant statistics.
       properties:
+        grant_count:
+          type: integer
+        active_count:
+          type: integer
+        expired_count:
+          type: integer
+        agency_count:
+          type: integer
         funding_total:
           type: string
           format: decimal
@@ -8888,14 +9355,6 @@ components:
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
           nullable: true
-        grant_count:
-          type: integer
-        active_count:
-          type: integer
-        expired_count:
-          type: integer
-        agency_count:
-          type: integer
       required:
       - active_count
       - agency_count
@@ -9228,6 +9687,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AllocationRequest'
+    PaginatedAllocationRequestStatsList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationRequestStats'
     PaginatedAllocationReviewList:
       type: object
       required:
@@ -10244,9 +10726,6 @@ components:
       type: object
       description: Serializer for aggregated publication statistics.
       properties:
-        review_average:
-          type: string
-          nullable: true
         publications_count:
           type: integer
         submitted_count:
@@ -10255,6 +10734,9 @@ components:
           type: integer
         journals_count:
           type: integer
+        review_average:
+          type: string
+          nullable: true
       required:
       - accepted_count
       - journals_count

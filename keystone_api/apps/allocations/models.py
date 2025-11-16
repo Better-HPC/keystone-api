@@ -271,7 +271,7 @@ class Comment(TeamModelInterface, models.Model):
 class JobStats(TeamModelInterface, models.Model):
     """Slurm Job status and statistics."""
 
-    jobid = models.CharField(max_length=64, unique=True) # Slurm ID, not database ID
+    jobid = models.CharField(max_length=64, unique=True)  # Slurm ID, not database ID
     account = models.CharField(max_length=128, null=True, blank=True)
     allocnodes = models.CharField(max_length=128, null=True, blank=True)
     alloctres = models.TextField(null=True, blank=True)

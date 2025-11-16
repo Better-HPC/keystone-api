@@ -7,7 +7,6 @@ from django.test import override_settings, TestCase
 from apps.notifications.models import Notification
 from apps.notifications.shortcuts import send_notification
 from apps.users.factories import UserFactory
-from apps.users.models import User
 
 
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')

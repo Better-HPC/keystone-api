@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
-from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import Membership
 from apps.users.serializers import PrivilegedUserSerializer
 
