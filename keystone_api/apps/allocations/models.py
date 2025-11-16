@@ -238,7 +238,7 @@ class Cluster(models.Model):
 
     # Regulate user access
     access_mode = models.CharField(max_length=2, choices=AccessChoices.choices, default=AccessChoices.OPEN)
-    access_teams = models.ManyToManyField(Team)
+    access_teams = models.ManyToManyField(Team, null=True, blank=True)
 
     history = AuditlogHistoryField()
 
