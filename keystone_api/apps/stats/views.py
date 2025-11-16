@@ -63,13 +63,13 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
         qs_expired = qs.filter(expire__lt=now_ts)
 
         # Request lifecycle counts
-        total_count = qs.count()
-        pending_count = qs.filter(status=AllocationRequest.StatusChoices.PENDING).count()
-        approved_count = qs.filter(status=AllocationRequest.StatusChoices.APPROVED).count()
-        declined_count = qs.filter(status=AllocationRequest.StatusChoices.DECLINED).count()
-        upcoming_count = qs_upcoming.count()
-        active_count = qs_active.count()
-        expired_count = qs_expired.count()
+        request_count = qs.count()
+        request_pending_count = qs.filter(status=AllocationRequest.StatusChoices.PENDING).count()
+        request_approved_count = qs.filter(status=AllocationRequest.StatusChoices.APPROVED).count()
+        request_declined_count = qs.filter(status=AllocationRequest.StatusChoices.DECLINED).count()
+        request_upcoming_count = qs_upcoming.count()
+        request_active_count = qs_active.count()
+        request_expired_count = qs_expired.count()
 
         # Award totals across all related allocations
         su_requested_total = qs.aggregate(total=Sum('allocation__requested'))['total'] or 0
@@ -100,7 +100,7 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             }
 
         # Ratios
-        approval_ratio = approved_count / total_count if total_count else 0.0
+        approval_ratio = request_approved_count / request_count if request_count else 0.0
         utilization_ratio = (
             su_finalized_total / su_awarded_total
             if su_awarded_total and su_awarded_total > 0
@@ -108,17 +108,17 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
         )
 
         # Timing metrics
-        avg_time_to_activation_days = qs.aggregate(Avg('time_to_activation'))['time_to_activation__avg']
-        avg_allocation_lifetime_days = qs.aggregate(Avg('allocation_lifetime'))['allocation_lifetime__avg']
+        days_to_activation_avg = qs.aggregate(Avg('time_to_activation'))['time_to_activation__avg']
+        days_lifetime_avg = qs.aggregate(Avg('allocation_lifetime'))['allocation_lifetime__avg']
 
         return {
-            "total_count": total_count,
-            "pending_count": pending_count,
-            "approved_count": approved_count,
-            "declined_count": declined_count,
-            "upcoming_count": upcoming_count,
-            "active_count": active_count,
-            "expired_count": expired_count,
+            "request_count": request_count,
+            "request_pending_count": request_pending_count,
+            "request_approved_count": request_approved_count,
+            "request_declined_count": request_declined_count,
+            "request_upcoming_count": request_upcoming_count,
+            "request_active_count": request_active_count,
+            "request_expired_count": request_expired_count,
             "su_requested_total": su_requested_total,
             "su_awarded_total": su_awarded_total,
             "su_awarded_upcoming": su_awarded_upcoming,
@@ -128,8 +128,8 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             "per_cluster": per_cluster_structured,
             "approval_ratio": approval_ratio,
             "utilization_ratio": utilization_ratio,
-            "avg_time_to_activation_days": avg_time_to_activation_days.days if avg_time_to_activation_days else None,
-            "avg_allocation_lifetime_days": avg_allocation_lifetime_days.days if avg_allocation_lifetime_days else None,
+            "days_to_activation_avg": days_to_activation_avg.days if days_to_activation_avg else None,
+            "days_lifetime_avg": days_lifetime_avg.days if days_lifetime_avg else None,
         }
 
     def list(self, request: Request) -> Response:

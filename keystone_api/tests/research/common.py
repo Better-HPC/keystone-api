@@ -11,6 +11,7 @@ from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership, Team, User
 from tests.utils import CustomAsserts
 
+# Type indicating a mixin class expects to be used with a subclass of APITestCase
 TApiTestCase = TypeVar("TApiTestCase", bound=APITestCase)
 
 
