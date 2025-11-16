@@ -12,7 +12,7 @@ from jinja2 import StrictUndefined
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
-DEBUG=True
+
 # Application metadata
 
 dist = importlib.metadata.distribution('keystone-api')
