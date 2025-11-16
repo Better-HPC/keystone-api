@@ -54,8 +54,6 @@ class EndpointPermissions(CustomAsserts, APITestCase):
         )
 
 
-# TODO: Fix failing decimal comparison
-
 class TeamGrantFiltering(APITestCase):
     """Test returned grant metrics are filtered by user team membership."""
 
@@ -92,11 +90,12 @@ class TeamGrantFiltering(APITestCase):
         today = datetime.date.today()
 
         # Funding totals
-        self.assertEqual(sum(g.amount for g in records), stats["funding_total"])
+        expected_funding_total = sum(float(g.amount) for g in records)
+        self.assertAlmostEqual(expected_funding_total, float(stats["funding_total"]), places=2)
 
         # Funding average
-        expected_avg = (sum(g.amount for g in records) / len(records) if records else None)
-        self.assertEqual(expected_avg, stats["funding_average"])
+        expected_avg = expected_funding_total / len(records)
+        self.assertAlmostEqual(expected_avg, float(stats["funding_average"]), places=2)
 
         # Grant count
         self.assertEqual(len(records), stats["grant_count"])
