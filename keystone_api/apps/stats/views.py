@@ -7,7 +7,7 @@ URLs to business logic.
 """
 
 from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
-from django.db.models.functions import Now
+from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -17,9 +17,112 @@ from rest_framework.response import Response
 import plugins.filter
 from apps.research_products.models import Grant, Publication
 from .serializers import *
+from ..allocations.models import AllocationRequest
 from ..users.mixins import TeamScopedListMixin
 
-__all__ = ['GrantStatsViewSet', 'PublicationStatsViewSet']
+__all__ = ['AllocationRequestStatsViewSet', 'GrantStatsViewSet', 'PublicationStatsViewSet']
+
+
+@extend_schema_view(
+    list=extend_schema(
+        summary="List aggregated allocation request statistics.",
+        description=(
+            "Returns cumulative statistics for allocation requests and awards. "
+            "Staff users receive statistics for all teams. "
+            "Non-staff users are limited to teams where they hold membership."
+        ),
+        tags=["Statistics"],
+        responses={200: AllocationRequestStatsSerializer},
+    ),
+)
+class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
+    """ViewSet providing aggregated allocation request statistics globally and per team."""
+
+    queryset = AllocationRequest.objects.all()
+    filter_backends = [plugins.filter.AdvancedFilterBackend]
+    permission_classes = [IsAuthenticated]
+
+    def _summarize(self) -> dict:
+        """Compute allocation request and award statistics."""
+
+        qs = self.filter_queryset(self.get_queryset())
+
+        # Request lifecycle counts
+        total_count = qs.count()
+        pending_count = qs.filter(status="pending").count()
+        approved_count = qs.filter(status="approved").count()
+        declined_count = qs.filter(status="declined").count()
+        upcoming_count = qs.filter(start_date__gt=now()).count()
+        active_count = qs.filter(start_date__lte=now(), end_date__gte=now()).count()
+        expired_count = qs.filter(end_date__lt=now()).count()
+
+        # Award totals
+        su_requested_total = qs.aggregate(Sum("su_requested"))["su_requested__sum"]
+        su_awarded_total = qs.aggregate(Sum("su_awarded"))["su_awarded__sum"]
+        su_finalized_total = qs.aggregate(Sum("su_finalized"))["su_finalized__sum"]
+
+        # Award totals per cluster
+        per_cluster = (
+            qs.values("cluster_id")
+            .annotate(
+                requested=Sum("su_requested"),
+                awarded=Sum("su_awarded"),
+                finalized=Sum("su_finalized"),
+            )
+        )
+
+        per_cluster_structured = {
+            str(row["cluster_id"]): {
+                "requested": row["requested"],
+                "awarded": row["awarded"],
+                "finalized": row["finalized"],
+            }
+            for row in per_cluster
+        }
+
+        # Ratios (guard against division by zero)
+        approval_ratio = (
+            approved_count / total_count if total_count > 0 else 0.0
+        )
+        utilization_ratio = (
+            (su_finalized_total / su_awarded_total)
+            if su_awarded_total and su_awarded_total > 0
+            else 0.0
+        )
+
+        # Timing metrics
+        avg_time_to_activation_days = qs.aggregate(
+            Avg("time_to_activation_days")
+        )["time_to_activation_days__avg"]
+
+        avg_allocation_lifetime_days = qs.aggregate(
+            Avg("lifetime_days")
+        )["lifetime_days__avg"]
+
+        return {
+            "total_count": total_count,
+            "pending_count": pending_count,
+            "approved_count": approved_count,
+            "declined_count": declined_count,
+            "upcoming_count": upcoming_count,
+            "active_count": active_count,
+            "expired_count": expired_count,
+            "su_total_requested": su_requested_total,
+            "su_total_awarded": su_awarded_total,
+            "su_total_finalized": su_finalized_total,
+            "per_cluster": per_cluster_structured,
+            "approval_ratio": approval_ratio,
+            "utilization_ratio": utilization_ratio,
+            "avg_time_to_activation_days": avg_time_to_activation_days,
+            "avg_allocation_lifetime_days": avg_allocation_lifetime_days,
+        }
+
+    def list(self, request: Request) -> Response:
+        """Return statistics calculated from records matching user permissions and query params."""
+
+        stats = self._summarize()
+        serializer = AllocationRequestStatsSerializer(stats)
+        return Response(serializer.data)
 
 
 @extend_schema_view(
@@ -49,12 +152,12 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
 
         qs = self.filter_queryset(self.get_queryset())
 
+        grant_count = qs.count()
+        active_count = qs.filter(end_date__gte=now()).count()
+        expired_count = qs.filter(end_date__lt=now()).count()
+        agency_count = qs.values("agency").distinct().count()
         funding_total = qs.aggregate(Sum("amount"))["amount__sum"]
         funding_average = qs.aggregate(Avg("amount"))["amount__avg"]
-        grant_count = qs.count()
-        active_count = qs.filter(end_date__gte=Now()).count()
-        expired_count = qs.filter(end_date__lt=Now()).count()
-        agency_count = qs.values("agency").distinct().count()
 
         return {
             "funding_total": funding_total,

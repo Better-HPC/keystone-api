@@ -8,7 +8,44 @@ creation.
 
 from rest_framework import serializers
 
-__all__ = ['GrantStatsSerializer', 'PublicationStatsSerializer']
+__all__ = [
+    'AllocationRequestStatsSerializer',
+    'GrantStatsSerializer',
+    'PublicationStatsSerializer',
+]
+
+
+class AllocationRequestStatsSerializer(serializers.Serializer):
+    """Aggregated statistics for allocation requests and awards."""
+
+    # Request lifecycle metrics
+    total_count = serializers.IntegerField()
+    pending_count = serializers.IntegerField()
+    approved_count = serializers.IntegerField()
+    declined_count = serializers.IntegerField()
+    upcoming_count = serializers.IntegerField()
+    active_count = serializers.IntegerField()
+    expired_count = serializers.IntegerField()
+
+    # Award totals
+    su_requested_total = serializers.FloatField()
+    su_awarded_total = serializers.FloatField()
+    su_finalized_total = serializers.FloatField()
+
+    # Award totals by cluster
+    per_cluster = serializers.DictField(
+        child=serializers.DictField(
+            child=serializers.FloatField(),
+        ),
+    )
+
+    # Ratios
+    approval_ratio = serializers.FloatField()
+    utilization_ratio = serializers.FloatField()
+
+    # Timing metrics
+    avg_time_to_activation_days = serializers.FloatField()
+    avg_allocation_lifetime_days = serializers.FloatField()
 
 
 class GrantStatsSerializer(serializers.Serializer):
