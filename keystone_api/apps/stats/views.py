@@ -6,8 +6,6 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-import plugins.filter
-from apps.research_products.models import Grant, Publication
 from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -16,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+import plugins.filter
+from apps.research_products.models import Grant, Publication
 from .serializers import *
 from ..allocations.models import AllocationRequest
 from ..users.mixins import TeamScopedListMixin

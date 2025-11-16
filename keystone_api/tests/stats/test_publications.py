@@ -1,10 +1,11 @@
 """Function tests for the `/stats/publications/` endpoint."""
 
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from apps.research_products.factories import PublicationFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
-from rest_framework import status
-from rest_framework.test import APITestCase
 from tests.utils import CustomAsserts
 
 ENDPOINT = '/stats/publications/'

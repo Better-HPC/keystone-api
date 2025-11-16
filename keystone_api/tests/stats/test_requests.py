@@ -1,11 +1,10 @@
 """Function tests for the `/stats/requests/` endpoint."""
 
-from apps.users.factories import UserFactory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationRequestFactory
-from apps.users.factories import MembershipFactory
+from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
