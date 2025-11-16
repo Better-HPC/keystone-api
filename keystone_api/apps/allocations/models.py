@@ -225,9 +225,21 @@ class Cluster(models.Model):
             models.Index(fields=['name']),
         ]
 
+    class AccessChoices(models.TextChoices):
+        """Enumerated choices for the `access` field."""
+
+        WHITELIST = 'WL', 'Whitelist'
+        BLACKLIST = 'BL', 'Blacklist'
+        OPEN = 'OP', 'Open'
+
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)
     enabled = models.BooleanField(default=True)
+
+    # Regulate user access
+    access_mode = models.CharField(max_length=2, choices=AccessChoices.choices, default=AccessChoices.OPEN)
+    access_teams = models.ManyToManyField(Team)
+
     history = AuditlogHistoryField()
 
     def __str__(self) -> str:  # pragma: nocover
