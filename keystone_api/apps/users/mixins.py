@@ -13,7 +13,7 @@ __all__ = ['TeamScopedListMixin', 'UserScopedListMixin']
 
 
 class TeamScopedListMixin:
-    """Adds team-based filtering to model viewsets.
+    """Adds team-based filtering to list operations in model viewsets.
 
     Extends `ModelViewset` classes by filtering list response data based on user
     team membership. Staff users are exempt from record filtering.
@@ -35,7 +35,7 @@ class TeamScopedListMixin:
 
 
 class UserScopedListMixin:
-    """Adds user-based filtering to model viewsets.
+    """Adds user-based filtering to list operations in model viewsets.
 
     Extends Model Viewset classes by filtering list response data
     to only include data where the `user` field matches the user submitting
