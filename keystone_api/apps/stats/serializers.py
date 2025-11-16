@@ -30,6 +30,9 @@ class AllocationRequestStatsSerializer(serializers.Serializer):
     # Award totals
     su_requested_total = serializers.FloatField()
     su_awarded_total = serializers.FloatField()
+    su_awarded_upcoming = serializers.FloatField()
+    su_awarded_active = serializers.FloatField()
+    su_awarded_expired = serializers.FloatField()
     su_finalized_total = serializers.FloatField()
 
     # Award totals by cluster

@@ -6,6 +6,8 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+import plugins.filter
+from apps.research_products.models import Grant, Publication
 from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -14,8 +16,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-import plugins.filter
-from apps.research_products.models import Grant, Publication
 from .serializers import *
 from ..allocations.models import AllocationRequest
 from ..users.mixins import TeamScopedListMixin
@@ -45,59 +45,71 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
 
-        qs = self.filter_queryset(self.get_queryset())
-
-        # Request lifecycle counts
-        total_count = qs.count()
-        pending_count = qs.filter(status="pending").count()
-        approved_count = qs.filter(status="approved").count()
-        declined_count = qs.filter(status="declined").count()
-        upcoming_count = qs.filter(start_date__gt=now()).count()
-        active_count = qs.filter(start_date__lte=now(), end_date__gte=now()).count()
-        expired_count = qs.filter(end_date__lt=now()).count()
-
-        # Award totals
-        su_requested_total = qs.aggregate(Sum("su_requested"))["su_requested__sum"]
-        su_awarded_total = qs.aggregate(Sum("su_awarded"))["su_awarded__sum"]
-        su_finalized_total = qs.aggregate(Sum("su_finalized"))["su_finalized__sum"]
-
-        # Award totals per cluster
-        per_cluster = (
-            qs.values("cluster_id")
-            .annotate(
-                requested=Sum("su_requested"),
-                awarded=Sum("su_awarded"),
-                finalized=Sum("su_finalized"),
+        now_ts = now()
+        qs = self.filter_queryset(self.get_queryset()).annotate(
+            time_to_activation=ExpressionWrapper(
+                F('active') - F('submitted'),
+                output_field=DurationField()
+            ),
+            allocation_lifetime=ExpressionWrapper(
+                F('expire') - F('active'),
+                output_field=DurationField()
             )
         )
 
-        per_cluster_structured = {
-            str(row["cluster_id"]): {
-                "requested": row["requested"],
-                "awarded": row["awarded"],
-                "finalized": row["finalized"],
-            }
-            for row in per_cluster
-        }
+        # Lifecycle subsets
+        qs_upcoming = qs.filter(active__gt=now_ts)
+        qs_active = qs.filter(active__lte=now_ts, expire__gte=now_ts)
+        qs_expired = qs.filter(expire__lt=now_ts)
 
-        # Ratios (guard against division by zero)
-        approval_ratio = (
-            approved_count / total_count if total_count > 0 else 0.0
-        )
+        # Request lifecycle counts
+        total_count = qs.count()
+        pending_count = qs.filter(status=AllocationRequest.StatusChoices.PENDING).count()
+        approved_count = qs.filter(status=AllocationRequest.StatusChoices.APPROVED).count()
+        declined_count = qs.filter(status=AllocationRequest.StatusChoices.DECLINED).count()
+        upcoming_count = qs_upcoming.count()
+        active_count = qs_active.count()
+        expired_count = qs_expired.count()
+
+        # Award totals across all related allocations
+        su_requested_total = qs.aggregate(total=Sum('allocation__requested'))['total'] or 0
+        su_awarded_total = qs.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_finalized_total = qs.aggregate(total=Sum('allocation__final'))['total'] or 0
+
+        su_awarded_upcoming = qs_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_awarded_active = qs_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_awarded_expired = qs_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+
+        # Award totals per cluster
+        clusters = qs.values('allocation__cluster_id').distinct()
+        per_cluster_structured = {}
+        for cluster in clusters:
+            cluster_id = cluster['allocation__cluster_id']
+            cluster_qs = qs.filter(allocation__cluster_id=cluster_id)
+            cluster_upcoming = cluster_qs.filter(active__gt=now_ts)
+            cluster_active = cluster_qs.filter(active__lte=now_ts, expire__gte=now_ts)
+            cluster_expired = cluster_qs.filter(expire__lt=now_ts)
+
+            per_cluster_structured[str(cluster_id)] = {
+                "su_requested_total": cluster_qs.aggregate(total=Sum('allocation__requested'))['total'] or 0,
+                "su_awarded_total": cluster_qs.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
+                "su_awarded_upcoming": cluster_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
+                "su_awarded_active": cluster_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
+                "su_awarded_expired": cluster_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
+                "su_finalized_total": cluster_qs.aggregate(total=Sum('allocation__final'))['total'] or 0,
+            }
+
+        # Ratios
+        approval_ratio = approved_count / total_count if total_count else 0.0
         utilization_ratio = (
-            (su_finalized_total / su_awarded_total)
+            su_finalized_total / su_awarded_total
             if su_awarded_total and su_awarded_total > 0
             else 0.0
         )
 
         # Timing metrics
-        avg_time_to_activation_days = qs.aggregate(
-            Avg("time_to_activation_days")
-        )["time_to_activation_days__avg"]
-
-        avg_allocation_lifetime_days = qs.aggregate(
-            Avg("lifetime_days")
-        )["lifetime_days__avg"]
+        avg_time_to_activation_days = qs.aggregate(Avg('time_to_activation'))['time_to_activation__avg']
+        avg_allocation_lifetime_days = qs.aggregate(Avg('allocation_lifetime'))['allocation_lifetime__avg']
 
         return {
             "total_count": total_count,
@@ -107,14 +119,17 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             "upcoming_count": upcoming_count,
             "active_count": active_count,
             "expired_count": expired_count,
-            "su_total_requested": su_requested_total,
-            "su_total_awarded": su_awarded_total,
-            "su_total_finalized": su_finalized_total,
+            "su_requested_total": su_requested_total,
+            "su_awarded_total": su_awarded_total,
+            "su_awarded_upcoming": su_awarded_upcoming,
+            "su_awarded_active": su_awarded_active,
+            "su_awarded_expired": su_awarded_expired,
+            "su_finalized_total": su_finalized_total,
             "per_cluster": per_cluster_structured,
             "approval_ratio": approval_ratio,
             "utilization_ratio": utilization_ratio,
-            "avg_time_to_activation_days": avg_time_to_activation_days,
-            "avg_allocation_lifetime_days": avg_allocation_lifetime_days,
+            "avg_time_to_activation_days": avg_time_to_activation_days.days if avg_time_to_activation_days else None,
+            "avg_allocation_lifetime_days": avg_allocation_lifetime_days.days if avg_allocation_lifetime_days else None,
         }
 
     def list(self, request: Request) -> Response:

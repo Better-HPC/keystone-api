@@ -9,5 +9,6 @@ app_name = 'stats'
 router = DefaultRouter()
 router.register('grants', GrantStatsViewSet, basename='grants')
 router.register('publications', PublicationStatsViewSet, basename='publications')
+router.register('requests', AllocationRequestStatsViewSet, basename='requests')
 
 urlpatterns = router.urls
