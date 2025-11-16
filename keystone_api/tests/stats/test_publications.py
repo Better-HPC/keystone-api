@@ -3,14 +3,18 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.factories import UserFactory
+from apps.research_products.factories import PublicationFactory
+from apps.users.factories import MembershipFactory, UserFactory
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+ENDPOINT = '/stats/publications/'
 
 
 class EndpointPermissions(CustomAsserts, APITestCase):
     """Test endpoint user permissions."""
 
-    endpoint = '/stats/publications/'
+    endpoint = ENDPOINT
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -47,3 +51,63 @@ class EndpointPermissions(CustomAsserts, APITestCase):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+
+class TeamRecordFiltering(APITestCase):
+    """Test returned metrics are filtered by user team membership."""
+
+    endpoint = ENDPOINT
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        membership_1 = MembershipFactory(role=Membership.Role.MEMBER)
+        self.team_1 = membership_1.team
+        self.team_1_user = membership_1.user
+        self.team_1_records = [
+            PublicationFactory(team=self.team_1) for _ in range(3)
+        ]
+
+        membership_2 = MembershipFactory(role=Membership.Role.MEMBER)
+        self.user_2 = membership_2.user
+        self.team_2 = membership_2.team
+        self.team_2_records = [
+            PublicationFactory(team=self.team_2) for _ in range(3)
+        ]
+
+        self.staff_user = UserFactory(is_staff=True)
+        self.all_records = self.team_1_records + self.team_2_records
+
+    def _assert_stats(self, stats: dict, records: list) -> None:
+        """Assert returned statistics match the provided records.
+
+        Args:
+            stats: Statistics returned by the API.
+            records: The records used to calculate the statistics.
+        """
+
+        # Publication count
+        self.assertEqual(len(records), stats["publications_count"])
+
+        # Submitted publication count (non-null submitted timestamp)
+        self.assertEqual(sum(1 for p in records if p.submitted), stats["submitted_count"])
+
+        # Accepted publications count (non-null published timestamp)
+        self.assertEqual(sum(1 for p in records if p.published), stats["accepted_count"])
+
+        # Journals count
+        self.assertEqual(len({p.journal for p in records}), stats["journals_count"])
+
+    def test_generic_user_statistics(self) -> None:
+        """Verify general users are only returned statistics from teams they are a member of."""
+
+        self.client.force_authenticate(self.team_1_user)
+        response = self.client.get(self.endpoint)
+        self._assert_stats(response.json(), self.team_1_records)
+
+    def test_staff_user_statistics(self) -> None:
+        """Verify staff users are returned aggregated statistics across all teams."""
+
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.endpoint)
+        self._assert_stats(response.json(), self.all_records)
