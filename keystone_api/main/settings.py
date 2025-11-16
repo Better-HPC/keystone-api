@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'apps.openapi',
     'apps.research_products',
     'apps.scheduler',
+    'apps.stats',
     'apps.users',
 ]
 
