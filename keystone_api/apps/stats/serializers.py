@@ -47,8 +47,8 @@ class AllocationRequestStatsSerializer(serializers.Serializer):
     utilization_ratio = serializers.FloatField()
 
     # Timing metrics
-    days_to_activation_avg = serializers.FloatField()
-    days_lifetime_avg = serializers.FloatField()
+    days_pending_average = serializers.FloatField()
+    days_active_average = serializers.FloatField()
 
 
 class GrantStatsSerializer(serializers.Serializer):

@@ -47,11 +47,11 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
 
         now_ts = now()
         qs = self.filter_queryset(self.get_queryset()).annotate(
-            time_to_activation=ExpressionWrapper(
+            days_pending=ExpressionWrapper(
                 F('active') - F('submitted'),
                 output_field=DurationField()
             ),
-            allocation_lifetime=ExpressionWrapper(
+            days_active=ExpressionWrapper(
                 F('expire') - F('active'),
                 output_field=DurationField()
             )
@@ -108,8 +108,8 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
         )
 
         # Timing metrics
-        days_to_activation_avg = qs.aggregate(Avg('time_to_activation'))['time_to_activation__avg']
-        days_lifetime_avg = qs.aggregate(Avg('allocation_lifetime'))['allocation_lifetime__avg']
+        days_pending_average = qs.aggregate(Avg('days_pending'))['days_pending__avg']
+        days_active_average = qs.aggregate(Avg('days_active'))['days_active__avg']
 
         return {
             "request_count": request_count,
@@ -128,8 +128,8 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             "per_cluster": per_cluster_structured,
             "approval_ratio": approval_ratio,
             "utilization_ratio": utilization_ratio,
-            "days_to_activation_avg": days_to_activation_avg.days if days_to_activation_avg else None,
-            "days_lifetime_avg": days_lifetime_avg.days if days_lifetime_avg else None,
+            "days_pending_average": days_pending_average.days if days_pending_average else None,
+            "days_active_average": days_active_average.days if days_active_average else None,
         }
 
     def list(self, request: Request) -> Response:
