@@ -93,10 +93,10 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             per_cluster_structured[str(cluster_id)] = {
                 "su_requested_total": cluster_qs.aggregate(total=Sum('allocation__requested'))['total'] or 0,
                 "su_awarded_total": cluster_qs.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
+                "su_finalized_total": cluster_qs.aggregate(total=Sum('allocation__final'))['total'] or 0,
                 "su_awarded_upcoming": cluster_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
                 "su_awarded_active": cluster_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
                 "su_awarded_expired": cluster_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
-                "su_finalized_total": cluster_qs.aggregate(total=Sum('allocation__final'))['total'] or 0,
             }
 
         # Ratios
