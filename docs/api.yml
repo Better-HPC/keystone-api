@@ -1400,64 +1400,6 @@ paths:
         schema:
           type: string
       - in: query
-        name: allocnodes
-        schema:
-          type: string
-      - in: query
-        name: allocnodes__contains
-        schema:
-          type: string
-      - in: query
-        name: allocnodes__endswith
-        schema:
-          type: string
-      - in: query
-        name: allocnodes__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: allocnodes__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: allocnodes__startswith
-        schema:
-          type: string
-      - in: query
-        name: alloctres
-        schema:
-          type: string
-      - in: query
-        name: alloctres__contains
-        schema:
-          type: string
-      - in: query
-        name: alloctres__endswith
-        schema:
-          type: string
-      - in: query
-        name: alloctres__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: alloctres__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: alloctres__startswith
-        schema:
-          type: string
-      - in: query
         name: cluster
         schema:
           type: integer
@@ -1475,30 +1417,30 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: created_at
+        name: created
         schema:
           type: string
           format: date-time
       - in: query
-        name: created_at__day
+        name: created__day
         schema:
           type: number
       - in: query
-        name: created_at__gt
+        name: created__gt
         schema:
           type: string
           format: date-time
       - in: query
-        name: created_at__gte
+        name: created__gte
         schema:
           type: string
           format: date-time
       - in: query
-        name: created_at__hour
+        name: created__hour
         schema:
           type: number
       - in: query
-        name: created_at__in
+        name: created__in
         schema:
           type: array
           items:
@@ -1508,91 +1450,43 @@ paths:
         explode: false
         style: form
       - in: query
-        name: created_at__isnull
+        name: created__isnull
         schema:
           type: boolean
       - in: query
-        name: created_at__lt
+        name: created__lt
         schema:
           type: string
           format: date-time
       - in: query
-        name: created_at__lte
+        name: created__lte
         schema:
           type: string
           format: date-time
       - in: query
-        name: created_at__minute
+        name: created__minute
         schema:
           type: number
       - in: query
-        name: created_at__month
+        name: created__month
         schema:
           type: number
       - in: query
-        name: created_at__second
+        name: created__second
         schema:
           type: number
       - in: query
-        name: created_at__week
+        name: created__week
         schema:
           type: number
       - in: query
-        name: created_at__week_day
+        name: created__week_day
         schema:
           type: number
       - in: query
-        name: created_at__year
+        name: created__year
         schema:
           type: number
-      - in: query
-        name: derivedexitcode
-        schema:
-          type: string
-      - in: query
-        name: derivedexitcode__contains
-        schema:
-          type: string
-      - in: query
-        name: derivedexitcode__endswith
-        schema:
-          type: string
-      - in: query
-        name: derivedexitcode__in
-        schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: derivedexitcode__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: derivedexitcode__startswith
-        schema:
-          type: string
-      - in: query
-        name: elapsed
-        schema:
-          type: string
-          format: duration
-      - in: query
-        name: elapsed__in
-        schema:
-          type: array
-          items:
-            type: string
-            format: duration
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: elapsed__isnull
-        schema:
-          type: boolean
       - in: query
         name: end
         schema:
@@ -1665,19 +1559,19 @@ paths:
         schema:
           type: number
       - in: query
-        name: group
+        name: exit_code
         schema:
           type: string
       - in: query
-        name: group__contains
+        name: exit_code__contains
         schema:
           type: string
       - in: query
-        name: group__endswith
+        name: exit_code__endswith
         schema:
           type: string
       - in: query
-        name: group__in
+        name: exit_code__in
         schema:
           type: array
           items:
@@ -1686,11 +1580,11 @@ paths:
         explode: false
         style: form
       - in: query
-        name: group__isnull
+        name: exit_code__isnull
         schema:
           type: boolean
       - in: query
-        name: group__startswith
+        name: exit_code__startswith
         schema:
           type: string
       - in: query
@@ -1785,19 +1679,19 @@ paths:
         schema:
           type: string
       - in: query
-        name: nodelist
+        name: nodes
         schema:
           type: string
       - in: query
-        name: nodelist__contains
+        name: nodes__contains
         schema:
           type: string
       - in: query
-        name: nodelist__endswith
+        name: nodes__endswith
         schema:
           type: string
       - in: query
-        name: nodelist__in
+        name: nodes__in
         schema:
           type: array
           items:
@@ -1806,11 +1700,11 @@ paths:
         explode: false
         style: form
       - in: query
-        name: nodelist__isnull
+        name: nodes__isnull
         schema:
           type: boolean
       - in: query
-        name: nodelist__startswith
+        name: nodes__startswith
         schema:
           type: string
       - in: query
@@ -1845,21 +1739,21 @@ paths:
       - in: query
         name: priority
         schema:
-          type: integer
+          type: string
       - in: query
-        name: priority__gt
+        name: priority__contains
         schema:
-          type: integer
+          type: string
       - in: query
-        name: priority__gte
+        name: priority__endswith
         schema:
-          type: integer
+          type: string
       - in: query
         name: priority__in
         schema:
           type: array
           items:
-            type: integer
+            type: string
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -1868,13 +1762,9 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: priority__lt
+        name: priority__startswith
         schema:
-          type: integer
-      - in: query
-        name: priority__lte
-        schema:
-          type: integer
+          type: string
       - in: query
         name: qos
         schema:
@@ -2076,6 +1966,35 @@ paths:
         schema:
           type: number
       - in: query
+        name: sus
+        schema:
+          type: string
+      - in: query
+        name: sus__contains
+        schema:
+          type: string
+      - in: query
+        name: sus__endswith
+        schema:
+          type: string
+      - in: query
+        name: sus__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: sus__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: sus__startswith
+        schema:
+          type: string
+      - in: query
         name: team
         schema:
           type: integer
@@ -2093,30 +2012,30 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: updated_at
+        name: updated
         schema:
           type: string
           format: date-time
       - in: query
-        name: updated_at__day
+        name: updated__day
         schema:
           type: number
       - in: query
-        name: updated_at__gt
+        name: updated__gt
         schema:
           type: string
           format: date-time
       - in: query
-        name: updated_at__gte
+        name: updated__gte
         schema:
           type: string
           format: date-time
       - in: query
-        name: updated_at__hour
+        name: updated__hour
         schema:
           type: number
       - in: query
-        name: updated_at__in
+        name: updated__in
         schema:
           type: array
           items:
@@ -2126,41 +2045,41 @@ paths:
         explode: false
         style: form
       - in: query
-        name: updated_at__isnull
+        name: updated__isnull
         schema:
           type: boolean
       - in: query
-        name: updated_at__lt
+        name: updated__lt
         schema:
           type: string
           format: date-time
       - in: query
-        name: updated_at__lte
+        name: updated__lte
         schema:
           type: string
           format: date-time
       - in: query
-        name: updated_at__minute
+        name: updated__minute
         schema:
           type: number
       - in: query
-        name: updated_at__month
+        name: updated__month
         schema:
           type: number
       - in: query
-        name: updated_at__second
+        name: updated__second
         schema:
           type: number
       - in: query
-        name: updated_at__week
+        name: updated__week
         schema:
           type: number
       - in: query
-        name: updated_at__week_day
+        name: updated__week_day
         schema:
           type: number
       - in: query
-        name: updated_at__year
+        name: updated__year
         schema:
           type: number
       - in: query
@@ -2202,7 +2121,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedJobStatsList'
+                $ref: '#/components/schemas/PaginatedJobList'
           description: ''
   /allocations/jobs/{id}/:
     get:
@@ -2214,7 +2133,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this job stats.
+        description: A unique integer value identifying this job.
         required: true
       tags:
       - Allocations - User Jobs
@@ -2226,7 +2145,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JobStats'
+                $ref: '#/components/schemas/Job'
           description: ''
   /allocations/request-choices/status/:
     get:
@@ -9402,9 +9321,9 @@ components:
       - start_date
       - team
       - title
-    JobStats:
+    Job:
       type: object
-      description: Object serializer for the `JobStats` class.
+      description: Object serializer for the `Job` class.
       properties:
         id:
           type: integer
@@ -9422,54 +9341,27 @@ components:
         jobid:
           type: string
           maxLength: 64
-        account:
-          type: string
-          nullable: true
-          maxLength: 128
-        allocnodes:
-          type: string
-          nullable: true
-          maxLength: 128
-        alloctres:
-          type: string
-          nullable: true
-        derivedexitcode:
-          type: string
-          nullable: true
-          maxLength: 10
-        elapsed:
-          type: string
-          nullable: true
-        end:
-          type: string
-          format: date-time
-          nullable: true
-        group:
-          type: string
-          nullable: true
-          maxLength: 128
         jobname:
           type: string
           nullable: true
           maxLength: 512
-        nodelist:
-          type: string
-          nullable: true
-        priority:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-          nullable: true
-        partition:
+        account:
           type: string
           nullable: true
           maxLength: 128
-        qos:
+        username:
           type: string
           nullable: true
           maxLength: 128
+        submit:
+          type: string
+          format: date-time
+          nullable: true
         start:
+          type: string
+          format: date-time
+          nullable: true
+        end:
           type: string
           format: date-time
           nullable: true
@@ -9477,19 +9369,34 @@ components:
           type: string
           nullable: true
           maxLength: 64
-        submit:
+        exit_code:
           type: string
-          format: date-time
           nullable: true
-        username:
+          maxLength: 10
+        priority:
+          type: string
+          nullable: true
+          maxLength: 50
+        qos:
           type: string
           nullable: true
           maxLength: 128
-        created_at:
+        nodes:
+          type: string
+          nullable: true
+          maxLength: 128
+        partition:
+          type: string
+          nullable: true
+          maxLength: 128
+        sus:
+          type: string
+          nullable: true
+        created:
           type: string
           format: date-time
           readOnly: true
-        updated_at:
+        updated:
           type: string
           format: date-time
           readOnly: true
@@ -9502,10 +9409,10 @@ components:
       required:
       - _cluster
       - _team
-      - created_at
+      - created
       - id
       - jobid
-      - updated_at
+      - updated
     Login:
       type: object
       description: Data serializer for validating user credentials.
@@ -9871,7 +9778,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GrantStats'
-    PaginatedJobStatsList:
+    PaginatedJobList:
       type: object
       required:
       - count
@@ -9893,7 +9800,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/JobStats'
+            $ref: '#/components/schemas/Job'
     PaginatedMembershipList:
       type: object
       required:
