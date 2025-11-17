@@ -33,15 +33,22 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
 
     preference = Preference.get_user_preference(user)
 
+    # Do not notify if there is no configured notification threshold
     days_until_expire = (request.expire - date.today()).days
     next_threshold = preference.get_expiration_threshold(days_until_expire)
     if next_threshold is None:
         return False
 
+    # Do not notify if the user joined after the notification threshold
     user_join_date = preference.user.date_joined.date()
     if user_join_date >= date.today() - timedelta(days=next_threshold):
         return False
 
+    # Do not notify if the allocation request went active after the notification threshold
+    if request.active >= date.today() - timedelta(days=next_threshold):
+        return False
+
+    # Do not notify if the user has already been notified for this threshold
     if Notification.objects.filter(
         user=preference.user,
         metadata__request_id=request.id,
