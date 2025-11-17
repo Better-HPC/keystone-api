@@ -293,6 +293,7 @@ class Job(TeamModelInterface, models.Model):
     partition = models.CharField(max_length=128, null=True, blank=True)
     sus = models.TextField(null=True, blank=True)
 
+    # Timestamps tracking db changes
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
