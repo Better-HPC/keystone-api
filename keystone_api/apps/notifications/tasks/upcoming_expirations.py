@@ -25,9 +25,11 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
         A boolean indicating whether to send a notification.
     """
 
+    # Do not notify if request does not expire
     if not request.expire:
         return False
 
+    # Do not notify if request is already expired
     if request.expire <= date.today():
         return False
 
