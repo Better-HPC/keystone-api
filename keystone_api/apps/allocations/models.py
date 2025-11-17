@@ -287,7 +287,7 @@ class Job(TeamModelInterface, models.Model):
     exit_code = models.CharField(max_length=10, null=True, blank=True)
 
     # Resource usage
-    priority = models.IntegerField(null=True, blank=True)
+    priority = models.CharField(max_length=50, null=True, blank=True)
     qos = models.CharField(max_length=128, null=True, blank=True)
     nodes = models.CharField(max_length=128, null=True, blank=True)
     partition = models.CharField(max_length=128, null=True, blank=True)
