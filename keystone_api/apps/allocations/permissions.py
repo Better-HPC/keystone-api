@@ -66,7 +66,7 @@ class AllocationPermissions(PermissionUtils, permissions.BasePermission):
         return (
             self.user_is_staff(request) or
             (self.is_read_only(request) and self.user_in_team(request, obj)) or
-            (self.user_in_team(request, obj) and request.cluster.verify_access_list(obj.request.team))
+            (self.user_in_team(request, obj) and obj.cluster.verify_access_list(obj.request.team))
         )
 
 

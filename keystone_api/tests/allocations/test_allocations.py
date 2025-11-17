@@ -16,7 +16,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
+    | Authenticated User         | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
