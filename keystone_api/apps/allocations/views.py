@@ -344,7 +344,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
         # Only filter for list operations
         if self.action == 'list' and not self.request.user.is_superuser:
-            user_teams = self.request.user.memberships.values_list('team_id', flat=True)
+            user_teams = self.request.user.get_all_teams().values_list('id', flat=True)
 
             # Clusters open to all
             open_clusters = qs.filter(access_mode=Cluster.AccessChoices.OPEN)
