@@ -37,7 +37,7 @@ def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
     cluster = Cluster.objects.get(name=cluster_name)
     cluster_jobs = get_cluster_jobs(cluster.name)
 
-    # Prefetch team objects
+    # Prefetch team objects from database
     account_names = set(job['account'] for job in cluster_jobs)
     teams = Team.objects.filter(name__in=account_names)
     team_map = {team.name: team for team in teams}
