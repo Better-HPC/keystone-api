@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import JobStatsFactory
+from apps.allocations.factories import JobFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
@@ -25,7 +25,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.job_stat = JobStatsFactory()
+        self.job_stat = JobFactory()
         self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
@@ -81,5 +81,5 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = '/allocations/jobs/'
-    factory = JobStatsFactory
+    factory = JobFactory
     team_field = 'team'

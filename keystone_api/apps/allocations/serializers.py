@@ -26,7 +26,7 @@ __all__ = [
     'AttachmentSerializer',
     'ClusterSerializer',
     'CommentSerializer',
-    'JobStatsSerializer',
+    'JobSerializer',
 ]
 
 
@@ -186,8 +186,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class JobStatsSerializer(serializers.ModelSerializer):
-    """Object serializer for the `JobStats` class."""
+class JobSerializer(serializers.ModelSerializer):
+    """Object serializer for the `Job` class."""
 
     _team = TeamSummarySerializer(source='team', read_only=True)
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
@@ -195,6 +195,6 @@ class JobStatsSerializer(serializers.ModelSerializer):
     class Meta:
         """Serializer settings."""
 
-        model = JobStats
+        model = Job
         fields = '__all__'
         read_only = ['team']

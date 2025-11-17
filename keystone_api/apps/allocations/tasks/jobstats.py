@@ -2,7 +2,7 @@
 
 from celery import shared_task
 
-from apps.allocations.models import Cluster, JobStats
+from apps.allocations.models import Cluster, Job
 from apps.users.models import Team
 from plugins.slurm import get_cluster_jobs
 
@@ -48,8 +48,8 @@ def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
         job['cluster'] = cluster
         job['username'] = job.pop('user', None)
         job['team'] = team_map.get(job['account'], None)
-        objs.append(JobStats(**job))
+        objs.append(Job(**job))
 
     # Bulk insert/update
-    update_fields = [field.name for field in JobStats._meta.get_fields() if not field.unique]
-    JobStats.objects.bulk_create(objs, update_conflicts=True, unique_fields=['jobid'], update_fields=update_fields)
+    update_fields = [field.name for field in Job._meta.get_fields() if not field.unique]
+    Job.objects.bulk_create(objs, update_conflicts=True, unique_fields=['jobid'], update_fields=update_fields)

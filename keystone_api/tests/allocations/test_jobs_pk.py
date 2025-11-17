@@ -3,7 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import JobStatsFactory
+from apps.allocations.factories import JobFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
@@ -27,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.jobstat = JobStatsFactory()
+        self.jobstat = JobFactory()
 
         self.team = self.jobstat.team
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
