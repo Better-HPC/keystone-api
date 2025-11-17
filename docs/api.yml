@@ -715,6 +715,43 @@ paths:
         schema:
           type: string
       - in: query
+        name: access_mode
+        schema:
+          type: string
+          enum:
+          - BL
+          - OP
+          - WL
+        description: |-
+          * `WL` - Whitelist
+          * `BL` - Blacklist
+          * `OP` - Open
+      - in: query
+        name: access_mode__contains
+        schema:
+          type: string
+      - in: query
+        name: access_mode__endswith
+        schema:
+          type: string
+      - in: query
+        name: access_mode__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: access_mode__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: access_mode__startswith
+        schema:
+          type: string
+      - in: query
         name: description
         schema:
           type: string
@@ -8697,6 +8734,16 @@ paths:
           description: ''
 components:
   schemas:
+    AccessModeEnum:
+      enum:
+      - WL
+      - BL
+      - OP
+      type: string
+      description: |-
+        * `WL` - Whitelist
+        * `BL` - Blacklist
+        * `OP` - Open
     Allocation:
       type: object
       description: Object serializer for the `Allocation` class.
@@ -9193,6 +9240,13 @@ components:
           maxLength: 150
         enabled:
           type: boolean
+        access_mode:
+          $ref: '#/components/schemas/AccessModeEnum'
+        access_teams:
+          type: array
+          items:
+            type: integer
+            nullable: true
       required:
       - _history
       - id
@@ -10319,6 +10373,13 @@ components:
           maxLength: 150
         enabled:
           type: boolean
+        access_mode:
+          $ref: '#/components/schemas/AccessModeEnum'
+        access_teams:
+          type: array
+          items:
+            type: integer
+            nullable: true
     PatchedComment:
       type: object
       description: Object serializer for the `Comment` class.
