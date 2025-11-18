@@ -22,6 +22,10 @@ class LDAPHealthCheck(BaseHealthCheckBackend):
 
         try:
             conn = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
+
+            conn.set_option(ldap.OPT_NETWORK_TIMEOUT, 5)
+            conn.set_option(ldap.OPT_TIMEOUT, 5)
+
             if settings.AUTH_LDAP_BIND_DN:  # pragma: no branch
                 conn.bind(settings.AUTH_LDAP_BIND_DN, settings.AUTH_LDAP_BIND_PASSWORD)
 
