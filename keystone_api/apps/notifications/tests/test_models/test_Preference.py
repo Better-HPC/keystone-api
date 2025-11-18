@@ -20,13 +20,13 @@ class GetExpirationThresholdMethod(TestCase):
         )
 
     def test_value_below_thresholds(self) -> None:
-        """Verify the calculation when the given value is below all thresholds."""
+        """Verify the lowest threshold is returned when the value is below all thresholds."""
 
         next_threshold = self.preference.get_expiration_threshold(1)
         self.assertEqual(next_threshold, 7)
 
     def test_value_between_thresholds(self) -> None:
-        """Verify the calculation when the given value is between two valid thresholds."""
+        """Verify the next greater threshold is returned when the value falls between thresholds."""
 
         next_threshold = self.preference.get_expiration_threshold(10)
         self.assertEqual(next_threshold, 14)
@@ -38,7 +38,7 @@ class GetExpirationThresholdMethod(TestCase):
         self.assertIsNone(next_threshold)
 
     def test_with_exact_match(self) -> None:
-        """Verify the calculation when the given value matches a threshold exactly."""
+        """Verify the method returns the matching threshold when the value equals a threshold."""
 
         next_threshold = self.preference.get_expiration_threshold(14)
         self.assertEqual(next_threshold, 14)
@@ -62,25 +62,25 @@ class GetUsageThresholdMethod(TestCase):
         )
 
     def test_value_below_all_thresholds(self) -> None:
-        """Verify the calculation when the given value is below all thresholds."""
+        """Verify the method returns `None` when the value is below all thresholds."""
 
         next_threshold = self.preference.get_usage_threshold(5)
         self.assertEqual(next_threshold, None)
 
     def test_value_between_thresholds(self) -> None:
-        """Verify the calculation when the given value is between two valid thresholds."""
+        """Verify the highest threshold below the value is returned when the value falls between thresholds."""
 
         next_threshold = self.preference.get_usage_threshold(25)
         self.assertEqual(next_threshold, 20)
 
     def test_value_above_all_thresholds(self) -> None:
-        """Verify the calculation when the given value is above all thresholds."""
+        """Verify the highest threshold is returned when the value exceeds all thresholds."""
 
         next_threshold = self.preference.get_usage_threshold(80)
         self.assertEqual(next_threshold, 75)
 
     def test_value_exact_match(self) -> None:
-        """Verify the calculation when the given value exactly matches a threshold."""
+        """Verify the method returns the matching threshold when the value equals a threshold."""
 
         next_threshold = self.preference.get_usage_threshold(50)
         self.assertEqual(next_threshold, 50)
