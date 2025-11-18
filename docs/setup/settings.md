@@ -136,8 +136,9 @@ Securing your production email server with a username/password is recommended, b
 
 ## LDAP Authentication
 
-Enabling LDAP authentication is optional and disabled by default.
+Using LDAP for authentication is optional and disabled by default.
 To enable LDAP, set the `AUTH_LDAP_SERVER_URI` value to the desired LDAP endpoint.
+Enabling LDAP integration will also add LDAP related health checks to the [API health endpoint](../api/logging.md#system-health).
 
 Application user fields are mapped to LDAP attributes by specifying the `AUTH_LDAP_ATTR_MAP` setting.
 The following example maps the `first_name` and `last_name` fields used by Keystone to the LDAP attributes `givenName`
