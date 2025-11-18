@@ -351,7 +351,8 @@ PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=
 
 # Logging
 
-CELERY_RESULT_EXPIRES = None  # Disable Celery's internal log clean up
+# Disable Celery's internal log clean up in favor of custom log rotation
+CELERY_RESULT_EXPIRES = None
 
 LOG_REQ_RETENTION_SEC = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
 LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).total_seconds())

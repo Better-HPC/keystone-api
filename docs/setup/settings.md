@@ -70,8 +70,8 @@ By default, these files are stored in subdirectories of the installed applicatio
 
 ## Logging
 
-Keystone automatically purges application logs to control long-term storage usage.
-Application logs are written to disk using a destination-based policy that rotates files according to a maximum file size.
+Keystone automatically purges application logs according to the policy settings described below.
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
 Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
 
 | Setting Name              | Default Value        | Description                                                                                                 |

@@ -20,7 +20,7 @@ def clear_log_records() -> None:
 
     from .models import RequestLog, AuditLog, TaskResult
 
-    # (model, retention interval, datetime field used for pruning)
+    # The (database model, retention interval, datetime field) used for pruning
     log_configs = [
         (RequestLog, settings.LOG_REQ_RETENTION_SEC, "timestamp"),
         (AuditLog, settings.LOG_AUD_RETENTION_SEC, "timestamp"),
