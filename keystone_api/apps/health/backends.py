@@ -16,7 +16,7 @@ class LDAPHealthCheck(BaseHealthCheckBackend):
     """Custom health check backend for LDAP connectivity."""
 
     def check_status(self) -> None:
-        """Perform a simple LDAP bind to verify server availability."""
+        """Perform an LDAP `whoami` query to verify server availability."""
 
         import ldap
 
@@ -25,10 +25,10 @@ class LDAPHealthCheck(BaseHealthCheckBackend):
             conn.set_option(ldap.OPT_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
             conn.set_option(ldap.OPT_NETWORK_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
 
-            if settings.AUTH_LDAP_BIND_DN:  # pragma: no branch
+            if settings.AUTH_LDAP_BIND_DN:
                 conn.bind(settings.AUTH_LDAP_BIND_DN, settings.AUTH_LDAP_BIND_PASSWORD)
 
-            if settings.AUTH_LDAP_START_TLS:  # pragma: no branch
+            if settings.AUTH_LDAP_START_TLS:
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
                 conn.start_tls_s()
 
@@ -41,7 +41,7 @@ class LDAPHealthCheck(BaseHealthCheckBackend):
             raise HealthCheckException("LDAP server not reachable.")
 
         except Exception:
-            raise HealthCheckException(f"Unexpected error")
+            raise HealthCheckException("Unexpected error")
 
 
 class SMTPHealthCheck(BaseHealthCheckBackend):
