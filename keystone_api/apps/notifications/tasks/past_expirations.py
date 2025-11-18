@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from celery import shared_task
 from django.db.models import Prefetch
+from django.utils import timezone
 
 from apps.allocations.models import AllocationRequest
 from apps.users.models import User
@@ -24,6 +25,10 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
     Returns:
         A boolean indicating whether to send a notification.
     """
+
+    # Do not notify if the request is not expired
+    if not request.expire <= timezone.now().date():
+        return False
 
     if Notification.objects.filter(
         user=user,
