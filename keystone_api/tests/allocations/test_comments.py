@@ -6,7 +6,9 @@ from rest_framework.test import APITestCase
 from apps.allocations.factories import AllocationRequestFactory, CommentFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
-from tests.utils import CustomAsserts, TeamScopedListFilteringTestMixin
+from tests.utils import CustomAsserts, TeamListFilteringTestMixin
+
+ENDPOINT = '/allocations/comments/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -25,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User     | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/comments/'
+    endpoint = ENDPOINT
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -143,9 +145,51 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class RecordFiltering(TeamScopedListFilteringTestMixin, APITestCase):
+class PrivateRecordFiltering(APITestCase):
+    """Test the filtering of returned records based on their `private` status."""
+
+    endpoint = ENDPOINT
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.request = AllocationRequestFactory()
+        self.team = self.request.team
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+
+        self.staff_user = UserFactory(is_staff=True)
+
+        self.public_comment = CommentFactory(request=self.request, user=self.team_member, private=False)
+        self.private_comment = CommentFactory(request=self.request, user=self.staff_user, private=True)
+
+    def test_staff_includes_private_records(self) -> None:
+        """Verify staff users are returned public and private records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+
+        results = response.json()['results']
+        returned_ids = [r['id'] for r in results]
+
+        expected_ids = [self.public_comment.id, self.private_comment.id]
+        self.assertCountEqual(expected_ids, returned_ids)
+
+    def test_nonstaff_excludes_private_records(self) -> None:
+        """Verify non-staff users are only returned public records."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.get(self.endpoint)
+
+        results = response.json()['results']
+        returned_ids = [r['id'] for r in results]
+
+        expected_ids = [self.public_comment.id, ]
+        self.assertCountEqual(expected_ids, returned_ids)
+
+
+class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
-    endpoint = '/allocations/comments/'
+    endpoint = ENDPOINT
     factory = CommentFactory
     team_field = 'request__team'

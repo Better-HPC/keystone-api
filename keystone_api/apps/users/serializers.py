@@ -9,6 +9,7 @@ creation.
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
+from django.utils.text import slugify
 from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
@@ -141,6 +142,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
+    slug = serializers.SlugField(read_only=True)
     membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
@@ -149,6 +151,18 @@ class TeamSerializer(serializers.ModelSerializer):
 
         model = Team
         fields = "__all__"
+
+    def validate(self, attrs: dict) -> dict:
+        """Ensure the slug generated from the team name is unique."""
+
+        if name := attrs.get("name"):
+            slug = slugify(name)
+            if Team.objects.filter(slug=slug).exists():
+                raise serializers.ValidationError({"name": "A team with this name already exists."})
+
+            attrs['slug'] = slug
+
+        return super().validate(attrs)
 
     @transaction.atomic
     def create(self, validated_data: dict) -> Team:
@@ -167,17 +181,22 @@ class TeamSerializer(serializers.ModelSerializer):
 
         members_data = validated_data.pop("membership", [])
 
-        # Update team attributes
-        instance.name = validated_data.get("name", instance.name)
+        # Update remaining fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         instance.save()
 
-        if self.partial is False:
+        # Replace or update memberships
+        if not self.partial:
             instance.membership.all().delete()
 
         # Update membership records
         for membership in members_data:
             Membership.objects.update_or_create(
-                team=instance, user=membership["user"], defaults={"role": membership["role"]}
+                team=instance,
+                user=membership["user"],
+                defaults={"role": membership["role"]},
             )
 
         return instance

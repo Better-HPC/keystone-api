@@ -14,21 +14,10 @@ from .models import *
 from .nested import AuditLogSummarySerializer
 
 __all__ = [
-    'AppLogSerializer',
     'AuditLogSerializer',
     'RequestLogSerializer',
     'TaskResultSerializer',
 ]
-
-
-class AppLogSerializer(serializers.ModelSerializer):
-    """Object serializer for the `AppLog` class."""
-
-    class Meta:
-        """Serializer settings."""
-
-        model = AppLog
-        fields = '__all__'
 
 
 class AuditLogSerializer(AuditLogSummarySerializer):

@@ -8,7 +8,7 @@ Multi-container deployments are strongly recommended for teams operating at scal
 
 !!! danger
 
-    The default container instance is **not** suitable for production out of the box.
+    The API container deploys with default settings that are **not** suitable for secure production use.
     See the [Settings](settings.md) page for a complete overview of configurable options and recommended settings.
 
 The following command will automatically pull and launch the latest API image.
@@ -35,21 +35,19 @@ Application dependencies are defined as separate services and setting values are
 variables in various `.env` files.
 
 ```yaml
-version: "3.7"
-
 services:
   cache: # (1)!
     image: redis
     container_name: keystone-cache
     command: redis-server
-    restart: always
+    restart: unless-stopped
     volumes:
       - cache_data:/data
 
   db: # (2)!
     image: postgres
     container_name: keystone-db
-    restart: always
+    restart: unless-stopped
     env_file:
       - db.env
     volumes:
@@ -61,10 +59,11 @@ services:
     entrypoint: sh
     command: |
       -c '
+        sleep 3 # Give dependent services time to start
         keystone-api migrate --no-input
         keystone-api collectstatic --no-input
         uvicorn --host 0.0.0.0 --port 8000 keystone_api.main.asgi:application'
-    restart: always
+    restart: unless-stopped
     depends_on:
       - cache
       - db
@@ -79,8 +78,8 @@ services:
   celery-worker: # (4)!
     image: ghcr.io/better-hpc/keystone-api
     container_name: keystone-celery-worker
-    entrypoint: celery -A keystone_api.apps.scheduler worker --uid 900
-    restart: always
+    entrypoint: celery -A keystone_api.apps.scheduler worker
+    restart: unless-stopped
     depends_on:
       - cache
       - db
@@ -91,8 +90,8 @@ services:
   celery-beat: # (5)!
     image: ghcr.io/better-hpc/keystone-api
     container_name: keystone-celery-beat
-    entrypoint: celery -A keystone_api.apps.scheduler beat --scheduler django_celery_beat.schedulers:DatabaseScheduler --uid 900
-    restart: always
+    entrypoint: celery -A keystone_api.apps.scheduler beat --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    restart: unless-stopped
     depends_on:
       - cache
       - db

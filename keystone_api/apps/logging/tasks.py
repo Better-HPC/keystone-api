@@ -18,12 +18,11 @@ __all__ = ['clear_log_records']
 def clear_log_records() -> None:
     """Delete request and application logs according to retention policies set in application settings."""
 
-    from .models import AppLog, RequestLog, AuditLog
+    from .models import RequestLog, AuditLog
 
     log_configs = [
-        (AppLog, settings.CONFIG_LOG_RETENTION),
-        (RequestLog, settings.CONFIG_REQUEST_RETENTION),
-        (AuditLog, settings.CONFIG_AUDIT_RETENTION),
+        (RequestLog, settings.LOG_REQ_RETENTION_SEC),
+        (AuditLog, settings.LOG_AUD_RETENTION_SEC),
     ]
 
     now = timezone.now()

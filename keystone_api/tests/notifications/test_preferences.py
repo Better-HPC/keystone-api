@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.notifications.factories import PreferenceFactory
 from apps.users.factories import UserFactory
-from tests.utils import CustomAsserts, UserScopedListFilteringTestMixin
+from tests.utils import CustomAsserts, UserListFilteringTestMixin
 
 ENDPOINT = '/notifications/preferences/'
 
@@ -128,7 +128,7 @@ class UserFieldAssignment(APITestCase):
         self.assertEqual(self.user2.id, response.data['user'])
 
 
-class RecordFiltering(UserScopedListFilteringTestMixin, APITestCase):
+class UserRecordFiltering(UserListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
     endpoint = ENDPOINT

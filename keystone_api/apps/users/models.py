@@ -19,6 +19,7 @@ from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.utils import timezone
+from django.utils.text import slugify
 from PIL import Image
 
 from .managers import *
@@ -65,7 +66,15 @@ class Membership(models.Model):
 class Team(models.Model):
     """A collection of users who share resources and permissions."""
 
+    class Meta:
+        """Database model settings."""
+
+        indexes = [
+            models.Index(fields=['slug']),
+        ]
+
     name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
     users = models.ManyToManyField('User', through=Membership)
     is_active = models.BooleanField(default=True)
     history = AuditlogHistoryField()
@@ -107,6 +116,16 @@ class Team(models.Model):
 
         else:
             return Membership.objects.create(user=user, team=self, role=role)
+
+    def save(self, *args, **kwargs):
+        """Persist the record to the database.
+
+        When saving a record, the `slug` field is automatically updated to reflect
+        the slugified value of the team name.
+        """
+
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the team name."""

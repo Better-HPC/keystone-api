@@ -12,5 +12,5 @@ router.register('notifications', NotificationViewSet)
 router.register('preferences', PreferenceViewSet)
 
 urlpatterns = router.urls + [
-    path('allocation-request/status-choices/', NotificationTypeChoicesView.as_view()),
+    path('notification-choices/type', NotificationTypeChoicesView.as_view()),
 ]

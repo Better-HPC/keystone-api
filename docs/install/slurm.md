@@ -9,6 +9,12 @@ $$
 \text{Billable Usage} = \sum_\text{TRES} \,\, \left ( W_\text{TRES} * U_\text{TRES} \right )
 $$
 
+!!! Warning
+
+    The above calculation assumes the Slurm `PriorityFlags` setting is disabled.
+    Modifying `PriorityFlags` may cause Slurm to use an alternative calculation, 
+    which is generally discouraged and may lead to unexpected behavior.
+
 Keystone interfaces with Slurm to automatically enforce per-cluster limits on a group's total allowed *Billable Usage*.
 These limits are enforced using the `GrpTresMins=billing=[LIMIT]` setting.
 Once a group reaches its allocation limit, additional Slurm jobs will be prevented from running on the target cluster.
@@ -85,10 +91,3 @@ See the [Slurm documentation](https://slurm.schedmd.com/tres.html) for full deta
     ```
     PartitionName=partition_name TRESBillingWeights="CPU=1.0,GRES/gpu=2.0"
     ```
-
-To ensure accurate usage calculations, enable the `MAX_TRES` flag in the `PriorityFlags` setting.
-This ensures the billable TRES includes node-local resources (e.g. CPU, memory, GPU) as well as global TRES (e.g. licenses).
-
-```
-PriorityFlags=MAX_TRES
-```

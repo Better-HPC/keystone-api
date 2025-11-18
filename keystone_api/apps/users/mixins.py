@@ -5,71 +5,52 @@ Each mixin defines a single, isolated piece of functionality and can be
 combined with other mixins or base view classes as needed.
 """
 
-from typing import TypeVar
-
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from django.db.models import QuerySet
 
 from .models import Team
 
 __all__ = ['TeamScopedListMixin', 'UserScopedListMixin']
 
-TViewSet = TypeVar("TViewSet", bound=GenericViewSet)
-
 
 class TeamScopedListMixin:
-    """Adds team-based filtering to list views based on user access.
+    """Adds team-based filtering to list operations in model viewsets.
 
-    Extends Model Viewset classes by filtering list response data
-    based on user team permissions.
+    Extends `ModelViewset` classes by filtering list response data based on user
+    team membership. Staff users are exempt from record filtering.
     """
 
     # Name of the model field that links an object to a team.
     # Can be overwritten by subclasses to match the relevant ForeignKey field in a request.
     team_field = 'team'
 
-    def list(self: TViewSet, request: Request) -> Response:
-        """Return a list of serialized records filtered by user team permissions."""
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset filtered by user team membership for list actions."""
 
-        queryset = self.filter_queryset(self.get_queryset())
-        if not request.user.is_staff:
-            teams = Team.objects.teams_for_user(request.user)
-            queryset = queryset.filter(**{self.team_field + '__in': teams})
+        queryset = super().get_queryset()
+        if self.action == 'list' and not self.request.user.is_staff:
+            teams = Team.objects.teams_for_user(self.request.user)
+            return queryset.filter(**{f'{self.team_field}__in': teams})
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset
 
 
 class UserScopedListMixin:
-    """Adds user-based filtering to list views based on the `user` field.
+    """Adds user-based filtering to list operations in model viewsets.
 
     Extends Model Viewset classes by filtering list response data
     to only include data where the `user` field matches the user submitting
-    the request. Staff users are returned all records in the database.
+    the request. Staff users are exempt from record filtering.
     """
 
-    # Name of the model field that links an object to a team.
+    # Name of the model field that links an object to a user.
     # Can be overwritten by subclasses to match the relevant ForeignKey field in a request.
     user_field = 'user'
 
-    def list(self: TViewSet, request: Request, *args, **kwargs) -> Response:
-        """Return a list of serialized records filtered for the requesting user."""
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset filtered by the requesting user for list actions."""
 
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = super().get_queryset()
+        if self.action == 'list' and not self.request.user.is_staff:
+            return queryset.filter(**{self.user_field: self.request.user})
 
-        if not request.user.is_staff:
-            queryset = queryset.filter(**{self.user_field: request.user})
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset

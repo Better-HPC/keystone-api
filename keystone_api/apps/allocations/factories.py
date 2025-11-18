@@ -229,15 +229,18 @@ class AttachmentFactory(DjangoModelFactory):
 
 
 class CommentFactory(DjangoModelFactory):
-    """Factory for creating mock `Comment` instances."""
+    """Factory for creating mock `Comment` instances.
+
+    Comments default to being public (`private=False`).
+    """
 
     class Meta:
         """Factory settings."""
 
         model = Comment
 
+    private = False
     content = factory.Faker('sentence', nb_words=10)
-    private = factory.Faker('pybool', truth_probability=10)
 
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)

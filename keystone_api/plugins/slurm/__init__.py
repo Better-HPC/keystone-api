@@ -14,7 +14,6 @@ __all__ = [
     'set_cluster_limit',
     'get_cluster_usage',
     'get_slurm_account_names',
-    'get_slurm_account_principal_investigator',
     'get_slurm_account_users',
     'parse_slurm_date',
     'parse_slurm_elapsed'
@@ -115,21 +114,6 @@ def get_slurm_account_names(cluster_name: str | None = None) -> set[str]:
     return set(subprocess_call(cmd).split())
 
 
-def get_slurm_account_principal_investigator(account_name: str) -> str:
-    """Return the Principal Investigator (PI) username (Slurm account description field) for a Slurm account given the
-    account name
-
-    Args:
-        account_name: The Slurm account name
-
-    Returns:
-        The Slurm account PI username (description field)
-    """
-
-    cmd = split(f"sacctmgr show -nP account where account={account_name} format=Descr")
-    return subprocess_call(cmd)
-
-
 def get_slurm_account_users(account_name: str, cluster_name: str | None = None) -> set[str]:
     """Return all usernames tied to a Slurm account
 
@@ -218,6 +202,9 @@ def get_cluster_usage(account_name: str, cluster_name: str) -> int:
 def get_cluster_jobs(cluster_name: str) -> list[dict]:
     """Retrieve SLURM job information for a given cluster.
 
+    This function returns data as presented by Slurm with no manipulation
+    except typecasting common data types (int, date, etc.) into Python types.
+
     Args:
         cluster_name: Name of the SLURM cluster to query jobs for.
 
@@ -226,29 +213,45 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
     """
 
     # Field names to fetch from slurm and their returned order
-    fields = (
+    slurm_fields = (
         "Account", "AllocNodes", "AllocTres", "DerivedExitCode", "Elapsed",
         "End", "Group", "JobId", "JobName", "NodeList", "Priority",
         "Partition", "QOS", "Start", "State", "Submit", "User"
     )
 
-    cmd = split(
-        f"sacct --allusers --allocations --noheader --parsable2 "
-        f"--clusters={cluster_name} --format={','.join(fields)}"
+    # Fetch job values from the Slurm account manager
+    slurm_cmd = split(
+        f"sacct --allusers --allocations --parsable2 "
+        f"--clusters={cluster_name} --format={','.join(slurm_fields)}"
     )
 
+    # Parse header values from the output command
+    header_row, *job_rows = subprocess_call(slurm_cmd).splitlines()
+    header_values = [col_name.lower() for col_name in header_row.split("|")]
+
+    # Map field names to functions for casting values into Python types
+    cast_funcs = {
+        "submit": parse_slurm_date,
+        "start": parse_slurm_date,
+        "end": parse_slurm_date,
+        "elapsed": parse_slurm_elapsed,
+    }
+
     job_list = []
-    for line in subprocess_call(cmd).splitlines():
-        parsed_line = line.split('|')
-        job_data: dict[str, any] = {field.lower(): value for field, value in zip(fields, parsed_line)}
+    for row in job_rows:
+        # Parse values and cast to python types where appropriate
+        parsed_job = dict()
+        for header, val in zip(header_values, row.split("|")):
+            cast = cast_funcs.get(header)
+            if val and cast:
+                parsed_job[header] = cast(val)
 
-        # Cast select values into Python objects
-        job_data['priority'] = int(job_data['priority']) if job_data['priority'] else None
-        job_data['submit'] = parse_slurm_date(job_data['submit'])
-        job_data['start'] = parse_slurm_date(job_data['start'])
-        job_data['end'] = parse_slurm_date(job_data['end'])
-        job_data['elapsed'] = parse_slurm_elapsed(job_data['elapsed'])
+            elif val:
+                parsed_job[header] = val
 
-        job_list.append(job_data)
+            else:
+                parsed_job[header] = None
+
+        job_list.append(parsed_job)
 
     return job_list

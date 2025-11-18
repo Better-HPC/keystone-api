@@ -6,6 +6,8 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
+ENDPOINT = '/users/teams/'
+
 
 class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
@@ -19,7 +21,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/users/teams/'
+    endpoint = ENDPOINT
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -75,3 +77,41 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={'name': 'New Name'},
         )
+
+
+class SlugHandling(APITestCase, CustomAsserts):
+    """Test slug value handling on team creation."""
+
+    endpoint = ENDPOINT
+
+    def setUp(self) -> None:
+        """Authenticate a generic user."""
+
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+
+    def test_slug_set_automatically(self) -> None:
+        """Verify a slug is automatically generated from the team name."""
+
+        response = self.client.post(self.endpoint, {"name": "My New Team"})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("slug", response.data)
+        self.assertEqual("my-new-team", response.data["slug"])
+
+    def test_manual_slug_ignored(self) -> None:
+        """Verify manually provided slug values are ignored."""
+
+        response = self.client.post(self.endpoint, {"name": "Manual Slug Test", "slug": "wrong-slug"})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual("manual-slug-test", response.data["slug"])
+
+    def test_slug_uniqueness_enforced(self) -> None:
+        """Verify users cannot create teams with the different names but the same slug."""
+
+        # Creating the first team should succeed
+        response1 = self.client.post(self.endpoint, {"name": "Team X"})
+        self.assertEqual(status.HTTP_201_CREATED, response1.status_code)
+
+        # Creating a team with a name that slugifies into a non-unique value should fail
+        response2 = self.client.post(self.endpoint, {"name": "Team-X"})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response2.status_code)

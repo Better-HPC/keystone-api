@@ -11,9 +11,8 @@ git clone https://github.com/better-hpc/keystone-api
 ```
 
 Keystone-API uses [Poetry](https://python-poetry.org/docs/) to manage application dependencies.
-Certain dependencies, such as those required for building documentation, are optional.
-To install the project with all optional dependencies, execute the following command from the root of the cloned
-repository:
+Certain dependencies, such as those required by optional features, are excluded by default.
+To install all optional dependencies, execute the following command from the root of the cloned repository:
 
 ```bash
 poetry install --all-extras
@@ -51,7 +50,7 @@ Keystone-API comes bundled with the `keystone-api` utility which wraps the stand
 The most common way to launch an API instance during development is with the runserver command:
 
 ```bash
-keystone-api runserver
+keystone-api runserver --noreload
 ```
 
 The `runserver` command launches a development server that automatically reloads when source files change.

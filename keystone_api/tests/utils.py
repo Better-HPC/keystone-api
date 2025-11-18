@@ -71,7 +71,7 @@ class CustomAsserts:
         return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
 
 
-class TeamScopedListFilteringTestMixin(ABC):
+class TeamListFilteringTestMixin(ABC):
     """Test the filtering of returned records based on user team membership."""
 
     # Test configuration
@@ -115,7 +115,8 @@ class TeamScopedListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.team_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -127,7 +128,8 @@ class TeamScopedListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -137,11 +139,12 @@ class TeamScopedListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.generic_user)
         response = self.client.get(self.endpoint)
 
+        response_data = response.json()['results']
         self.assertEqual(200, response.status_code)
-        self.assertEqual(0, len(response.json()))
+        self.assertEqual(0, len(response_data))
 
 
-class UserScopedListFilteringTestMixin:
+class UserListFilteringTestMixin:
     """Test the filtering of returned records based on user ownership."""
 
     # Test configuration
@@ -182,7 +185,8 @@ class UserScopedListFilteringTestMixin:
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.user_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -194,7 +198,8 @@ class UserScopedListFilteringTestMixin:
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_ids = {record['id'] for record in response.json()}
+        response_data = response.json()['results']
+        response_ids = {record['id'] for record in response_data}
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -204,5 +209,6 @@ class UserScopedListFilteringTestMixin:
         self.client.force_authenticate(self.other_user)
         response = self.client.get(self.endpoint)
 
+        response_data = response.json()['results']
         self.assertEqual(200, response.status_code)
-        self.assertEqual(0, len(response.json()))
+        self.assertEqual(0, len(response_data))
