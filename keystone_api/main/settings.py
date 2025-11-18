@@ -302,6 +302,7 @@ if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
 
     AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
 
+    AUTH_LDAP_TIMEOUT = env.int("AUTH_LDAP_TIMEOUT", 10)
     AUTH_LDAP_ALWAYS_UPDATE_USER = True
     AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", True)
     AUTH_LDAP_BIND_DN = env.str("AUTH_LDAP_BIND_DN", "")

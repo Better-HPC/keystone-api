@@ -149,6 +149,7 @@ See the `apps.users.models.User` class for a full list of available Keystone fie
 | `AUTH_LDAP_REQUIRE_CERT`  | `False`          | Whether to require certificate verification.                      |
 | `AUTH_LDAP_ATTR_MAP`      |                  | A mapping of user fields to LDAP attribute names.                 |
 | `AUTH_LDAP_PURGE_REMOVED` | `False`          | Delete users when removed from LDAP instead of deactivating them. |
+| `AUTH_LDAP_TIMEOUT`       | `10`             | The number of seconds before timing out an LDAP connection/query. |
 
 ## Developer Settings
 
