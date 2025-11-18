@@ -16,7 +16,6 @@ from factory.django import DjangoModelFactory
 from factory.random import randgen
 
 from apps.users.factories import TeamFactory, UserFactory
-from apps.users.models import User
 from .models import *
 
 __all__ = [

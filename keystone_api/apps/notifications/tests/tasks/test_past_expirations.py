@@ -13,7 +13,7 @@ from apps.notifications.tasks.past_expirations import should_notify_past_expirat
 class ShouldNotifyPastExpirationMethod(TestCase):
     """Test the determination of whether a notification should be issued for an expired allocation."""
 
-    def test_true_if_new_notification(self) -> None:
+    def test_true_if_expires_today(self) -> None:
         """Verify returns `True` for requests expiring today with no existing notification."""
 
         request = AllocationRequestFactory(expire=date.today())
@@ -23,7 +23,7 @@ class ShouldNotifyPastExpirationMethod(TestCase):
             should_notify_past_expiration(request.submitter, request)
         )
 
-    def test_true_when_expiration_date_is_before_today(self) -> None:
+    def test_true_if_expires_before_today(self) -> None:
         """Verify returns `True` for requests expiring yesterday with no existing notification."""
 
         request = AllocationRequestFactory(expire=date.today() - timedelta(days=1))
@@ -56,7 +56,7 @@ class ShouldNotifyPastExpirationMethod(TestCase):
             should_notify_past_expiration(request.submitter, request)
         )
 
-    def test_false_when_expiration_date_is_after_today(self) -> None:
+    def test_false_if_expires_after_today(self) -> None:
         """Verify returns `False` when the request has not yet expired."""
 
         request = AllocationRequestFactory(expire=date.today() + timedelta(days=1))
