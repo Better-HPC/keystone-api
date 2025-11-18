@@ -70,8 +70,9 @@ By default, these files are stored in subdirectories of the installed applicatio
 
 ## Logging
 
-In addition to writing application logs to disk, Keystone stores audit logs and request history in the application database.
-All log values are automatically rotated and purged by the application.
+Keystone automatically purges application logs according to the policy settings described below.
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
+Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
 
 | Setting Name              | Default Value        | Description                                                                                                 |
 |---------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
@@ -81,6 +82,7 @@ All log values are automatically rotated and purged by the application.
 | `LOG_APP_RETENTION_FILES` | `5`                  | Maximum rotated log files to keep.                                                                          |
 | `LOG_REQ_RETENTION_SEC`   | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
 | `LOG_AUD_RETENTION_SEC`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
+| `LOG_TSK_RETENTION_SEC`   | `2592000` (30 days)  | How long to store task logs in seconds. Set to 0 to keep all records.                                       |
 
 ## API Throttling
 

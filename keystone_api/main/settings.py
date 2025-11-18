@@ -354,8 +354,12 @@ PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=
 
 # Logging
 
+# Disable Celery's internal log clean up in favor of custom log rotation
+CELERY_RESULT_EXPIRES = None
+
 LOG_REQ_RETENTION_SEC = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
 LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).total_seconds())
+LOG_TSK_RETENTION_SEC = env.int('LOG_TSK_RETENTION_SEC', timedelta(days=30).total_seconds())
 
 _default_log_dir = BASE_DIR / 'keystone.log'
 LOG_FILE_PATH = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
