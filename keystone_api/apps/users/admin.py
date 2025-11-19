@@ -119,4 +119,5 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_active', 'total_members', 'owners')
     search_fields = ('name',)
     list_filter = ('is_active',)
+    readonly_fields = ('slug',)
     inlines = [MembershipInline]
