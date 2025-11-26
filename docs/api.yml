@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Keystone API
   version: 0.0.0
-  description: A REST API for managing user resource allocations on HPC systems.
+  description: The backend REST API for the Keystone HPC utility.
 paths:
   /allocations/allocations/:
     get:

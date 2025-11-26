@@ -6,26 +6,9 @@ build-backend = "poetry.core.masonry.api"
 name = "keystone-api"
 version = "0.0.0"
 readme = "README.md"
-description = "A REST API for managing user resource allocations on HPC systems."
+description = "The backend REST API for the Keystone HPC utility."
 authors = [{ name = "Better HPC LLC" }]
 keywords = ["Better", "HPC", "keystone", "api"]
-classifiers = [
-    "Environment :: Web Environment",
-    "Framework :: Django",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Information Technology",
-    "Intended Audience :: System Administrators",
-    "Natural Language :: English",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Topic :: Internet",
-    "Topic :: Internet :: WWW/HTTP",
-    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
-    "Topic :: Software Development",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Software Development :: Libraries :: Application Frameworks",
-    "Typing :: Typed"
-]
 requires-python = ">=3.11,<4"
 dependencies = [
     "coverage==7.11.3",
