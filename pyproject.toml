@@ -40,10 +40,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-ldap = ["django-auth-ldap"]
-smtp = ["aiosmtpd"]
+ldap = ["django-auth-ldap==5.2.0"]
+smtp = ["aiosmtpd==1.4.6"]
 tests = ["coverage"]
-all = ["django-auth-ldap", "aiosmtpd", "coverage"]
+all = ["django-auth-ldap==5.2.0", "aiosmtpd==1.4.6", "coverage"]
 
 [tool.poetry.group.tests.dependencies]
 coverage = { version = "*", optional = true }
