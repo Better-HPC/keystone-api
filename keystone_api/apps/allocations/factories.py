@@ -26,7 +26,7 @@ __all__ = [
     'AttachmentFactory',
     'ClusterFactory',
     'CommentFactory',
-    'JobStatsFactory'
+    'JobFactory'
 ]
 
 
@@ -246,13 +246,13 @@ class CommentFactory(DjangoModelFactory):
     request = factory.SubFactory(AllocationRequestFactory)
 
 
-class JobStatsFactory(DjangoModelFactory):
+class JobFactory(DjangoModelFactory):
     """Factory for creating mock `JobStats` instances."""
 
     class Meta:
         """Factory settings."""
 
-        model = JobStats
+        model = Job
 
     jobid = factory.Sequence(lambda n: f"{n + 1}")
     jobname = factory.Faker('word')

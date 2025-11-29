@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from apps.allocations.factories import JobStatsFactory
+from apps.allocations.factories import JobFactory
 from apps.users.factories import TeamFactory
 
 
@@ -13,7 +13,7 @@ class GetTeamMethod(TestCase):
         """Create mock database records"""
 
         self.team = TeamFactory()
-        self.jobstat = JobStatsFactory(team=self.team)
+        self.jobstat = JobFactory(team=self.team)
 
     def test_get_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""

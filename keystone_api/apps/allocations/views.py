@@ -30,7 +30,7 @@ __all__ = [
     'AttachmentViewSet',
     'ClusterViewSet',
     'CommentViewSet',
-    'JobStatsViewSet',
+    'JobViewSet',
 ]
 
 
@@ -396,15 +396,15 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         tags=["Allocations - User Jobs"],
     )
 )
-class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
+class JobViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching Slurm job statistics."""
 
-    model = JobStats
+    model = Job
 
     permission_classes = [IsAuthenticated, MemberReadOnly]
     search_fields = ['account', 'username', 'group', 'team__name']
-    serializer_class = JobStatsSerializer
-    queryset = JobStats.objects.select_related(
+    serializer_class = JobSerializer
+    queryset = Job.objects.select_related(
         'cluster',
         'team',
     )

@@ -14,7 +14,7 @@ router.register('clusters', ClusterViewSet)
 router.register('comments', CommentViewSet)
 router.register('requests', AllocationRequestViewSet)
 router.register('reviews', AllocationReviewViewSet)
-router.register('jobs', JobStatsViewSet)
+router.register('jobs', JobViewSet)
 
 urlpatterns = router.urls + [
     path('request-choices/status/', AllocationRequestStatusChoicesView.as_view()),

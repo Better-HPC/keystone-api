@@ -27,7 +27,7 @@ __all__ = [
     'Attachment',
     'Cluster',
     'Comment',
-    'JobStats',
+    'Job',
     'TeamModelInterface',
 ]
 
@@ -268,29 +268,34 @@ class Comment(TeamModelInterface, models.Model):
         return f'Comment by {self.user} made on request "{self.request.title[:50]}"'
 
 
-class JobStats(TeamModelInterface, models.Model):
-    """Slurm Job status and statistics."""
+class Job(TeamModelInterface, models.Model):
+    """HPC Job status and resource information."""
 
-    jobid = models.CharField(max_length=64, unique=True)  # Slurm ID, not database ID
-    account = models.CharField(max_length=128, null=True, blank=True)
-    allocnodes = models.CharField(max_length=128, null=True, blank=True)
-    alloctres = models.TextField(null=True, blank=True)
-    derivedexitcode = models.CharField(max_length=10, null=True, blank=True)
-    elapsed = models.DurationField(null=True, blank=True)
-    end = models.DateTimeField(null=True, blank=True)
-    group = models.CharField(max_length=128, null=True, blank=True)
+    # Job identifiers
+    jobid = models.CharField(max_length=64, unique=True)  # Scheduler ID, not database ID
     jobname = models.CharField(max_length=512, null=True, blank=True)
-    nodelist = models.TextField(null=True, blank=True)
-    priority = models.IntegerField(null=True, blank=True)
-    partition = models.CharField(max_length=128, null=True, blank=True)
-    qos = models.CharField(max_length=128, null=True, blank=True)
-    start = models.DateTimeField(null=True, blank=True)
-    state = models.CharField(max_length=64, null=True, blank=True)
-    submit = models.DateTimeField(null=True, blank=True)
+
+    # User identifiers
+    account = models.CharField(max_length=128, null=True, blank=True)  # Scheduler account, not keystone team
     username = models.CharField(max_length=128, null=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    # Runtime / status
+    submit = models.DateTimeField(null=True, blank=True)
+    start = models.DateTimeField(null=True, blank=True)
+    end = models.DateTimeField(null=True, blank=True)
+    state = models.CharField(max_length=64, null=True, blank=True)
+    exit_code = models.CharField(max_length=10, null=True, blank=True)
+
+    # Resource usage
+    priority = models.CharField(max_length=50, null=True, blank=True)
+    qos = models.CharField(max_length=128, null=True, blank=True)
+    nodes = models.CharField(max_length=128, null=True, blank=True)
+    partition = models.CharField(max_length=128, null=True, blank=True)
+    sus = models.TextField(null=True, blank=True)
+
+    # Timestamps tracking db changes
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
     cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE, null=True, blank=True)

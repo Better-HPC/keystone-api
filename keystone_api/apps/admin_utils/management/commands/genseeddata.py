@@ -294,7 +294,7 @@ class Command(StdOutUtils, BaseCommand):
 
                     num_jobs = randgen.randint(*n_req_jobs)
                     for _ in range(num_jobs):
-                        JobStatsFactory(team=team, cluster=randgen.choice(clusters))
+                        JobFactory(team=team, cluster=randgen.choice(clusters))
 
                 # Attach grants
                 if team_grants:

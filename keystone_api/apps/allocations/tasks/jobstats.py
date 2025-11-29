@@ -2,7 +2,7 @@
 
 from celery import shared_task
 
-from apps.allocations.models import Cluster, JobStats
+from apps.allocations.models import Cluster, Job
 from apps.users.models import Team
 from plugins.slurm import get_cluster_jobs
 
@@ -37,19 +37,35 @@ def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
     cluster = Cluster.objects.get(name=cluster_name)
     cluster_jobs = get_cluster_jobs(cluster.name)
 
-    # Prefetch team objects
+    # Prefetch team objects from the database
     account_names = set(job['account'] for job in cluster_jobs)
     teams = Team.objects.filter(name__in=account_names)
     team_map = {team.name: team for team in teams}
 
-    # Prepare JobStats objects
+    # Map Slurm fields to model fields
     objs = []
-    for job in cluster_jobs:
-        job['cluster'] = cluster
-        job['username'] = job.pop('user', None)
-        job['team'] = team_map.get(job['account'], None)
-        objs.append(JobStats(**job))
+    for job_data in cluster_jobs:
+        objs.append(
+            Job(**{
+                'jobid': job_data.get('jobid'),
+                'jobname': job_data.get('jobname'),
+                'account': job_data.get('account'),
+                'username': job_data.get('user'),
+                'submit': job_data.get('submit'),
+                'start': job_data.get('start'),
+                'end': job_data.get('end'),
+                'state': job_data.get('state'),
+                'exit_code': job_data.get('derivedexitcode'),
+                'priority': job_data.get('priority'),
+                'qos': job_data.get('qos'),
+                'nodes': job_data.get('allocnodes'),
+                'partition': job_data.get('partition'),
+                'sus': job_data.get('alloctres'),
+                'team': team_map.get(job_data.get('account')),
+                'cluster': cluster,
+            })
+        )
 
     # Bulk insert/update
-    update_fields = [field.name for field in JobStats._meta.get_fields() if not field.unique]
-    JobStats.objects.bulk_create(objs, update_conflicts=True, unique_fields=['jobid'], update_fields=update_fields)
+    update_fields = [field.name for field in Job._meta.get_fields() if not field.unique]
+    Job.objects.bulk_create(objs, update_conflicts=True, unique_fields=['jobid'], update_fields=update_fields)
