@@ -226,7 +226,7 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     serializer_class = AllocationSerializer
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
-    permission_classes = [IsAuthenticated, AllocationPermissions]
+    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
     queryset = Allocation.objects.prefetch_related(
         'history'
     ).select_related(

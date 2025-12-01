@@ -16,7 +16,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Authenticated User         | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
@@ -53,12 +53,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_201_CREATED,
+            post=status.HTTP_403_FORBIDDEN,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'requested': 1000, 'cluster': 1, 'request': 1}
         )
 
     def test_staff_user_permissions(self) -> None:
