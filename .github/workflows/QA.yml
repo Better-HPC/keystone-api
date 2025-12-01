@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@master
@@ -53,11 +53,11 @@ jobs:
         run: docker load --input /tmp/keystone-api.tar
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Check file content
         run: |
-          old_spec_path="docs/api.yml"
+          old_spec_path="docs/api/openapi.yml"
           old_spec_content=$(cat $old_spec_path)
           
           new_spec_path="new_spec.yml"

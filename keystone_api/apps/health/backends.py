@@ -5,9 +5,43 @@ These checks supplement third-party health checks that come bundled with the
 `django-health-check` package.
 """
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import get_connection
 from health_check.backends import BaseHealthCheckBackend
+from health_check.exceptions import HealthCheckException
+
+
+class LDAPHealthCheck(BaseHealthCheckBackend):
+    """Custom health check backend for LDAP connectivity."""
+
+    def check_status(self) -> None:
+        """Perform an LDAP `whoami` query to verify server availability."""
+
+        import ldap
+
+        try:
+            conn = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
+            conn.set_option(ldap.OPT_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
+            conn.set_option(ldap.OPT_NETWORK_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
+
+            if settings.AUTH_LDAP_BIND_DN:
+                conn.bind(settings.AUTH_LDAP_BIND_DN, settings.AUTH_LDAP_BIND_PASSWORD)
+
+            if settings.AUTH_LDAP_START_TLS:
+                ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+                conn.start_tls_s()
+
+            conn.whoami_s()
+
+        except ldap.INVALID_CREDENTIALS:
+            raise HealthCheckException("Invalid LDAP credentials.")
+
+        except ldap.SERVER_DOWN:
+            raise HealthCheckException("LDAP server not reachable.")
+
+        except Exception:
+            raise HealthCheckException("Unexpected error")
 
 
 class SMTPHealthCheck(BaseHealthCheckBackend):

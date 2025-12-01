@@ -49,6 +49,9 @@ def ldap_update_users() -> None:
 
     # Search LDAP for all user entries
     conn = get_ldap_connection()
+    conn.set_option(ldap.OPT_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
+    conn.set_option(ldap.OPT_NETWORK_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
+
     search = conn.search_s(settings.AUTH_LDAP_USER_SEARCH.base_dn, ldap.SCOPE_SUBTREE, '(objectClass=account)')
 
     # Fetch LDAP usernames using the LDAP attribute map defined in settings

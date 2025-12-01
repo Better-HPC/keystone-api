@@ -6,8 +6,10 @@ integration with the parent project.
 """
 
 from django.apps import AppConfig
-
 from health_check.plugins import plugin_dir
+
+from apps.health.backends import LDAPHealthCheck
+from main import settings
 
 
 class HealthAppConfig(AppConfig):
@@ -20,3 +22,6 @@ class HealthAppConfig(AppConfig):
 
         from .backends import SMTPHealthCheck
         plugin_dir.register(SMTPHealthCheck)
+
+        if settings.AUTH_LDAP_SERVER_URI:
+            plugin_dir.register(LDAPHealthCheck)

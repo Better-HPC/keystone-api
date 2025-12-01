@@ -70,8 +70,9 @@ By default, these files are stored in subdirectories of the installed applicatio
 
 ## Logging
 
-In addition to writing application logs to disk, Keystone stores audit logs and request history in the application database.
-All log values are automatically rotated and purged by the application.
+Keystone automatically purges application logs according to the policy settings described below.
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
+Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
 
 | Setting Name              | Default Value        | Description                                                                                                 |
 |---------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
@@ -81,6 +82,7 @@ All log values are automatically rotated and purged by the application.
 | `LOG_APP_RETENTION_FILES` | `5`                  | Maximum rotated log files to keep.                                                                          |
 | `LOG_REQ_RETENTION_SEC`   | `2592000` (30 days)  | How long to store request logs in seconds. Set to 0 to keep all records.                                    |
 | `LOG_AUD_RETENTION_SEC`   | `2592000` (30 days)  | How long to store audit logs in seconds. Set to 0 to keep all records.                                      |
+| `LOG_TSK_RETENTION_SEC`   | `2592000` (30 days)  | How long to store task logs in seconds. Set to 0 to keep all records.                                       |
 
 ## API Throttling
 
@@ -136,8 +138,9 @@ Securing your production email server with a username/password is recommended, b
 
 ## LDAP Authentication
 
-Enabling LDAP authentication is optional and disabled by default.
+Using LDAP for authentication is optional and disabled by default.
 To enable LDAP, set the `AUTH_LDAP_SERVER_URI` value to the desired LDAP endpoint.
+Enabling LDAP integration will also add LDAP related health checks to the [API health endpoint](../api/logging.md#system-health).
 
 Application user fields are mapped to LDAP attributes by specifying the `AUTH_LDAP_ATTR_MAP` setting.
 The following example maps the `first_name` and `last_name` fields used by Keystone to the LDAP attributes `givenName`
@@ -159,6 +162,7 @@ See the `apps.users.models.User` class for a full list of available Keystone fie
 | `AUTH_LDAP_REQUIRE_CERT`  | `False`          | Whether to require certificate verification.                      |
 | `AUTH_LDAP_ATTR_MAP`      |                  | A mapping of user fields to LDAP attribute names.                 |
 | `AUTH_LDAP_PURGE_REMOVED` | `False`          | Delete users when removed from LDAP instead of deactivating them. |
+| `AUTH_LDAP_TIMEOUT`       | `10`             | The number of seconds before timing out an LDAP connection/query. |
 
 ## Developer Settings
 

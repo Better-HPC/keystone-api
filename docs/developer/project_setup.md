@@ -119,5 +119,5 @@ The `spectacular` command will dynamically generate an OpenAPI schema in YAML fo
 Rendering the specification into HTML is left to the developer using the documentation tool of their choice.
 
 ```bash
-keystone-api spectacular --file docs/api.yml
+keystone-api spectacular --file docs/api/openapi.yml
 ```

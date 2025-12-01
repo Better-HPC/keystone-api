@@ -18,15 +18,17 @@ __all__ = ['clear_log_records']
 def clear_log_records() -> None:
     """Delete request and application logs according to retention policies set in application settings."""
 
-    from .models import RequestLog, AuditLog
+    from .models import RequestLog, AuditLog, TaskResult
 
+    # The (database model, retention interval, datetime field) used for pruning
     log_configs = [
-        (RequestLog, settings.LOG_REQ_RETENTION_SEC),
-        (AuditLog, settings.LOG_AUD_RETENTION_SEC),
+        (RequestLog, settings.LOG_REQ_RETENTION_SEC, "timestamp"),
+        (AuditLog, settings.LOG_AUD_RETENTION_SEC, "timestamp"),
+        (TaskResult, settings.LOG_TSK_RETENTION_SEC, "date_done"),
     ]
 
     now = timezone.now()
-    for model, retention in log_configs:
+    for model, retention, field in log_configs:
         if retention > 0:
             cutoff = now - timedelta(seconds=retention)
-            model.objects.filter(timestamp__lte=cutoff).delete()
+            model.objects.filter(**{f"{field}__lte": cutoff}).delete()

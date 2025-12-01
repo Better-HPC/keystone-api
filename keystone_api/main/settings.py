@@ -227,7 +227,6 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': SUMMARY,
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
-    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAuthenticated'],
     'ENUM_NAME_OVERRIDES': {
         'RequestStatusChoices': 'apps.allocations.models.AllocationRequest.StatusChoices',
         'ReviewStatusChoices': 'apps.allocations.models.AllocationReview.StatusChoices',
@@ -298,18 +297,21 @@ else:
 AUTH_USER_MODEL = "users.User"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
+# General LDAP settings
 AUTH_LDAP_PURGE_REMOVED = env.bool("AUTH_LDAP_PURGE_REMOVED", False)
+AUTH_LDAP_TIMEOUT = env.int("AUTH_LDAP_TIMEOUT", 10)
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", True)
+AUTH_LDAP_BIND_DN = env.str("AUTH_LDAP_BIND_DN", "")
+AUTH_LDAP_BIND_PASSWORD = env.str("AUTH_LDAP_BIND_PASSWORD", "")
+AUTH_LDAP_USER_ATTR_MAP = env.dict('AUTH_LDAP_ATTR_MAP', default=dict())
+
+# LDAP settings that require the LDAP dependency to initialize
 if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
     import ldap
     from django_auth_ldap.config import LDAPSearch
 
     AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
-
-    AUTH_LDAP_ALWAYS_UPDATE_USER = True
-    AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", True)
-    AUTH_LDAP_BIND_DN = env.str("AUTH_LDAP_BIND_DN", "")
-    AUTH_LDAP_BIND_PASSWORD = env.str("AUTH_LDAP_BIND_PASSWORD", "")
-    AUTH_LDAP_USER_ATTR_MAP = env.dict('AUTH_LDAP_ATTR_MAP', default=dict())
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
         env.str("AUTH_LDAP_USER_SEARCH", ""),
         ldap.SCOPE_SUBTREE,
@@ -351,8 +353,12 @@ PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=
 
 # Logging
 
+# Disable Celery's internal log clean up in favor of custom log rotation
+CELERY_RESULT_EXPIRES = None
+
 LOG_REQ_RETENTION_SEC = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
 LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).total_seconds())
+LOG_TSK_RETENTION_SEC = env.int('LOG_TSK_RETENTION_SEC', timedelta(days=30).total_seconds())
 
 _default_log_dir = BASE_DIR / 'keystone.log'
 LOG_FILE_PATH = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
