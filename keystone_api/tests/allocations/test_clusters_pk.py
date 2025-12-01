@@ -1,4 +1,5 @@
 """Function tests for the `/allocations/clusters/<pk>/` endpoint."""
+
 from rest_framework import status
 from rest_framework.test import APITestCase
 
