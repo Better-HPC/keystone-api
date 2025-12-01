@@ -323,6 +323,48 @@ class ClusterViewSet(viewsets.ModelViewSet):
     serializer_class = ClusterSerializer
     queryset = Cluster.objects.all()
 
+    def get_queryset(self) -> QuerySet[Cluster]:
+        """Return a queryset of clusters visible to the requesting user.
+
+        For the 'list' action, clusters are filters by the cluster's access
+        mode and the requesting user's team memberships.
+
+        - OPEN clusters are always included.
+        - WHITELIST User must belong to an allowed team.
+        - BLACKLIST User must NOT belong to an allowed team.
+
+        Staff users are exempt from record filtering.
+        Other actions (retrieve, update, delete) are also exempt from record filtering.
+
+        Returns:
+            A queryset for filtered `Cluster` records.
+        """
+
+        qs = super().get_queryset()
+
+        # Only filter for list operations
+        if self.action == 'list' and not self.request.user.is_staff:
+            user_teams = self.request.user.get_all_teams().values_list('id', flat=True)
+
+            # Clusters open to all
+            open_clusters = qs.filter(access_mode=Cluster.AccessChoices.OPEN)
+
+            # Clusters whitelisting specific teams
+            whitelisted_clusters = qs.filter(
+                access_mode=Cluster.AccessChoices.WHITELIST,
+                access_teams__in=user_teams
+            )
+
+            # Clusters blacklisting specific teams
+            blacklisted_clusters = qs.filter(
+                access_mode=Cluster.AccessChoices.BLACKLIST
+            ).exclude(access_teams__in=user_teams)
+
+            # Combine querysets
+            qs = (open_clusters | whitelisted_clusters | blacklisted_clusters).distinct()
+
+        return qs
+
 
 @extend_schema_view(
     list=extend_schema(

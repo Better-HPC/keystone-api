@@ -4,8 +4,11 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import ClusterFactory
-from apps.users.factories import UserFactory
+from apps.allocations.models import Cluster
+from apps.users.factories import MembershipFactory, UserFactory
 from tests.utils import CustomAsserts
+
+ENDPOINT = '/allocations/clusters/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -20,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/clusters/'
+    endpoint = ENDPOINT
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -76,3 +79,40 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={'name': 'foo', 'api_url': 'localhost:6820', 'api_user': 'slurm', 'api_token': 'foobar'}
         )
+
+
+class ClusterAccessLists(APITestCase):
+    """Test returned cluster records are filtered by white/black lists."""
+
+    endpoint = ENDPOINT
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        membership = MembershipFactory()
+        self.generic_user = membership.user
+        self.team = membership.team
+
+        # Create cluster records with various access modes
+        self.open_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.OPEN)
+        self.whitelist_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.WHITELIST)
+        self.blacklist_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.BLACKLIST)
+
+        # Add teams to cluster access lists
+        self.whitelist_cluster.access_teams.add(self.team)
+        self.blacklist_cluster.access_teams.add(self.team)
+
+    def test_access_lists_enforced(self) -> None:
+        """Verify returned cluster records are regulated by white/black lists."""
+
+        self.client.force_authenticate(user=self.generic_user)
+
+        response = self.client.get(self.endpoint)
+        returned_ids = set(record['id'] for record in response.data['results'])
+
+        expected_ids = {self.open_cluster.id, self.whitelist_cluster.id}
+
+        # Should return the open cluster and team whitelisted cluster but not the blacklisted cluster
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertSetEqual(expected_ids, returned_ids)
+        self.assertNotIn(self.blacklist_cluster.id, returned_ids)

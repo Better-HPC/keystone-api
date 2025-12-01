@@ -216,3 +216,8 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
             self.profile_image.save(f'{self.username}.png', ContentFile(image_io.getvalue()), save=False)
 
         super().save(*args, **kwargs)
+
+    def get_all_teams(self) -> models.QuerySet:
+        """Return a queryset containing all teams the user belongs to."""
+
+        return Team.objects.filter(users=self)

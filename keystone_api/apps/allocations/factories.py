@@ -40,6 +40,7 @@ class ClusterFactory(DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Cluster {n + 1}")
     description = factory.Faker('sentence')
+    access_mode = Cluster.AccessChoices.OPEN
     enabled = True
 
 

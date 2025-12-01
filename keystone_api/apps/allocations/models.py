@@ -225,10 +225,40 @@ class Cluster(models.Model):
             models.Index(fields=['name']),
         ]
 
+    class AccessChoices(models.TextChoices):
+        """Enumerated choices for the `access` field."""
+
+        WHITELIST = 'WL', 'Whitelist'
+        BLACKLIST = 'BL', 'Blacklist'
+        OPEN = 'OP', 'Open'
+
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)
     enabled = models.BooleanField(default=True)
+
+    # Regulate user access
+    access_mode = models.CharField(max_length=2, choices=AccessChoices.choices, default=AccessChoices.OPEN)
+    access_teams = models.ManyToManyField(Team, null=True, blank=True)
+
     history = AuditlogHistoryField()
+
+    def verify_access_list(self, team: Team) -> bool:
+        """Determine whether the provided team makes it past the cluster white/black list.
+
+        Args:
+            team: The team to verify access for.
+
+        Returns:
+            A boolean indicating whether the team has cluster access.
+        """
+
+        if self.access_mode == self.AccessChoices.WHITELIST:
+            return self.access_teams.filter(id=team.id).exists()
+
+        elif self.access_mode == self.AccessChoices.BLACKLIST:
+            return not self.access_teams.filter(id=team.id).exists()
+
+        return True
 
     def __str__(self) -> str:  # pragma: nocover
         """Return the cluster name as a string."""
