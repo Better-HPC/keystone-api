@@ -57,7 +57,7 @@ jobs:
 
       - name: Check file content
         run: |
-          old_spec_path="docs/api.yml"
+          old_spec_path="docs/api/openapi.yml"
           old_spec_content=$(cat $old_spec_path)
           
           new_spec_path="new_spec.yml"

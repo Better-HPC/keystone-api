@@ -9,10 +9,10 @@ nav:
       - setup/settings.md
       - setup/notification.md
   - REST API:
-    - API Specification: api/index.html
-    - api/authentication.md
-    - api/filtering.md
-    - api/logging.md
+      - api/openapi.md
+      - api/authentication.md
+      - api/filtering.md
+      - api/logging.md
   - Developer Notes:
       - developer/project_setup.md
       - developer/design_guidelines.md
