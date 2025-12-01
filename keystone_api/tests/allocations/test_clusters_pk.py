@@ -1,11 +1,13 @@
 """Function tests for the `/allocations/clusters/<pk>/` endpoint."""
-
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import ClusterFactory
-from apps.users.factories import UserFactory
+from apps.allocations.models import Cluster
+from apps.users.factories import MembershipFactory, UserFactory
 from tests.utils import CustomAsserts
+
+ENDPOINT_PATTERN = '/allocations/clusters/{pk}/'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -20,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/allocations/clusters/{pk}/'
+    endpoint_pattern = ENDPOINT_PATTERN
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -79,3 +81,40 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put_body={'name': 'foo', 'api_url': 'localhost:6820', 'api_user': 'slurm', 'api_token': 'foobar'},
             patch_body={'name': 'foo'}
         )
+
+
+class ClusterAccessListPermissionIsolationTests(APITestCase):
+    """Verify cluster-level access lists do not alter authenticated permission checks."""
+
+    endpoint_pattern = ENDPOINT_PATTERN
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        membership = MembershipFactory()
+        self.user = membership.user
+        self.team = membership.team
+
+        # Clusters using access lists
+        self.whitelisted = ClusterFactory(access_mode=Cluster.AccessChoices.WHITELIST)
+        self.blacklisted = ClusterFactory(access_mode=Cluster.AccessChoices.BLACKLIST)
+
+        # Attach team to both lists
+        self.whitelisted.access_teams.add(self.team)
+        self.blacklisted.access_teams.add(self.team)
+
+    def test_user_can_access_whitelist_cluster(self) -> None:
+        """Verify users can access clusters their team is whitelisted on."""
+
+        self.client.force_authenticate(user=self.user)
+
+        res = self.client.get(self.endpoint_pattern.format(pk=self.whitelisted.id))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_user_can_access_blacklist_cluster(self) -> None:
+        """Verify users can access clusters their team is blacklisted on."""
+
+        self.client.force_authenticate(user=self.user)
+
+        res = self.client.get(self.endpoint_pattern.format(pk=self.blacklisted.id))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
