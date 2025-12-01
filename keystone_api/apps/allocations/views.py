@@ -343,7 +343,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
 
         # Only filter for list operations
-        if self.action == 'list' and not self.request.user.is_superuser:
+        if self.action == 'list' and not self.request.user.is_staff:
             user_teams = self.request.user.get_all_teams().values_list('id', flat=True)
 
             # Clusters open to all
