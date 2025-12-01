@@ -8,7 +8,7 @@
  *
  * Example usage:
  *   window.ui = SwaggerUIBundle({
- *     url: '../openapi.yml',
+ *     url: 'openapi.yml',
  *     plugins: [disableAuthorizePlugin]
  *   });
  */
