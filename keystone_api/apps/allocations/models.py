@@ -243,7 +243,7 @@ class Cluster(models.Model):
     history = AuditlogHistoryField()
 
     def verify_access_list(self, team: Team) -> bool:
-        """Verify whether the provided team makes it past the cluster white/black list.
+        """Determine whether the provided team makes it past the cluster white/black list.
 
         Args:
             team: The team to verify access for.

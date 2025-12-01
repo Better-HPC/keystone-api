@@ -82,7 +82,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
 
 class ClusterAccessLists(APITestCase):
-    """Test returned cluster records are filtered by access white/black lists."""
+    """Test returned cluster records are filtered by white/black lists."""
 
     endpoint = ENDPOINT
 
@@ -98,7 +98,7 @@ class ClusterAccessLists(APITestCase):
         self.whitelist_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.WHITELIST)
         self.blacklist_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.BLACKLIST)
 
-        # Tie regulated clusters to team access lists
+        # Add teams to cluster access lists
         self.whitelist_cluster.access_teams.add(self.team)
         self.blacklist_cluster.access_teams.add(self.team)
 
@@ -112,7 +112,7 @@ class ClusterAccessLists(APITestCase):
 
         expected_ids = {self.open_cluster.id, self.whitelist_cluster.id}
 
-        # Should return the open and team whitelisted clusters but not the blacklisted cluster
+        # Should return the open cluster and team whitelisted cluster but not the blacklisted cluster
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertSetEqual(expected_ids, returned_ids)
         self.assertNotIn(self.blacklist_cluster.id, returned_ids)

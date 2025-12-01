@@ -324,7 +324,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     queryset = Cluster.objects.all()
 
     def get_queryset(self) -> QuerySet[Cluster]:
-        """Return a queryset of clusters visible to the requesting user..
+        """Return a queryset of clusters visible to the requesting user.
 
         For the 'list' action, clusters are filters by the cluster's access
         mode and the requesting user's team memberships.
@@ -334,10 +334,10 @@ class ClusterViewSet(viewsets.ModelViewSet):
         - BLACKLIST User must NOT belong to an allowed team.
 
         Staff users are exempt from record filtering.
-        Other actions (retrieve, update, delete) return all clusters unfiltered.
+        Other actions (retrieve, update, delete) are also exempt from record filtering.
 
         Returns:
-            A queryset for filtered Cluster records.
+            A queryset for filtered `Cluster` records.
         """
 
         qs = super().get_queryset()
@@ -355,7 +355,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
                 access_teams__in=user_teams
             )
 
-            # Clusters blacklisting specific teams (user's teams must NOT be in access_teams)
+            # Clusters blacklisting specific teams
             blacklisted_clusters = qs.filter(
                 access_mode=Cluster.AccessChoices.BLACKLIST
             ).exclude(access_teams__in=user_teams)

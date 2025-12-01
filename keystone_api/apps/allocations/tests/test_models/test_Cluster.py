@@ -11,7 +11,7 @@ class VerifyAccessListMethod(TestCase):
     """Test the evaluation of user white/black-lists."""
 
     def setUp(self) -> None:
-        """Verify test fixtures are created for cluster and team records."""
+        """Create test fixtures using mock data."""
 
         self.cluster = ClusterFactory()
         self.team_allowed = TeamFactory()

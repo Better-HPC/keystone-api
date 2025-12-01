@@ -85,7 +85,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
 
 class ClusterAccessListPermissionIsolationTests(APITestCase):
-    """Verify cluster-level access lists do not alter authenticated permission checks."""
+    """Verify users can access individual records regardless of cluster-level access lists."""
 
     endpoint_pattern = ENDPOINT_PATTERN
 
