@@ -61,7 +61,7 @@ def get_template(template_name: str) -> Template:
     return environment.get_template(template_name)
 
 
-def format_template(template: Template, context: dict[str, any]) -> (str, str):
+def format_template(template: Template, context: dict[str, any]) -> tuple[str, str]:
     """Render a Jinja2 template with context and return both HTML and plain text output.
 
     Args:

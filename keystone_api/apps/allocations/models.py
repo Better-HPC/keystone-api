@@ -6,8 +6,8 @@ Each model reflects a different database and defines low-level defaults for how
 the associated table/fields/records are presented by parent interfaces.
 """
 
-import abc
 import os
+from abc import abstractmethod
 
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
@@ -35,7 +35,7 @@ __all__ = [
 class TeamModelInterface:
     """Interface class for database models affiliated with a team."""
 
-    @abc.abstractmethod
+    @abstractmethod
     def get_team(self) -> Team:
         """Return the team associated with the current record."""
 

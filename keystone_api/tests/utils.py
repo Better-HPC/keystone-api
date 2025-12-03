@@ -144,7 +144,7 @@ class TeamListFilteringTestMixin(ABC):
         self.assertEqual(0, len(response_data))
 
 
-class UserListFilteringTestMixin:
+class UserListFilteringTestMixin(ABC):
     """Test the filtering of returned records based on user ownership."""
 
     # Test configuration
