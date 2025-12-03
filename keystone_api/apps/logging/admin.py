@@ -4,6 +4,8 @@ Extends and customizes the site-wide administration utility with
 interfaces for managing application database constructs.
 """
 
+from typing import Literal
+
 import auditlog.admin
 import auditlog.models
 import django_celery_results.admin
@@ -34,17 +36,17 @@ admin.site.unregister(auditlog.models.LogEntry)
 class ReadOnlyModelAdminMixin:
     """Mixin class for creating model admins with read only permissions."""
 
-    def has_change_permission(self, request, obj=None) -> False:
+    def has_change_permission(self, request, obj=None) -> Literal[False]:
         """Disable permissions for modifying records."""
 
         return False
 
-    def has_add_permission(self, request, obj=None) -> False:
+    def has_add_permission(self, request, obj=None) -> Literal[False]:
         """Disable permissions for creating new records."""
 
         return False
 
-    def has_delete_permission(self, request, obj=None) -> False:
+    def has_delete_permission(self, request, obj=None) -> Literal[False]:
         """Disable permissions for deleting records."""
 
         return False

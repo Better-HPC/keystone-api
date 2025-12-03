@@ -6,6 +6,7 @@ an outgoing client response.
 """
 
 import uuid
+from typing import Callable
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -20,7 +21,7 @@ class LogRequestMiddleware:
     """Log metadata from incoming HTTP requests to the database."""
 
     # __init__ signature required by Django for dependency injection
-    def __init__(self, get_response: callable) -> None:
+    def __init__(self, get_response: Callable) -> None:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpRequest:
