@@ -9246,7 +9246,6 @@ components:
           type: array
           items:
             type: integer
-            nullable: true
       required:
       - _history
       - id
@@ -10391,7 +10390,6 @@ components:
           type: array
           items:
             type: integer
-            nullable: true
     PatchedComment:
       type: object
       description: Object serializer for the `Comment` class.
