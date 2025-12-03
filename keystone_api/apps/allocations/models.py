@@ -7,7 +7,7 @@ the associated table/fields/records are presented by parent interfaces.
 """
 
 import os
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 
-class TeamModelInterface(ABC):
+class TeamModelInterface:
     """Interface class for database models affiliated with a team."""
 
     @abstractmethod
