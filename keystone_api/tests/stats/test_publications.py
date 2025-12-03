@@ -1,5 +1,6 @@
 """Function tests for the `/stats/publications/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -8,13 +9,13 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
-ENDPOINT = '/stats/publications/'
+VIEW_NAME = 'stats:publication-list'
 
 
 class EndpointPermissions(CustomAsserts, APITestCase):
     """Test endpoint user permissions."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -56,7 +57,7 @@ class EndpointPermissions(CustomAsserts, APITestCase):
 class TeamRecordFiltering(APITestCase):
     """Test returned metrics are filtered by user team membership."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

@@ -1,11 +1,14 @@
 """Function tests for the `/users/users/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from apps.users.models import User
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'users:user-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -20,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/users/users/'
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -85,6 +88,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class CredentialHandling(APITestCase):
     """Test the handling of user credentials."""
 
+    endpoint = reverse(VIEW_NAME)
+
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -99,7 +104,7 @@ class CredentialHandling(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.post(
-            path='/users/users/',
+            path=self.endpoint,
             data={
                 'username': 'foobar',
                 'password': 'foobar123',
@@ -125,7 +130,7 @@ class CredentialHandling(APITestCase):
         """Verify credentials are not included in get requests."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.get('/users/users/')
+        response = self.client.get(self.endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         records = response.json()['results']
@@ -139,7 +144,7 @@ class CredentialHandling(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.post(
-            path='/users/users/',
+            path=self.endpoint,
             data={
                 'username': 'foobar',
                 'password': 'short',

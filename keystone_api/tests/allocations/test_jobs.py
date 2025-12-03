@@ -1,11 +1,14 @@
 """Function tests for the `/allocations/jobs/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import JobStatsFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, TeamListFilteringTestMixin
+
+VIEW_NAME = "allocations:job-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -20,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/allocations/jobs/'
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -80,6 +83,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
-    endpoint = '/allocations/jobs/'
+    endpoint = reverse(VIEW_NAME)
     factory = JobStatsFactory
     team_field = 'team'

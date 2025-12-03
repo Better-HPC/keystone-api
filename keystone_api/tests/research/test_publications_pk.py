@@ -7,6 +7,8 @@ from rest_framework.test import APITestCase
 from apps.research_products.factories import PublicationFactory
 from .common import ResearchDetailEndpointPermissionsTestMixin
 
+VIEW_NAME = "research:publication-detail"
+
 
 class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCase):
     """Test endpoint user permissions.
@@ -15,8 +17,8 @@ class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCas
     tested endpoint permissions.
     """
 
+    view_name = VIEW_NAME
     factory = PublicationFactory
-    endpoint_pattern = '/research/publications/{pk}/'
 
     def build_valid_record_data(self) -> dict:
         """Return a dictionary containing valid Publication data."""

@@ -1,11 +1,14 @@
 """Function tests for the `/notifications/preferences/<pk>/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.notifications.factories import PreferenceFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'notifications:preference-detail'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -31,14 +34,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = UserFactory(is_staff=True)
 
         self.preference = PreferenceFactory(user=self.preference_user)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.preference.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.preference_user.id)
-
         self.assert_http_responses(
-            endpoint,
+            self.endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -52,12 +54,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_same_user(self) -> None:
         """Verify authenticated users can access and modify their own records."""
 
-        # Define a user / record endpoint for the SAME user
-        endpoint = self.endpoint_pattern.format(pk=self.preference.id)
+        # Authenticate as the notification recipient
         self.client.force_authenticate(user=self.preference_user)
 
         self.assert_http_responses(
-            endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -71,12 +72,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_authenticated_user_different_user(self) -> None:
         """Verify users cannot modify other users' records."""
 
-        # Define a user / record endpoint for DIFFERENT users
-        endpoint = self.endpoint_pattern.format(pk=self.preference.id)
+        # Authenticate as a different user than the notification recipient
         self.client.force_authenticate(user=self.generic_user)
 
         self.assert_http_responses(
-            endpoint,
+            self.endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
@@ -90,11 +90,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_staff_user_permissions(self) -> None:
         """Verify staff users can modify other users' records."""
 
-        endpoint = self.endpoint_pattern.format(pk=self.preference.id)
         self.client.force_authenticate(user=self.staff_user)
-
         self.assert_http_responses(
-            endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,

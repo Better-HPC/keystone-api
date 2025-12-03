@@ -1,5 +1,6 @@
 """Function tests for the `/allocations/clusters/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -8,7 +9,7 @@ from apps.allocations.models import Cluster
 from apps.users.factories import MembershipFactory, UserFactory
 from tests.utils import CustomAsserts
 
-ENDPOINT = '/allocations/clusters/'
+VIEW_NAME = 'allocations:cluster-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -23,7 +24,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -84,7 +85,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class ClusterAccessLists(APITestCase):
     """Test returned cluster records are filtered by white/black lists."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

@@ -1,5 +1,6 @@
 """Function tests for the `/allocations/allocations/<pk>/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -7,6 +8,8 @@ from apps.allocations.factories import AllocationFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+VIEW_NAME = "allocations:allocation-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -23,8 +26,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                  | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/allocations/allocations/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -36,7 +37,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = self.endpoint_pattern.format(pk=self.allocation.pk)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.allocation.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

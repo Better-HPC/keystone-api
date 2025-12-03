@@ -1,5 +1,6 @@
 """Function tests for the `/allocations/reviews/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -8,7 +9,7 @@ from apps.allocations.models import AllocationReview
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
-ENDPOINT = '/allocations/reviews/'
+VIEW_NAME = 'allocations:review-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -23,7 +24,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -87,7 +88,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class ReviewerAssignment(APITestCase):
     """Test the automatic assignment and verification of the `reviewer` field."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -139,6 +140,6 @@ class ReviewerAssignment(APITestCase):
 class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
     factory = AllocationReviewFactory
     team_field = 'request__team'

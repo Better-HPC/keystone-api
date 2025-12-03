@@ -1,5 +1,6 @@
 """Function tests for the `/notifications/preferences/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -7,7 +8,7 @@ from apps.notifications.factories import PreferenceFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, UserListFilteringTestMixin
 
-ENDPOINT = '/notifications/preferences/'
+VIEW_NAME = 'notifications:preference-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -22,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User Accessing | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -81,7 +82,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class UserFieldAssignment(APITestCase):
     """Test the automatic assignment and verification of the `user` field."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -131,5 +132,5 @@ class UserFieldAssignment(APITestCase):
 class UserRecordFiltering(UserListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
     factory = PreferenceFactory

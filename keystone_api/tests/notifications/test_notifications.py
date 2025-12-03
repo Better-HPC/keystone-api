@@ -1,5 +1,6 @@
 """Function tests for the `/notifications/notifications/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -7,7 +8,7 @@ from apps.notifications.factories import NotificationFactory
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts, UserListFilteringTestMixin
 
-ENDPOINT = '/notifications/notifications/'
+VIEW_NAME = 'notifications:notification-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -22,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -81,5 +82,5 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class UserRecordFiltering(UserListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user ownership."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
     factory = NotificationFactory

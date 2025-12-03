@@ -1,10 +1,13 @@
 """Function tests for the `/version/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITransactionTestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+VIEW_NAME = "version:version"
 
 
 class EndpointPermissions(APITransactionTestCase, CustomAsserts):
@@ -18,7 +21,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     | Authenticated User         | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/version/'
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

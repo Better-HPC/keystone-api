@@ -1,5 +1,6 @@
 """Function tests for the `/users/teams/<pk>/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -7,7 +8,7 @@ from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
 
-ENDPOINT_PATTERN = '/users/teams/{pk}/'
+VIEW_NAME = 'users:team-detail'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -26,8 +27,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = ENDPOINT_PATTERN
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -39,13 +38,13 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_team_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.team_endpoint = self.endpoint_pattern.format(pk=self.team.pk)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.team.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
-            self.team_endpoint,
+            self.endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -61,7 +60,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.non_team_member)
         self.assert_http_responses(
-            self.team_endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -77,7 +76,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
-            self.team_endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -93,7 +92,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_admin)
         self.assert_http_responses(
-            self.team_endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -111,7 +110,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_owner)
         self.assert_http_responses(
-            self.team_endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -129,7 +128,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
-            self.team_endpoint,
+            self.endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -146,15 +145,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class SlugHandling(APITestCase):
     """Test slug value handling on team updates."""
 
-    endpoint_pattern = ENDPOINT_PATTERN
-
     def setUp(self) -> None:
-        """Authenticate a team owner."""
+        """Authenticate as a team owner."""
 
         self.team = TeamFactory(name="Original Name")
         self.owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
+
         self.client.force_authenticate(user=self.owner)
-        self.endpoint = self.endpoint_pattern.format(pk=self.team.pk)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.team.id})
 
     def test_slug_updates_when_name_changes(self) -> None:
         """Verify the slug value is automatically updated when the team name changes."""
@@ -187,11 +185,15 @@ class SlugHandling(APITestCase):
     def test_slug_uniqueness_enforced(self) -> None:
         """Verify slug uniqueness is enforced when updating records."""
 
+        # Create a staf user with full permissions
+        staff_user = UserFactory(is_staff=True)
+        self.client.force_authenticate(user=staff_user)
+
         # Create two initial team records
-        TeamFactory(name="Team 1")
-        TeamFactory(name="Team 2")
-        endpoint2 = self.endpoint_pattern.format(pk=1)
+        team1 = TeamFactory(name="Team 1")
+        team2 = TeamFactory(name="Team 2")
+        team2_endpoint = reverse(VIEW_NAME, kwargs={'pk': team2.id})
 
         # Rename second team so the name renames unique but the slug conflicts with the first team
-        response1 = self.client.patch(endpoint2, {"name": "Team-1"})
+        response1 = self.client.patch(team2_endpoint, {"name": team1.slug})
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response1.status_code)

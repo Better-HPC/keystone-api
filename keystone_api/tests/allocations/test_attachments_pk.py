@@ -1,6 +1,7 @@
 """Function tests for the `/allocations/attachments/<pk>/` endpoint."""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -8,6 +9,8 @@ from apps.allocations.factories import AttachmentFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'allocations:attachment-detail'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -24,20 +27,18 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                  | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/allocations/attachments/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        attachment = AttachmentFactory()
+        self.attachment = AttachmentFactory()
 
-        self.team = attachment.request.team
+        self.team = self.attachment.request.team
         self.non_member = UserFactory()
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
 
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = self.endpoint_pattern.format(pk=attachment.pk)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.attachment.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

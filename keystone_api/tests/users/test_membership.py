@@ -1,11 +1,14 @@
 """Function tests for the `/users/membership/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'users:membership-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -24,7 +27,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/users/memberships/'
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

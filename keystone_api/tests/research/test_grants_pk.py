@@ -7,6 +7,8 @@ from rest_framework.test import APITestCase
 from apps.research_products.factories import GrantFactory
 from .common import ResearchDetailEndpointPermissionsTestMixin
 
+VIEW_NAME = "research:grant-detail"
+
 
 class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCase):
     """Test endpoint user permissions.
@@ -15,8 +17,8 @@ class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCas
     tested endpoint permissions.
     """
 
+    view_name = VIEW_NAME
     factory = GrantFactory
-    endpoint_pattern = '/research/grants/{pk}/'
 
     def build_valid_record_data(self) -> dict:
         """Return a dictionary containing valid Grant data."""

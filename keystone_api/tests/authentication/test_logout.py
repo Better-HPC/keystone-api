@@ -1,10 +1,15 @@
 """Function tests for the `/authentication/logout/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+LOGIN_VIEW_NAME = 'authentication:login'
+LOGOUT_VIEW_NAME = 'authentication:logout'
+WHOAMI_VIEW_NAME = 'authentication:whoami'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -18,7 +23,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authenticated User   | 405 | 405  | 200     | 200  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/authentication/logout/'
+    endpoint = reverse(LOGOUT_VIEW_NAME)
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access the endpoint."""
@@ -55,9 +60,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class UserAuthentication(APITestCase):
     """Test the process of logging out users."""
 
-    login_endpoint = '/authentication/login/'
-    logout_endpoint = '/authentication/logout/'
-    whoami_endpoint = '/authentication/whoami/'
+    login_endpoint = reverse(LOGIN_VIEW_NAME)
+    logout_endpoint = reverse(LOGOUT_VIEW_NAME)
+    whoami_endpoint = reverse(WHOAMI_VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

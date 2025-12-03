@@ -1,12 +1,13 @@
 """Function tests for the `/users/users/<pk>/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
-ENDPOINT_PATTERN = '/users/users/{pk}/'
+VIEW_NAME = 'users:user-detail'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -22,8 +23,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = ENDPOINT_PATTERN
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -31,7 +30,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.user1_endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+        self.user1_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.user1.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -114,8 +113,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class CredentialHandling(APITestCase):
     """Test the getting/setting of user credentials."""
 
-    endpoint_pattern = ENDPOINT_PATTERN
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -123,7 +120,7 @@ class CredentialHandling(APITestCase):
         self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.user1_endpoint = self.endpoint_pattern.format(pk=self.user1.id)
+        self.user1_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.user1.id})
 
     def test_user_get_own_password(self) -> None:
         """Verify users cannot retrieve their own password."""
@@ -184,14 +181,12 @@ class CredentialHandling(APITestCase):
 class RecordHistory(APITestCase):
     """Test the serialization of record history."""
 
-    endpoint_pattern = ENDPOINT_PATTERN
-
     def setUp(self) -> None:
         """Authenticate as a generic application user."""
 
         user = UserFactory()
         self.client.force_authenticate(user=user)
-        self.endpoint = self.endpoint_pattern.format(pk=user.id)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': user.id})
 
     def test_password_masked(self) -> None:
         """Verify password values are masked in returned responses."""

@@ -1,5 +1,6 @@
 """Function tests for the `/allocations/requests/<pk>/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -7,6 +8,8 @@ from apps.allocations.factories import AllocationRequestFactory, CommentFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'allocations:comment-detail'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -28,8 +31,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user  (private comment) | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/allocations/comments/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -48,11 +49,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         # Create a public comment
         self.public_comment = CommentFactory(request=self.request)
-        self.endpoint = self.endpoint_pattern.format(pk=self.public_comment.pk)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.public_comment.id})
 
         # Create a public comment
         self.private_comment = CommentFactory(private=True, request=self.request)
-        self.private_endpoint = self.endpoint_pattern.format(pk=self.private_comment.pk)
+        self.private_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.private_comment.id})
 
         # Valid record data used to test write operations
         self.record_data = {'content': 'foobar', 'request': self.request.pk}

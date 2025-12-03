@@ -1,10 +1,14 @@
 """Function tests for the `/authentication/login/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+LOGIN_VIEW_NAME = 'authentication:login'
+WHOAMI_VIEW_NAME = 'authentication:whoami'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -18,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authenticated User   | 405 | 405  | 200     | 200  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/authentication/login/'
+    endpoint = reverse(LOGIN_VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -64,8 +68,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class UserAuthentication(APITestCase):
     """Test the user authentication process."""
 
-    login_endpoint = '/authentication/login/'
-    whoami_endpoint = '/authentication/whoami/'
+    login_endpoint = reverse(LOGIN_VIEW_NAME)
+    whoami_endpoint = reverse(WHOAMI_VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

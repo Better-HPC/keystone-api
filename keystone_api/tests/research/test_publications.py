@@ -2,11 +2,14 @@
 
 import datetime
 
+from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from apps.research_products.factories import PublicationFactory
 from tests.utils import TeamListFilteringTestMixin
 from .common import ResearchListEndpointPermissionsTestMixin
+
+VIEW_NAME = "research:publication-list"
 
 
 class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase):
@@ -16,7 +19,7 @@ class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase)
     tested endpoint permissions.
     """
 
-    endpoint = '/research/publications/'
+    endpoint = reverse(VIEW_NAME)
 
     def build_valid_record_data(self) -> dict:
         """Return a dictionary containing valid Publication data."""
@@ -33,5 +36,5 @@ class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase)
 class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
+    endpoint = reverse(VIEW_NAME)
     factory = PublicationFactory
-    endpoint = '/research/publications/'

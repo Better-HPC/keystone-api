@@ -1,10 +1,13 @@
 """Function tests for the `/openapi/json` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+VIEW_NAME = "openapi:json"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -18,7 +21,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/openapi/json/'
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

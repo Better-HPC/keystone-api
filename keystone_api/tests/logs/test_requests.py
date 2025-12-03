@@ -1,8 +1,11 @@
 """Function tests for the `/logs/requests/` endpoint."""
 
+from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from .common import LogEndpointPermissionTestMixin
+
+VIEW_NAME = "logging:request-list"
 
 
 class EndpointPermissions(LogEndpointPermissionTestMixin, APITestCase):
@@ -12,4 +15,4 @@ class EndpointPermissions(LogEndpointPermissionTestMixin, APITestCase):
     tested endpoint permissions.
     """
 
-    endpoint = '/logs/requests/'
+    endpoint = reverse(VIEW_NAME)

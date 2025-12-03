@@ -1,18 +1,14 @@
 """Common tests for research endpoints."""
 
 from abc import ABC, abstractmethod
-from typing import TypeVar
 
+from django.urls import reverse
 from factory.django import DjangoModelFactory
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
-from apps.users.models import Membership, Team, User
+from apps.users.models import Membership
 from tests.utils import CustomAsserts
-
-# Type indicating a mixin class expects to be used with a subclass of APITestCase
-TApiTestCase = TypeVar("TApiTestCase", bound=APITestCase)
 
 
 class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
@@ -31,21 +27,22 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
     | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    # Test Fixtures
-    team: Team
-    team_member: User
-    team_admin: User
-    team_owner: User
-    staff_user: User
-    generic_user: User
-    valid_record_data: dict
-
     @property
     @abstractmethod
-    def endpoint(self: TApiTestCase) -> str:
+    def endpoint(self) -> str:
         """The API endpoint to test."""
 
-    def setUp(self: TApiTestCase) -> None:
+    @abstractmethod
+    def build_valid_record_data(self) -> dict:
+        """Override to return valid record data for the tested resource.
+
+        Returns:
+            A dictionary of valid record data.
+        """
+
+        raise NotImplementedError
+
+    def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
@@ -58,17 +55,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
 
         self.valid_record_data = self.build_valid_record_data()
 
-    @abstractmethod
-    def build_valid_record_data(self: TApiTestCase) -> dict:
-        """Override to return valid record data for the tested resource.
-
-        Returns:
-            A dictionary of valid record data.
-        """
-
-        raise NotImplementedError
-
-    def test_unauthenticated_user_permissions(self: TApiTestCase) -> None:
+    def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
@@ -83,7 +70,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
             trace=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_non_member_permissions(self: TApiTestCase) -> None:
+    def test_non_member_permissions(self) -> None:
         """Verify users have read access but cannot create records for teams where they are not members."""
 
         self.client.force_authenticate(user=self.generic_user)
@@ -100,7 +87,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
             post_body=self.valid_record_data
         )
 
-    def test_team_member_permissions(self: TApiTestCase) -> None:
+    def test_team_member_permissions(self) -> None:
         """Verify regular team members have read-only access."""
 
         self.client.force_authenticate(user=self.team_member)
@@ -117,7 +104,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
             post_body=self.valid_record_data
         )
 
-    def test_team_admin_permissions(self: TApiTestCase) -> None:
+    def test_team_admin_permissions(self) -> None:
         """Verify team admins have read and write access."""
 
         self.client.force_authenticate(user=self.team_admin)
@@ -134,7 +121,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
             post_body=self.valid_record_data
         )
 
-    def test_team_owner_permissions(self: TApiTestCase) -> None:
+    def test_team_owner_permissions(self) -> None:
         """Verify team owners have read and write access."""
 
         self.client.force_authenticate(user=self.team_owner)
@@ -151,7 +138,7 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
             post_body=self.valid_record_data
         )
 
-    def test_staff_user_permissions(self: TApiTestCase) -> None:
+    def test_staff_user_permissions(self) -> None:
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
@@ -183,25 +170,17 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
     | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    # Test Fixtures
-    endpoint: str
-    team: Team
-    team_member: User
-    non_member: User
-    staff_user: User
-    valid_record_data: dict
+    @property
+    @abstractmethod
+    def view_name(self) -> str:
+        """The endpoint view name to test."""
 
     @property
     @abstractmethod
-    def factory(self: TApiTestCase) -> type[DjangoModelFactory]:
+    def factory(self) -> type[DjangoModelFactory]:
         """Object factory used to define valid record data during testing."""
 
-    @property
-    @abstractmethod
-    def endpoint_pattern(self: TApiTestCase) -> str:
-        """Pattern string for a per-record endpoint, with a placeholder (e.g., `{pk}`) for the object ID."""
-
-    def setUp(self: TApiTestCase) -> None:
+    def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
         membership = MembershipFactory(role=Membership.Role.MEMBER)
@@ -212,10 +191,10 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
         self.staff_user = UserFactory(is_staff=True)
 
         record = self.factory(team=self.team)
-        self.endpoint = self.endpoint_pattern.format(pk=record.pk)
+        self.endpoint = reverse(self.view_name, kwargs={'pk': record.id})
         self.valid_record_data = self.build_valid_record_data()
 
-    def build_valid_record_data(self: TApiTestCase) -> dict:
+    def build_valid_record_data(self) -> dict:
         """Override to return valid record data for the tested resource.
 
         Returns:
@@ -224,7 +203,7 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
 
         raise NotImplementedError
 
-    def test_unauthenticated_user_permissions(self: TApiTestCase) -> None:
+    def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
@@ -239,7 +218,7 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
             trace=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_non_member_permissions(self: TApiTestCase) -> None:
+    def test_non_member_permissions(self) -> None:
         """Verify users cannot access records for a team they are not in."""
 
         self.client.force_authenticate(user=self.non_member)
@@ -255,7 +234,7 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
-    def test_team_member_permissions(self: TApiTestCase) -> None:
+    def test_team_member_permissions(self) -> None:
         """Verify team members have read and write permissions against their own group records."""
 
         self.client.force_authenticate(user=self.team_member)
@@ -273,7 +252,7 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
             patch_body=self.valid_record_data
         )
 
-    def test_staff_user_permissions(self: TApiTestCase) -> None:
+    def test_staff_user_permissions(self) -> None:
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)

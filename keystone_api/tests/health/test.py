@@ -2,11 +2,14 @@
 
 from unittest.mock import Mock, patch
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITransactionTestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'health:health'
 
 
 @patch('health_check.backends.BaseHealthCheckBackend.run_check', return_value=None)
@@ -24,7 +27,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     | Staff User                 | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = '/health/'
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

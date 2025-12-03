@@ -1,5 +1,5 @@
 """Function tests for the `/allocations/reviews/<pk>/` endpoint."""
-
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -7,6 +7,8 @@ from apps.allocations.factories import AllocationReviewFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+VIEW_NAME = "allocations:review-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -35,7 +37,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = self.endpoint_pattern.format(pk=self.review.pk)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.review.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

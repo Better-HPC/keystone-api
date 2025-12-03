@@ -1,11 +1,14 @@
 """Function tests for the `/users/membership/<pk>/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.utils import CustomAsserts
+
+VIEW_NAME = 'users:membership-detail'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -25,8 +28,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/users/memberships/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -41,7 +42,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_team_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.member1_endpoint = self.endpoint_pattern.format(pk=membership.pk)
+        self.member1_endpoint = reverse(VIEW_NAME, kwargs={"pk": membership.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

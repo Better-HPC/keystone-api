@@ -1,12 +1,13 @@
 """Function tests for the `/users/teams/` endpoint."""
 
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
-ENDPOINT = '/users/teams/'
+VIEW_NAME = 'users:team-list'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -21,7 +22,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -82,7 +83,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 class SlugHandling(APITestCase, CustomAsserts):
     """Test slug value handling on team creation."""
 
-    endpoint = ENDPOINT
+    endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Authenticate a generic user."""

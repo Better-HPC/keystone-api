@@ -2,11 +2,14 @@
 
 from datetime import date
 
+from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from apps.research_products.factories import GrantFactory
 from tests.utils import TeamListFilteringTestMixin
 from .common import ResearchListEndpointPermissionsTestMixin
+
+VIEW_NAME = "research:grant-list"
 
 
 class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase):
@@ -16,7 +19,7 @@ class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase)
     tested endpoint permissions.
     """
 
-    endpoint = '/research/grants/'
+    endpoint = reverse(VIEW_NAME)
 
     def build_valid_record_data(self) -> dict:
         """Return a dictionary containing valid Grant data."""
@@ -35,5 +38,5 @@ class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase)
 class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
+    endpoint = reverse(VIEW_NAME)
     factory = GrantFactory
-    endpoint = '/research/grants/'
