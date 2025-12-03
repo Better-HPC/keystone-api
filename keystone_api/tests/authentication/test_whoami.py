@@ -1,4 +1,4 @@
-"""Function tests for the `/authentication/whoami/` endpoint."""
+"""Function tests for the `authentication:whoami` endpoint."""
 
 from django.urls import reverse
 from rest_framework import status

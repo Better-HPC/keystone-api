@@ -1,4 +1,4 @@
-"""Function tests for the `/openapi/yaml` endpoint."""
+"""Function tests for the `openapi:yaml` endpoint."""
 
 from django.urls import reverse
 from rest_framework import status
@@ -7,7 +7,7 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
-VIEW_NAME = "openapi:json"
+VIEW_NAME = "openapi:yaml"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):

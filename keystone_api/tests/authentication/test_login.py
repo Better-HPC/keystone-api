@@ -1,4 +1,4 @@
-"""Function tests for the `/authentication/login/` endpoint."""
+"""Function tests for the `authentication:login` endpoint."""
 
 from django.urls import reverse
 from rest_framework import status

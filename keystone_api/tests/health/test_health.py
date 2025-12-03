@@ -1,4 +1,4 @@
-"""Function tests for the `health:json` endpoint."""
+"""Function tests for the `health:health` endpoint."""
 
 from unittest.mock import Mock, patch
 
@@ -9,19 +9,22 @@ from rest_framework.test import APITransactionTestCase
 from apps.users.factories import UserFactory
 from tests.utils import CustomAsserts
 
-VIEW_NAME = 'health:json'
+VIEW_NAME = 'health:health'
+
 
 @patch('health_check.backends.BaseHealthCheckBackend.run_check', return_value=None)
 class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     """Test endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
+    In production, the returned response value depends on the result of the system health check.
+    However, these tests mock the tests to always pass, ensuring a 200 response code.
 
-    | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
-    | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | User Status                | GET  | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------------|------|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User       | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authenticated User         | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Staff User                 | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = reverse(VIEW_NAME)
