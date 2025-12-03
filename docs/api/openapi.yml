@@ -9404,6 +9404,16 @@ components:
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
           nullable: true
+        funding_active:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
+          nullable: true
+        funding_expired:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
+          nullable: true
         funding_average:
           type: string
           format: decimal
@@ -9413,7 +9423,9 @@ components:
       - active_count
       - agency_count
       - expired_count
+      - funding_active
       - funding_average
+      - funding_expired
       - funding_total
       - grant_count
     GrantSummary:

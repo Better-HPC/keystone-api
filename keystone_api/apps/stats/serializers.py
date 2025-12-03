@@ -60,6 +60,8 @@ class GrantStatsSerializer(serializers.Serializer):
     agency_count = serializers.IntegerField()
 
     funding_total = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
+    funding_active = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
+    funding_expired = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
     funding_average = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
 
 

@@ -172,10 +172,14 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         expired_count = qs.filter(end_date__lt=now()).count()
         agency_count = qs.values("agency").distinct().count()
         funding_total = qs.aggregate(Sum("amount"))["amount__sum"]
+        funding_active = qs.filter(end_date__gte=now()).aggregate(Sum("amount"))["amount__sum"]
+        funding_expired = qs.filter(end_date__lt=now()).aggregate(Sum("amount"))["amount__sum"]
         funding_average = qs.aggregate(Avg("amount"))["amount__avg"]
 
         return {
             "funding_total": funding_total,
+            "funding_active": funding_active,
+            "funding_expired": funding_expired,
             "funding_average": funding_average,
             "grant_count": grant_count,
             "active_count": active_count,
