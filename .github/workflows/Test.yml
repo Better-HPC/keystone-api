@@ -58,7 +58,6 @@ jobs:
             exit 1
           fi
 
-  # Run application level unit tests
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -87,27 +86,19 @@ jobs:
           }
 
           # Run tests and collect coverage
-          coverage run \
-            --source $PACKAGE_DIR/keystone_api \
-            /usr/local/bin/keystone-api test apps plugins
+          coverage run --source $PACKAGE_DIR/keystone_api /usr/local/bin/keystone-api test tests.unit_tests
 
           # Report coverage to the console
-          coverage report \
-            --omit "$OMIT_PATHS" \
-            --include "$INCLUDE_PATHS"
+          coverage report --omit "$OMIT_PATHS" --include "$INCLUDE_PATHS"
 
           # Write coverage report to disk in XML format
-          coverage xml \
-            --omit "$OMIT_PATHS" \
-            --include "$INCLUDE_PATHS" \
-            -o report.xml
+          coverage xml --omit "$OMIT_PATHS" --include "$INCLUDE_PATHS" -o report.xml
 
       - name: Report coverage results
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r report.xml
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
-  # Run package level function tests
   function-tests:
     name: Function Tests
     runs-on: ubuntu-latest
@@ -119,10 +110,11 @@ jobs:
           name: keystone-api-docker
           path: /tmp
 
+      - name: Load image
+        run: docker load --input /tmp/keystone-api.tar
+
       - name: Run tests
-        run: |
-          docker load --input /tmp/keystone-api.tar
-          docker run -e API_THROTTLE_ANON="1000/sec" -e API_THROTTLE_USER="1000/sec" keystone-api test tests
+        run: docker run -e API_THROTTLE_ANON="1000/sec" -e API_THROTTLE_USER="1000/sec" keystone-api test tests.function_tests
 
   report-test-status:
     name: Report Test Status

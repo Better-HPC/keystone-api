@@ -7,8 +7,8 @@ from .views import *
 app_name = 'logging'
 
 router = DefaultRouter()
-router.register('audit', AuditLogViewSet)
-router.register('requests', RequestLogViewSet)
-router.register('tasks', TaskResultViewSet)
+router.register('audit', AuditLogViewSet, basename='audit')
+router.register('requests', RequestLogViewSet, basename='request')
+router.register('tasks', TaskResultViewSet, basename='task')
 
 urlpatterns = router.urls

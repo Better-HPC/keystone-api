@@ -7,7 +7,7 @@ from .views import *
 app_name = 'research_products'
 
 router = DefaultRouter()
-router.register('grants', GrantViewSet)
-router.register('publications', PublicationViewSet)
+router.register('grants', GrantViewSet, basename="grant")
+router.register('publications', PublicationViewSet, basename="publication")
 
 urlpatterns = router.urls
