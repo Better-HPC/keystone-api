@@ -77,8 +77,8 @@ jobs:
           PACKAGE_DIR=$(docker run --entrypoint python --rm keystone-api -c 'import site; print(site.getsitepackages()[0])')
 
           # Common runtime settings for tests
-          OMIT_PATHS="*/migrations/*"
-          INCLUDE_PATHS="*/keystone_api/*"
+          OMIT_PATHS="*/tests/*,*/migrations/*"
+          INCLUDE_PATHS="*/keystone_api/apps/*,*/keystone_api/plugins/*"
 
           # Helper function to run the coverage utility from inside the container
           coverage() {
