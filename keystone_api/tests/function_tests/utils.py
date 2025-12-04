@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 from django.db import transaction
 from factory.django import DjangoModelFactory
+from rest_framework import status
 
 from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
@@ -65,6 +66,29 @@ class CustomAsserts:
         arg_names = ('data', 'headers')
         arg_values = (kwargs.get(f'{method}_body', None), kwargs.get(f'{method}_headers', None))
         return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
+
+
+class GetResponseContentTests(ABC):
+    """Test response content for an authenticated GET request matches the provided content."""
+
+    @property
+    @abstractmethod
+    def endpoint(self) -> str:
+        """The endpoint URL being tested."""
+
+    @property
+    @abstractmethod
+    def expected_content(self) -> dict:
+        """The expected response bopy."""
+
+    def test_returns_expected_content(self) -> None:
+        """Verify GET responses include the expected content."""
+
+        self.client.force_authenticate(user=UserFactory())
+
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(self.expected_content, response.json())
 
 
 class TeamListFilteringTestMixin(ABC):

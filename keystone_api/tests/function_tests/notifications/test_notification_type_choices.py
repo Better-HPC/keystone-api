@@ -1,14 +1,15 @@
-"""Function tests for the `allocations:review-status-choices` endpoint."""
+"""Function tests for the `notifications:notification-type-choices` endpoint."""
 
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import AllocationReview
+from apps.allocations.models import AllocationRequest
+from apps.notifications.models import Notification
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, GetResponseContentTests
 
-VIEW_NAME = 'allocations:review-status-choices'
+VIEW_NAME = 'notifications:notification-type-choices'
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -79,7 +80,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
 
 class ResponseContent(GetResponseContentTests, APITestCase):
-    """Test the endpoint returns valid allocation review status codes."""
+    """Test the endpoint returns valid notification type values."""
 
     endpoint = reverse(VIEW_NAME)
-    expected_content = dict(AllocationReview.StatusChoices.choices)
+    expected_content = dict(Notification.NotificationType.choices)

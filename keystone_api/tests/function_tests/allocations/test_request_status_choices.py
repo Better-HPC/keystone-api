@@ -6,8 +6,7 @@ from rest_framework.test import APITestCase
 
 from apps.allocations.models import AllocationRequest
 from apps.users.factories import UserFactory
-from tests.function_tests.utils import CustomAsserts
-from .common import GetResponseContentTests
+from tests.function_tests.utils import CustomAsserts, GetResponseContentTests
 
 VIEW_NAME = 'allocations:request-status-choices'
 
@@ -80,7 +79,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
 
 class ResponseContent(GetResponseContentTests, APITestCase):
-    """Test the endpoint returns valid Allocation Request status codes."""
+    """Test the endpoint returns valid allocation request status codes."""
 
     endpoint = reverse(VIEW_NAME)
     expected_content = dict(AllocationRequest.StatusChoices.choices)
