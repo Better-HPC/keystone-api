@@ -8,9 +8,9 @@ from .views import *
 app_name = 'notifications'
 
 router = DefaultRouter()
-router.register('notifications', NotificationViewSet)
-router.register('preferences', PreferenceViewSet)
+router.register('notifications', NotificationViewSet, basename="notification")
+router.register('preferences', PreferenceViewSet, basename="preference")
 
 urlpatterns = router.urls + [
-    path('notification-choices/type', NotificationTypeChoicesView.as_view()),
+    path('notification-choices/type', NotificationTypeChoicesView.as_view(), name='notification-type-choices'),
 ]

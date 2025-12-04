@@ -12,9 +12,9 @@ router.register('allocations', AllocationViewSet, basename='allocation')
 router.register('attachments', AttachmentViewSet, basename='attachment')
 router.register('clusters', ClusterViewSet, basename='cluster')
 router.register('comments', CommentViewSet, basename='comment')
+router.register('jobs', JobStatsViewSet, basename='job')
 router.register('requests', AllocationRequestViewSet, basename='request')
 router.register('reviews', AllocationReviewViewSet, basename='review')
-router.register('jobs', JobStatsViewSet, basename='job')
 
 urlpatterns = router.urls + [
     path('request-choices/status/', AllocationRequestStatusChoicesView.as_view(), name='request-status-choices'),
