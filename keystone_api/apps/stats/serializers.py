@@ -69,6 +69,7 @@ class PublicationStatsSerializer(serializers.Serializer):
     """Serializer for aggregated publication statistics."""
 
     publications_count = serializers.IntegerField()
+    draft_count = serializers.IntegerField()
     submitted_count = serializers.IntegerField()
     accepted_count = serializers.IntegerField()
     journals_count = serializers.IntegerField()

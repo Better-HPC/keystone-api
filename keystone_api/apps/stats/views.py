@@ -223,6 +223,7 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         qs = self.filter_queryset(self.get_queryset())
 
         publications_count = qs.count()
+        draft_count = qs.filter(submitted__isnull=True, published__isnull=False).count()
         submitted_count = qs.filter(submitted__isnull=False).count()
         accepted_count = qs.filter(published__isnull=False).count()
         journals_count = qs.values("journal").distinct().count()
@@ -242,6 +243,7 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         return {
             "review_average": review_avg,
             "publications_count": publications_count,
+            "draft_count": draft_count,
             "submitted_count": submitted_count,
             "accepted_count": accepted_count,
             "journals_count": journals_count,

@@ -10799,6 +10799,8 @@ components:
       properties:
         publications_count:
           type: integer
+        draft_count:
+          type: integer
         submitted_count:
           type: integer
         accepted_count:
@@ -10810,6 +10812,7 @@ components:
           nullable: true
       required:
       - accepted_count
+      - draft_count
       - journals_count
       - publications_count
       - review_average
