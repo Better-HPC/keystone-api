@@ -45,6 +45,7 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
 
+        # Base query with useful annotations
         now_ts = now()
         qs = self.filter_queryset(self.get_queryset()).annotate(
             days_pending=ExpressionWrapper(
@@ -57,16 +58,16 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             )
         )
 
-        # Lifecycle subsets
-        qs_upcoming = qs.filter(active__gt=now_ts)
-        qs_active = qs.filter(active__lte=now_ts, expire__gte=now_ts)
-        qs_expired = qs.filter(expire__lt=now_ts)
+        # Subqueries based on request lifecycle
+        qs_upcoming = qs.filter(status=AllocationRequest.StatusChoices.APPROVED, active__gt=now_ts)
+        qs_active = qs.filter(status=AllocationRequest.StatusChoices.APPROVED, active__lte=now_ts, expire__gte=now_ts)
+        qs_expired = qs.filter(status=AllocationRequest.StatusChoices.APPROVED, expire__lt=now_ts)
 
         # Request lifecycle counts
         request_count = qs.count()
         request_pending_count = qs.filter(status=AllocationRequest.StatusChoices.PENDING).count()
-        request_approved_count = qs.filter(status=AllocationRequest.StatusChoices.APPROVED).count()
         request_declined_count = qs.filter(status=AllocationRequest.StatusChoices.DECLINED).count()
+        request_approved_count = qs.filter(status=AllocationRequest.StatusChoices.APPROVED).count()
         request_upcoming_count = qs_upcoming.count()
         request_active_count = qs_active.count()
         request_expired_count = qs_expired.count()
