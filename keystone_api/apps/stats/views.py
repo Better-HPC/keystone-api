@@ -27,7 +27,7 @@ __all__ = ['AllocationRequestStatsView', 'GrantStatsView', 'PublicationStatsView
 
 
 @extend_schema_view(
-    list=extend_schema(
+    get=extend_schema(
         summary="List aggregated allocation request statistics.",
         description=(
             "Returns cumulative statistics for allocation requests and awards. "
@@ -215,7 +215,7 @@ class GrantStatsView(TeamScopedListMixin, GenericAPIView):
 
 
 @extend_schema_view(
-    list=extend_schema(
+    get=extend_schema(
         summary="List aggregated publication statistics.",
         description=(
             "Returns cumulative publication statistics. "
