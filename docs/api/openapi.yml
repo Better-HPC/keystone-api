@@ -9362,6 +9362,8 @@ components:
       properties:
         grant_count:
           type: integer
+        upcoming_count:
+          type: integer
         active_count:
           type: integer
         expired_count:
@@ -9369,6 +9371,11 @@ components:
         agency_count:
           type: integer
         funding_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
+          nullable: true
+        funding_upcoming:
           type: string
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
@@ -9396,7 +9403,9 @@ components:
       - funding_average
       - funding_expired
       - funding_total
+      - funding_upcoming
       - grant_count
+      - upcoming_count
     GrantSummary:
       type: object
       description: Serializer for summarizing grant information in nested representations.
