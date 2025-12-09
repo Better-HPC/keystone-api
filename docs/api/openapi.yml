@@ -9374,27 +9374,22 @@ components:
           type: string
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
-          nullable: true
         funding_upcoming:
           type: string
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
-          nullable: true
         funding_active:
           type: string
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
-          nullable: true
         funding_expired:
           type: string
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
-          nullable: true
         funding_average:
           type: string
           format: decimal
           pattern: ^-?\d{0,15}(?:\.\d{0,2})?$
-          nullable: true
       required:
       - active_count
       - agency_count

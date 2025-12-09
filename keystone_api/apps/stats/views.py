@@ -6,7 +6,10 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
+from decimal import Decimal
+
+from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, Value, When
+from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
@@ -168,11 +171,11 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         Non-staff users are limited to teams where they are a member.
         """
 
-        # Common DB aggregates
-        amount_sum = Sum("amount")
-        amount_avg = Avg("amount")
+        # Common DB aggregates (wrapped in Coalesce for 0-defaults)
+        amount_sum = Coalesce(Sum("amount"), Decimal('0.00'))
+        amount_avg = Coalesce(Avg("amount"), Decimal('0.00'))
 
-        # Base querys for all records and records by lifecycle stage
+        # Base querysets for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
         upcoming_qs = qs.filter(start_date__gt=now())
         active_qs = qs.filter(start_date__lte=now(), end_date__gt=now())
@@ -186,11 +189,11 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         agency_count = qs.values("agency").distinct().count()
 
         # Funding values
-        funding_total = qs.aggregate(amount_sum)["amount__sum"]
-        funding_upcoming = upcoming_qs.aggregate(amount_sum)["amount__sum"]
-        funding_active = active_qs.aggregate(amount_sum)["amount__sum"]
-        funding_expired = expired_qs.aggregate(amount_sum)["amount__sum"]
-        funding_average = qs.aggregate(amount_avg)["amount__avg"]
+        funding_total = qs.aggregate(funding_total=amount_sum)["funding_total"]
+        funding_upcoming = upcoming_qs.aggregate(funding_upcoming=amount_sum)["funding_upcoming"]
+        funding_active = active_qs.aggregate(funding_active=amount_sum)["funding_active"]
+        funding_expired = expired_qs.aggregate(funding_expired=amount_sum)["funding_expired"]
+        funding_average = qs.aggregate(funding_average=amount_avg)["funding_average"]
 
         return {
             "grant_count": grant_count,
@@ -260,8 +263,14 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
             )
         ).aggregate(
             review_time_avg=Avg(
-                Case(When(submitted__isnull=False, published__isnull=False, then=F("review_time")), default=None)
-            )
+                Case(
+                    When(
+                        submitted__isnull=False,
+                        published__isnull=False,
+                        then=F("review_time")
+                    ),
+                    default=None
+                ))
         )["review_time_avg"]
 
         return {
