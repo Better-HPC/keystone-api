@@ -6,7 +6,10 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
+from decimal import Decimal
+
+from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, Value, When
+from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
@@ -41,6 +44,7 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
     queryset = AllocationRequest.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
@@ -159,6 +163,7 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
     queryset = Grant.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -166,26 +171,41 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         Non-staff users are limited to teams where they are a member.
         """
 
-        qs = self.filter_queryset(self.get_queryset())
+        # Common DB aggregates (wrapped in Coalesce for 0-defaults)
+        amount_sum = Coalesce(Sum("amount"), Decimal('0.00'))
+        amount_avg = Coalesce(Avg("amount"), Decimal('0.00'))
 
+        # Base querysets for all records and records by lifecycle stage
+        qs = self.filter_queryset(self.get_queryset())
+        upcoming_qs = qs.filter(start_date__gt=now())
+        active_qs = qs.filter(start_date__lte=now(), end_date__gt=now())
+        expired_qs = qs.filter(end_date__lte=now())
+
+        # Record counts
         grant_count = qs.count()
-        active_count = qs.filter(end_date__gte=now()).count()
-        expired_count = qs.filter(end_date__lt=now()).count()
+        upcoming_count = upcoming_qs.count()
+        active_count = active_qs.count()
+        expired_count = expired_qs.count()
         agency_count = qs.values("agency").distinct().count()
-        funding_total = qs.aggregate(Sum("amount"))["amount__sum"]
-        funding_active = qs.filter(end_date__gte=now()).aggregate(Sum("amount"))["amount__sum"]
-        funding_expired = qs.filter(end_date__lt=now()).aggregate(Sum("amount"))["amount__sum"]
-        funding_average = qs.aggregate(Avg("amount"))["amount__avg"]
+
+        # Funding values
+        funding_total = qs.aggregate(funding_total=amount_sum)["funding_total"]
+        funding_upcoming = upcoming_qs.aggregate(funding_upcoming=amount_sum)["funding_upcoming"]
+        funding_active = active_qs.aggregate(funding_active=amount_sum)["funding_active"]
+        funding_expired = expired_qs.aggregate(funding_expired=amount_sum)["funding_expired"]
+        funding_average = qs.aggregate(funding_average=amount_avg)["funding_average"]
 
         return {
-            "funding_total": funding_total,
-            "funding_active": funding_active,
-            "funding_expired": funding_expired,
-            "funding_average": funding_average,
             "grant_count": grant_count,
+            "upcoming_count": upcoming_count,
             "active_count": active_count,
             "expired_count": expired_count,
             "agency_count": agency_count,
+            "funding_total": funding_total,
+            "funding_upcoming": funding_upcoming,
+            "funding_active": funding_active,
+            "funding_expired": funding_expired,
+            "funding_average": funding_average,
         }
 
     def list(self, request: Request) -> Response:
@@ -214,6 +234,7 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
     queryset = Publication.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.
@@ -221,12 +242,17 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         Non-staff users are limited to teams where they are a member.
         """
 
+        # Base querys for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
+        draft_qs = qs.filter(submitted__isnull=True, published__isnull=True)
+        submitted_qs = qs.filter(submitted__isnull=False, published__isnull=True)
+        accepted_qs = qs.filter(published__isnull=False)
 
+        # Record counts
         publications_count = qs.count()
-        draft_count = qs.filter(submitted__isnull=True, published__isnull=False).count()
-        submitted_count = qs.filter(submitted__isnull=False).count()
-        accepted_count = qs.filter(published__isnull=False).count()
+        draft_count = draft_qs.count()
+        submitted_count = submitted_qs.count()
+        accepted_count = accepted_qs.count()
         journals_count = qs.values("journal").distinct().count()
 
         # Average time spent under review by the journal
@@ -237,17 +263,23 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
             )
         ).aggregate(
             review_time_avg=Avg(
-                Case(When(submitted__isnull=False, published__isnull=False, then=F("review_time")), default=None)
-            )
+                Case(
+                    When(
+                        submitted__isnull=False,
+                        published__isnull=False,
+                        then=F("review_time")
+                    ),
+                    default=None
+                ))
         )["review_time_avg"]
 
         return {
-            "review_average": review_avg,
             "publications_count": publications_count,
             "draft_count": draft_count,
             "submitted_count": submitted_count,
             "accepted_count": accepted_count,
             "journals_count": journals_count,
+            "review_average": review_avg,
         }
 
     def list(self, request: Request) -> Response:
