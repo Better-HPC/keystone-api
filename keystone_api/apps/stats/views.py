@@ -193,16 +193,16 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         funding_average = qs.aggregate(amount_avg)["amount__avg"]
 
         return {
-            "funding_total": funding_total,
-            "funding_upcoming": funding_upcoming,
-            "funding_active": funding_active,
-            "funding_expired": funding_expired,
-            "funding_average": funding_average,
             "grant_count": grant_count,
             "upcoming_count": upcoming_count,
             "active_count": active_count,
             "expired_count": expired_count,
             "agency_count": agency_count,
+            "funding_total": funding_total,
+            "funding_upcoming": funding_upcoming,
+            "funding_active": funding_active,
+            "funding_expired": funding_expired,
+            "funding_average": funding_average,
         }
 
     def list(self, request: Request) -> Response:
@@ -265,12 +265,12 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         )["review_time_avg"]
 
         return {
-            "review_average": review_avg,
             "publications_count": publications_count,
             "draft_count": draft_count,
             "submitted_count": submitted_count,
             "accepted_count": accepted_count,
             "journals_count": journals_count,
+            "review_average": review_avg,
         }
 
     def list(self, request: Request) -> Response:

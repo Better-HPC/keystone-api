@@ -55,11 +55,13 @@ class GrantStatsSerializer(serializers.Serializer):
     """Serializer for aggregated grant statistics."""
 
     grant_count = serializers.IntegerField()
+    upcoming_count = serializers.IntegerField()
     active_count = serializers.IntegerField()
     expired_count = serializers.IntegerField()
     agency_count = serializers.IntegerField()
 
     funding_total = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
+    funding_upcoming = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
     funding_active = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
     funding_expired = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
     funding_average = serializers.DecimalField(max_digits=17, decimal_places=2, allow_null=True)
