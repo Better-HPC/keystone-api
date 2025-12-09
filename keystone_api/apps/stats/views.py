@@ -166,23 +166,38 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         Non-staff users are limited to teams where they are a member.
         """
 
-        qs = self.filter_queryset(self.get_queryset())
+        # Common DB aggregates
+        amount_sum = Sum("amount")
+        amount_avg = Avg("amount")
 
+        # Base querys for all records and records by lifecycle stage
+        qs = self.filter_queryset(self.get_queryset())
+        upcoming_qs = qs.filter(start_date__gt=now())
+        active_qs = qs.filter(start_date__lte=now(), end_date__gt=now())
+        expired_qs = qs.filter(end_date__lte=now())
+
+        # Record counts
         grant_count = qs.count()
-        active_count = qs.filter(end_date__gte=now()).count()
-        expired_count = qs.filter(end_date__lt=now()).count()
+        upcoming_count = upcoming_qs.count()
+        active_count = active_qs.count()
+        expired_count = expired_qs.count()
         agency_count = qs.values("agency").distinct().count()
-        funding_total = qs.aggregate(Sum("amount"))["amount__sum"]
-        funding_active = qs.filter(end_date__gte=now()).aggregate(Sum("amount"))["amount__sum"]
-        funding_expired = qs.filter(end_date__lt=now()).aggregate(Sum("amount"))["amount__sum"]
-        funding_average = qs.aggregate(Avg("amount"))["amount__avg"]
+
+        # Funding values
+        funding_total = qs.aggregate(amount_sum)["amount__sum"]
+        funding_upcoming = upcoming_qs.aggregate(amount_sum)["amount__sum"]
+        funding_active = active_qs.aggregate(amount_sum)["amount__sum"]
+        funding_expired = expired_qs.aggregate(amount_sum)["amount__sum"]
+        funding_average = qs.aggregate(amount_avg)["amount__avg"]
 
         return {
             "funding_total": funding_total,
+            "funding_upcoming": funding_upcoming,
             "funding_active": funding_active,
             "funding_expired": funding_expired,
             "funding_average": funding_average,
             "grant_count": grant_count,
+            "upcoming_count": upcoming_count,
             "active_count": active_count,
             "expired_count": expired_count,
             "agency_count": agency_count,
@@ -221,12 +236,17 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
         Non-staff users are limited to teams where they are a member.
         """
 
+        # Base querys for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
+        draft_qs = qs.filter(submitted__isnull=True, published__isnull=True)
+        submitted_qs = qs.filter(submitted__isnull=False, published__isnull=True)
+        accepted_qs = qs.filter(published__isnull=False)
 
+        # Record counts
         publications_count = qs.count()
-        draft_count = qs.filter(submitted__isnull=True, published__isnull=False).count()
-        submitted_count = qs.filter(submitted__isnull=False).count()
-        accepted_count = qs.filter(published__isnull=False).count()
+        draft_count = draft_qs.count()
+        submitted_count = submitted_qs.count()
+        accepted_count = accepted_qs.count()
         journals_count = qs.values("journal").distinct().count()
 
         # Average time spent under review by the journal
