@@ -6395,6 +6395,11 @@ paths:
       description: Returns cumulative grant statistics. Staff users receive statistics
         for all teams. Non-staff users are limited to teams where they hold membership.
       summary: Retrieve aggregated grant statistics.
+      parameters:
+      - in: query
+        name: team
+        schema:
+          type: integer
       tags:
       - Statistics
       security:
@@ -6414,6 +6419,11 @@ paths:
         statistics for all teams. Non-staff users are limited to teams where they
         hold membership.
       summary: List aggregated publication statistics.
+      parameters:
+      - in: query
+        name: team
+        schema:
+          type: integer
       tags:
       - Statistics
       security:
@@ -6433,6 +6443,11 @@ paths:
         Staff users receive statistics for all teams. Non-staff users are limited
         to teams where they hold membership.
       summary: List aggregated allocation request statistics.
+      parameters:
+      - in: query
+        name: team
+        schema:
+          type: integer
       tags:
       - Statistics
       security:

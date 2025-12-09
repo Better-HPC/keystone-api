@@ -6,24 +6,58 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from abc import ABC, abstractmethod
 from decimal import Decimal
 
-from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
+from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, QuerySet, Sum, When
 from django.db.models.functions import Coalesce
 from django.utils.timezone import now
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 import plugins.filter
+from apps.allocations.models import AllocationRequest
 from apps.research_products.models import Grant, Publication
+from apps.users.models import Team
 from .serializers import *
-from ..allocations.models import AllocationRequest
-from ..users.mixins import TeamScopedListMixin
 
 __all__ = ['AllocationRequestStatsView', 'GrantStatsView', 'PublicationStatsView']
+
+TEAM_QUERY_PARAM = OpenApiParameter(
+    name='team',
+    type=OpenApiTypes.INT,
+    location=OpenApiParameter.QUERY,
+    required=False,
+)
+
+
+class BaseStatsView(ABC):
+    """Base class for statistics views with common logic."""
+
+    @abstractmethod
+    def _summarize(self) -> dict:
+        """Compute and return summary statistics as a dictionary."""
+
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset filtered by user team membership for list actions."""
+
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            teams = Team.objects.teams_for_user(self.request.user)
+            return queryset.filter(team__in=teams)
+
+        return queryset
+
+    def get(self, request: Request) -> Response:
+        """Return statistics calculated from records matching user permissions and query params."""
+
+        stats = self._summarize()
+        serializer = self.serializer_class(stats)
+        return Response(serializer.data)
 
 
 @extend_schema_view(
@@ -35,9 +69,10 @@ __all__ = ['AllocationRequestStatsView', 'GrantStatsView', 'PublicationStatsView
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
+        parameters=[TEAM_QUERY_PARAM]
     ),
 )
-class AllocationRequestStatsView(TeamScopedListMixin, GenericAPIView):
+class AllocationRequestStatsView(BaseStatsView, GenericAPIView):
     """ViewSet providing aggregated allocation request statistics globally and per team."""
 
     queryset = AllocationRequest.objects.all()
@@ -136,13 +171,6 @@ class AllocationRequestStatsView(TeamScopedListMixin, GenericAPIView):
             "days_active_average": days_active_average.days if days_active_average else None,
         }
 
-    def get(self, request: Request) -> Response:
-        """Return statistics calculated from records matching user permissions and query params."""
-
-        stats = self._summarize()
-        serializer = self.serializer_class(stats)
-        return Response(serializer.data)
-
 
 @extend_schema_view(
     get=extend_schema(
@@ -153,9 +181,10 @@ class AllocationRequestStatsView(TeamScopedListMixin, GenericAPIView):
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
+        parameters=[TEAM_QUERY_PARAM]
     ),
 )
-class GrantStatsView(TeamScopedListMixin, GenericAPIView):
+class GrantStatsView(BaseStatsView, GenericAPIView):
     """ViewSet providing aggregated grant statistics globally and per team."""
 
     queryset = Grant.objects.all()
@@ -206,13 +235,6 @@ class GrantStatsView(TeamScopedListMixin, GenericAPIView):
             "funding_average": funding_average,
         }
 
-    def get(self, request: Request) -> Response:
-        """Return statistics calculated from records matching user permissions and query params."""
-
-        stats = self._summarize()
-        serializer = self.serializer_class(stats)
-        return Response(serializer.data)
-
 
 @extend_schema_view(
     get=extend_schema(
@@ -223,9 +245,10 @@ class GrantStatsView(TeamScopedListMixin, GenericAPIView):
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
+        parameters=[TEAM_QUERY_PARAM]
     ),
 )
-class PublicationStatsView(TeamScopedListMixin, GenericAPIView):
+class PublicationStatsView(BaseStatsView, GenericAPIView):
     """ViewSet providing aggregated publication statistics globally and per team."""
 
     queryset = Publication.objects.all()
@@ -278,10 +301,3 @@ class PublicationStatsView(TeamScopedListMixin, GenericAPIView):
             "journals_count": journals_count,
             "review_average": review_avg,
         }
-
-    def get(self, request: Request) -> Response:
-        """Return statistics calculated from records matching user permissions and query params."""
-
-        stats = self._summarize()
-        serializer = self.serializer_class(stats)
-        return Response(serializer.data)
