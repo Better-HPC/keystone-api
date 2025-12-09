@@ -6396,18 +6396,6 @@ paths:
         for all teams. Non-staff users are limited to teams where they hold membership.
       summary: List aggregated grant statistics.
       parameters:
-      - name: _limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: _offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
       - in: query
         name: agency
         schema:
@@ -6735,7 +6723,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedGrantStatsList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/GrantStats'
           description: ''
   /stats/publications/:
     get:
@@ -6745,18 +6735,6 @@ paths:
         hold membership.
       summary: List aggregated publication statistics.
       parameters:
-      - name: _limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: _offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
       - in: query
         name: abstract
         schema:
@@ -7109,7 +7087,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedPublicationStatsList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicationStats'
           description: ''
   /stats/requests/:
     get:
@@ -7119,18 +7099,6 @@ paths:
         to teams where they hold membership.
       summary: List aggregated allocation request statistics.
       parameters:
-      - name: _limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: _offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
       - in: query
         name: active
         schema:
@@ -7494,7 +7462,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedAllocationRequestStatsList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AllocationRequestStats'
           description: ''
   /users/membership-choices/role/:
     get:
@@ -9752,29 +9722,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AllocationRequest'
-    PaginatedAllocationRequestStatsList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationRequestStats'
     PaginatedAllocationReviewList:
       type: object
       required:
@@ -9913,29 +9860,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Grant'
-    PaginatedGrantStatsList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/GrantStats'
     PaginatedJobStatsList:
       type: object
       required:
@@ -10051,29 +9975,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Publication'
-    PaginatedPublicationStatsList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicationStats'
     PaginatedRequestLogList:
       type: object
       required:

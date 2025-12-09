@@ -41,6 +41,7 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
     queryset = AllocationRequest.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
@@ -159,6 +160,7 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
     queryset = Grant.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -229,6 +231,7 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
     queryset = Publication.objects.all()
     filter_backends = [plugins.filter.AdvancedFilterBackend]
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.
