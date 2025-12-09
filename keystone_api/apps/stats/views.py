@@ -8,11 +8,11 @@ URLs to business logic.
 
 from decimal import Decimal
 
-from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, Value, When
+from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, Sum, When
 from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import viewsets
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -23,7 +23,7 @@ from .serializers import *
 from ..allocations.models import AllocationRequest
 from ..users.mixins import TeamScopedListMixin
 
-__all__ = ['AllocationRequestStatsViewSet', 'GrantStatsViewSet', 'PublicationStatsViewSet']
+__all__ = ['AllocationRequestStatsView', 'GrantStatsView', 'PublicationStatsView']
 
 
 @extend_schema_view(
@@ -35,16 +35,15 @@ __all__ = ['AllocationRequestStatsViewSet', 'GrantStatsViewSet', 'PublicationSta
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
-        responses={200: AllocationRequestStatsSerializer},
     ),
 )
-class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
+class AllocationRequestStatsView(TeamScopedListMixin, GenericAPIView):
     """ViewSet providing aggregated allocation request statistics globally and per team."""
 
     queryset = AllocationRequest.objects.all()
-    filter_backends = [plugins.filter.AdvancedFilterBackend]
+    serializer_class = AllocationRequestStatsSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
+    filter_backends = [plugins.filter.AdvancedFilterBackend]
 
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
@@ -137,33 +136,32 @@ class AllocationRequestStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet
             "days_active_average": days_active_average.days if days_active_average else None,
         }
 
-    def list(self, request: Request) -> Response:
+    def get(self, request: Request) -> Response:
         """Return statistics calculated from records matching user permissions and query params."""
 
         stats = self._summarize()
-        serializer = AllocationRequestStatsSerializer(stats)
+        serializer = self.serializer_class(stats)
         return Response(serializer.data)
 
 
 @extend_schema_view(
-    list=extend_schema(
-        summary="List aggregated grant statistics.",
+    get=extend_schema(
+        summary="Retrieve aggregated grant statistics.",
         description=(
             "Returns cumulative grant statistics. "
             "Staff users receive statistics for all teams. "
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
-        responses={200: GrantStatsSerializer},
     ),
 )
-class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
+class GrantStatsView(TeamScopedListMixin, GenericAPIView):
     """ViewSet providing aggregated grant statistics globally and per team."""
 
     queryset = Grant.objects.all()
-    filter_backends = [plugins.filter.AdvancedFilterBackend]
+    serializer_class = GrantStatsSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
+    filter_backends = [plugins.filter.AdvancedFilterBackend]
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -208,11 +206,11 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
             "funding_average": funding_average,
         }
 
-    def list(self, request: Request) -> Response:
+    def get(self, request: Request) -> Response:
         """Return statistics calculated from records matching user permissions and query params."""
 
         stats = self._summarize()
-        serializer = GrantStatsSerializer(stats)
+        serializer = self.serializer_class(stats)
         return Response(serializer.data)
 
 
@@ -225,16 +223,15 @@ class GrantStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
-        responses={200: PublicationStatsSerializer},
     ),
 )
-class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
+class PublicationStatsView(TeamScopedListMixin, GenericAPIView):
     """ViewSet providing aggregated publication statistics globally and per team."""
 
     queryset = Publication.objects.all()
-    filter_backends = [plugins.filter.AdvancedFilterBackend]
+    serializer_class = PublicationStatsSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
+    filter_backends = [plugins.filter.AdvancedFilterBackend]
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.
@@ -282,9 +279,9 @@ class PublicationStatsViewSet(TeamScopedListMixin, viewsets.GenericViewSet):
             "review_average": review_avg,
         }
 
-    def list(self, request: Request) -> Response:
+    def get(self, request: Request) -> Response:
         """Return statistics calculated from records matching user permissions and query params."""
 
         stats = self._summarize()
-        serializer = PublicationStatsSerializer(stats)
+        serializer = self.serializer_class(stats)
         return Response(serializer.data)

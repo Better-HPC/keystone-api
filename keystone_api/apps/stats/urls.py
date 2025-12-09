@@ -1,14 +1,13 @@
 """URL routing for the parent application."""
 
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from .views import *
 
 app_name = 'stats'
 
-router = DefaultRouter()
-router.register('grants', GrantStatsViewSet, basename='grant')
-router.register('publications', PublicationStatsViewSet, basename='publication')
-router.register('requests', AllocationRequestStatsViewSet, basename='request')
-
-urlpatterns = router.urls
+urlpatterns = [
+    path('grants/', GrantStatsView.as_view(), name='grant-detail'),
+    path('publications/', PublicationStatsView.as_view(), name='publication-detail'),
+    path('requests/', AllocationRequestStatsView.as_view(), name='request-detail'),
+]
