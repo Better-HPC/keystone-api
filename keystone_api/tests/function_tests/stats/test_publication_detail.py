@@ -9,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'stats:publication-list'
+VIEW_NAME = 'stats:publication-detail'
 
 
 class EndpointPermissions(CustomAsserts, APITestCase):
