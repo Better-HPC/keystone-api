@@ -8,7 +8,7 @@ integration with the parent project.
 from django.apps import AppConfig
 from health_check.plugins import plugin_dir
 
-from apps.health.backends import LDAPHealthCheck
+from apps.health.backends import LDAPHealthCheck, SMTPHealthCheck
 from main import settings
 
 
@@ -20,7 +20,6 @@ class HealthAppConfig(AppConfig):
     def ready(self) -> None:
         """Setup tasks executed after loading the application configuration and models"""
 
-        from .backends import SMTPHealthCheck
         plugin_dir.register(SMTPHealthCheck)
 
         if settings.AUTH_LDAP_SERVER_URI:

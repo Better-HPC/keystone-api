@@ -31,7 +31,19 @@ class AuditLogSerializer(AuditLogSummarySerializer):
         """Serializer settings."""
 
         model = AuditLog
-        fields = ['id', 'record_name', 'record_id', 'action', 'changes', 'cid', 'remote_addr', 'remote_port', 'timestamp', 'actor', '_actor']
+        fields = [
+            'id',
+            'record_name',
+            'record_id',
+            'action',
+            'changes',
+            'cid',
+            'remote_addr',
+            'remote_port',
+            'timestamp',
+            'actor',
+            '_actor'
+        ]
 
     @extend_schema_field(str)
     def get_record_name(self, obj: AuditLog) -> str:

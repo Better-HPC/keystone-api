@@ -16,7 +16,6 @@ from rest_framework.response import Response
 
 from apps.research_products.models import Grant, Publication
 from apps.users.mixins import TeamScopedListMixin
-from .mixins import *
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -45,11 +44,16 @@ __all__ = [
         )
     )
 )
-class AllocationRequestStatusChoicesView(GetChoicesMixin, GenericAPIView):
+class AllocationRequestStatusChoicesView(GenericAPIView):
     """API endpoints for exposing valid allocation request `status` values."""
 
     permission_classes = [IsAuthenticated]
     response_content = dict(AllocationRequest.StatusChoices.choices)
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        """Return a dictionary mapping values to human-readable names."""
+
+        return Response(self.response_content)
 
 
 @extend_schema_view(
@@ -117,11 +121,16 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         )
     )
 )
-class AllocationReviewStatusChoicesView(GetChoicesMixin, GenericAPIView):
+class AllocationReviewStatusChoicesView(GenericAPIView):
     """API endpoints for exposing valid allocation review `status` values."""
 
     permission_classes = [IsAuthenticated]
     response_content = dict(AllocationReview.StatusChoices.choices)
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        """Return a dictionary mapping values to human-readable names."""
+
+        return Response(self.response_content)
 
 
 @extend_schema_view(
