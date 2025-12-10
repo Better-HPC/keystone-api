@@ -13,6 +13,3 @@ nav:
       - api/authentication.md
       - api/filtering.md
       - api/logging.md
-  - Developer Notes:
-      - developer/project_setup.md
-      - developer/design_guidelines.md
