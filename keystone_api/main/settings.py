@@ -18,7 +18,7 @@ sys.path.insert(0, str(BASE_DIR))
 dist = importlib.metadata.distribution('keystone-api')
 VERSION = dist.metadata['version']
 SUMMARY = dist.metadata['summary']
-DEBUG = True
+
 env = environ.Env()
 
 # Core security settings
