@@ -28,6 +28,8 @@ This includes access to application internals and the ability to bypass input da
 
 ## Templates
 
+The following templates are available for customization.
+
 ### Base Template
 
 **Template file:** `base.html`
