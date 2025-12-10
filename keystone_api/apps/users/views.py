@@ -7,7 +7,7 @@ URLs to business logic.
 """
 
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
-from rest_framework import serializers, status, viewsets
+from rest_framework import serializers, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -40,14 +40,13 @@ __all__ = [
 class MembershipRoleChoicesView(APIView):
     """API endpoints for exposing valid team `role` values."""
 
-    _resp_body = dict(Membership.Role.choices)
     permission_classes = [IsAuthenticated]
+    response_content = dict(Membership.Role.choices)
 
-    @extend_schema(responses={'200': _resp_body})
     def get(self, request: Request) -> Response:
         """Return valid values for the team membership `role` field."""
 
-        return Response(self._resp_body, status=status.HTTP_200_OK)
+        return Response(self.response_content)
 
 
 @extend_schema_view(
