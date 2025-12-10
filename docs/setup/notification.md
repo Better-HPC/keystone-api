@@ -13,14 +13,20 @@ When a notification is triggered, Keystone first checks for a custom template fi
 If no custom template is available, Keystone falls back to an internal default.
 The selected template is then rendered using the context data outlined below.
 
-For security reasons, data is sanitized before being injected into the template.
-Certain Jinja features — such as access to application internals — are also disabled.
+Email notification templates can be rendered and written to disk using the `keystone-api render_templates` command.
+It is strongly recommended to develop and test templates locally before deploying them to a production environment.
+See `keystone-api render_templates --help` for details.
 
-!!! note 
+### Template Security
 
-    Email notification templates can be rendered and written to disk using the `keystone-api render_templates` command.
-    It is strongly recommended to develop and test templates locally before deploying them to a production environment.
-    See `keystone-api render_templates --help` for details.
+Template files are required to have no write permissions for users other than the owner or group (i.e., `o+w`).
+If a template file has world-writeable permissions, Keystone will refuse to load it.
+This restriction is provided for security and ensures templates cannot be modified by unauthorized users in production.
+
+Users familiar with the Jinja2 templating engine will also find certain Jinja features are also not availible.
+This includes access to application internals and the ability to bypass input data sanitation.
+
+## Templates
 
 ### Base Template
 
@@ -50,7 +56,7 @@ The _upcoming expiration_ notification alerts users that one or more of their ac
 its expiration date.
 
 ??? info "Available Template Fields"
-    
+
     | Field Name           | Type             | Description                                                               |
     |----------------------|------------------|---------------------------------------------------------------------------|
     | `user_name`          | `str`            | Username of the notified user.                                            |
@@ -82,7 +88,7 @@ The _past expiration_ notification alerts users that one or more of their active
 and that the resources granted under that allocation are no longer available for use.
 
 ??? info "Available Template Fields"
-    
+
     | Field Name           | Type             | Description                                                          |
     |----------------------|------------------|----------------------------------------------------------------------|
     | `user_name`          | `str`            | Username of the notified user.                                       |
