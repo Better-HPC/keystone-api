@@ -22,7 +22,7 @@ jobs:
         run: docker load --input /tmp/keystone-api.tar
 
       - name: Run project checks
-        run: docker run keystone-api check --deploy
+        run: docker run keystone-api check --deploy --fail-level WARNING
 
       - name: Run migration checks
         run: docker run keystone-api makemigrations --check
