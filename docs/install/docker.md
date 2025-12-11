@@ -15,7 +15,7 @@ The following command will automatically pull and launch the latest API image.
 This example launches the image as a container called `keystone` and maps the API to port 8000 on the local machine.
 
 ```bash
-docker run --detach --publish 8000:80 --name keystone ghcr.io/better-hpc/keystone-api
+docker run --detach --publish 8000:80 --name keystone docker.cloudsmith.io/better-hpc/keystone/keystone-api
 ```
 
 The container will automatically execute the API quickstart utility, which initializes core system dependencies (Postgres, Redis, etc.) within the container.
@@ -54,7 +54,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
 
   api: # (3)!
-    image: ghcr.io/better-hpc/keystone-api
+    image: docker.cloudsmith.io/better-hpc/keystone/keystone-api
     container_name: keystone-api
     entrypoint: sh
     command: |
@@ -76,7 +76,7 @@ services:
       - uploaded_files:/app/upload_files
 
   celery-worker: # (4)!
-    image: ghcr.io/better-hpc/keystone-api
+    image: docker.cloudsmith.io/better-hpc/keystone/keystone-api
     container_name: keystone-celery-worker
     entrypoint: celery -A keystone_api.apps.scheduler worker
     restart: unless-stopped
@@ -88,7 +88,7 @@ services:
       - api.env
 
   celery-beat: # (5)!
-    image: ghcr.io/better-hpc/keystone-api
+    image: docker.cloudsmith.io/better-hpc/keystone/keystone-api
     container_name: keystone-celery-beat
     entrypoint: celery -A keystone_api.apps.scheduler beat --scheduler django_celery_beat.schedulers:DatabaseScheduler
     restart: unless-stopped
