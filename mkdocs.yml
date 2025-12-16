@@ -6,7 +6,7 @@ nav:
       - install/docker.md
       - install/systemd.md
   - Setup:
-      - setup/settings.md
+      - Application Settings: setup/settings.md
       - setup/notification.md
   - REST API:
       - api/openapi.md
