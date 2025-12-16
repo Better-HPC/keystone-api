@@ -25,7 +25,7 @@ class TeamSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Team
-        fields = ["id", "name", "is_active"]
+        fields = ["id", "slug", "name", "is_active"]
 
 
 class TeamRoleSerializer(serializers.ModelSerializer):
