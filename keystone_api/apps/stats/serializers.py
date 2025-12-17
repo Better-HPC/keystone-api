@@ -28,23 +28,15 @@ class AllocationRequestStatsSerializer(serializers.Serializer):
     request_expired_count = serializers.IntegerField()
 
     # Award totals
+    su_pending_total = serializers.FloatField()
+    su_declined_total = serializers.FloatField()
+    su_approved_total = serializers.FloatField()
+    su_upcoming_total = serializers.FloatField()
+    su_active_total = serializers.FloatField()
+    su_expired_total = serializers.FloatField()
     su_requested_total = serializers.FloatField()
     su_awarded_total = serializers.FloatField()
-    su_awarded_upcoming = serializers.FloatField()
-    su_awarded_active = serializers.FloatField()
-    su_awarded_expired = serializers.FloatField()
     su_finalized_total = serializers.FloatField()
-
-    # Award totals by cluster
-    per_cluster = serializers.DictField(
-        child=serializers.DictField(
-            child=serializers.FloatField(),
-        ),
-    )
-
-    # Ratios
-    approval_ratio = serializers.FloatField()
-    utilization_ratio = serializers.FloatField()
 
     # Timing metrics
     days_pending_average = serializers.FloatField()
