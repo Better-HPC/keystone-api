@@ -7882,35 +7882,31 @@ components:
           type: integer
         request_expired_count:
           type: integer
+        su_pending_total:
+          type: number
+          format: double
+        su_declined_total:
+          type: number
+          format: double
+        su_approved_total:
+          type: number
+          format: double
+        su_upcoming_total:
+          type: number
+          format: double
+        su_active_total:
+          type: number
+          format: double
+        su_expired_total:
+          type: number
+          format: double
         su_requested_total:
           type: number
           format: double
         su_awarded_total:
           type: number
           format: double
-        su_awarded_upcoming:
-          type: number
-          format: double
-        su_awarded_active:
-          type: number
-          format: double
-        su_awarded_expired:
-          type: number
-          format: double
         su_finalized_total:
-          type: number
-          format: double
-        per_cluster:
-          type: object
-          additionalProperties:
-            type: object
-            additionalProperties:
-              type: number
-              format: double
-        approval_ratio:
-          type: number
-          format: double
-        utilization_ratio:
           type: number
           format: double
         days_pending_average:
@@ -7920,10 +7916,8 @@ components:
           type: number
           format: double
       required:
-      - approval_ratio
       - days_active_average
       - days_pending_average
-      - per_cluster
       - request_active_count
       - request_approved_count
       - request_count
@@ -7931,13 +7925,15 @@ components:
       - request_expired_count
       - request_pending_count
       - request_upcoming_count
-      - su_awarded_active
-      - su_awarded_expired
+      - su_active_total
+      - su_approved_total
       - su_awarded_total
-      - su_awarded_upcoming
+      - su_declined_total
+      - su_expired_total
       - su_finalized_total
+      - su_pending_total
       - su_requested_total
-      - utilization_ratio
+      - su_upcoming_total
     AllocationRequestStatusChoices:
       type: object
       properties:

@@ -85,70 +85,50 @@ class AllocationRequestStatsView(BaseStatsView, GenericAPIView):
 
         # Base query with useful annotations
         now_ts = now()
-        qs = self.filter_queryset(self.get_queryset()).annotate(
-            days_pending=ExpressionWrapper(
-                F('active') - F('submitted'),
-                output_field=DurationField()
-            ),
-            days_active=ExpressionWrapper(
-                F('expire') - F('active'),
-                output_field=DurationField()
-            )
-        )
+        qs = self.filter_queryset(self.get_queryset())
 
         # Subqueries based on request lifecycle
-        qs_upcoming = qs.filter(status=AllocationRequest.StatusChoices.APPROVED, active__gt=now_ts)
-        qs_active = qs.filter(status=AllocationRequest.StatusChoices.APPROVED, active__lte=now_ts, expire__gte=now_ts)
-        qs_expired = qs.filter(status=AllocationRequest.StatusChoices.APPROVED, expire__lt=now_ts)
+        qs_pending = qs.filter(status=AllocationRequest.StatusChoices.PENDING)
+        qs_declined = qs.filter(status=AllocationRequest.StatusChoices.DECLINED)
+        qs_approved = qs.filter(status=AllocationRequest.StatusChoices.APPROVED)
+
+        qs_upcoming = qs_approved.filter(active__gt=now_ts)
+        qs_active = qs_approved.filter(active__lte=now_ts, expire__gte=now_ts)
+        qs_expired = qs_approved.filter(expire__lt=now_ts)
 
         # Request lifecycle counts
         request_count = qs.count()
-        request_pending_count = qs.filter(status=AllocationRequest.StatusChoices.PENDING).count()
-        request_declined_count = qs.filter(status=AllocationRequest.StatusChoices.DECLINED).count()
-        request_approved_count = qs.filter(status=AllocationRequest.StatusChoices.APPROVED).count()
+        request_pending_count = qs_pending.count()
+        request_declined_count = qs_declined.count()
+        request_approved_count = qs_approved.count()
         request_upcoming_count = qs_upcoming.count()
         request_active_count = qs_active.count()
         request_expired_count = qs_expired.count()
 
         # Award totals across all related allocations
+        su_pending_total = qs_pending.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_declined_total = qs_declined.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_approved_total = qs_approved.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_upcoming_total = qs_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_active_total = qs_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_expired_total = qs_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+
         su_requested_total = qs.aggregate(total=Sum('allocation__requested'))['total'] or 0
         su_awarded_total = qs.aggregate(total=Sum('allocation__awarded'))['total'] or 0
         su_finalized_total = qs.aggregate(total=Sum('allocation__final'))['total'] or 0
 
-        su_awarded_upcoming = qs_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_awarded_active = qs_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_awarded_expired = qs_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-
-        # Award totals per cluster
-        clusters = qs.values('allocation__cluster_id').distinct()
-        per_cluster_structured = {}
-        for cluster in clusters:
-            cluster_id = cluster['allocation__cluster_id']
-            cluster_qs = qs.filter(allocation__cluster_id=cluster_id)
-            cluster_upcoming = cluster_qs.filter(active__gt=now_ts)
-            cluster_active = cluster_qs.filter(active__lte=now_ts, expire__gte=now_ts)
-            cluster_expired = cluster_qs.filter(expire__lt=now_ts)
-
-            per_cluster_structured[str(cluster_id)] = {
-                "su_requested_total": cluster_qs.aggregate(total=Sum('allocation__requested'))['total'] or 0,
-                "su_awarded_total": cluster_qs.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
-                "su_finalized_total": cluster_qs.aggregate(total=Sum('allocation__final'))['total'] or 0,
-                "su_awarded_upcoming": cluster_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
-                "su_awarded_active": cluster_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
-                "su_awarded_expired": cluster_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0,
-            }
-
-        # Ratios
-        approval_ratio = request_approved_count / request_count if request_count else 0.0
-        utilization_ratio = (
-            su_finalized_total / su_awarded_total
-            if su_awarded_total and su_awarded_total > 0
-            else 0.0
+        # Timing metrics
+        qs_annotated = qs.annotate(
+            days_pending=ExpressionWrapper(
+                F('active') - F('submitted'), output_field=DurationField()
+            ),
+            days_active=ExpressionWrapper(
+                F('expire') - F('active'), output_field=DurationField()
+            )
         )
 
-        # Timing metrics
-        days_pending_average = qs.aggregate(Avg('days_pending'))['days_pending__avg']
-        days_active_average = qs.aggregate(Avg('days_active'))['days_active__avg']
+        days_pending_average = qs_annotated.aggregate(Avg('days_pending'))['days_pending__avg']
+        days_active_average = qs_annotated.aggregate(Avg('days_active'))['days_active__avg']
 
         return {
             "request_count": request_count,
@@ -158,15 +138,17 @@ class AllocationRequestStatsView(BaseStatsView, GenericAPIView):
             "request_upcoming_count": request_upcoming_count,
             "request_active_count": request_active_count,
             "request_expired_count": request_expired_count,
+
+            "su_pending_total": su_pending_total,
+            "su_declined_total": su_declined_total,
+            "su_approved_total": su_approved_total,
+            "su_upcoming_total": su_upcoming_total,
+            "su_active_total": su_active_total,
+            "su_expired_total": su_expired_total,
             "su_requested_total": su_requested_total,
             "su_awarded_total": su_awarded_total,
-            "su_awarded_upcoming": su_awarded_upcoming,
-            "su_awarded_active": su_awarded_active,
-            "su_awarded_expired": su_awarded_expired,
             "su_finalized_total": su_finalized_total,
-            "per_cluster": per_cluster_structured,
-            "approval_ratio": approval_ratio,
-            "utilization_ratio": utilization_ratio,
+
             "days_pending_average": days_pending_average.days if days_pending_average else None,
             "days_active_average": days_active_average.days if days_active_average else None,
         }
