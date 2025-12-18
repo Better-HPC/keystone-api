@@ -92,9 +92,9 @@ ALLOWED_FILE_TYPES = [
 
 # Trust system administrators and disable select deployment checks
 SILENCED_SYSTEM_CHECKS = [
-    "security.W004",  # SECURE_HSTS_SECONDS is not set.
-    "security.W008",  # SECURE_SSL_REDIRECT setting is not set to True.
-    "security.W012",  # SESSION_COOKIE_SECURE is not set to True.
+    "security.W004", # SECURE_HSTS_SECONDS is not set.
+    "security.W008", # SECURE_SSL_REDIRECT setting is not set to True.
+    "security.W012", # SESSION_COOKIE_SECURE is not set to True.
     "security.W016"  # CSRF_COOKIE_SECURE is not set to True.
 ]
 
