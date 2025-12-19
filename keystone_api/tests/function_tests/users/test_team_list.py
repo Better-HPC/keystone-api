@@ -4,8 +4,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.factories import UserFactory
-from tests.function_tests.utils import CustomAsserts
+from apps.users.factories import TeamFactory, UserFactory
+from apps.users.models import Team
+from tests.function_tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
 VIEW_NAME = 'users:team-list'
 
@@ -116,3 +117,22 @@ class SlugHandling(APITestCase, CustomAsserts):
         # Creating a team with a name that slugifies into a non-unique value should fail
         response2 = self.client.post(self.endpoint, {"name": "Team-X"})
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response2.status_code)
+
+
+class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
+    """Test the filtering of returned records based on user team membership."""
+
+    endpoint = reverse(VIEW_NAME)
+    factory = TeamFactory
+
+    def create_related_record(self) -> Team:
+        """Create a Team record where the user is a member."""
+
+        # Use the default team record created by the mixin class
+        return self.team
+
+    def create_non_related_record(self) -> Team:
+        """Create a Team record where the user is not a member."""
+
+        # noinspection PyTypeChecker
+        return self.factory()

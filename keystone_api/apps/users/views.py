@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
+from .mixins import TeamScopedListMixin
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -126,9 +127,13 @@ class MembershipViewSet(viewsets.ModelViewSet):
         tags=["Users - Teams"],
     ),
 )
-class TeamViewSet(viewsets.ModelViewSet):
+class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user teams."""
 
+    # Filter returned records using TeamScopedListMixin
+    team_field = 'id'
+
+    # General view configuration
     permission_classes = [IsAuthenticated, TeamPermissions]
     serializer_class = TeamSerializer
     search_fields = ['name']
