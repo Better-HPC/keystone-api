@@ -5,7 +5,6 @@ models or services, and generating the appropriate HTTP response(s). Views
 serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
-
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -14,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
+from .mixins import TeamScopedListMixin
 from .models import *
 from .permissions import *
 from .serializers import *
@@ -126,9 +126,13 @@ class MembershipViewSet(viewsets.ModelViewSet):
         tags=["Users - Teams"],
     ),
 )
-class TeamViewSet(viewsets.ModelViewSet):
+class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user teams."""
 
+    # Settings for TeamScopedListMixin
+    team_field = 'id'
+
+    # General view configuration
     permission_classes = [IsAuthenticated, TeamPermissions]
     serializer_class = TeamSerializer
     search_fields = ['name']

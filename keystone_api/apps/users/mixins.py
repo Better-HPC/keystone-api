@@ -21,6 +21,7 @@ class TeamScopedListMixin:
 
     # Name of the model field that links an object to a team.
     # Can be overwritten by subclasses to match the relevant ForeignKey field in a request.
+    # Can be set to `id` when the filtering records from the team model itself.
     team_field = 'team'
 
     def get_queryset(self) -> QuerySet:
