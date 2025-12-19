@@ -19,7 +19,7 @@ from .models import *
 
 __all__ = ['MembershipFactory', 'TeamFactory', 'UserFactory']
 
-# Using a fixed, prehashed password avoids the significant
+# Using a fixed, prehashed password avoids the significant overhead
 # of hashing a dynamically generated value for each record
 DEFAULT_PASSWORD = make_password('password')
 
