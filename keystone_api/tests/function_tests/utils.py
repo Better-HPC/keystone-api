@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 
 from django.db import transaction
+from django.db.models import Model
 from factory.django import DjangoModelFactory
 from rest_framework import status
 
@@ -107,6 +108,18 @@ class TeamListFilteringTestMixin(ABC):
     def factory(self) -> type[DjangoModelFactory]:
         """Factory method used to define valid record data during testing."""
 
+    def create_related_record(self) -> Model:
+        """Create a record with a relation to `self.team`."""
+
+        # noinspection PyTypeChecker
+        return self.factory(**{self.team_field: self.team})
+
+    def create_non_related_record(self) -> Model:
+        """Create a record not associated with `self.team`."""
+
+        # noinspection PyTypeChecker
+        return self.factory()
+
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -116,8 +129,9 @@ class TeamListFilteringTestMixin(ABC):
         self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.team_records = [self.factory(**{self.team_field: self.team}) for _ in range(5)]
-        self.all_records = [self.factory() for _ in range(5)] + self.team_records
+        self.team_records = [self.create_related_record() for _ in range(5)]
+        self.other_records = [self.create_non_related_record() for _ in range(5)]
+        self.all_records = self.team_records + self.other_records
 
     def test_user_returned_filtered_records(self) -> None:
         """Verify users are only returned records for teams they belong to."""
@@ -127,9 +141,10 @@ class TeamListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(200, response.status_code)
 
-        response_data = response.json()['results']
-        response_ids = {record['id'] for record in response_data}
+        response_data = response.json()["results"]
+        response_ids = {record["id"] for record in response_data}
         expected_ids = {record.id for record in self.team_records}
+
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_staff_returned_all_records(self) -> None:
@@ -146,9 +161,10 @@ class TeamListFilteringTestMixin(ABC):
         self.assertSetEqual(expected_ids, response_ids)
 
     def test_user_with_no_records(self) -> None:
-        """Verify user's not belonging to any teams are returned an empty list."""
+        """Verify users not belonging to any teams are returned an empty list."""
 
         self.client.force_authenticate(self.generic_user)
+
         response = self.client.get(self.endpoint)
 
         response_data = response.json()['results']
@@ -172,6 +188,18 @@ class UserListFilteringTestMixin(ABC):
     def factory(self) -> type[DjangoModelFactory]:
         """Factory method used to define valid record data during testing."""
 
+    def create_related_record(self) -> Model:
+        """Create a record with a relation to `self.owner_user`."""
+
+        # noinspection PyTypeChecker
+        return self.factory(**{self.user_field: self.owner_user})
+
+    def create_non_related_record(self) -> Model:
+        """Create a record not associated with `self.owner_user`."""
+
+        # noinspection PyTypeChecker
+        return self.factory()
+
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -179,8 +207,9 @@ class UserListFilteringTestMixin(ABC):
         self.other_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.user_records = [self.factory(**{self.user_field: self.owner_user}), ]
-        self.all_records = [self.factory() for _ in range(5)] + self.user_records
+        self.user_records = [self.create_related_record(), ]
+        self.other_records = [self.create_non_related_record() for _ in range(5)]
+        self.all_records = self.user_records + self.other_records
 
     def test_user_returned_own_records(self) -> None:
         """Verify users only receive records they own."""
