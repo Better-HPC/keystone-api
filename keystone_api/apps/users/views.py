@@ -130,7 +130,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user teams."""
 
-    # Settings for TeamScopedListMixin
+    # Filter returned records using TeamScopedListMixin
     team_field = 'id'
 
     # General view configuration
