@@ -19,8 +19,8 @@ from .models import *
 
 __all__ = ['MembershipFactory', 'TeamFactory', 'UserFactory']
 
-# Using a fixed, prehashed password for dummy accounts avoids significant
-# overhead from hashing a dynamically generated value for each record
+# Using a fixed, prehashed password avoids the significant
+# of hashing a dynamically generated value for each record
 DEFAULT_PASSWORD = make_password('password')
 
 
