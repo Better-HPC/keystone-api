@@ -2,7 +2,6 @@ site_name: Keystone API
 nav:
   - Introduction: index.md
   - Installation:
-      - install/slurm.md
       - install/docker.md
       - install/systemd.md
   - Setup:
