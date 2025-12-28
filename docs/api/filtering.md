@@ -38,7 +38,7 @@ In the following example, `field1` is sorted in ascending order followed by `fie
 
 ## Searching Records
 
-Most API endpoints support semantic search via the `_search` parameter (see the [API specification](../../api) for specifics).
+Most API endpoints support semantic search via the `_search` parameter (see the [API specification](openapi.md) for specifics).
 When provided with search text, the API will compare the search value against the record fields and return case-insensitive partial matches.
 
 ```bash
