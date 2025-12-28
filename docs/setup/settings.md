@@ -70,7 +70,7 @@ By default, these files are stored in subdirectories of the installed applicatio
 
 ## Logging
 
-Keystone automatically purges application logs according to the policy settings described below.
+Keystone automatically purges log recordss according to the policy settings below.
 Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
 Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
 
@@ -112,7 +112,7 @@ The PostgreSQL backend should always be used in production settings.
 ## Redis Connection
 
 Redis settings define the network location and connection information for the application Redis cache.
-Enabling password authentication is recommended.
+Enabling password authentication is strongly recommended.
 
 | Setting Name     | Default Value | Description                                  |
 |------------------|---------------|----------------------------------------------|
@@ -124,7 +124,8 @@ Enabling password authentication is recommended.
 ## Email Notifications
 
 Keystone will default to using the local server when issuing email notifications.
-Securing your production email server with a username/password is recommended, but not required.
+An alternative SMTP server can be sepcified using the settings below.
+Securing your production email server with a username/password is strongly recommended.
 
 | Setting Name          | Default Value             | Description                                             |
 |-----------------------|---------------------------|---------------------------------------------------------|
