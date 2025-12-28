@@ -1,6 +1,6 @@
 # Deploying with Systemd
 
-Keystone-API can be installed directly on a machine using system packages.
+The Keystone API can be installed directly on a machine using system packages.
 Doing so requires administrative privileges and assumes you are familiar with managing system services via systemd.
 
 !!! note
@@ -9,34 +9,20 @@ Doing so requires administrative privileges and assumes you are familiar with ma
 
 ## Installing the API
 
-The `keystone_api` package can be installed using the `pip` or `pipx` package managers.
+The `keystone_api` package can be installed using the `pipx` package manager.
 
-=== "pipx (recommended)"
 
-    ```bash
-    pipx install --include-deps keystone-api
-    ```
+```bash
+BHPC_REPO="https://dl.cloudsmith.io/public/better-hpc/keystone/python/simple/"
+pipx install --extra-index-url=$BHPC_REPO --include-deps keystone-api
+```
 
-=== "pip"
-
-    ```bash
-    pip install keystone-api
-    ```
-
-If leveraging LDAP for user authentication, include the LDAP dependency group in the install command.
+If leveraging LDAP for user authentication, include the LDAP dependency group in the `install` command.
 This option requires the LDAP libraries and development headers to be pre-installed on the host system.
 
-=== "pipx (recommended)"
-
-    ```bash
-    pipx install --include-deps keystone-api[ldap]
-    ```
-
-=== "pip"
-
-    ```bash
-    pip install keystone-api[ldap]
-    ```
+```bash
+pipx install --extra-index-url=$BHPC_REPO --include-deps keystone-api[ldap]
+```
 
 If the installation was successful, the packaged CLI tool will be available in your working environment.
 Use the `--help` option to view the available commands.
@@ -46,7 +32,7 @@ keystone-api --help
 ```
 
 The `keystone-api` utility does not support tab autocompletion by default.
-To enable autocomplete for the Bash/Zsh shells, use the `enable_autocomplete` command.
+To enable autocomplete for the Bash or Zsh shells use the `enable_autocomplete` command.
 
 ```bash
 keystone-api enable_autocomplete
@@ -69,8 +55,7 @@ only that the connection and authentication values are set correctly in the API 
 
 ### PostgreSQL
 
-Using PostgreSQL for the application database is strongly recommended.
-After deploying a server instance, you will need to create a dedicated database and user account.
+After deploying a PostgreSQL instance, you will need to create a dedicated database and user account.
 Start by launching a new SQL session with admin permissions.
 
 ```bash
@@ -102,7 +87,7 @@ The following unit files are provided as a starting point to daemonize the proce
 !!! warning
 
     Celery can generate a significant number of log files, particularly when running multiple concurrent workers.
-    It is recommended administrators implement log rotation to prevent excessive disk consumption.
+    Administrators should regularly rotate and clear log files to prevent excessive disk consumption.
 
 === "keystone-worker.service"
 
@@ -150,7 +135,7 @@ The following unit files are provided as a starting point to daemonize the proce
 ## Deploying the Application
 
 Before launching the API, migrate the database to the latest schema version and collect any static files.
-See the [Settings](settings.md) page for details on configuring database credentials and the static files location.
+See the [Settings](../setup/settings.md) page for details on configuring database credentials and the static files location.
 
 ```bash
 keystone-api migrate
@@ -229,7 +214,7 @@ server {
 
 ## Upgrading Application Versions
 
-Software updates are handled by the Python package manager.
+Software updates are executed using the Pipx package manager.
 System services should be taken offline before upgrading to a new version.
 
 !!! danger
@@ -243,42 +228,20 @@ System services should be taken offline before upgrading to a new version.
     When performing upgrades, it is best to prevent inadvertent restarts by stopping incoming traffic from the upstream proxy.
     This is achievable by taking the proxy offline or by modifying the proxy config and restarting the proxy service.
 
-=== "pipx (recommended)"
+```bash
+systemctl stop nginx
+systemctl stop keystone-server
+systemctl stop keystone-beat
+systemctl stop keystone-worker
 
-    ```bash
-    systemctl stop nginx
-    systemctl stop keystone-server
-    systemctl stop keystone-beat
-    systemctl stop keystone-worker
+# Pause here to back up the application database
 
-    # Pause here to back up the application database
+pipx upgrade keystone-api
+keystone-api migrate
+keystone-api collectstatic
 
-    pipx upgrade keystone-api
-    keystone-api migrate
-    keystone-api collectstatic
-    
-    systemctl start keystone-worker
-    systemctl start keystone-beat
-    systemctl start keystone-server
-    systemctl start nginx
-    ```
-
-=== "pip"
-
-    ```bash
-    systemctl stop nginx
-    systemctl stop keystone-server
-    systemctl stop keystone-beat
-    systemctl stop keystone-worker
-
-    # Pause here to back up the application database
-    
-    pip install --upgrade keystone-api
-    keystone-api migrate
-    keystone-api collectstatic
-    
-    systemctl start keystone-worker
-    systemctl start keystone-beat
-    systemctl start keystone-server
-    systemctl start nginx
-    ```
+systemctl start keystone-worker
+systemctl start keystone-beat
+systemctl start keystone-server
+systemctl start nginx
+```

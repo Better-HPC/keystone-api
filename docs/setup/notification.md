@@ -23,7 +23,7 @@ Template files are required to have no write permissions for users other than th
 If a template file has world-writeable permissions, Keystone will refuse to load it.
 This restriction is provided for security and ensures templates cannot be modified by unauthorized users in production.
 
-Users familiar with the Jinja2 templating engine will also find certain Jinja features are also not availible.
+Users familiar with the Jinja2 templating engine will also find certain Jinja features are not available.
 This includes access to application internals and the ability to bypass input data sanitation.
 
 ## Templates
@@ -72,9 +72,9 @@ its expiration date.
     | `req_expire`         | `date` or `None` | Date when the allocation request expires.                                 |
     | `req_days_left`      | `int` or `None`  | Number of days remaining until expiration (calculated from current date). |
     | `allocations`        | `list[dict]`     | List of allocated resources tied to the request. Each item includes:      |
-    | ├─ `alloc_cluster`   | `str`            | Name of the cluster where the resource is allocated.                      |
-    | ├─ `alloc_requested` | `int`            | Number of service units requested (or `0` if unavailable).                |
-    | └─ `alloc_awarded`   | `int`            | Number of service units awarded (or `0` if unavailable).                  |
+    | ├ `alloc_cluster`    | `str`            | Name of the cluster where the resource is allocated.                      |
+    | ├ `alloc_requested`  | `int`            | Number of service units requested (or `0` if unavailable).                |
+    | └ `alloc_awarded`    | `int`            | Number of service units awarded (or `0` if unavailable).                  |
 
 ??? abstract "Default Template Content"
 
@@ -103,10 +103,10 @@ and that the resources granted under that allocation are no longer available for
     | `req_active`         | `date`           | Date when the allocation request became active.                      |
     | `req_expire`         | `date` or `None` | Date when the allocation request expires.                            |
     | `allocations`        | `list[dict]`     | List of allocated resources tied to the request. Each item includes: |
-    | ├─ `alloc_cluster`   | `str`            | Name of the cluster where the resource is allocated.                 |
-    | ├─ `alloc_requested` | `int`            | Number of service units requested (or `0` if unavailable).           |
-    | └─ `alloc_awarded`   | `int`            | Number of service units awarded (or `0` if unavailable).             |
-    | └─ `alloc_awarded`   | `int`            | Number of service unitss used by the team (or `0` if unavailable).   |
+    | ├ `alloc_cluster`    | `str`            | Name of the cluster where the resource is allocated.                 |
+    | ├ `alloc_requested`  | `int`            | Number of service units requested (or `0` if unavailable).           |
+    | ├ `alloc_awarded`    | `int`            | Number of service units awarded (or `0` if unavailable).             |
+    | └ `alloc_awarded`    | `int`            | Number of service unitss used by the team (or `0` if unavailable).   |
 
 ??? abstract "Default Template Content"
 

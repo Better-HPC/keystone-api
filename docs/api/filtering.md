@@ -15,10 +15,10 @@ Keystone uses limit/offset style pagination.
 Both pagination arguments are optional and default to the values below.
 To prevent excessive request sizes, the API enforces an upper limit of 1,000 records per response.
 
-| Query Argument | Default Value    |
-|----------------|------------------|
-| `_limit`       | `100`            |
-| `_offset`      | `0` (First page) |
+| Query Argument | Default Value      |
+|----------------|--------------------|
+| `_limit`       | `100`              |
+| `_offset`      | `0` (First record) |
 
 ## Ordering Responses
 
@@ -62,7 +62,7 @@ In the following example the API will return records where the `example` field i
 .../endpoint?example__gt=50&example__lt=150
 ```
 
-Available query filters are summarized in the tables below.
+The available query filters depend on a field's data type and are summarized in the tables below.
 
 ### General Filters
 

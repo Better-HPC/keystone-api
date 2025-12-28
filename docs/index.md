@@ -1,6 +1,6 @@
 # Keystone REST API
 
-The Keystone REST API serves as the primary backend service for the Keystone platform.
-In addition to defining underlying business logic, it is responsible for orchestrating critical services to support
-user-facing functionality and automated workloads.
-This includes managing user authentication, asynchronous background tasks, and HPC integration through Slurm.
+The Keystone REST API acts as the primary control plane for the Keystone platform. 
+Beyond implementing core business logic, it orchestrates essential services that support both user and admin-facing functionality.
+This  includes handling user authentication, synchronizing resource allocations across clusters, and issuing
+automated user notifications.

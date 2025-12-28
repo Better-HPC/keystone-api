@@ -1,27 +1,31 @@
 # Deploying with Docker
 
-Keystone-API can be deployed as a single container using Docker, or as several containers using Docker Compose.
+The Keystone API can be deployed as a single container using Docker, or as several containers using Docker Compose.
 Single-container deployments are best suited for those looking to test-drive Keystone's capabilities.
-Multi-container deployments are strongly recommended for teams operating at scale.
-
-## Using Docker Standalone
+Multi-container deployments are strongly recommended for teams operating in production.
 
 !!! danger
 
     The API container deploys with default settings that are **not** suitable for secure production use.
-    See the [Settings](settings.md) page for a complete overview of configurable options and recommended settings.
+    See the [Settings](../setup/settings.md) page for a complete overview of configurable options and recommended settings.
 
-The following command will automatically pull and launch the latest API image.
-This example launches the image as a container called `keystone` and maps the API to port 8000 on the local machine.
+## Using Docker Standalone
+
+The latest API image can be pulled and launched using the Docker command below.
+This example runs the image as a container called `keystone` and maps the API to port `8000` on the local machine.
 
 ```bash
-docker run --detach --publish 8000:80 --name keystone docker.cloudsmith.io/better-hpc/keystone/keystone-api
+docker run \
+  --detach \
+  --publish 8000:80 \
+  --name keystone \
+  docker.cloudsmith.io/better-hpc/keystone/keystone-api
 ```
 
-The container will automatically execute the API quickstart utility, which initializes core system dependencies (Postgres, Redis, etc.) within the container.
-The utility also checks for existing user accounts and, if no accounts are found, creates an admin account with username `admin` and password `quickstart`.
+The container will automatically execute the API quickstart utility and initialize core system dependencies (Postgres, Redis, etc.) within the container.
+The container will also check for existing user accounts and, if no accounts are found, create an admin account with username `admin` and password `quickstart`.
 
-To verify the API health, check the running container status or query the API's health endpoint.
+To verify the container's health, check the running container status or query the API's health endpoint.
 
 ```bash
 docker inspect --format='{{.State.Health.Status}}' keystone

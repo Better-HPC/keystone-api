@@ -34,13 +34,14 @@ API's standard [query parameters](./filtering.md).
 Clients may optionally specify a unique correlation ID (`cid`) using the `X-KEYSTONE-CID` header.
 This value is propagated through internal logs, enabling record correlation across logging endpoints.
 Clients should leverage this feature to organize log records around a common transaction or user session.
-If A CID value is not provided, a unique value is assigned to each incoming request.
+If A CID value is not provided, a unique value is assigned by the server to each incoming request.
 
 CID values must be a valid UUIDv4 string, including dashes (e.g. `d61eef0b-258d-42ca-b14b-852860a54259`).
 
 ## Performance Metrics
 
-Keystone exposes comprehensive health and performance metrics using the Prometheus format.
-Each webserver worker exposes metrics on a different port selected from the port range defined by application settings.
+Keystone exposes comprehensive health and performance metrics in Prometheus format.
+Each webserver worker exposes metrics on a different port selected from the port range defined by
+[application settings](../setup/settings.md).
 In accordance with Prometheus conventions, these metrics are accessible via the `/metrics/` endpoint on each port.
 No authentication is required to access these endpoints.
