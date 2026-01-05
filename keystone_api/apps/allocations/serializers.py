@@ -44,6 +44,8 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _comments = serializers.SerializerMethodField()
 
     class Meta:
+        """Serializer settings."""
+
         model = AllocationRequest
         fields = '__all__'
         extra_kwargs = {
