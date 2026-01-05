@@ -64,4 +64,4 @@ class CommentSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Comment
-        fields = ['user', 'content', 'created', 'private', '_user']
+        fields = ['id', 'user', 'content', 'created', 'private', '_user']

@@ -25,8 +25,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
-    endpoint_pattern = '/allocations/jobs/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
@@ -38,7 +36,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = self.endpoint_pattern.format(pk=self.jobstat.pk)
         self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.jobstat.id})
 
     def test_unauthenticated_user_permissions(self) -> None:

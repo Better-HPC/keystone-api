@@ -26,8 +26,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/allocations/reviews/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 

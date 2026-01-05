@@ -24,8 +24,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Staff User Accessing Other's Data         | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
-    endpoint_pattern = '/notifications/preferences/{pk}/'
-
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
