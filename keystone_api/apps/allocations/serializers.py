@@ -40,16 +40,26 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _grants = GrantSummarySerializer(source='grants', many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
-    _comments = CommentSummarySerializer(source='comments', many=True, read_only=True)
+    _comments = serializers.SerializerMethodField()
 
     class Meta:
-        """Serializer settings."""
-
         model = AllocationRequest
         fields = '__all__'
         extra_kwargs = {
             'submitted': {'read_only': True},
         }
+
+    def get__comments(self, obj: AllocationRequest) -> list:
+        """Filter returned comments based on the requesting user's staff status."""
+
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+
+        qs = obj.comments.all()
+        if not (user and user.is_staff):
+            qs = qs.filter(private=False)
+
+        return CommentSummarySerializer(qs, many=True).data
 
 
 class AllocationReviewSerializer(serializers.ModelSerializer):

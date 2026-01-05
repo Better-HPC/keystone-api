@@ -51,6 +51,7 @@ class LogRequestMiddleware:
         try:
             request_log.save()
 
+        # Pass on error so logging failure does not break request handling
         except (IntegrityError, Exception):  # pragma: no cover
             pass
 

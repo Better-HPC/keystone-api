@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import AllocationRequestFactory
+from apps.allocations.factories import AllocationRequestFactory, CommentFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
@@ -27,8 +27,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | Team owner                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
-
-    endpoint_pattern = '/allocations/requests/{pk}/'
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
@@ -143,3 +141,57 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put_body=record_data,
             patch_data=record_data
         )
+
+
+class AllocationCommentsVisibility(APITestCase):
+    """Test filtering of nested private comments based on user staff status."""
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.allocation_request = AllocationRequestFactory()
+        self.team = self.allocation_request.team
+
+        self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.staff_user = UserFactory(is_staff=True)
+
+        self.public_comment = CommentFactory(
+            request=self.allocation_request,
+            private=False,
+        )
+
+        self.private_comment = CommentFactory(
+            request=self.allocation_request,
+            private=True,
+        )
+
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.allocation_request.id})
+
+    def _get_comment_ids(self, response) -> set[int]:
+        """Extract comment IDs from the response payload."""
+
+        return {comment["id"] for comment in response.data["_comments"]}
+
+    def test_member_sees_only_public_comments(self) -> None:
+        """Verify non-staff users only receive non-private comments."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.get(self.endpoint)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        comment_ids = self._get_comment_ids(response)
+
+        self.assertIn(self.public_comment.id, comment_ids)
+        self.assertNotIn(self.private_comment.id, comment_ids)
+
+    def test_staff_user_sees_all_comments(self) -> None:
+        """Verify staff users receive both public and private comments."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        comment_ids = self._get_comment_ids(response)
+
+        self.assertIn(self.public_comment.id, comment_ids)
+        self.assertIn(self.private_comment.id, comment_ids)
