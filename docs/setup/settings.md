@@ -136,6 +136,7 @@ Securing your production email server with a username/password is strongly recom
 | `EMAIL_USE_TLS`       | `False`                   | Use a TLS connection to the SMTP server.                |
 | `EMAIL_FROM_ADDRESS`  | `noreply@keystone.bot`    | The default "from" address used in email notifications. |
 | `EMAIL_TEMPLATE_DIR`  | `/etc/keystone/templates` | Directory to search for customized email templates.     |
+| `EMAIL_DEBUG_DIR`     |                           | Write emails to disk instead of using the SMTP server.  |
 
 ## LDAP Authentication
 
@@ -164,11 +165,3 @@ See the `apps.users.models.User` class for a full list of available Keystone fie
 | `AUTH_LDAP_ATTR_MAP`      |                  | A mapping of user fields to LDAP attribute names.                 |
 | `AUTH_LDAP_PURGE_REMOVED` | `False`          | Delete users when removed from LDAP instead of deactivating them. |
 | `AUTH_LDAP_TIMEOUT`       | `10`             | The number of seconds before timing out an LDAP connection/query. |
-
-## Developer Settings
-
-The following settings are intended for use in debugging or development.
-
-| Setting Name      | Default Value | Description                                            |
-|-------------------|---------------|--------------------------------------------------------|
-| `DEBUG_EMAIL_DIR` |               | Write emails to disk instead of using the SMTP server. |
