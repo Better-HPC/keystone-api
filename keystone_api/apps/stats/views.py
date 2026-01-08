@@ -252,7 +252,7 @@ class NotificationStatsView(GenericAPIView):
     def get(self, request: Request) -> Response:
         """Return statistics calculated from records matching user permissions and query params."""
 
-        qs = self.get_queryset()
+        qs = self.filter_queryset(self.get_queryset())
         serializer = self.serializer_class({
             "total": qs.count(),
             "unread": qs.filter(read=false).count(),
