@@ -96,3 +96,12 @@ class TeamRecordFiltering(APITestCase):
 
         stats = response.json()
         self.assertEqual(len(self.all_records), stats["request_count"])
+
+    def test_team_filtered_statistics(self) -> None:
+        """Verify query values can be used to filter returned statistics by team."""
+
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.endpoint, query_params={"team": self.team_1.id})
+
+        stats = response.json()
+        self.assertEqual(len(self.team_1_records), stats["request_count"])

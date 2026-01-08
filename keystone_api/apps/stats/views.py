@@ -18,7 +18,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from sympy import false
 
 from apps.allocations.models import AllocationRequest
 from apps.notifications.models import Notification
@@ -255,7 +254,7 @@ class NotificationStatsView(GenericAPIView):
         qs = self.filter_queryset(self.get_queryset())
         serializer = self.serializer_class({
             "total": qs.count(),
-            "unread": qs.filter(read=false).count(),
+            "unread": qs.filter(read=False).count(),
         })
 
         return Response(serializer.data)
