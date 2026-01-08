@@ -6412,13 +6412,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/GrantStats'
           description: ''
+  /stats/notifications/:
+    get:
+      operationId: stats_notifications_retrieve
+      description: Returns cumulative statistics for user notifications. Staff users
+        receive statistics for all users. Non-staff users are limited to their own
+        notifications.
+      summary: Retrieve aggregated user notification statistics.
+      tags:
+      - Statistics
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationStats'
+          description: ''
   /stats/publications/:
     get:
       operationId: stats_publications_retrieve
       description: Returns cumulative publication statistics. Staff users receive
         statistics for all teams. Non-staff users are limited to teams where they
         hold membership.
-      summary: List aggregated publication statistics.
+      summary: Retrieve aggregated publication statistics.
       parameters:
       - in: query
         name: team
@@ -6442,7 +6461,7 @@ paths:
       description: Returns cumulative statistics for allocation requests and awards.
         Staff users receive statistics for all teams. Non-staff users are limited
         to teams where they hold membership.
-      summary: List aggregated allocation request statistics.
+      summary: Retrieve aggregated allocation request statistics.
       parameters:
       - in: query
         name: team
@@ -8652,6 +8671,17 @@ components:
       - subject
       - time
       - user
+    NotificationStats:
+      type: object
+      description: Serializer for aggregated notification statistics.
+      properties:
+        total:
+          type: integer
+        unread:
+          type: integer
+      required:
+      - total
+      - unread
     NotificationTypeChoices:
       type: object
       properties:
