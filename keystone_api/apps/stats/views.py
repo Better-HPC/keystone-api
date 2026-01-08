@@ -18,14 +18,20 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from sympy import false
 
-import plugins.filter
 from apps.allocations.models import AllocationRequest
+from apps.notifications.models import Notification
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team
 from .serializers import *
 
-__all__ = ['AllocationRequestStatsView', 'GrantStatsView', 'PublicationStatsView']
+__all__ = [
+    'AllocationRequestStatsView',
+    'GrantStatsView',
+    'NotificationStatsView',
+    'PublicationStatsView'
+]
 
 TEAM_QUERY_PARAM = OpenApiParameter(
     name='team',
@@ -35,8 +41,8 @@ TEAM_QUERY_PARAM = OpenApiParameter(
 )
 
 
-class BaseStatsView(ABC):
-    """Base class for statistics views with common logic."""
+class AbstractTeamStatsView(ABC):
+    """Abstract base class for team-based statistics views."""
 
     @abstractmethod
     def _summarize(self) -> dict:
@@ -62,7 +68,7 @@ class BaseStatsView(ABC):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="List aggregated allocation request statistics.",
+        summary="Retrieve aggregated allocation request statistics.",
         description=(
             "Returns cumulative statistics for allocation requests and awards. "
             "Staff users receive statistics for all teams. "
@@ -72,13 +78,12 @@ class BaseStatsView(ABC):
         parameters=[TEAM_QUERY_PARAM]
     ),
 )
-class AllocationRequestStatsView(BaseStatsView, GenericAPIView):
-    """ViewSet providing aggregated allocation request statistics globally and per team."""
+class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
+    """ViewSet providing aggregated allocation request statistics."""
 
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestStatsSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [plugins.filter.AdvancedFilterBackend]
 
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
@@ -166,13 +171,12 @@ class AllocationRequestStatsView(BaseStatsView, GenericAPIView):
         parameters=[TEAM_QUERY_PARAM]
     ),
 )
-class GrantStatsView(BaseStatsView, GenericAPIView):
-    """ViewSet providing aggregated grant statistics globally and per team."""
+class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
+    """ViewSet providing aggregated grant statistics."""
 
     queryset = Grant.objects.all()
     serializer_class = GrantStatsSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [plugins.filter.AdvancedFilterBackend]
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -220,7 +224,46 @@ class GrantStatsView(BaseStatsView, GenericAPIView):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="List aggregated publication statistics.",
+        summary="Retrieve aggregated user notification statistics.",
+        description=(
+            "Returns cumulative statistics for user notifications. "
+            "Staff users receive statistics for all users. "
+            "Non-staff users are limited to their own notifications."
+        ),
+        tags=["Statistics"],
+    ),
+)
+class NotificationStatsView(GenericAPIView):
+    """ViewSet providing aggregated notification statistics."""
+
+    queryset = Notification.objects.all()
+    serializer_class = NotificationStatsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset filtered by user team membership for list actions."""
+
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            return queryset.filter(user=self.request.user)
+
+        return queryset
+
+    def get(self, request: Request) -> Response:
+        """Return statistics calculated from records matching user permissions and query params."""
+
+        qs = self.get_queryset()
+        serializer = self.serializer_class({
+            "total": qs.count(),
+            "unread": qs.filter(read=false).count(),
+        })
+
+        return Response(serializer.data)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Retrieve aggregated publication statistics.",
         description=(
             "Returns cumulative publication statistics. "
             "Staff users receive statistics for all teams. "
@@ -230,13 +273,12 @@ class GrantStatsView(BaseStatsView, GenericAPIView):
         parameters=[TEAM_QUERY_PARAM]
     ),
 )
-class PublicationStatsView(BaseStatsView, GenericAPIView):
-    """ViewSet providing aggregated publication statistics globally and per team."""
+class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):
+    """ViewSet providing aggregated publication statistics."""
 
     queryset = Publication.objects.all()
     serializer_class = PublicationStatsSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [plugins.filter.AdvancedFilterBackend]
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.
