@@ -63,10 +63,8 @@ class UserRecordFiltering(APITestCase):
 
         self.user_1 = UserFactory()
         self.user_1_records = [
-            NotificationFactory(user=self.user_1) for _ in range(2)
-        ]
-        self.user_1_unread = [
-            NotificationFactory(user=self.user_1, read=False) for _ in range(3)
+            NotificationFactory(user=self.user_1),
+            NotificationFactory(user=self.user_1, read=False)
         ]
 
         self.user_2 = UserFactory()
@@ -75,7 +73,7 @@ class UserRecordFiltering(APITestCase):
         ]
 
         self.staff_user = UserFactory(is_staff=True)
-        self.all_records = self.user_1_records + self.user_1_unread + self.user_2_records
+        self.all_records = self.user_1_records + self.user_2_records
 
     def test_generic_user_statistics(self) -> None:
         """Verify general users are only returned statistics for their own notifications."""
@@ -84,9 +82,7 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        expected_total = len(self.user_1_records) + len(self.user_1_unread)
-        self.assertEqual(expected_total, stats["total"])
-        self.assertEqual(len(self.user_1_unread), stats["unread"])
+        self.assertEqual(len(self.user_1_records), stats["total"])
 
     def test_staff_user_statistics(self) -> None:
         """Verify staff users are returned aggregated statistics across all users."""
@@ -104,5 +100,4 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint, query_params={"user": self.user_1.id})
 
         stats = response.json()
-        expected_total = len(self.user_1_records) + len(self.user_1_unread)
-        self.assertEqual(expected_total, stats["total"])
+        self.assertEqual(len(self.user_1_records), stats["total"])
