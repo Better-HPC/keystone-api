@@ -15,8 +15,7 @@ VIEW_NAME = "research:grant-list"
 class EndpointPermissions(ResearchListEndpointPermissionsTestMixin, APITestCase):
     """Test endpoint user permissions.
 
-    See the `ResearchListEndpointPermissionsTests` class docstring for details on the
-    tested endpoint permissions.
+    See the parent mixin class for details on the tested endpoint permissions.
     """
 
     endpoint = reverse(VIEW_NAME)

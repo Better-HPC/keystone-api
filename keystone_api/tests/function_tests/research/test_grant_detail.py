@@ -13,8 +13,7 @@ VIEW_NAME = "research:grant-detail"
 class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCase):
     """Test endpoint user permissions.
 
-    See the `ResearchDetailEndpointPermissionsTests` class docstring for details on the
-    tested endpoint permissions.
+    See the parent mixin class for details on the tested endpoint permissions.
     """
 
     view_name = VIEW_NAME

@@ -11,6 +11,7 @@ from rest_framework import serializers
 __all__ = [
     'AllocationRequestStatsSerializer',
     'GrantStatsSerializer',
+    'NotificationStatsSerializer',
     'PublicationStatsSerializer',
 ]
 
@@ -57,6 +58,13 @@ class GrantStatsSerializer(serializers.Serializer):
     funding_active = serializers.DecimalField(max_digits=17, decimal_places=2)
     funding_expired = serializers.DecimalField(max_digits=17, decimal_places=2)
     funding_average = serializers.DecimalField(max_digits=17, decimal_places=2)
+
+
+class NotificationStatsSerializer(serializers.Serializer):
+    """Serializer for aggregated notification statistics."""
+
+    total = serializers.IntegerField()
+    unread = serializers.IntegerField()
 
 
 class PublicationStatsSerializer(serializers.Serializer):

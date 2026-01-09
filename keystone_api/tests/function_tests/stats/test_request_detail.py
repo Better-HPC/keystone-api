@@ -1,57 +1,23 @@
 """Function tests for the `stats:request-list` endpoint."""
 
 from django.urls import reverse
-from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationRequestFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
-from tests.function_tests.utils import CustomAsserts
+from .common import StatisticEndpointPermissionsTestMixin
 
 VIEW_NAME = 'stats:request-detail'
 
 
-class EndpointPermissions(CustomAsserts, APITestCase):
-    """Test endpoint user permissions."""
+class EndpointPermissions(StatisticEndpointPermissionsTestMixin, APITestCase):
+    """Test endpoint user permissions.
+
+    See the parent mixin class for details on the tested endpoint permissions.
+    """
 
     endpoint = reverse(VIEW_NAME)
-
-    def setUp(self) -> None:
-        """Create test fixtures using mock data."""
-
-        self.generic_user = UserFactory()
-
-    def test_unauthenticated_user_permissions(self) -> None:
-        """Verify unauthenticated users cannot access resources."""
-
-        self.assert_http_responses(
-            self.endpoint,
-            get=status.HTTP_401_UNAUTHORIZED,
-            head=status.HTTP_401_UNAUTHORIZED,
-            options=status.HTTP_401_UNAUTHORIZED,
-            post=status.HTTP_401_UNAUTHORIZED,
-            put=status.HTTP_401_UNAUTHORIZED,
-            patch=status.HTTP_401_UNAUTHORIZED,
-            delete=status.HTTP_401_UNAUTHORIZED,
-            trace=status.HTTP_401_UNAUTHORIZED
-        )
-
-    def test_authenticated_user_permissions(self) -> None:
-        """Verify authenticated have read only permissions."""
-
-        self.client.force_login(user=self.generic_user)
-        self.assert_http_responses(
-            self.endpoint,
-            get=status.HTTP_200_OK,
-            head=status.HTTP_200_OK,
-            options=status.HTTP_200_OK,
-            post=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put=status.HTTP_405_METHOD_NOT_ALLOWED,
-            patch=status.HTTP_405_METHOD_NOT_ALLOWED,
-            delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
 
 
 class TeamRecordFiltering(APITestCase):
@@ -96,3 +62,12 @@ class TeamRecordFiltering(APITestCase):
 
         stats = response.json()
         self.assertEqual(len(self.all_records), stats["request_count"])
+
+    def test_team_filtered_statistics(self) -> None:
+        """Verify query values can be used to filter returned statistics by team."""
+
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.endpoint, query_params={"team": self.team_1.id})
+
+        stats = response.json()
+        self.assertEqual(len(self.team_1_records), stats["request_count"])
