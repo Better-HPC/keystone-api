@@ -41,6 +41,8 @@ class MembershipSerializer(serializers.ModelSerializer):
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including sensitive fields."""
 
+    display_name = serializers.CharField(read_only=True)
+    abbreviation = serializers.CharField(read_only=True)
     membership = TeamRoleSerializer(many=True, read_only=False, required=False, default=[])
     _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
 

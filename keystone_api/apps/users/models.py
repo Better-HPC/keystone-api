@@ -177,6 +177,27 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
 
     objects = UserManager()
 
+    @property
+    def display_name(self) -> str:
+        """Return the user's display name."""
+
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+
+        return self.first_name or self.username
+
+    @property
+    def abbreviation(self) -> str:
+        """Return the user's uppercase two-character abbreviation."""
+
+        if self.first_name and self.last_name:
+            abbrev = f"{self.first_name[0]}{self.last_name[0]}"
+
+        else:
+            abbrev = self.username[:2]
+
+        return abbrev.upper()
+
     def _generate_default_image(self, grid_size: tuple[int, int] = (6, 6), square_size: int = 40) -> Image:
         """Generate a unique user profile image
 

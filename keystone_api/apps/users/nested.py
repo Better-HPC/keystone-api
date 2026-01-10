@@ -43,11 +43,24 @@ class TeamRoleSerializer(serializers.ModelSerializer):
 class UserSummarySerializer(serializers.ModelSerializer):
     """Serializer for summarizing user records in nested responses."""
 
+    display_name = serializers.CharField(read_only=True)
+    abbreviation = serializers.CharField(read_only=True)
+
     class Meta:
         """Serializer settings."""
 
         model = User
-        fields = ["id", "username", "first_name", "last_name", "email", "department", "role"]
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "display_name",
+            "abbreviation",
+            "email",
+            "department",
+            "role",
+        ]
 
 
 class UserRoleSerializer(serializers.ModelSerializer):
