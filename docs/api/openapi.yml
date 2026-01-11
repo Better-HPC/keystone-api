@@ -10198,6 +10198,12 @@ components:
           type: string
           nullable: true
           maxLength: 150
+        display_name:
+          type: string
+          readOnly: true
+        abbreviation:
+          type: string
+          readOnly: true
         email:
           type: string
           format: email
@@ -10211,12 +10217,6 @@ components:
           type: string
           nullable: true
           maxLength: 1000
-        display_name:
-          type: string
-          readOnly: true
-        abbreviation:
-          type: string
-          readOnly: true
       required:
       - abbreviation
       - display_name
