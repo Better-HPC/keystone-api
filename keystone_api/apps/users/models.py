@@ -193,6 +193,9 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         if self.first_name and self.last_name:
             abbrev = f"{self.first_name[0]}{self.last_name[0]}"
 
+        elif self.first_name:
+            abbrev = f"{self.first_name[0]}"
+
         else:
             abbrev = self.username[:2]
 
