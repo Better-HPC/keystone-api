@@ -9533,6 +9533,12 @@ components:
         id:
           type: integer
           readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        abbreviation:
+          type: string
+          readOnly: true
         membership:
           type: array
           items:
@@ -9854,6 +9860,12 @@ components:
         id:
           type: integer
           readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        abbreviation:
+          type: string
+          readOnly: true
         membership:
           type: array
           items:
@@ -9937,7 +9949,9 @@ components:
           description: Specific permissions for this user.
       required:
       - _history
+      - abbreviation
       - date_joined
+      - display_name
       - id
       - is_active
       - is_ldap_user
@@ -10184,6 +10198,12 @@ components:
           type: string
           nullable: true
           maxLength: 150
+        display_name:
+          type: string
+          readOnly: true
+        abbreviation:
+          type: string
+          readOnly: true
         email:
           type: string
           format: email
@@ -10198,6 +10218,8 @@ components:
           nullable: true
           maxLength: 1000
       required:
+      - abbreviation
+      - display_name
       - id
       - username
     health_json_ok:
