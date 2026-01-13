@@ -36,14 +36,14 @@ Administrators are cautioned to consider the potentially irreversible side effec
 
 CORS and CSRF settings define which domains are allowed to interact with the Keystone-API.
 
-| Setting Name             | Default Value                        <br/><br/> | Description                                                                |
-|--------------------------|-------------------------------------------------|----------------------------------------------------------------------------|
-| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of accepted host/domain names (**without** protocol). |
-| `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted CORS origin domains (**with** protocol).  |
-| `SECURE_CSRF_ORIGINS`    | _See default local addresses._                  | Comma-separated list of accepted CSRF origin domains (**with** protocol).  |
-| `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                    |
-| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                             | Number of seconds before session tokens expire.                            |
-| `SECURE_TOKEN_DOMAIN`    | None                                            | Domain attribute for session/csrf cookies. Set for cross-subdomain usage.  | 
+| Setting Name             | Default Value                        <br/><br/> | Description                                                                                      |
+|--------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of accepted host/domain names (**without** protocol).                       |
+| `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted CORS origin domains (**with** protocol).                        |
+| `SECURE_CSRF_ORIGINS`    | _See default local addresses._                  | Comma-separated list of accepted CSRF origin domains (**with** protocol).                        |
+| `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                                          |
+| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                             | Number of seconds before session tokens expire.                                                  |
+| `SECURE_TOKEN_DOMAIN`    | None                                            | Domain attribute for session/csrf cookies. Set for cross-subdomain usage (e.g., `.example.com`). | 
 
 Default values are defined relative to the following list of _default local addresses_:
 
