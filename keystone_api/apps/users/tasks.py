@@ -14,7 +14,6 @@ from .models import User
 # Optional dependencies
 try:
     import ldap
-    from django_auth_ldap.backend import LDAPBackend
 
 except ImportError:  # pragma: nocover
     pass
@@ -52,19 +51,38 @@ def ldap_update_users() -> None:
     conn.set_option(ldap.OPT_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
     conn.set_option(ldap.OPT_NETWORK_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
 
-    search = conn.search_s(settings.AUTH_LDAP_USER_SEARCH.base_dn, ldap.SCOPE_SUBTREE, '(objectClass=account)')
+    search = conn.search_s(settings.AUTH_LDAP_USER_SEARCH.base_dn, ldap.SCOPE_SUBTREE, settings.AUTH_LDAP_USER_FILTER)
 
     # Fetch LDAP usernames using the LDAP attribute map defined in settings
-    ldap_username_attr = settings.AUTH_LDAP_USER_ATTR_MAP.get('username', 'uid')
+    attr_map = settings.AUTH_LDAP_USER_ATTR_MAP
+    ldap_username_attr = attr_map.get('username', 'uid')
     ldap_names = {uid.decode() for result in search for uid in result[1][ldap_username_attr]}
 
     # Update user data
-    backend = LDAPBackend()
-    for username in tqdm(ldap_names):
-        user = backend.populate_user(username)
-        if user is not None:  # pragma: no branch
-            user.is_ldap_user = True
-            user.save()
+    for dn, attrs in tqdm(search):
+        if not dn:
+            continue
+
+        usernames = attrs.get(ldap_username_attr, [])
+        if not usernames:
+            continue
+
+        username = usernames[0].decode() if isinstance(usernames[0], bytes) else usernames[0]
+
+        # Build user fields from LDAP attributes
+        user_data = {'is_ldap_user': True, 'is_active': True}
+        for django_field, ldap_attr in attr_map.items():
+            if django_field == 'username':
+                continue
+
+            values = attrs.get(ldap_attr, [])
+            if values:
+                user_data[django_field] = values[0].decode() if isinstance(values[0], bytes) else values[0]
+
+        User.objects.update_or_create(
+            username=username,
+            defaults=user_data
+        )
 
     # Handle usernames that have been removed from LDAP
     keystone_names = set(User.objects.filter(is_ldap_user=True).values_list('username', flat=True))

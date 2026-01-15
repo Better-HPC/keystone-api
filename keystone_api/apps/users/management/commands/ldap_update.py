@@ -23,13 +23,11 @@ class Command(BaseCommand):
             parser: The argument parser instance.
         """
 
-        parser.add_argument('--prune', action='store_true', help='Delete accounts with usernames not found in LDAP.')
-
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
         try:
-            ldap_update_users(prune=options['prune'])
+            ldap_update_users()
 
         except KeyboardInterrupt:
             pass
