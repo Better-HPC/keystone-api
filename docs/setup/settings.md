@@ -72,8 +72,10 @@ By default, these files are stored in subdirectories of the installed applicatio
 ## Logging
 
 Keystone automatically purges log records according to the policy settings below.
-Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
-Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file
+size/count.
+Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured
+age (in seconds).
 
 | Setting Name              | Default Value        | Description                                                                                                 |
 |---------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
@@ -163,8 +165,8 @@ A full list of available Keystone fields can be found in the project's [OpenApi 
 | `AUTH_LDAP_BIND_DN`       |                         | Optionally bind LDAP queries to the given DN.                     |
 | `AUTH_LDAP_BIND_PASSWORD` |                         | The password to use when binding to the LDAP server.              |
 | `AUTH_LDAP_USER_SEARCH`   |                         | The base DN for searching users in the LDAP server.               |
-| `AUTH_LDAP_USER_FILTER`   | `(objectClass=account)` | The LDAP filter used to identify user entries during sync.        |
-| `AUTH_LDAP_LOGIN_FILTER`  | `(uid=%(user)s)`        | The LDAP filter used to find a user during authentication.        |
+| `AUTH_LDAP_USER_FILTER`   | `(objectClass=account)` | Search filter to apply when selecting LDAP user account entries.  |
+| `AUTH_LDAP_LOGIN_FILTER`  | `(uid=%(user)s)`        | Search filter for username lookups during authentication.         |
 | `AUTH_LDAP_REQUIRE_CERT`  | `False`                 | Whether to require certificate verification.                      |
 | `AUTH_LDAP_ATTR_MAP`      |                         | A mapping of user fields to LDAP attribute names.                 |
 | `AUTH_LDAP_PURGE_REMOVED` | `False`                 | Delete users when removed from LDAP instead of deactivating them. |
