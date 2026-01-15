@@ -94,6 +94,22 @@ class GetLdapConnectionMethod(TestCase):
         result = get_ldap_connection()
         self.assertEqual(result, mock_conn)
 
+    @override_settings(
+        AUTH_LDAP_SERVER_URI='ldap://ds.example.com:389',
+        AUTH_LDAP_BIND_DN='',
+        AUTH_LDAP_START_TLS=False,
+        AUTH_LDAP_TIMEOUT=30,
+    )
+    @patch('apps.users.tasks.ldap')
+    def test_sets_timeout_options(self, mock_ldap: MagicMock) -> None:
+        """Verify timeout options are set on the connection."""
+
+        mock_conn = mock_ldap.initialize.return_value
+        get_ldap_connection()
+
+        mock_conn.set_option.assert_any_call(mock_ldap.OPT_TIMEOUT, 30)
+        mock_conn.set_option.assert_any_call(mock_ldap.OPT_NETWORK_TIMEOUT, 30)
+
 
 class ParseLdapEntryMethod(TestCase):
     """Test the parsing of LDAP entries via the `parse_ldap_entry` function."""
