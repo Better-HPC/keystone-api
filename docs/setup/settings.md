@@ -71,11 +71,9 @@ By default, these files are stored in subdirectories of the installed applicatio
 
 ## Logging
 
-Keystone automatically purges log recordss according to the policy settings below.
-Application logs are written to disk using a size-based policy that rotates files according to a maximum file
-size/count.
-Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured
-age (in seconds).
+Keystone automatically purges log records according to the policy settings below.
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
+Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
 
 | Setting Name              | Default Value        | Description                                                                                                 |
 |---------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
@@ -127,7 +125,7 @@ Enabling password authentication is strongly recommended.
 ## Email Notifications
 
 Keystone will default to using the local server when issuing email notifications.
-An alternative SMTP server can be sepcified using the settings below.
+An alternative SMTP server can be specified using the settings below.
 Securing your production email server with a username/password is strongly recommended.
 
 | Setting Name          | Default Value             | Description                                             |
