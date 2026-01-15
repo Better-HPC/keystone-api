@@ -35,6 +35,41 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
     return conn
 
 
+def parse_ldap_entry(dn: str, attrs: dict, attr_map: dict) -> dict | None:
+    """Parse an LDAP entry into a dict of Django user fields.
+
+    Args:
+        dn: The distinguished name of the LDAP entry.
+        attrs: The LDAP attributes for the entry.
+        attr_map: Mapping of Django field names to LDAP attribute names.
+
+    Returns:
+        A dict of user fields, or None if the entry is invalid.
+    """
+
+    # Skip referral entries
+    if not dn:
+        return None
+
+    ldap_username_attr = attr_map.get('username', 'uid')
+    usernames = attrs.get(ldap_username_attr, [])
+    if not usernames:
+        return None
+
+    username = usernames[0].decode() if isinstance(usernames[0], bytes) else usernames[0]
+
+    user_data = {'username': username, 'is_ldap_user': True, 'is_active': True}
+    for django_field, ldap_attr in attr_map.items():
+        if django_field == 'username':
+            continue
+
+        values = attrs.get(ldap_attr, [])
+        if values:
+            user_data[django_field] = values[0].decode() if isinstance(values[0], bytes) else values[0]
+
+    return user_data
+
+
 @shared_task()
 def ldap_update_users() -> None:
     """Update the user database with the latest data from LDAP.
@@ -46,38 +81,28 @@ def ldap_update_users() -> None:
     if not settings.AUTH_LDAP_SERVER_URI:
         return
 
-    # Search LDAP for all user entries
+    # Connect to the LDAP server
     conn = get_ldap_connection()
     conn.set_option(ldap.OPT_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
     conn.set_option(ldap.OPT_NETWORK_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
 
-    search = conn.search_s(settings.AUTH_LDAP_USER_SEARCH.base_dn, ldap.SCOPE_SUBTREE, settings.AUTH_LDAP_USER_FILTER)
+    # Search LDAP for all user entries
+    search = conn.search_s(
+        settings.AUTH_LDAP_USER_SEARCH.base_dn,
+        ldap.SCOPE_SUBTREE,
+        settings.AUTH_LDAP_USER_FILTER)
 
-    # Fetch LDAP usernames using the LDAP attribute map defined in settings
+    ldap_usernames = set()
     attr_map = settings.AUTH_LDAP_USER_ATTR_MAP
-    ldap_username_attr = attr_map.get('username', 'uid')
-    ldap_names = {uid.decode() for result in search for uid in result[1][ldap_username_attr]}
 
     # Update user data
     for dn, attrs in tqdm(search):
-        if not dn:
+        user_data = parse_ldap_entry(dn, attrs, attr_map)
+        if not user_data:
             continue
 
-        usernames = attrs.get(ldap_username_attr, [])
-        if not usernames:
-            continue
-
-        username = usernames[0].decode() if isinstance(usernames[0], bytes) else usernames[0]
-
-        # Build user fields from LDAP attributes
-        user_data = {'is_ldap_user': True, 'is_active': True}
-        for django_field, ldap_attr in attr_map.items():
-            if django_field == 'username':
-                continue
-
-            values = attrs.get(ldap_attr, [])
-            if values:
-                user_data[django_field] = values[0].decode() if isinstance(values[0], bytes) else values[0]
+        username = user_data.pop('username')
+        ldap_usernames.add(username)
 
         User.objects.update_or_create(
             username=username,
@@ -85,8 +110,8 @@ def ldap_update_users() -> None:
         )
 
     # Handle usernames that have been removed from LDAP
-    keystone_names = set(User.objects.filter(is_ldap_user=True).values_list('username', flat=True))
-    removed_usernames = keystone_names - ldap_names
+    keystone_usernames = set(User.objects.filter(is_ldap_user=True).values_list('username', flat=True))
+    removed_usernames = keystone_usernames - ldap_usernames
 
     if settings.AUTH_LDAP_PURGE_REMOVED:
         User.objects.filter(username__in=removed_usernames).delete()

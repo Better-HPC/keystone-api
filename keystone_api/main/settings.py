@@ -326,7 +326,7 @@ AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", True)
 AUTH_LDAP_BIND_DN = env.str("AUTH_LDAP_BIND_DN", "")
 AUTH_LDAP_BIND_PASSWORD = env.str("AUTH_LDAP_BIND_PASSWORD", "")
 AUTH_LDAP_USER_ATTR_MAP = env.dict('AUTH_LDAP_ATTR_MAP', default=dict())
-AUTH_LDAP_USER_FILTER = env.str("AUTH_LDAP_USER_FILTER", "(objectClass=inetOrgPerson)")
+AUTH_LDAP_USER_FILTER = env.str("AUTH_LDAP_USER_FILTER", "(objectClass=account)")
 
 # LDAP settings that require the LDAP dependency to initialize
 if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
@@ -337,7 +337,7 @@ if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
         env.str("AUTH_LDAP_USER_SEARCH", ""),
         ldap.SCOPE_SUBTREE,
-        "(uid=%(user)s)"
+        env.str("AUTH_LDAP_LOGIN_FILTER", "(uid=%(user)s)")
     )
 
     if env.bool('AUTH_LDAP_REQUIRE_CERT', False):
