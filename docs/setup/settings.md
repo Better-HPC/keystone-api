@@ -71,9 +71,11 @@ By default, these files are stored in subdirectories of the installed applicatio
 
 ## Logging
 
-Keystone automatically purges log recordss according to the policy settings below.
-Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
-Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured age (in seconds).
+Keystone automatically purges log records according to the policy settings below.
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file
+size/count.
+Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured
+age (in seconds).
 
 | Setting Name              | Default Value        | Description                                                                                                 |
 |---------------------------|----------------------|-------------------------------------------------------------------------------------------------------------|
@@ -125,7 +127,7 @@ Enabling password authentication is strongly recommended.
 ## Email Notifications
 
 Keystone will default to using the local server when issuing email notifications.
-An alternative SMTP server can be sepcified using the settings below.
+An alternative SMTP server can be specified using the settings below.
 Securing your production email server with a username/password is strongly recommended.
 
 | Setting Name          | Default Value             | Description                                             |
@@ -143,7 +145,8 @@ Securing your production email server with a username/password is strongly recom
 
 Using LDAP for authentication is optional and disabled by default.
 To enable LDAP, set the `AUTH_LDAP_SERVER_URI` value to the desired LDAP endpoint.
-Enabling LDAP integration will also add LDAP related health checks to the [API health endpoint](../api/logging.md#system-health).
+Enabling LDAP integration will also add LDAP related health checks to the
+[API health endpoint](../api/logging.md#system-health).
 
 Application user fields are mapped to LDAP attributes by specifying the `AUTH_LDAP_ATTR_MAP` setting.
 The following example maps the `first_name` and `last_name` fields used by Keystone to the LDAP attributes `givenName`
@@ -153,16 +156,18 @@ and `sn`:
 AUTH_LDAP_ATTR_MAP="first_name=givenName,last_name=sn"
 ```
 
-See the `apps.users.models.User` class for a full list of available Keystone fields.
+A full list of available Keystone fields can be found in the project's [OpenApi specification](../api/openapi.md).
 
-| Setting Name              | Default Value    | Description                                                       |
-|---------------------------|------------------|-------------------------------------------------------------------|
-| `AUTH_LDAP_SERVER_URI`    |                  | The URI of the LDAP server.                                       |
-| `AUTH_LDAP_START_TLS`     | `True`           | Whether to use TLS when connecting to the LDAP server.            |
-| `AUTH_LDAP_BIND_DN`       |                  | Optionally bind LDAP queries to the given DN.                     |
-| `AUTH_LDAP_BIND_PASSWORD` |                  | The password to use when binding to the LDAP server.              |
-| `AUTH_LDAP_USER_SEARCH`   | `(uid=%(user)s)` | The search query for finding a user in the LDAP server.           |
-| `AUTH_LDAP_REQUIRE_CERT`  | `False`          | Whether to require certificate verification.                      |
-| `AUTH_LDAP_ATTR_MAP`      |                  | A mapping of user fields to LDAP attribute names.                 |
-| `AUTH_LDAP_PURGE_REMOVED` | `False`          | Delete users when removed from LDAP instead of deactivating them. |
-| `AUTH_LDAP_TIMEOUT`       | `10`             | The number of seconds before timing out an LDAP connection/query. |
+| Setting Name              | Default Value           | Description                                                       |
+|---------------------------|-------------------------|-------------------------------------------------------------------|
+| `AUTH_LDAP_SERVER_URI`    |                         | The URI of the LDAP server.                                       |
+| `AUTH_LDAP_START_TLS`     | `True`                  | Whether to use TLS when connecting to the LDAP server.            |
+| `AUTH_LDAP_BIND_DN`       |                         | Optionally bind LDAP queries to the given DN.                     |
+| `AUTH_LDAP_BIND_PASSWORD` |                         | The password to use when binding to the LDAP server.              |
+| `AUTH_LDAP_USER_SEARCH`   |                         | The base DN for searching users in the LDAP server.               |
+| `AUTH_LDAP_USER_FILTER`   | `(objectClass=account)` | Search filter to apply when selecting LDAP user account entries.  |
+| `AUTH_LDAP_LOGIN_FILTER`  | `(uid=%(user)s)`        | Search filter for username lookups during authentication.         |
+| `AUTH_LDAP_REQUIRE_CERT`  | `False`                 | Whether to require certificate verification.                      |
+| `AUTH_LDAP_ATTR_MAP`      |                         | A mapping of user fields to LDAP attribute names.                 |
+| `AUTH_LDAP_PURGE_REMOVED` | `False`                 | Delete users when removed from LDAP instead of deactivating them. |
+| `AUTH_LDAP_TIMEOUT`       | `10`                    | The number of seconds before timing out an LDAP connection/query. |
