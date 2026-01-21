@@ -12,7 +12,7 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 ### Core Security
 
 Keystone-API requires a random secret key to sign and verify requests.
-Secret keys are conventionally 50 characters long and can be generated using common unities like `openssl`.
+Secret keys are conventionally 50 characters long and can be generated using common utilities like `openssl`.
 For example: `openssl rand -base64 48 | cut -c1-50`
 
 | Setting Name        | Default Value      | Description                                      |
@@ -25,6 +25,10 @@ Enabling TLS is strongly recommended in production.
 Enabling HSTS is also recommended, but only when TLS is already fully configured.
 Administrators are cautioned to consider the potentially irreversible side effects of HSTS before enabling it.
 
+Alternatively, administrators can implement TLS/HSTS support using a reverse proxy placed in front of the API.
+This is a common approach in production environments and allows for centralized certificate management.
+When using a reverse proxy for TLS, the settings below can be left at their default values.
+
 | Setting Name             | Default Value  | Description                                       |
 |--------------------------|----------------|---------------------------------------------------|
 | `SECURE_SSL_REDIRECT`    | `False`        | Automatically redirect all HTTP traffic to HTTPS. |
@@ -35,10 +39,20 @@ Administrators are cautioned to consider the potentially irreversible side effec
 ### CORS/CSRF
 
 CORS and CSRF settings define which domains are allowed to interact with the Keystone-API.
+In most deployments, these settings should be configured as follows:
+
+- **`SECURE_ALLOWED_HOSTS`**: Set to the domain name(s) where the API is hosted (e.g., `api.example.com`).
+- **`SECURE_ALLOWED_ORIGINS`** and **`SECURE_CSRF_ORIGINS`**: Set to the full URL(s) of the frontend web application (
+  e.g., `https://app.example.com`).
+- **`SECURE_SSL_TOKENS`**: Set to `True` when serving over HTTPS to ensure tokens are only transmitted over secure
+  connections.
+- **`SECURE_TOKEN_DOMAIN`**: Only required when the API and frontend are hosted on different subdomains of the same
+  parent domain. Set to the parent domain with a leading dot (e.g., `.example.com`) to allow token sharing across
+  subdomains.
 
 | Setting Name             | Default Value                        <br/><br/> | Description                                                                                      |
 |--------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of accepted host/domain names (**without** protocol).                       |
+| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of api host/domain names (**without** protocol).                            |
 | `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted CORS origin domains (**with** protocol).                        |
 | `SECURE_CSRF_ORIGINS`    | _See default local addresses._                  | Comma-separated list of accepted CSRF origin domains (**with** protocol).                        |
 | `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                                          |
@@ -105,7 +119,7 @@ The PostgreSQL backend should always be used in production settings.
 
 | Setting Name         | Default Value | Description                                             |
 |----------------------|---------------|---------------------------------------------------------|
-| `DB_POSTGRES_ENABLE` | `False`       | Use PostgreSQL instead of the default Sqlite driver.    |
+| `DB_POSTGRES_ENABLE` | `False`       | Use PostgreSQL instead of the demo SQLite database.     |
 | `DB_NAME`            | `keystone`    | The name of the application database.                   |
 | `DB_USER`            |               | Username for database authentication (PostgreSQL only). |
 | `DB_PASSWORD`        |               | Password for database authentication (PostgreSQL only). |

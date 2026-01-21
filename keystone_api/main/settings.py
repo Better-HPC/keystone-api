@@ -283,7 +283,7 @@ else:
     EMAIL_HOST = env.str('EMAIL_HOST', 'localhost')
     EMAIL_PORT = env.int('EMAIL_PORT', 25)
     EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = env.str('your_email_password', '')
+    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', '')
     EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
 
 # Database
@@ -342,6 +342,10 @@ if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
 
     if env.bool('AUTH_LDAP_REQUIRE_CERT', False):
         AUTH_LDAP_GLOBAL_OPTIONS = {ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER}
+
+    else:
+        AUTH_LDAP_GLOBAL_OPTIONS = {ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_TRY}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
