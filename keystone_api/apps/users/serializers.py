@@ -8,7 +8,6 @@ creation.
 
 from django.contrib.auth import password_validation
 from django.contrib.auth.hashers import make_password
-from django.db import transaction
 from django.utils.text import slugify
 from rest_framework import serializers
 
@@ -43,7 +42,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
     display_name = serializers.CharField(read_only=True)
     abbreviation = serializers.CharField(read_only=True)
-    membership = TeamRoleSerializer(many=True, read_only=False, required=False, default=[])
+    _membership = TeamRoleSerializer(many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
 
     class Meta:
@@ -71,57 +70,11 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
         return super().validate(attrs)
 
-    @transaction.atomic
-    def create(self, validated_data: dict) -> User:
-        """Create and return a new User instance."""
-
-        teams_data = validated_data.pop("membership", [])
-        validated_data.pop("groups", None)
-        validated_data.pop("user_permissions", None)
-
-        # Passwords are pre-hashed in the validated data dictionary so instances
-        # are created directly instead of using the `create_user` factory method.
-        user = User.objects.create(**validated_data)
-
-        for team_data in teams_data:
-            Membership.objects.create(
-                user=user,
-                team=team_data["team"],
-                role=team_data["role"]
-            )
-
-        return user
-
-    @transaction.atomic
-    def update(self, instance: User, validated_data: dict) -> User:
-        """Update and return an existing User instance."""
-
-        teams_data = validated_data.pop("membership", [])
-        validated_data.pop("groups", None)
-        validated_data.pop("user_permissions", None)
-
-        # Update user info. Passwords are pre-hashed in the validated data dictionary
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        # Overwrite existing memberships for `PUT` style operations
-        if self.partial is False:
-            instance.membership.all().delete()
-
-        # If teams are provided, update memberships
-        for team_data in teams_data:
-            Membership.objects.update_or_create(
-                team=team_data["team"], user=instance, defaults={"role": team_data["role"]}
-            )
-
-        instance.save()
-        return instance
-
 
 class RestrictedUserSerializer(PrivilegedUserSerializer):
     """Object serializer for the `User` class with sensitive fields marked as read only."""
 
-    membership = TeamRoleSerializer(many=True, read_only=True)
+    _membership = TeamRoleSerializer(many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -145,7 +98,7 @@ class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     slug = serializers.SlugField(read_only=True)
-    membership = UserRoleSerializer(many=True, read_only=False, required=False, default=[])
+    _membership = UserRoleSerializer(many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
@@ -165,40 +118,3 @@ class TeamSerializer(serializers.ModelSerializer):
             attrs['slug'] = slug
 
         return super().validate(attrs)
-
-    @transaction.atomic
-    def create(self, validated_data: dict) -> Team:
-        """Create and return a new Team from validated data."""
-
-        members_data = validated_data.pop("membership", [])
-        team = Team.objects.create(**validated_data)
-        for membership in members_data:
-            Membership.objects.create(team=team, user=membership["user"], role=membership["role"])
-
-        return team
-
-    @transaction.atomic
-    def update(self, instance: Team, validated_data: dict) -> Team:
-        """Update and return an existing Team instance."""
-
-        members_data = validated_data.pop("membership", [])
-
-        # Update remaining fields
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        instance.save()
-
-        # Replace or update memberships
-        if not self.partial:
-            instance.membership.all().delete()
-
-        # Update membership records
-        for membership in members_data:
-            Membership.objects.update_or_create(
-                team=instance,
-                user=membership["user"],
-                defaults={"role": membership["role"]},
-            )
-
-        return instance
