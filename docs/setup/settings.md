@@ -12,7 +12,7 @@ Improperly configured settings can introduce dangerous vulnerabilities and may d
 ### Core Security
 
 Keystone-API requires a random secret key to sign and verify requests.
-Secret keys are conventionally 50 characters long and can be generated using common unities like `openssl`.
+Secret keys are conventionally 50 characters long and can be generated using common utilities like `openssl`.
 For example: `openssl rand -base64 48 | cut -c1-50`
 
 | Setting Name        | Default Value      | Description                                      |
@@ -25,6 +25,10 @@ Enabling TLS is strongly recommended in production.
 Enabling HSTS is also recommended, but only when TLS is already fully configured.
 Administrators are cautioned to consider the potentially irreversible side effects of HSTS before enabling it.
 
+Alternatively, administrators can implement TLS/HSTS support using a reverse proxy placed in front of the API.
+This is a common approach in production environments and allows for centralized certificate management.
+When using a reverse proxy for TLS, the settings below can be left at their default values.
+
 | Setting Name             | Default Value  | Description                                       |
 |--------------------------|----------------|---------------------------------------------------|
 | `SECURE_SSL_REDIRECT`    | `False`        | Automatically redirect all HTTP traffic to HTTPS. |
@@ -32,18 +36,17 @@ Administrators are cautioned to consider the potentially irreversible side effec
 | `SECURE_HSTS_SUBDOMAINS` | `False`        | Enable HSTS for subdomains.                       |
 | `SECURE_HSTS_PRELOAD`    | `False`        | Enable HSTS preload functionality.                |
 
-### CORS/CSRF
+### Auth Tokens
 
-CORS and CSRF settings define which domains are allowed to interact with the Keystone-API.
+The following settings define which domains are allowed to interact with the Keystone-API.
+In most deployments, these settings should be configured as follows:
 
-| Setting Name             | Default Value                        <br/><br/> | Description                                                                                      |
-|--------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of accepted host/domain names (**without** protocol).                       |
-| `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted CORS origin domains (**with** protocol).                        |
-| `SECURE_CSRF_ORIGINS`    | _See default local addresses._                  | Comma-separated list of accepted CSRF origin domains (**with** protocol).                        |
-| `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                                          |
-| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                             | Number of seconds before session tokens expire.                                                  |
-| `SECURE_TOKEN_DOMAIN`    | None                                            | Domain attribute for session/csrf cookies. Set for cross-subdomain usage (e.g., `.example.com`). | 
+- **`SECURE_SSL_TOKENS`**: Enabled when serving over HTTPS and disabled otherwise.
+- **`SECURE_ALLOWED_HOSTS`**: Set to the domain name(s) where the API is hosted <br> (e.g., `api.example.com`).
+- **`SECURE_ALLOWED_ORIGINS`**: Set to the full URL(s) of the frontend web application <br> (e.g., `https://app.example.com`).
+- **`SECURE_TOKEN_DOMAIN`**: Only required when the API and frontend are hosted on different subdomains of the same
+  parent domain. This setting should specify the parent domain with a leading dot (e.g., `.example.com`) to allow 
+  token sharing across subdomains.
 
 Default values are defined relative to the following list of _default local addresses_:
 
@@ -55,6 +58,14 @@ Default values are defined relative to the following list of _default local addr
 - `https://127.0.0.1:443`
 - `http://127.0.0.1:4200`
 - `http://127.0.0.1:8000`
+
+| Setting Name             | Default Value                        <br/><br/> | Description                                                                                      |
+|--------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `SECURE_SSL_TOKENS`      | `False`                                         | Only issue session/CSRF tokens over secure connections.                                          |
+| `SECURE_ALLOWED_HOSTS`   | <code>localhost,127.0.0.1</code>                | Comma-separated list of api host/domain names (**without** protocol).                            |
+| `SECURE_ALLOWED_ORIGINS` | _See default local addresses._                  | Comma-separated list of accepted client origin domains (**with** protocol).                      |
+| `SECURE_SESSION_AGE`     | `1209600` (2 weeks)                             | Number of seconds before session tokens expire.                                                  |
+| `SECURE_TOKEN_DOMAIN`    | None                                            | Domain attribute for session/csrf cookies. Set for cross-subdomain usage (e.g., `.example.com`). |
 
 ## General Configuration
 
@@ -72,8 +83,7 @@ By default, these files are stored in subdirectories of the installed applicatio
 ## Logging
 
 Keystone automatically purges log records according to the policy settings below.
-Application logs are written to disk using a size-based policy that rotates files according to a maximum file
-size/count.
+Application logs are written to disk using a size-based policy that rotates files according to a maximum file size/count.
 Audit, request, and task logs are maintained in the application database and are removed once they exceed a configured
 age (in seconds).
 
@@ -105,7 +115,7 @@ The PostgreSQL backend should always be used in production settings.
 
 | Setting Name         | Default Value | Description                                             |
 |----------------------|---------------|---------------------------------------------------------|
-| `DB_POSTGRES_ENABLE` | `False`       | Use PostgreSQL instead of the default Sqlite driver.    |
+| `DB_POSTGRES_ENABLE` | `False`       | Use PostgreSQL instead of the demo SQLite database.     |
 | `DB_NAME`            | `keystone`    | The name of the application database.                   |
 | `DB_USER`            |               | Username for database authentication (PostgreSQL only). |
 | `DB_PASSWORD`        |               | Password for database authentication (PostgreSQL only). |
