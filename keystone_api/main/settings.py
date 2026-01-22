@@ -43,22 +43,14 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_AGE = env.int("SECURE_SESSION_AGE", timedelta(days=14).total_seconds())
 
-CSRF_TRUSTED_ORIGINS = env.list("SECURE_CSRF_ORIGINS", default=_trusted_local)
-CSRF_COOKIE_SECURE = _SECURE_SSL_TOKENS
-CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = "Lax"
-
-_cookie_domain = os.environ.get("SECURE_TOKEN_DOMAIN", None)
-SESSION_COOKIE_DOMAIN = _cookie_domain
-CSRF_COOKIE_DOMAIN = _cookie_domain
-
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", False)
 SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", False)
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", 0)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("SECURE_HSTS_SUBDOMAINS", False)
 
+_ALLOWED_ORIGINS = env.list("SECURE_ALLOWED_ORIGINS", default=_trusted_local)
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = env.list("SECURE_ALLOWED_ORIGINS", default=_trusted_local)
+CORS_ALLOWED_ORIGINS = _ALLOWED_ORIGINS
 CORS_ALLOW_HEADERS = [
     "accept",
     "authorization",
@@ -68,6 +60,15 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
     "x-keystone-cid",
 ]
+
+CSRF_TRUSTED_ORIGINS = _ALLOWED_ORIGINS
+CSRF_COOKIE_SECURE = _SECURE_SSL_TOKENS
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = "Lax"
+
+_cookie_domain = os.environ.get("SECURE_TOKEN_DOMAIN", None)
+SESSION_COOKIE_DOMAIN = _cookie_domain
+CSRF_COOKIE_DOMAIN = _cookie_domain
 
 ALLOWED_FILE_TYPES = [
     # Documents
