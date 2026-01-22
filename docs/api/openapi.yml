@@ -9539,11 +9539,12 @@ components:
         abbreviation:
           type: string
           readOnly: true
-        membership:
+        _membership:
           type: array
           items:
             $ref: '#/components/schemas/TeamRole'
           readOnly: true
+          title: ' membership'
         _history:
           type: array
           items:
@@ -9631,11 +9632,12 @@ components:
           type: string
           readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
-        membership:
+        _membership:
           type: array
           items:
             $ref: '#/components/schemas/UserRole'
-          default: []
+          readOnly: true
+          title: ' membership'
         _history:
           type: array
           items:
@@ -9866,11 +9868,12 @@ components:
         abbreviation:
           type: string
           readOnly: true
-        membership:
+        _membership:
           type: array
           items:
             $ref: '#/components/schemas/TeamRole'
           readOnly: true
+          title: ' membership'
         _history:
           type: array
           items:
@@ -9949,6 +9952,7 @@ components:
           description: Specific permissions for this user.
       required:
       - _history
+      - _membership
       - abbreviation
       - date_joined
       - display_name
@@ -9957,7 +9961,6 @@ components:
       - is_ldap_user
       - is_staff
       - last_login
-      - membership
       - password
       - profile_image
       - username
@@ -10089,11 +10092,12 @@ components:
           type: string
           readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
-        membership:
+        _membership:
           type: array
           items:
             $ref: '#/components/schemas/UserRole'
-          default: []
+          readOnly: true
+          title: ' membership'
         _history:
           type: array
           items:
@@ -10112,6 +10116,7 @@ components:
           readOnly: true
       required:
       - _history
+      - _membership
       - id
       - name
       - slug

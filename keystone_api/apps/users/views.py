@@ -87,6 +87,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated, MembershipPermissions]
     serializer_class = MembershipSerializer
+    search_fields = ['team__name', 'user__username']
     queryset = Membership.objects.prefetch_related(
         'history'
     ).select_related(
