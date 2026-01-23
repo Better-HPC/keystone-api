@@ -33,6 +33,22 @@ class CreateUserMethod(TestCase):
         user = User.objects.create_user(username='foobar', password="foobar123")
         self.assertEqual(user.email, None)
 
+    def test_passwords_are_validated(self) -> None:
+        """Verify passwords are validated against application security rules."""
+
+        with self.assertRaisesRegex(ValidationError, 'This password is too short'):
+            User.objects.create_user(
+                username='foobar',
+                password='short',
+                first_name='foo',
+                last_name='bar',
+                email="foo@bar.com"
+            )
+
+
+class CreateSuperUserMethod(TestCase):
+    """Test the creation of admin user accounts via the `create_super_user` method."""
+
     def test_create_superuser(self) -> None:
         """Verify superuser accounts are created with the correct attributes."""
 
@@ -74,15 +90,3 @@ class CreateUserMethod(TestCase):
                 email="foo@bar.com",
                 password="foobar123",
                 is_superuser=False)
-
-    def test_passwords_are_validated(self) -> None:
-        """Verify passwords are validated against application security rules."""
-
-        with self.assertRaisesRegex(ValidationError, 'This password is too short'):
-            User.objects.create_user(
-                username='foobar',
-                password='short',
-                first_name='foo',
-                last_name='bar',
-                email="foo@bar.com"
-            )
