@@ -42,7 +42,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 
     display_name = serializers.CharField(read_only=True)
     abbreviation = serializers.CharField(read_only=True)
-    _membership = TeamRoleSerializer(many=True, read_only=True)
+    _membership = TeamRoleSerializer(source="membership", many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
 
     class Meta:
@@ -74,7 +74,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 class RestrictedUserSerializer(PrivilegedUserSerializer):
     """Object serializer for the `User` class with sensitive fields marked as read only."""
 
-    _membership = TeamRoleSerializer(many=True, read_only=True)
+    _membership = TeamRoleSerializer(source="membership", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -98,7 +98,7 @@ class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     slug = serializers.SlugField(read_only=True)
-    _membership = UserRoleSerializer(many=True, read_only=True)
+    _membership = UserRoleSerializer(source="membership", many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
 
     class Meta:
