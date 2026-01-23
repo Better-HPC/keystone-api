@@ -5,7 +5,7 @@ from django.test import TestCase
 from apps.users.tasks import parse_ldap_entry
 
 
-class ParseLdapEntry(TestCase):
+class ParseLdapEntryMethod(TestCase):
     """Test the parsing of LDAP entries into propperly formatted application data."""
 
     def test_returns_none_when_dn_is_empty(self) -> None:
