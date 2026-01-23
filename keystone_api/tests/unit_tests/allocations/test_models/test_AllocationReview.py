@@ -22,7 +22,7 @@ class GetTeamMethod(TestCase):
             request=self.allocation_request,
         )
 
-    def test_get_team(self) -> None:
+    def test_returns_correct_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""
 
         self.assertEqual(self.team, self.allocation_review.get_team())

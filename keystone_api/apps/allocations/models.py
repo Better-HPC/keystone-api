@@ -199,6 +199,11 @@ class Attachment(TeamModelInterface, models.Model):
 
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
 
+    def get_team(self) -> Team:
+        """Return the user team tied to the current record."""
+
+        return self.request.team
+
     def save(self, *args, **kwargs) -> None:
         """Persist the ORM instance to the database"""
 
@@ -207,11 +212,6 @@ class Attachment(TeamModelInterface, models.Model):
             self.name = os.path.basename(self.file.path)
 
         super().save(*args, **kwargs)
-
-    def get_team(self) -> Team:
-        """Return the user team tied to the current record."""
-
-        return self.request.team
 
 
 @auditlog.register()
