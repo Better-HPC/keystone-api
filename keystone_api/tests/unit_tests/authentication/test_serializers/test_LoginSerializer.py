@@ -11,7 +11,7 @@ from apps.users.factories import UserFactory
 User = get_user_model()
 
 
-class Validation(TestCase):
+class ValidationMethod(TestCase):
     """Test the validation of user credentials."""
 
     def setUp(self) -> None:
