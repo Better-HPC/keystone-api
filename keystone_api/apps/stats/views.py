@@ -23,7 +23,7 @@ from apps.allocations.models import AllocationRequest
 from apps.notifications.models import Notification
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team
-from plugins.filter.schemas import FilterGetAutoSchema
+from plugins.schemas import FilterGetAutoSchema
 from .serializers import *
 
 __all__ = [
