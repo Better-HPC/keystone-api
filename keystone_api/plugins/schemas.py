@@ -13,47 +13,15 @@ class FilterGetAutoSchema(AutoSchema):
     By default, DRF Spectacular only includes filter parameters in the OpenAPI
     schema for list endpoints. This custom schema class extends the default
     behavior to include filter parameters on all GET endpoints, including
-    detail views and custom endpoints.
+    detail and custom endpoints.
     """
 
     def get_filter_backends(self) -> list[BaseFilterBackend | DjangoFilterBackend]:
-        """Return filter backends for all endpoints, not just list endpoints.
-
-        The parent class implementation returns an empty list for non-list
-        actions. This override ensures that the view's configured filter
-        backends are always returned, enabling filter parameter generation
-        for detail endpoints and custom views.
-
-        Returns:
-            A list of filter backend classes configured on the view, or an
-            empty list if no filter backends are defined.
-        """
+        """Return the view's filter backends for GET requests, and an empty list otherwise."""
 
         # The parent class returns an empty list for non-list actions
-        # We override to always return the view's filter backends
-        if hasattr(self.view, 'filter_backends'):
-            return self.view.filter_backends
+        # We override to return the view's filter backends for all `GET` operations
+        if self.method == "GET":
+            return getattr(self.view, 'filter_backends', [])
 
         return []
-
-    def allows_filters(self, path: str, method: str) -> bool:
-        """Allow filters on all GET endpoints, not just list endpoints.
-
-        The parent class implementation restricts filter parameters to list
-        actions only. This override enables filters on all GET requests,
-        allowing detail views and custom endpoints to expose their filter
-        parameters in the generated OpenAPI schema.
-
-        Args:
-            path: The URL path being documented.
-            method: The HTTP method (e.g., 'GET', 'POST', 'PUT').
-
-        Returns:
-            True if the method is GET, otherwise delegates to the parent
-            implementation for other HTTP methods.
-        """
-
-        if method.upper() == 'GET':
-            return True
-
-        return super().allows_filters(path, method)
