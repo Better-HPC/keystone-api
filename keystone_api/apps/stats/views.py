@@ -23,6 +23,7 @@ from apps.allocations.models import AllocationRequest
 from apps.notifications.models import Notification
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team
+from plugins.filter.schemas import FilterGetAutoSchema
 from .serializers import *
 
 __all__ = [
@@ -83,6 +84,7 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
@@ -176,6 +178,7 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
     queryset = Grant.objects.all()
     serializer_class = GrantStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -238,6 +241,7 @@ class NotificationStatsView(GenericAPIView):
     queryset = Notification.objects.all()
     serializer_class = NotificationStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def get_queryset(self) -> QuerySet:
         """Return the base queryset filtered by user team membership for list actions."""
