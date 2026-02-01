@@ -1,8 +1,8 @@
 """Custom pagination handlers for API endpoints.
 
 Pagination classes control how large datasets are divided into paginated
-API responses. This includes defining the pagination strategy default/maximum
-pagination limits, and the query parameter names used to control pagination.
+API responses. This includes defining the pagination strategy, default/maximum
+page size, and query parameter names used to control pagination.
 """
 
 from rest_framework.pagination import LimitOffsetPagination

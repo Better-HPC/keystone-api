@@ -1,7 +1,8 @@
-"""Custom filter backends for Django REST Framework views.
+"""Custom filter backends for the Django REST Framework.
 
-Filter backends define how query parameters are generated for API endpoints
-and provide support for filtering database queries based on URL parameters.
+Filter backends define how query parameters are handled in API requests.
+This includes assigning parameters to endpoints, parsing values from incoming
+requests, and applying parsed values in ORM queries.
 """
 
 from django import views
