@@ -7009,11 +7009,6 @@ paths:
         statistics for all teams. Non-staff users are limited to teams where they
         hold membership.
       summary: Retrieve aggregated publication statistics.
-      parameters:
-      - in: query
-        name: team
-        schema:
-          type: integer
       tags:
       - Statistics
       security:
