@@ -1,6 +1,14 @@
+"""Custom filter backends for Django REST Framework views.
+
+Filter backends define how query parameters are generated for API endpoints
+and provide support for filtering database queries based on URL parameters.
+"""
+
 from django import views
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
+
+__all__ = ['AdvancedFilterBackend', 'FactoryBuiltFilterSet']
 
 
 class FactoryBuiltFilterSet:
@@ -12,9 +20,11 @@ class FactoryBuiltFilterSet:
 
 
 class AdvancedFilterBackend(DjangoFilterBackend):
-    """Custom filter backend for Django REST framework
+    """Dynamic filter backend for model based ViewSets.
 
-    This filter backend automatically generates filters for Django model fields based on their types.
+    Automatically generates query parameters for model based viewsets based
+    on the underlying model fields (e.g., comparison operators for numeric
+    fields, pattern matching for text fields).
     """
 
     _default_filters = ["exact", "in", "isnull"]

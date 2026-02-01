@@ -1,9 +1,8 @@
-"""Provides custom pagination handlers for API endpoints.
+"""Custom pagination handlers for API endpoints.
 
-Pagination classes determine how large datasets are divided and delivered in
-paginated API responses. This plugin customizes the default limit/offset
-pagination strategy, including default and maximum limits, and overrides the
-query parameter names used to control pagination.
+Pagination classes control how large datasets are divided into paginated
+API responses. This includes defining the pagination strategy default/maximum
+pagination limits, and the query parameter names used to control pagination.
 """
 
 from rest_framework.pagination import LimitOffsetPagination

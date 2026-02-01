@@ -1,4 +1,9 @@
-"""Custom schema generation for DRF Spectacular."""
+"""Custom schema generation for DRF Spectacular.
+
+Schema classes define how API endpoints are documented in the OpenAPI
+specification. This includes determining which query parameters, request
+bodies, and responses are included in the generated API documentation.
+"""
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.openapi import AutoSchema
