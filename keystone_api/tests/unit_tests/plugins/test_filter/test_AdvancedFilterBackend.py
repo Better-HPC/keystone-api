@@ -6,7 +6,7 @@ from django.db import models
 from django.test import TestCase
 from django_filters import FilterSet
 
-from plugins.filter.backends import AdvancedFilterBackend, FactoryBuiltFilterSet
+from plugins.filters import AdvancedFilterBackend, FactoryBuiltFilterSet
 
 
 class SampleModel(models.Model):
