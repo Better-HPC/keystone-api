@@ -230,7 +230,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_FILTER_BACKENDS': (
-        'plugins.filter.AdvancedFilterBackend',
+        'plugins.filters.AdvancedFilterBackend',
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter'
     ),

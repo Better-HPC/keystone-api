@@ -6396,10 +6396,335 @@ paths:
         for all teams. Non-staff users are limited to teams where they hold membership.
       summary: Retrieve aggregated grant statistics.
       parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: agency
+        schema:
+          type: string
+      - in: query
+        name: agency__contains
+        schema:
+          type: string
+      - in: query
+        name: agency__endswith
+        schema:
+          type: string
+      - in: query
+        name: agency__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: agency__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: agency__startswith
+        schema:
+          type: string
+      - in: query
+        name: amount
+        schema:
+          type: number
+      - in: query
+        name: amount__gt
+        schema:
+          type: number
+      - in: query
+        name: amount__gte
+        schema:
+          type: number
+      - in: query
+        name: amount__in
+        schema:
+          type: array
+          items:
+            type: number
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: amount__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: amount__lt
+        schema:
+          type: number
+      - in: query
+        name: amount__lte
+        schema:
+          type: number
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: description__contains
+        schema:
+          type: string
+      - in: query
+        name: description__endswith
+        schema:
+          type: string
+      - in: query
+        name: description__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: description__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: description__startswith
+        schema:
+          type: string
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__day
+        schema:
+          type: number
+      - in: query
+        name: end_date__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: end_date__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: end_date__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date__month
+        schema:
+          type: number
+      - in: query
+        name: end_date__week
+        schema:
+          type: number
+      - in: query
+        name: end_date__week_day
+        schema:
+          type: number
+      - in: query
+        name: end_date__year
+        schema:
+          type: number
+      - in: query
+        name: grant_number
+        schema:
+          type: string
+      - in: query
+        name: grant_number__contains
+        schema:
+          type: string
+      - in: query
+        name: grant_number__endswith
+        schema:
+          type: string
+      - in: query
+        name: grant_number__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: grant_number__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: grant_number__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__day
+        schema:
+          type: number
+      - in: query
+        name: start_date__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: start_date__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: start_date__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_date__month
+        schema:
+          type: number
+      - in: query
+        name: start_date__week
+        schema:
+          type: number
+      - in: query
+        name: start_date__week_day
+        schema:
+          type: number
+      - in: query
+        name: start_date__year
+        schema:
+          type: number
       - in: query
         name: team
         schema:
           type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: title__contains
+        schema:
+          type: string
+      - in: query
+        name: title__endswith
+        schema:
+          type: string
+      - in: query
+        name: title__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: title__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title__startswith
+        schema:
+          type: string
       tags:
       - Statistics
       security:
@@ -6419,6 +6744,252 @@ paths:
         receive statistics for all users. Non-staff users are limited to their own
         notifications.
       summary: Retrieve aggregated user notification statistics.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: message
+        schema:
+          type: string
+      - in: query
+        name: message__contains
+        schema:
+          type: string
+      - in: query
+        name: message__endswith
+        schema:
+          type: string
+      - in: query
+        name: message__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: message__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: message__startswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type
+        schema:
+          type: string
+          enum:
+          - GM
+          - RD
+          - RE
+        description: |-
+          * `GM` - General Message
+          * `RE` - Upcoming Request Expiration
+          * `RD` - Request Past Expiration
+      - in: query
+        name: notification_type__contains
+        schema:
+          type: string
+      - in: query
+        name: notification_type__endswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: notification_type__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: notification_type__startswith
+        schema:
+          type: string
+      - in: query
+        name: read
+        schema:
+          type: boolean
+      - in: query
+        name: read__in
+        schema:
+          type: array
+          items:
+            type: boolean
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: read__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: subject
+        schema:
+          type: string
+      - in: query
+        name: subject__contains
+        schema:
+          type: string
+      - in: query
+        name: subject__endswith
+        schema:
+          type: string
+      - in: query
+        name: subject__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: subject__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: subject__startswith
+        schema:
+          type: string
+      - in: query
+        name: time
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__day
+        schema:
+          type: number
+      - in: query
+        name: time__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__hour
+        schema:
+          type: number
+      - in: query
+        name: time__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: time__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: time__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: time__minute
+        schema:
+          type: number
+      - in: query
+        name: time__month
+        schema:
+          type: number
+      - in: query
+        name: time__second
+        schema:
+          type: number
+      - in: query
+        name: time__week
+        schema:
+          type: number
+      - in: query
+        name: time__week_day
+        schema:
+          type: number
+      - in: query
+        name: time__year
+        schema:
+          type: number
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
       tags:
       - Statistics
       security:
@@ -6438,11 +7009,6 @@ paths:
         statistics for all teams. Non-staff users are limited to teams where they
         hold membership.
       summary: Retrieve aggregated publication statistics.
-      parameters:
-      - in: query
-        name: team
-        schema:
-          type: integer
       tags:
       - Statistics
       security:
@@ -6463,10 +7029,371 @@ paths:
         to teams where they hold membership.
       summary: Retrieve aggregated allocation request statistics.
       parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: active
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__day
+        schema:
+          type: number
+      - in: query
+        name: active__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: active__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: active__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: active__month
+        schema:
+          type: number
+      - in: query
+        name: active__week
+        schema:
+          type: number
+      - in: query
+        name: active__week_day
+        schema:
+          type: number
+      - in: query
+        name: active__year
+        schema:
+          type: number
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: description__contains
+        schema:
+          type: string
+      - in: query
+        name: description__endswith
+        schema:
+          type: string
+      - in: query
+        name: description__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: description__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: description__startswith
+        schema:
+          type: string
+      - in: query
+        name: expire
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__day
+        schema:
+          type: number
+      - in: query
+        name: expire__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: expire__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: expire__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: expire__month
+        schema:
+          type: number
+      - in: query
+        name: expire__week
+        schema:
+          type: number
+      - in: query
+        name: expire__week_day
+        schema:
+          type: number
+      - in: query
+        name: expire__year
+        schema:
+          type: number
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - AP
+          - CR
+          - DC
+          - PD
+        description: |-
+          * `PD` - Pending
+          * `AP` - Approved
+          * `DC` - Declined
+          * `CR` - Changes Requested
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
+      - in: query
+        name: status__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: status__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: status__startswith
+        schema:
+          type: string
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__hour
+        schema:
+          type: number
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: submitted__minute
+        schema:
+          type: number
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__second
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
+      - in: query
+        name: submitter
+        schema:
+          type: integer
+      - in: query
+        name: submitter__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitter__isnull
+        schema:
+          type: boolean
       - in: query
         name: team
         schema:
           type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: title__contains
+        schema:
+          type: string
+      - in: query
+        name: title__endswith
+        schema:
+          type: string
+      - in: query
+        name: title__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: title__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title__startswith
+        schema:
+          type: string
       tags:
       - Statistics
       security:

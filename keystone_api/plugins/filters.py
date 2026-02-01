@@ -1,8 +1,8 @@
-"""Extends the `django-filter` package with custom filter backends.
+"""Custom filter backends for the Django REST Framework.
 
-Filter backends define the default behavior when filtering database queries
-for REST API calls based on URL parameters. This plugin customizes the default
-filters available for different field types (e.g., char, int, bool, etc.).
+Filter backends define how query parameters are handled in API requests.
+This includes assigning parameters to endpoints, parsing values from incoming
+requests, and applying parsed values in ORM queries.
 """
 
 from django import views
@@ -21,16 +21,18 @@ class FactoryBuiltFilterSet:
 
 
 class AdvancedFilterBackend(DjangoFilterBackend):
-    """Custom filter backend for Django REST framework
+    """Dynamic filter backend for model based ViewSets.
 
-    This filter backend automatically generates filters for Django model fields based on their types.
+    Automatically generates query parameters for model based viewsets based
+    on the underlying model fields (e.g., comparison operators for numeric
+    fields, pattern matching for text fields).
     """
 
-    _default_filters = ['exact', 'in', 'isnull']
-    _numeric_filters = _default_filters + ['lt', 'lte', 'gt', 'gte']
-    _text_filters = _default_filters + ['contains', 'startswith', 'endswith']
-    _date_filters = _default_filters + _numeric_filters + ['year', 'month', 'day', 'week', 'week_day']
-    _time_filters = _default_filters + _numeric_filters + ['hour', 'minute', 'second']
+    _default_filters = ["exact", "in", "isnull"]
+    _numeric_filters = _default_filters + ["lt", "lte", "gt", "gte"]
+    _text_filters = _default_filters + ["contains", "startswith", "endswith"]
+    _date_filters = _default_filters + _numeric_filters + ["year", "month", "day", "week", "week_day"]
+    _time_filters = _default_filters + _numeric_filters + ["hour", "minute", "second"]
 
     _field_filter_map = {
         models.AutoField: _numeric_filters,

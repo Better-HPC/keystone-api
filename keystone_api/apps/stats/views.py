@@ -12,8 +12,7 @@ from decimal import Decimal
 from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, QuerySet, Sum, When
 from django.db.models.functions import Coalesce
 from django.utils.timezone import now
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -23,6 +22,7 @@ from apps.allocations.models import AllocationRequest
 from apps.notifications.models import Notification
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team
+from plugins.schemas import FilterGetAutoSchema
 from .serializers import *
 
 __all__ = [
@@ -31,13 +31,6 @@ __all__ = [
     'NotificationStatsView',
     'PublicationStatsView'
 ]
-
-TEAM_QUERY_PARAM = OpenApiParameter(
-    name='team',
-    type=OpenApiTypes.INT,
-    location=OpenApiParameter.QUERY,
-    required=False,
-)
 
 
 class AbstractTeamStatsView(ABC):
@@ -74,7 +67,6 @@ class AbstractTeamStatsView(ABC):
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
-        parameters=[TEAM_QUERY_PARAM]
     ),
 )
 class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
@@ -83,6 +75,7 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def _summarize(self) -> dict:
         """Compute allocation request and award statistics."""
@@ -167,7 +160,6 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
-        parameters=[TEAM_QUERY_PARAM]
     ),
 )
 class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
@@ -176,6 +168,7 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
     queryset = Grant.objects.all()
     serializer_class = GrantStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
@@ -238,6 +231,7 @@ class NotificationStatsView(GenericAPIView):
     queryset = Notification.objects.all()
     serializer_class = NotificationStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def get_queryset(self) -> QuerySet:
         """Return the base queryset filtered by user team membership for list actions."""
@@ -269,7 +263,6 @@ class NotificationStatsView(GenericAPIView):
             "Non-staff users are limited to teams where they hold membership."
         ),
         tags=["Statistics"],
-        parameters=[TEAM_QUERY_PARAM]
     ),
 )
 class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):
