@@ -58,6 +58,7 @@ class Command(BaseCommand):
         with override_settings(EMAIL_TEMPLATE_DIR=input_dir):
             self._render_notification(output_dir, Notification.NotificationType.request_expiring, "upcoming_expiration.eml")
             self._render_notification(output_dir, Notification.NotificationType.request_expired, "past_expiration.eml")
+            self._render_notification(output_dir, Notification.NotificationType.general_message, "general_message.eml")
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 
