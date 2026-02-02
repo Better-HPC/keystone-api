@@ -52,7 +52,8 @@ class Notification(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     subject = models.TextField()
-    message = models.TextField()
+    message_text = models.TextField()
+    message_html = models.TextField()
     metadata = models.JSONField(null=True)
     notification_type = models.CharField(max_length=2, choices=NotificationType.choices)
 

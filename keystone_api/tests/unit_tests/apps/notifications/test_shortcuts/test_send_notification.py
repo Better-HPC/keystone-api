@@ -57,6 +57,6 @@ class SendNotificationMethod(TestCase):
         """Verify a record of the email is stored in the database."""
 
         notification = Notification.objects.get(user=self.user)
-        self.assertEqual(self.clean_text, notification.message)
+        self.assertEqual(self.clean_text, notification.message_text)
         self.assertEqual(self.notification_type, notification.notification_type)
         self.assertEqual(self.notification_metadata, notification.metadata)

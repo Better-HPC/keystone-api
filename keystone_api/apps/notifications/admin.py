@@ -28,7 +28,7 @@ class NotificationAdmin(admin.ModelAdmin):
 
     list_display = ('user', 'notification_type', 'subject', 'time', 'read')
     list_filter = ('read', 'notification_type', 'time')
-    search_fields = ('user__username', 'subject', 'message')
+    search_fields = ('user__username', 'subject', 'message_text')
 
     def has_change_permission(self, request, obj=None) -> Literal[False]:
         """Disable permissions for modifying records."""

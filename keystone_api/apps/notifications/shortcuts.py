@@ -8,9 +8,9 @@ import os
 import stat
 from typing import Any
 
-from html2text import html2text, HTML2Text
 from django.conf import settings
 from django.core.mail import send_mail
+from html2text import HTML2Text
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
 from jinja2.sandbox import SandboxedEnvironment
 
@@ -113,7 +113,8 @@ def send_notification(
     Notification.objects.create(
         user=user,
         subject=subject,
-        message=html_text,
+        message_text=plain_text,
+        message_html=html_text,
         notification_type=notification_type,
         metadata=notification_metadata
     )
