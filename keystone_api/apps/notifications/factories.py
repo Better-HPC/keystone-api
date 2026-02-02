@@ -96,14 +96,14 @@ class NotificationFactory(DjangoModelFactory):
     def message_html(self) -> str:
         """Generate an HTML message body based on the notification type."""
 
-        html_content, _ = self._render_template()
+        html_content, _ = NotificationFactory._render_template(self)
         return html_content
 
     @factory.lazy_attribute
     def message_text(self) -> str:
         """Generate a plain text message body based on the notification type."""
 
-        _, text_content = self._render_template()
+        _, text_content = NotificationFactory._render_template(self)
         return text_content
 
     def _render_template(self) -> tuple[str, str]:
