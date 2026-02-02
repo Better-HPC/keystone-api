@@ -4864,19 +4864,19 @@ paths:
         schema:
           type: integer
       - in: query
-        name: message
+        name: message_html
         schema:
           type: string
       - in: query
-        name: message__contains
+        name: message_html__contains
         schema:
           type: string
       - in: query
-        name: message__endswith
+        name: message_html__endswith
         schema:
           type: string
       - in: query
-        name: message__in
+        name: message_html__in
         schema:
           type: array
           items:
@@ -4885,11 +4885,40 @@ paths:
         explode: false
         style: form
       - in: query
-        name: message__isnull
+        name: message_html__isnull
         schema:
           type: boolean
       - in: query
-        name: message__startswith
+        name: message_html__startswith
+        schema:
+          type: string
+      - in: query
+        name: message_text
+        schema:
+          type: string
+      - in: query
+        name: message_text__contains
+        schema:
+          type: string
+      - in: query
+        name: message_text__endswith
+        schema:
+          type: string
+      - in: query
+        name: message_text__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: message_text__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: message_text__startswith
         schema:
           type: string
       - in: query
@@ -6791,19 +6820,19 @@ paths:
         schema:
           type: integer
       - in: query
-        name: message
+        name: message_html
         schema:
           type: string
       - in: query
-        name: message__contains
+        name: message_html__contains
         schema:
           type: string
       - in: query
-        name: message__endswith
+        name: message_html__endswith
         schema:
           type: string
       - in: query
-        name: message__in
+        name: message_html__in
         schema:
           type: array
           items:
@@ -6812,11 +6841,40 @@ paths:
         explode: false
         style: form
       - in: query
-        name: message__isnull
+        name: message_html__isnull
         schema:
           type: boolean
       - in: query
-        name: message__startswith
+        name: message_html__startswith
+        schema:
+          type: string
+      - in: query
+        name: message_text
+        schema:
+          type: string
+      - in: query
+        name: message_text__contains
+        schema:
+          type: string
+      - in: query
+        name: message_text__endswith
+        schema:
+          type: string
+      - in: query
+        name: message_text__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: message_text__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: message_text__startswith
         schema:
           type: string
       - in: query
@@ -9575,7 +9633,7 @@ components:
         subject:
           type: string
           readOnly: true
-        message:
+        message_html:
           type: string
           readOnly: true
         notification_type:
@@ -9593,7 +9651,7 @@ components:
       required:
       - _user
       - id
-      - message
+      - message_html
       - notification_type
       - subject
       - time
@@ -10370,7 +10428,7 @@ components:
         subject:
           type: string
           readOnly: true
-        message:
+        message_html:
           type: string
           readOnly: true
         notification_type:
