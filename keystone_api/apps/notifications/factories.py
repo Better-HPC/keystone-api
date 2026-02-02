@@ -90,7 +90,7 @@ class NotificationFactory(DjangoModelFactory):
                 return "General notification"
 
             case _:
-                raise RuntimeError(f"No factory support for notification type {self.notification_type}")
+                raise RuntimeError(f"No subject factory support for notification type {self.notification_type}")
 
     @factory.lazy_attribute
     def message_html(self) -> str:
@@ -127,7 +127,7 @@ class NotificationFactory(DjangoModelFactory):
                 context = _GENERAL_TEMPLATE_CONTEXT
 
             case _:
-                raise RuntimeError(f"No factory support for notification type {self.notification_type}")
+                raise RuntimeError(f"No message factory support for notification type {self.notification_type}")
 
         template = get_template(template_name)
         return format_template(template, context=context)
