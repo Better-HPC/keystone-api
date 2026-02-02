@@ -9,7 +9,6 @@ import stat
 from typing import Any
 
 import html2text
-import nh3
 from django.conf import settings
 from django.core.mail import send_mail
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
@@ -17,6 +16,7 @@ from jinja2.sandbox import SandboxedEnvironment
 
 from apps.users.models import User
 from .models import Notification
+from .utils import sanitize_html
 
 __all__ = [
     'get_template',
@@ -69,15 +69,17 @@ def format_template(template: Template, context: dict[str, Any]) -> tuple[str, s
         context: A dictionary of variables to inject into the template.
 
     Returns:
-        A tuple containing the rendered template in HTML and plain formats.
+        A tuple containing the rendered template in HTML and plain text formats.
 
     Raises:
         RuntimeError: If the rendered template is empty.
     """
 
-    html_content = template.render(**context)
-    text_content = html2text.html2text(html_content)
-    return html_content, text_content
+    html = template.render(**context)
+    sanitized_html = sanitize_html(html)
+
+    text_content = html2text.html2text(sanitized_html)
+    return sanitized_html, text_content
 
 
 def send_notification(
@@ -103,7 +105,7 @@ def send_notification(
     Notification.objects.create(
         user=user,
         subject=subject,
-        message=nh3.clean(html_text),
+        message=html_text,
         notification_type=notification_type,
         metadata=notification_metadata
     )
