@@ -8,7 +8,7 @@ import os
 import stat
 from typing import Any
 
-import inscriptis
+from html2text import html2text, HTML2Text
 from django.conf import settings
 from django.core.mail import send_mail
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
@@ -81,7 +81,12 @@ def format_template(template: Template, context: dict[str, Any]) -> tuple[str, s
     if not sanitized_html:
         raise RuntimeError("Template is empty")
 
-    sanitized_text = inscriptis.get_text(html).strip()
+    converter = HTML2Text()
+    converter.body_width = 0  # No line wrapping
+    converter.ignore_emphasis = True  # No **bold** or _italic_
+    converter.single_line_break = True  # Use single \n instead of trailing spaces + \n
+    sanitized_text = converter.handle(html).strip()
+
     return sanitized_html, sanitized_text
 
 

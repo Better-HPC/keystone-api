@@ -1,4 +1,4 @@
-"""Tests for HTML sanitization utilities."""
+"""Unit tests for the `sanitize_html` function."""
 
 from django.test import TestCase
 
