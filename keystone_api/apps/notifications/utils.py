@@ -81,7 +81,7 @@ def _sanitize_html_tags(html: str) -> str:
             'tbody', 'td', 'th', 'thead', 'time', 'title', 'tr', 'tt', 'u',
             'ul', 'var', 'wbr'
         },
-        clean_content_tags=set(),
+        clean_content_tags={'script'},
         strip_comments=True,
         link_rel="noopener noreferrer",
         url_schemes={"http", "https", "mailto"},
