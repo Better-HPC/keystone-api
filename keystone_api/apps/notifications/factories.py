@@ -89,11 +89,11 @@ class NotificationFactory(DjangoModelFactory):
                 raise RuntimeError(f"No factory support for notification type {self.notification_type}")
 
     @factory.lazy_attribute
-    def message(self) -> str:
-        """Generate a message body based on the notification type.
+    def message_html(self) -> str:
+        """Generate an HTML message body based on the notification type.
 
         Returns:
-            The notification message content.
+            The notification message content in HTML format.
         """
 
         match self.notification_type:
@@ -108,11 +108,35 @@ class NotificationFactory(DjangoModelFactory):
                 return html_content
 
             case Notification.NotificationType.general_message:
-                return "This is a general notification message."
+                return "<p>This is a general notification message.</p>"
 
             case _:
                 raise RuntimeError(f"No factory support for notification type {self.notification_type}")
 
+    @factory.lazy_attribute
+    def message_text(self) -> str:
+        """Generate a plain text message body based on the notification type.
+
+        Returns:
+            The notification message content in plain text format.
+        """
+
+        match self.notification_type:
+            case Notification.NotificationType.request_expired:
+                template = get_template("past_expiration.html")
+                _, text_content = format_template(template, context=_EXPIRED_TEMPLATE_CONTEXT)
+                return text_content
+
+            case Notification.NotificationType.request_expiring:
+                template = get_template("upcoming_expiration.html")
+                _, text_content = format_template(template, context=_EXPIRING_TEMPLATE_CONTEXT)
+                return text_content
+
+            case Notification.NotificationType.general_message:
+                return "This is a general notification message."
+
+            case _:
+                raise RuntimeError(f"No factory support for notification type {self.notification_type}")
 
 class PreferenceFactory(DjangoModelFactory):
     """Factory for creating mock `Preference` instances."""
