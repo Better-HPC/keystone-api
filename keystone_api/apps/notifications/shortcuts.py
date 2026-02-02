@@ -5,18 +5,18 @@ redirecting URLs, issuing notifications, and handling HTTP responses.
 """
 
 import os
-import re
 import stat
-from html import unescape
+from typing import Any
 
+from html2text import html2text, HTML2Text
 from django.conf import settings
 from django.core.mail import send_mail
-from django.utils.html import strip_tags
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
 from jinja2.sandbox import SandboxedEnvironment
 
 from apps.users.models import User
 from .models import Notification
+from .utils import sanitize_html
 
 __all__ = [
     'get_template',
@@ -61,7 +61,7 @@ def get_template(template_name: str) -> Template:
     return environment.get_template(template_name)
 
 
-def format_template(template: Template, context: dict[str, any]) -> tuple[str, str]:
+def format_template(template: Template, context: dict[str, Any]) -> tuple[str, str]:
     """Render a Jinja2 template with context and return both HTML and plain text output.
 
     Args:
@@ -69,32 +69,25 @@ def format_template(template: Template, context: dict[str, any]) -> tuple[str, s
         context: A dictionary of variables to inject into the template.
 
     Returns:
-        A tuple containing the rendered HTML content and a plain text version.
+        A tuple containing the rendered template in HTML and plain text formats.
 
     Raises:
         RuntimeError: If the rendered template is empty.
     """
 
-    html_content = template.render(**context)
+    html = template.render(**context)
+    sanitized_html = sanitize_html(html).strip()
 
-    # Replace <p> and <br> tags with line breaks
-    text_content = (
-        html_content.replace('<br>', '\n')
-        .replace('<br/>', '\n')
-        .replace('<p>', '\n\n')
-        .replace('</p>', '')
-    )
+    if not sanitized_html:
+        raise RuntimeError("Template is empty")
 
-    text_content = strip_tags(text_content)  # Remove HTML tags
-    text_content = unescape(text_content)  # Unescape special HTML characters
-    text_content = re.sub(r'\n\s*\n+', '\n\n', text_content)  # Collapse excessive newlines
-    text_content = re.sub(r'[ \t]+', ' ', text_content)  # Remove redundant spacing between words
-    text_content = text_content.strip()  # Remove trailing whitespace
+    converter = HTML2Text()
+    converter.body_width = 0  # No line wrapping
+    converter.ignore_emphasis = True  # No **bold** or _italic_
+    converter.single_line_break = True  # Use single \n instead of trailing spaces + \n
+    sanitized_text = converter.handle(html).strip()
 
-    if not (html_content and text_content):
-        raise RuntimeError("Loaded template is empty.")
-
-    return html_content, text_content
+    return sanitized_html, sanitized_text
 
 
 def send_notification(
@@ -120,7 +113,7 @@ def send_notification(
     Notification.objects.create(
         user=user,
         subject=subject,
-        message=plain_text,
+        message=html_text,
         notification_type=notification_type,
         metadata=notification_metadata
     )

@@ -1,5 +1,7 @@
 """Unit tests for the `send_notification` function."""
 
+import html2text
+import nh3
 from django.conf import settings
 from django.core import mail
 from django.test import override_settings, TestCase
@@ -25,8 +27,9 @@ class SendNotificationMethod(TestCase):
         )
 
         self.subject = 'Test Subject'
-        self.plain_text = 'This is a plain text message.'
-        self.html_text = '<p>This is an HTML message.</p>'
+        self.html_text = '<p>This is an <b>HTML</b> message.</p>'
+        self.plain_text = html2text.html2text(self.html_text)
+        self.clean_text = nh3.clean(self.html_text)
         self.notification_type = Notification.NotificationType.general_message
         self.notification_metadata = {'key': 'value'}
 
@@ -54,6 +57,6 @@ class SendNotificationMethod(TestCase):
         """Verify a record of the email is stored in the database."""
 
         notification = Notification.objects.get(user=self.user)
-        self.assertEqual(self.plain_text, notification.message)
+        self.assertEqual(self.clean_text, notification.message)
         self.assertEqual(self.notification_type, notification.notification_type)
         self.assertEqual(self.notification_metadata, notification.metadata)
