@@ -18,40 +18,48 @@ from apps.notifications.shortcuts import format_template, get_template
 from apps.users.factories import UserFactory
 from .models import *
 
-__all__ = ['NotificationFactory', 'PreferenceFactory']
+__all__ = ["NotificationFactory", "PreferenceFactory"]
+
+# Template context for general notifications
+_GENERAL_TEMPLATE_CONTEXT = {
+    "user_name": "jsmith",
+    "user_first": "John",
+    "user_last": "Smith",
+    "message": "This is an important general notification concerning your HPC account."
+}
 
 # Template context for expiring allocation notifications
 _EXPIRING_TEMPLATE_CONTEXT = {
-    'user_name': "jsmith",
-    'user_first': "John",
-    'user_last': "Smith",
-    'req_id': 1234,
-    'req_title': "Project Title",
-    'req_team': "Team Name",
-    'req_submitted': date(2024, 1, 1),
-    'req_active': date(2024, 1, 8),
-    'req_expire': date(2024, 12, 31),
-    'req_days_left': 7,
-    'allocations': (
-        {'alloc_cluster': "Cluster 1", 'alloc_requested': 100_000, 'alloc_awarded': 100_000},
-        {'alloc_cluster': "Cluster 2", 'alloc_requested': 250_000, 'alloc_awarded': 200_000},
+    "user_name": "jsmith",
+    "user_first": "John",
+    "user_last": "Smith",
+    "req_id": 1234,
+    "req_title": "Project Title",
+    "req_team": "Team Name",
+    "req_submitted": date(2024, 1, 1),
+    "req_active": date(2024, 1, 8),
+    "req_expire": date(2024, 12, 31),
+    "req_days_left": 7,
+    "allocations": (
+        {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000},
+        {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000},
     ),
 }
 
 # Template context for expired allocation notifications
 _EXPIRED_TEMPLATE_CONTEXT = {
-    'user_name': "jsmith",
-    'user_first': "John",
-    'user_last': "Smith",
-    'req_id': 1234,
-    'req_title': "Project Title",
-    'req_team': "Team Name",
-    'req_submitted': date(2024, 1, 1),
-    'req_active': date(2024, 1, 8),
-    'req_expire': date(2024, 12, 31),
-    'allocations': (
-        {'alloc_cluster': "Cluster 1", 'alloc_requested': 100_000, 'alloc_awarded': 100_000, 'alloc_final': 50_000},
-        {'alloc_cluster': "Cluster 2", 'alloc_requested': 250_000, 'alloc_awarded': 200_000, 'alloc_final': 175_000},
+    "user_name": "jsmith",
+    "user_first": "John",
+    "user_last": "Smith",
+    "req_id": 1234,
+    "req_title": "Project Title",
+    "req_team": "Team Name",
+    "req_submitted": date(2024, 1, 1),
+    "req_active": date(2024, 1, 8),
+    "req_expire": date(2024, 12, 31),
+    "allocations": (
+        {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000, "alloc_final": 50_000},
+        {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000, "alloc_final": 175_000},
     ),
 }
 
@@ -62,18 +70,14 @@ class NotificationFactory(DjangoModelFactory):
     class Meta:
         model = Notification
 
-    time = factory.Faker('date_time_this_year')
+    time = factory.Faker("date_time_this_year")
     read = factory.Faker("pybool", truth_probability=30)
     notification_type = LazyFunction(lambda: randgen.choice(Notification.NotificationType.values))
     user = factory.SubFactory(UserFactory)
 
     @factory.lazy_attribute
     def subject(self) -> str:
-        """Generate a subject line for the current notification.
-
-        Returns:
-            A subject string appropriate for the notification type.
-        """
+        """Generate a subject line for the current notification."""
 
         match self.notification_type:
             case Notification.NotificationType.request_expired:
@@ -90,53 +94,44 @@ class NotificationFactory(DjangoModelFactory):
 
     @factory.lazy_attribute
     def message_html(self) -> str:
-        """Generate an HTML message body based on the notification type.
+        """Generate an HTML message body based on the notification type."""
 
-        Returns:
-            The notification message content in HTML format.
-        """
-
-        match self.notification_type:
-            case Notification.NotificationType.request_expired:
-                template = get_template("past_expiration.html")
-                html_content, _ = format_template(template, context=_EXPIRED_TEMPLATE_CONTEXT)
-                return html_content
-
-            case Notification.NotificationType.request_expiring:
-                template = get_template("upcoming_expiration.html")
-                html_content, _ = format_template(template, context=_EXPIRING_TEMPLATE_CONTEXT)
-                return html_content
-
-            case Notification.NotificationType.general_message:
-                return "<p>This is a general notification message.</p>"
-
-            case _:
-                raise RuntimeError(f"No factory support for notification type {self.notification_type}")
+        html_content, _ = self._render_template()
+        return html_content
 
     @factory.lazy_attribute
     def message_text(self) -> str:
-        """Generate a plain text message body based on the notification type.
+        """Generate a plain text message body based on the notification type."""
+
+        _, text_content = self._render_template()
+        return text_content
+
+    def _render_template(self) -> tuple[str, str]:
+        """Render the template for the current notification type.
 
         Returns:
-            The notification message content in plain text format.
+            A tuple of containing the rendered notification in (html, plain_text) format.
         """
 
         match self.notification_type:
             case Notification.NotificationType.request_expired:
-                template = get_template("past_expiration.html")
-                _, text_content = format_template(template, context=_EXPIRED_TEMPLATE_CONTEXT)
-                return text_content
+                template_name = "past_expiration.html"
+                context = _EXPIRED_TEMPLATE_CONTEXT
 
             case Notification.NotificationType.request_expiring:
-                template = get_template("upcoming_expiration.html")
-                _, text_content = format_template(template, context=_EXPIRING_TEMPLATE_CONTEXT)
-                return text_content
+                template_name = "upcoming_expiration.html"
+                context = _EXPIRING_TEMPLATE_CONTEXT
 
             case Notification.NotificationType.general_message:
-                return "This is a general notification message."
+                template_name = "general.html"
+                context = _GENERAL_TEMPLATE_CONTEXT
 
             case _:
                 raise RuntimeError(f"No factory support for notification type {self.notification_type}")
+
+        template = get_template(template_name)
+        return format_template(template, context=context)
+
 
 class PreferenceFactory(DjangoModelFactory):
     """Factory for creating mock `Preference` instances."""
