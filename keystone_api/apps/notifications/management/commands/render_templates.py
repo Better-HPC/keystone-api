@@ -56,14 +56,14 @@ class Command(BaseCommand):
 
         # Write example notifications to disk
         with override_settings(EMAIL_TEMPLATE_DIR=input_dir):
-            self._render_notification(output_dir, Notification.NotificationType.request_expiring, "upcoming_expiration.eml")
-            self._render_notification(output_dir, Notification.NotificationType.request_expired, "past_expiration.eml")
-            self._render_notification(output_dir, Notification.NotificationType.general_message, "general_message.eml")
+            self._render_notification(Notification.NotificationType.request_expiring, output_dir, "upcoming_expiration.eml")
+            self._render_notification(Notification.NotificationType.request_expired, output_dir, "past_expiration.eml")
+            self._render_notification(Notification.NotificationType.general_message, output_dir, "general_message.eml")
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 
     @staticmethod
-    def _render_notification(output_dir: Path, notification_type: Notification.NotificationType, filename: str) -> None:
+    def _render_notification(notification_type: Notification.NotificationType, output_dir: Path, filename: str) -> None:
         """Render a sample notification and write it to disk.
 
         Args:

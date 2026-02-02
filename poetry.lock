@@ -1718,4 +1718,4 @@ tests = ["coverage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "fd7ca238e75abb6c71c92e8e19756cd20eb6e4347cb172b7bf243451bc08ea80"
+content-hash = "bcb4cff5a95f94db21467e53c33aaa23d7053ae6c07f8b28cc8d6e9f055e513e"
