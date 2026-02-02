@@ -9,7 +9,7 @@ readme = "README.md"
 description = "The backend REST API for the Keystone HPC utility."
 authors = [{ name = "Better HPC LLC" }]
 keywords = ["Better", "HPC", "keystone", "api"]
-requires-python = ">=3.11,<4"
+requires-python = ">=3.11,<3.15"
 dependencies = [
     "coverage==7.11.3",
     "django==5.2.9",
@@ -27,7 +27,6 @@ dependencies = [
     "factory-boy==3.3.3",
     "faker==37.12.0",
     "flower==2.0.1",
-    "html2text (>=2025.4.15,<2026.0.0)",
     "iso4217==1.14.20250512",
     "jinja2==3.1.6",
     "nh3 (>=0.3.2,<0.4.0)",
@@ -39,6 +38,7 @@ dependencies = [
     "tqdm==4.67.1",
     "uritemplate==4.2.0",
     "uvicorn==0.38.0",
+    "inscriptis (>=2.7.0,<3.0.0)",
 ]
 
 [project.optional-dependencies]

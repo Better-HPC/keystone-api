@@ -8,7 +8,7 @@ import os
 import stat
 from typing import Any
 
-import html2text
+import inscriptis
 from django.conf import settings
 from django.core.mail import send_mail
 from jinja2 import FileSystemLoader, StrictUndefined, Template, TemplateNotFound
@@ -76,10 +76,13 @@ def format_template(template: Template, context: dict[str, Any]) -> tuple[str, s
     """
 
     html = template.render(**context)
-    sanitized_html = sanitize_html(html)
+    sanitized_html = sanitize_html(html).strip()
 
-    text_content = html2text.html2text(sanitized_html)
-    return sanitized_html, text_content
+    if not sanitized_html:
+        raise RuntimeError("Template is empty")
+
+    sanitized_text = inscriptis.get_text(html).strip()
+    return sanitized_html, sanitized_text
 
 
 def send_notification(

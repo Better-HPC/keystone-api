@@ -6,80 +6,155 @@ from jinja2 import Environment, StrictUndefined, Template, UndefinedError
 from apps.notifications.shortcuts import format_template
 
 
-class FormatTemplateMethod(TestCase):
-    """Test the formatting of notification templates."""
+class HtmlOutputTest(TestCase):
+    """Tests for HTML output from format_template."""
 
-    def test_renders_html_and_plain_text(self) -> None:
-        """Verify templates are properly formatted and returned in HTML and PlainText."""
+    def test_interpolates_jinja_variables(self) -> None:
+        """Verify Jinja2 variables are interpolated in HTML output."""
 
-        template_str = "<h1>Hello {{ name }}</h1><p>Welcome to the site.</p><br>Thanks!"
-        context = {"name": "Alice"}
-        template = Template(template_str)
+        template = Template("<h1>Hello {{ name }}</h1>")
+        html, _ = format_template(template, {"name": "Alice"})
 
-        html, text = format_template(template, context)
+        self.assertEqual("<h1>Hello Alice</h1>", html)
 
-        expected_html = "<h1>Hello Alice</h1><p>Welcome to the site.</p><br>Thanks!"
-        expected_text = "Hello Alice\n\nWelcome to the site.\nThanks!"
+    def test_preserves_html_entities(self) -> None:
+        """Verify HTML entities are preserved in HTML output."""
 
-        self.assertEqual(expected_html, html)
-        self.assertEqual(expected_text, text)
+        template = Template("<p>Use &lt;code&gt; for code and &amp; for ampersand.</p>")
+        html, _ = format_template(template, {})
 
-    def test_template_with_special_chars(self) -> None:
-        """Verify special characters are properly formatted in HTML and plain text."""
+        self.assertIn("&lt;code&gt;", html)
+        self.assertIn("&amp;", html)
 
-        template = Template("<p>Use &lt;code&gt; tags for code.</p>")
-        html, text = format_template(template, {})
 
-        expected_html = "<p>Use &lt;code&gt; tags for code.</p>"
-        expected_text = "Use <code> tags for code."
+class PlainTextOutput(TestCase):
+    """Tests for plain text output from format_template."""
 
-        self.assertEqual(expected_html, html)
-        self.assertEqual(expected_text, text)
+    def test_strips_html_tags(self) -> None:
+        """Verify HTML tags are removed from plain text output."""
 
-    def test_newline_structure_preserved_in_plain_text(self) -> None:
-        """Verify line breaks and paragraph structure are preserved in plain text."""
+        template = Template("<p>This is <strong>bold</strong> text.</p>")
+        _, text = format_template(template, {})
 
-        template = Template("<p>Line one.</p><p>Line two.</p><p>Line<br>three.</p>")
-        html, text = format_template(template, {})
+        self.assertEqual("This is bold text.", text)
 
-        expected_html = "<p>Line one.</p><p>Line two.</p><p>Line<br>three.</p>"
-        expected_text = "Line one.\n\nLine two.\n\nLine\nthree."
+    def test_decodes_html_entities(self) -> None:
+        """Verify HTML entities are decoded in plain text output."""
 
-        self.assertEqual(expected_html, html)
-        self.assertEqual(expected_text, text)
+        template = Template("<p>Use &lt;code&gt; for code and &amp; for ampersand.</p>")
+        _, text = format_template(template, {})
 
-    def test_whitespace_normalization(self) -> None:
-        """Verify excessive whitespace is normalized in plain text."""
+        self.assertEqual("Use <code> for code and & for ampersand.", text)
 
-        template = Template("<p>   Hello    world. </p>")
-        html, text = format_template(template, {})
+    def test_br_tags_become_newlines(self) -> None:
+        """Verify br tags are converted to newlines in plain text output."""
 
-        expected_text = "Hello world."
-        self.assertEqual(expected_text, text)
+        template = Template("Line one<br>Line two<br>Line three")
+        _, text = format_template(template, {})
 
-    def test_extra_context_variable_is_ignored(self) -> None:
-        """Verify extra context variables are ignored."""
+        self.assertEqual("Line one\nLine two\nLine three", text)
+
+    def test_paragraph_tags_create_separation(self) -> None:
+        """Verify paragraph tags are separated by blank lines in plain text output."""
+
+        template = Template("<p>First paragraph.</p><p>Second paragraph.</p>")
+        _, text = format_template(template, {})
+
+        self.assertEqual("First paragraph.\n\nSecond paragraph.", text)
+
+    def test_heading_content_preserved(self) -> None:
+        """Verify heading tag content is preserved in plain text output."""
+
+        template = Template("<h1>Main Title</h1><h2>Subtitle</h2>")
+        _, text = format_template(template, {})
+
+        self.assertEqual("Main Title\n\nSubtitle", text)
+
+    def test_list_items_on_separate_lines(self) -> None:
+        """Verify list items appear on separate lines in plain text output."""
+
+        template = Template("<ul><li>Item one</li><li>Item two</li></ul>")
+        _, text = format_template(template, {})
+
+        self.assertEqual("  * Item one\n  * Item two", text)
+
+    def test_link_text_preserved(self) -> None:
+        """Verify link text is preserved in plain text output."""
+
+        template = Template('<a href="https://example.com">our website</a>')
+        _, text = format_template(template, {})
+
+        self.assertEqual("our website", text)
+
+    def test_table_cells_preserved(self) -> None:
+        """Verify table cell content is preserved in plain text output."""
+
+        template = Template("<table><tr><td>Cell 1</td><td>Cell 2</td></tr></table>")
+        _, text = format_template(template, {})
+
+        self.assertEqual("Cell 1\tCell 2", text)
+
+    def test_whitespace_normalized(self) -> None:
+        """Verify consecutive whitespace is collapsed in plain text output."""
+
+        template = Template("<p>   Hello    world.   </p>")
+        _, text = format_template(template, {})
+
+        self.assertEqual("Hello world.", text)
+
+    def test_nested_tag_content_preserved(self) -> None:
+        """Verify content within nested tags is preserved in plain text output."""
+
+        template = Template("<strong>bold and <em>italic</em></strong>")
+        _, text = format_template(template, {})
+
+        self.assertEqual("bold and italic", text)
+
+
+class TemplateContextHandling(TestCase):
+    """Tests for template context handling in format_template."""
+
+    def test_interpolates_context_variables(self) -> None:
+        """Verify context variables are interpolated in output."""
 
         template = Template("Welcome, {{ user }}!")
-        context = {
-            "user": "Bob",
-            "irrelevant": "should be ignored"
-        }
+        html, text = format_template(template, {"user": "Bob"})
 
-        html, text = format_template(template, context)
         self.assertEqual("Welcome, Bob!", html)
-        self.assertEqual("Welcome, Bob!", text)
+        self.assertIn("Welcome, Bob!", text)
+
+    def test_ignores_extra_context_variables(self) -> None:
+        """Verify context variables not referenced in template do not affect output."""
+
+        template = Template("Hello, {{ name }}!")
+        context = {"name": "Alice", "unused": "ignored"}
+        html, text = format_template(template, context)
+
+        self.assertEqual("Hello, Alice!", html)
+        self.assertNotIn("ignored", html)
+        self.assertNotIn("ignored", text)
+
+    def test_raises_error_for_missing_variable_in_strict_mode(self) -> None:
+        """Verify UndefinedError is raised when StrictUndefined template is missing context variables."""
+
+        env = Environment(undefined=StrictUndefined, autoescape=True)
+        template = env.from_string("Hello {{ name }}")
+
+        with self.assertRaises(UndefinedError):
+            format_template(template, {})
+
+
+class TemplateValidation(TestCase):
+    """Tests for input validation in format_template."""
 
     def test_empty_template_raises_error(self) -> None:
-        """Verify an error is raised for empty templates."""
+        """Verify RuntimeError is raised when rendered template is empty."""
 
         with self.assertRaises(RuntimeError):
             format_template(Template(""), {})
 
-    def test_respects_strict_mode(self) -> None:
-        """Verify an error is raised when rendering a `StrictUndefined` template with missing variables."""
+    def test_whitespace_only_template_raises_error(self) -> None:
+        """Verify RuntimeError is raised when rendered template contains only whitespace."""
 
-        env = Environment(undefined=StrictUndefined, autoescape=True)
-        template = env.from_string("Hello {{ name }}")
-        with self.assertRaises(UndefinedError):
-            format_template(template, {})
+        with self.assertRaises(RuntimeError):
+            format_template(Template("   \n\t  "), {})
