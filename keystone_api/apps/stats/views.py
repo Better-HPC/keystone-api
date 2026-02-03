@@ -271,6 +271,7 @@ class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):
     queryset = Publication.objects.all()
     serializer_class = PublicationStatsSerializer
     permission_classes = [IsAuthenticated]
+    schema = FilterGetAutoSchema()
 
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.

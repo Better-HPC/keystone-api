@@ -7067,6 +7067,361 @@ paths:
         statistics for all teams. Non-staff users are limited to teams where they
         hold membership.
       summary: Retrieve aggregated publication statistics.
+      parameters:
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: abstract
+        schema:
+          type: string
+      - in: query
+        name: abstract__contains
+        schema:
+          type: string
+      - in: query
+        name: abstract__endswith
+        schema:
+          type: string
+      - in: query
+        name: abstract__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: abstract__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: abstract__startswith
+        schema:
+          type: string
+      - in: query
+        name: doi
+        schema:
+          type: string
+      - in: query
+        name: doi__contains
+        schema:
+          type: string
+      - in: query
+        name: doi__endswith
+        schema:
+          type: string
+      - in: query
+        name: doi__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: doi__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: doi__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - in: query
+        name: id__gt
+        schema:
+          type: integer
+      - in: query
+        name: id__gte
+        schema:
+          type: integer
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__lt
+        schema:
+          type: integer
+      - in: query
+        name: id__lte
+        schema:
+          type: integer
+      - in: query
+        name: issue
+        schema:
+          type: string
+      - in: query
+        name: issue__contains
+        schema:
+          type: string
+      - in: query
+        name: issue__endswith
+        schema:
+          type: string
+      - in: query
+        name: issue__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: issue__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: issue__startswith
+        schema:
+          type: string
+      - in: query
+        name: journal
+        schema:
+          type: string
+      - in: query
+        name: journal__contains
+        schema:
+          type: string
+      - in: query
+        name: journal__endswith
+        schema:
+          type: string
+      - in: query
+        name: journal__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: journal__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: journal__startswith
+        schema:
+          type: string
+      - in: query
+        name: published
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__day
+        schema:
+          type: number
+      - in: query
+        name: published__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: published__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: published__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: published__month
+        schema:
+          type: number
+      - in: query
+        name: published__week
+        schema:
+          type: number
+      - in: query
+        name: published__week_day
+        schema:
+          type: number
+      - in: query
+        name: published__year
+        schema:
+          type: number
+      - in: query
+        name: submitted
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
+      - in: query
+        name: submitted__gt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: submitted__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: submitted__lt
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__lte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: submitted__month
+        schema:
+          type: number
+      - in: query
+        name: submitted__week
+        schema:
+          type: number
+      - in: query
+        name: submitted__week_day
+        schema:
+          type: number
+      - in: query
+        name: submitted__year
+        schema:
+          type: number
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: title__contains
+        schema:
+          type: string
+      - in: query
+        name: title__endswith
+        schema:
+          type: string
+      - in: query
+        name: title__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: title__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: title__startswith
+        schema:
+          type: string
+      - in: query
+        name: volume
+        schema:
+          type: string
+      - in: query
+        name: volume__contains
+        schema:
+          type: string
+      - in: query
+        name: volume__endswith
+        schema:
+          type: string
+      - in: query
+        name: volume__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: volume__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: volume__startswith
+        schema:
+          type: string
       tags:
       - Statistics
       security:
