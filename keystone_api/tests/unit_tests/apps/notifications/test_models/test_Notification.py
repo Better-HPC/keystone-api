@@ -25,16 +25,18 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 1",
-            message="Test message 1",
+            message_html="<p>Test message 1</p>",
+            message_text="Test message 1",
             metadata=metadata
         )
 
+        # Create a notification with a different message but same user, type, and metadata
         with self.assertRaises(IntegrityError):
             Notification.objects.create(
                 user=user,
                 notification_type=Notification.NotificationType.request_expired,
-                subject="Expired Duplicate",
-                message="Test message duplicate",
+                message_html="<p>Test message 2</p>",
+                message_text="Test message 2",
                 metadata=metadata
             )
 
@@ -49,7 +51,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 1",
-            message="Test message 1",
+            message_html="<p>Test message 1</p>",
+            message_text="Test message 1",
             metadata=metadata1
         )
 
@@ -57,7 +60,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 2",
-            message="Test message 2",
+            message_html="<p>Test message 2</p>",
+            message_text="Test message 2",
             metadata=metadata2
         )
 
@@ -74,7 +78,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 1",
-            message="Test message 1",
+            message_html="<p>Test message 1</p>",
+            message_text="Test message 1",
             metadata=metadata1
         )
 
@@ -82,7 +87,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 2",
-            message="Test message 2",
+            message_html="<p>Test message 2</p>",
+            message_text="Test message 2",
             metadata=metadata2
         )
 
@@ -99,7 +105,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 1",
-            message="Test message 1",
+            message_html="<p>Test message 1</p>",
+            message_text="Test message 1",
             metadata=metadata
         )
 
@@ -107,7 +114,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=other_user,
             notification_type=Notification.NotificationType.request_expired,
             subject="Expired 2",
-            message="Test message 2",
+            message_html="<p>Test message 2</p>",
+            message_text="Test message 2",
             metadata=metadata
         )
 
@@ -125,7 +133,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=type1,
             subject="Expired 1",
-            message="Test message 1",
+            message_html="<p>Test message 1</p>",
+            message_text="Test message 1",
             metadata=metadata
         )
 
@@ -133,7 +142,8 @@ class MetadataUniquenessConstraint(TestCase):
             user=user,
             notification_type=type2,
             subject="Expired 2",
-            message="Test message 2",
+            message_html="<p>Test message 2</p>",
+            message_text="Test message 2",
             metadata=metadata
         )
 

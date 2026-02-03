@@ -9,7 +9,6 @@
 """
 
 from argparse import ArgumentParser
-from datetime import date, timedelta
 from pathlib import Path
 
 from django.conf import settings
@@ -17,7 +16,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.core.management.base import BaseCommand
 from django.test import override_settings
 
-from apps.notifications.shortcuts import format_template, get_template
+from apps.notifications.factories import NotificationFactory
+from apps.notifications.models import Notification
 
 
 class Command(BaseCommand):
@@ -56,88 +56,30 @@ class Command(BaseCommand):
 
         # Write example notifications to disk
         with override_settings(EMAIL_TEMPLATE_DIR=input_dir):
-            self._render_upcoming_expiration(output_dir)
-            self._render_past_expiration(output_dir)
+            self._render_notification(Notification.NotificationType.request_expiring, output_dir, "upcoming_expiration.eml")
+            self._render_notification(Notification.NotificationType.request_expired, output_dir, "past_expiration.eml")
+            self._render_notification(Notification.NotificationType.general_message, output_dir, "general_message.eml")
 
         self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
 
     @staticmethod
-    def _render_upcoming_expiration(output_dir: Path) -> None:
-        """Render a sample notification for an allocation request with an upcoming expiration."""
+    def _render_notification(notification_type: Notification.NotificationType, output_dir: Path, filename: str) -> None:
+        """Render a sample notification and write it to disk.
 
-        expired = date.today() + timedelta(days=7)
-        active = expired - timedelta(days=358)
-        submitted = active - timedelta(days=7)
+        Args:
+            output_dir: The directory to write the rendered email file.
+            notification_type: The type of notification to render.
+            filename: The output filename for the rendered email.
+        """
 
-        template = get_template("upcoming_expiration.html")
-        subject = "Your HPC allocation 1234 is expiring soon"
-        html_content, text_content = format_template(template, context={
-            'user_name': "jsmith",
-            'user_first': "John",
-            'user_last': "Smith",
-            'req_id': 1234,
-            'req_title': "Project Title",
-            'req_team': "Team Name",
-            'req_submitted': submitted,
-            'req_active': active,
-            'req_expire': expired,
-            'req_days_left': 7,
-            'allocations': (
-                {
-                    'alloc_cluster': "Cluster 1",
-                    'alloc_requested': 100_000,
-                    'alloc_awarded': 100_000,
-                },
-                {
-                    'alloc_cluster': "Cluster 2",
-                    'alloc_requested': 250_000,
-                    'alloc_awarded': 200_000,
-                },
-            )
-        })
+        notification = NotificationFactory.build(notification_type=notification_type)
 
-        mail = EmailMultiAlternatives(subject, text_content, settings.EMAIL_FROM_ADDRESS)
-        mail.attach_alternative(html_content, "text/html")
-        with output_dir.joinpath("upcoming_expiration.eml").open(mode="w") as f:
-            f.write(mail.message().as_string())
+        mail = EmailMultiAlternatives(
+            notification.subject,
+            notification.message_text,
+            settings.EMAIL_FROM_ADDRESS
+        )
 
-    @staticmethod
-    def _render_past_expiration(output_dir: Path) -> None:
-        """Render a sample notification for an allocation request that has expired."""
-
-        expired = date.today()
-        active = expired - timedelta(days=358)
-        submitted = active - timedelta(days=7)
-
-        template = get_template("past_expiration.html")
-        subject = "Your HPC allocation 1234 has expired"
-        html_content, text_content = format_template(template, context={
-            'user_name': "jsmith",
-            'user_first': "John",
-            'user_last': "Smith",
-            'req_id': 1234,
-            'req_title': "Project Title",
-            'req_team': "Team Name",
-            'req_submitted': submitted,
-            'req_active': active,
-            'req_expire': expired,
-            'allocations': (
-                {
-                    'alloc_cluster': "Cluster 1",
-                    'alloc_requested': 100_000,
-                    'alloc_awarded': 100_000,
-                    'alloc_final': 50_000,
-                },
-                {
-                    'alloc_cluster': "Cluster 2",
-                    'alloc_requested': 250_000,
-                    'alloc_awarded': 200_000,
-                    'alloc_final': 175_000,
-                },
-            )
-        })
-
-        mail = EmailMultiAlternatives(subject, text_content, settings.EMAIL_FROM_ADDRESS)
-        mail.attach_alternative(html_content, "text/html")
-        with output_dir.joinpath("past_expiration.eml").open(mode="w") as f:
+        mail.attach_alternative(notification.message_html, "text/html")
+        with output_dir.joinpath(filename).open(mode="w") as f:
             f.write(mail.message().as_string())
