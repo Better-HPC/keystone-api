@@ -26,18 +26,19 @@ jobs:
         with:
           category: /language:python
 
-  codacy:
-    name: Codacy
+  sonarqube:
+    name: SonarQube
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@master
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          upload: true
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   
   api-spec:
     name: OpenAPI
@@ -72,7 +73,7 @@ jobs:
   report-qa-status:
     name: Report QA Status
     runs-on: ubuntu-latest
-    needs: [ codeql, codacy, api-spec ]
+    needs: [ codeql, sonarqube, api-spec ]
     if: always()
 
     steps:
