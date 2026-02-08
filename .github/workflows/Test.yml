@@ -94,11 +94,6 @@ jobs:
           # Write coverage report to disk in XML format
           coverage xml --omit "$OMIT_PATHS" --include "$INCLUDE_PATHS" -o report.xml
 
-      - name: Report coverage results
-        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Python -r report.xml
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-
   function-tests:
     name: Function Tests
     runs-on: ubuntu-latest
