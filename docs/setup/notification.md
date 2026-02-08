@@ -23,8 +23,9 @@ Template files are required to have no write permissions for users other than th
 If a template file has world-writeable permissions, Keystone will refuse to load it.
 This restriction is provided for security and ensures templates cannot be modified by unauthorized users in production.
 
-Users familiar with the Jinja2 templating engine will also find certain Jinja features are not available.
-This includes access to application internals and the ability to bypass input data sanitation.
+Notification templates are automatically sanitized to remove any JavaScript or externally loaded resources (e.g. css imports).
+Users familiar with the Jinja2 templating engine will also find certain Jinja features are not available, including
+access to application internals and the ability to bypass variable sanitation.
 
 ## Templates
 
