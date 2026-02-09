@@ -5,6 +5,9 @@ asynchronously from the rest of the application and log their results in the
 application database.
 """
 
+import logging
+import time
+
 from celery import shared_task
 from django.conf import settings
 from tqdm import tqdm
@@ -19,6 +22,8 @@ except ImportError:  # pragma: nocover
     pass
 
 __all__ = ['ldap_update_users']
+
+logger = logging.getLogger(__name__)
 
 
 def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
@@ -35,6 +40,54 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
     conn.set_option(ldap.OPT_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
     conn.set_option(ldap.OPT_NETWORK_TIMEOUT, settings.AUTH_LDAP_TIMEOUT)
     return conn
+
+
+def fetch_ldap_data(attempts: int = 3, delay: float = 2.0) -> list:
+    """Fetch data from LDAP with retry logic.
+
+    Attempts to connect and fetch data from LDAP up to `attempts` times.
+    Retries use exponential backoff, where the wait time doubles after each
+    failure (delay, delay*2, delay*4, etc.).
+
+    Args:
+        attempts: Maximum number of connection attempts.
+        delay: Initial delay in seconds between retries.
+
+    Returns:
+        List of LDAP search results.
+
+    Raises:
+        RuntimeError: If the `attempts` or `delay` arguments are less than one or zero respectively.
+    """
+
+    if attempts < 1:
+        raise RuntimeError("The `attempts` argument must be greater or equal to 1")
+
+    if delay < 0:
+        raise RuntimeError("The `delay` argument must be greater or equal to 0")
+
+    for attempt in range(attempts):
+        try:
+            conn = get_ldap_connection()
+            search = conn.search_s(
+                settings.AUTH_LDAP_USER_SEARCH.base_dn,
+                ldap.SCOPE_SUBTREE,
+                settings.AUTH_LDAP_USER_FILTER)
+
+            logger.info(f"Successfully fetched LDAP data on attempt {attempt + 1}")
+            return search
+
+        except Exception as e:
+            logger.warning(f"LDAP fetch attempt {attempt + 1}/{attempts} failed: {e}")
+
+            if attempt < attempts - 1:
+                wait_time = delay * (2 ** attempt)  # Exponential backoff
+                logger.info(f"Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+
+            else:
+                logger.error(f"All {attempts} LDAP fetch attempts failed")
+                raise
 
 
 def parse_ldap_entry(dn: str, attrs: dict, attr_map: dict) -> dict | None:
@@ -83,12 +136,8 @@ def ldap_update_users() -> None:
     if not settings.AUTH_LDAP_SERVER_URI:
         return
 
-    # Search LDAP for all user entries
-    conn = get_ldap_connection()
-    search = conn.search_s(
-        settings.AUTH_LDAP_USER_SEARCH.base_dn,
-        ldap.SCOPE_SUBTREE,
-        settings.AUTH_LDAP_USER_FILTER)
+    # Search LDAP for all user entries with retry logic
+    search = fetch_ldap_data(attempts=3, delay=2.0)
 
     # Update user data
     ldap_usernames = set()
