@@ -7,6 +7,7 @@ application database.
 
 import logging
 import time
+
 from celery import shared_task
 from django.conf import settings
 from tqdm import tqdm
@@ -41,21 +42,31 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
     return conn
 
 
-def fetch_ldap_data(max_retries: int = 3, delay: float = 2.0) -> list:
+def fetch_ldap_data(max_retries: int = 2, delay: float = 2.0) -> list:
     """Fetch data from LDAP with retry logic.
+
+    Attempts to connect and fetch data from LDAP once, then retries up to
+    `max_retries` times on failure. Retries use exponential backoff, where the
+    wait time doubles after each failure (delay, delay*2, delay*4, etc.).
 
     Args:
         max_retries: Maximum number of retry attempts.
-        delay: Delay in seconds between retries (will exponentially backoff).
+        delay: Initial delay in seconds between retries.
 
     Returns:
         List of LDAP search results.
 
     Raises:
-        Exception: If all retry attempts fail.
+        RuntimeError: If the `max_retries` or `delay` arguments are less than zero.
     """
 
-    for attempt in range(max_retries):
+    if max_retries < 0:
+        raise RuntimeError("The `max_retries` argument must be greater or equal to 0")
+
+    if delay < 0:
+        raise RuntimeError("The `delay` argument must be greater or equal to 0")
+
+    for attempt in range(max_retries + 1):
         try:
             conn = get_ldap_connection()
             search = conn.search_s(
@@ -69,7 +80,7 @@ def fetch_ldap_data(max_retries: int = 3, delay: float = 2.0) -> list:
         except Exception as e:
             logger.warning(f"LDAP fetch attempt {attempt + 1}/{max_retries} failed: {e}")
 
-            if attempt < max_retries - 1:
+            if attempt < max_retries:
                 wait_time = delay * (2 ** attempt)  # Exponential backoff
                 logger.info(f"Retrying in {wait_time} seconds...")
                 time.sleep(wait_time)
@@ -126,7 +137,7 @@ def ldap_update_users() -> None:
         return
 
     # Search LDAP for all user entries with retry logic
-    search = fetch_ldap_data(max_retries=3, delay=2.0)
+    search = fetch_ldap_data(max_retries=2, delay=2.0)
 
     # Update user data
     ldap_usernames = set()
