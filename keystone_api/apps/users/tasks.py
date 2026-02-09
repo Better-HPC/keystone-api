@@ -42,31 +42,31 @@ def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
     return conn
 
 
-def fetch_ldap_data(max_retries: int = 2, delay: float = 2.0) -> list:
+def fetch_ldap_data(attempts: int = 3, delay: float = 2.0) -> list:
     """Fetch data from LDAP with retry logic.
 
-    Attempts to connect and fetch data from LDAP once, then retries up to
-    `max_retries` times on failure. Retries use exponential backoff, where the
-    wait time doubles after each failure (delay, delay*2, delay*4, etc.).
+    Attempts to connect and fetch data from LDAP up to `attempts` times.
+    Retries use exponential backoff, where the wait time doubles after each
+    failure (delay, delay*2, delay*4, etc.).
 
     Args:
-        max_retries: Maximum number of retry attempts.
+        attempts: Maximum number of connection attempts.
         delay: Initial delay in seconds between retries.
 
     Returns:
         List of LDAP search results.
 
     Raises:
-        RuntimeError: If the `max_retries` or `delay` arguments are less than zero.
+        RuntimeError: If the `attempts` or `delay` arguments are less than one or zero respectively.
     """
 
-    if max_retries < 0:
-        raise RuntimeError("The `max_retries` argument must be greater or equal to 0")
+    if attempts < 1:
+        raise RuntimeError("The `attempts` argument must be greater or equal to 1")
 
     if delay < 0:
         raise RuntimeError("The `delay` argument must be greater or equal to 0")
 
-    for attempt in range(max_retries + 1):
+    for attempt in range(attempts):
         try:
             conn = get_ldap_connection()
             search = conn.search_s(
@@ -78,15 +78,15 @@ def fetch_ldap_data(max_retries: int = 2, delay: float = 2.0) -> list:
             return search
 
         except Exception as e:
-            logger.warning(f"LDAP fetch attempt {attempt + 1}/{max_retries} failed: {e}")
+            logger.warning(f"LDAP fetch attempt {attempt + 1}/{attempts} failed: {e}")
 
-            if attempt < max_retries:
+            if attempt < attempts - 1:
                 wait_time = delay * (2 ** attempt)  # Exponential backoff
                 logger.info(f"Retrying in {wait_time} seconds...")
                 time.sleep(wait_time)
 
             else:
-                logger.error(f"All {max_retries} LDAP fetch attempts failed")
+                logger.error(f"All {attempts} LDAP fetch attempts failed")
                 raise
 
 
@@ -137,7 +137,7 @@ def ldap_update_users() -> None:
         return
 
     # Search LDAP for all user entries with retry logic
-    search = fetch_ldap_data(max_retries=2, delay=2.0)
+    search = fetch_ldap_data(attempts=3, delay=2.0)
 
     # Update user data
     ldap_usernames = set()

@@ -22,7 +22,7 @@ class FetchLdapDataMethod(TestCase):
 
     @patch('apps.users.tasks.get_ldap_connection')
     def test_first_attempt_successful(self, mock_get_conn: Mock) -> None:
-        """Verify LDAP data is returned when fetched successfully on the first attempt without retries."""
+        """Verify LDAP data is returned when fetched successfully on the first attempt."""
 
         mock_conn = Mock()
         mock_search_results = [
@@ -33,7 +33,7 @@ class FetchLdapDataMethod(TestCase):
         mock_conn.search_s.return_value = mock_search_results
         mock_get_conn.return_value = mock_conn
 
-        result = fetch_ldap_data(max_retries=3, delay=1.0)
+        result = fetch_ldap_data(attempts=3, delay=1.0)
 
         self.assertEqual(result, mock_search_results)
         mock_get_conn.assert_called_once()
@@ -48,13 +48,11 @@ class FetchLdapDataMethod(TestCase):
     def test_connection_failure_retry(self, mock_get_conn: Mock, mock_sleep: Mock) -> None:
         """Verify LDAP data is fetched successfully after two connection failures."""
 
-        # Setup mock connection
         mock_conn = Mock()
         mock_search_results = [
             ('cn=user1,dc=example,dc=com', {'uid': [b'user1']}),
         ]
 
-        # First two attempts fail, third succeeds
         mock_get_conn.side_effect = [
             Exception('Connection timeout'),
             Exception('Server unavailable'),
@@ -62,7 +60,7 @@ class FetchLdapDataMethod(TestCase):
         ]
 
         mock_conn.search_s.return_value = mock_search_results
-        result = fetch_ldap_data(max_retries=3, delay=1.0)
+        result = fetch_ldap_data(attempts=3, delay=1.0)
 
         self.assertEqual(result, mock_search_results)
         self.assertEqual(mock_get_conn.call_count, 3)
@@ -72,7 +70,6 @@ class FetchLdapDataMethod(TestCase):
     def test_search_failure_retry(self, mock_get_conn: Mock, mock_sleep: Mock) -> None:
         """Verify LDAP data is fetched successfully after two search failures."""
 
-        # Setup mock connections
         mock_conn_1 = Mock()
         mock_conn_1.search_s.side_effect = Exception('Search failed')
 
@@ -85,35 +82,33 @@ class FetchLdapDataMethod(TestCase):
 
         mock_get_conn.side_effect = [mock_conn_1, mock_conn_2, mock_conn_3]
 
-        # Execute
-        result = fetch_ldap_data(max_retries=3, delay=1.0)
+        result = fetch_ldap_data(attempts=3, delay=1.0)
 
-        # Assert
         self.assertEqual(result, mock_search_results)
         self.assertEqual(mock_get_conn.call_count, 3)
 
     @patch('apps.users.tasks.time.sleep')
     @patch('apps.users.tasks.get_ldap_connection')
-    def test_all_retries_exhausted(self, mock_get_conn: Mock, mock_sleep: Mock) -> None:
-        """Verify an exception is raised when all retry attempts are exhausted."""
+    def test_all_attempts_exhausted(self, mock_get_conn: Mock, mock_sleep: Mock) -> None:
+        """Verify an exception is raised when all attempts are exhausted."""
 
         mock_get_conn.side_effect = Exception('Connection timeout')
 
         with self.assertRaises(Exception) as context:
-            fetch_ldap_data(max_retries=3, delay=1.0)
+            fetch_ldap_data(attempts=3, delay=1.0)
 
         self.assertEqual(str(context.exception), 'Connection timeout')
-        self.assertEqual(mock_get_conn.call_count, 4)
+        self.assertEqual(mock_get_conn.call_count, 3)
 
     @patch('apps.users.tasks.get_ldap_connection')
-    def test_zero_retries(self, mock_get_conn: Mock) -> None:
-        """Verify no retry attempts are made when `max_retries` is set to 0."""
+    def test_single_attempt(self, mock_get_conn: Mock) -> None:
+        """Verify only one connection attempt is made when `attempts` is set to 1."""
 
         mock_get_conn.side_effect = Exception('Connection failed')
-        with self.assertRaises(Exception):
-            fetch_ldap_data(max_retries=0, delay=1.0)
 
-        # Should not be called once with 0 retries after failure
+        with self.assertRaises(Exception):
+            fetch_ldap_data(attempts=1, delay=1.0)
+
         self.assertEqual(mock_get_conn.call_count, 1)
 
     @patch('apps.users.tasks.time.sleep')
@@ -124,37 +119,37 @@ class FetchLdapDataMethod(TestCase):
         mock_get_conn.side_effect = Exception('Connection timeout')
 
         with self.assertRaises(Exception):
-            fetch_ldap_data(max_retries=3, delay=2.0)
+            fetch_ldap_data(attempts=4, delay=2.0)
 
-        # Assert exponential backoff: 2.0 * 2^0, 2.0 * 2^1, 2.0 * 2^2
         expected_sleep_calls = [call(2.0), call(4.0), call(8.0)]
         mock_sleep.assert_has_calls(expected_sleep_calls)
-        self.assertEqual(mock_get_conn.call_count, 4)
+        self.assertEqual(mock_sleep.call_count, 3)
 
     @patch('apps.users.tasks.time.sleep')
     @patch('apps.users.tasks.get_ldap_connection')
     def test_custom_delay_parameter(self, mock_get_conn: Mock, mock_sleep: Mock) -> None:
         """Verify custom delay parameter values are respected in exponential backoff calculations."""
 
-        mock_get_conn.side_effect = [
-            Exception('First failure'),
-            Exception('Second failure'),
-            Exception('Third failure'),
-        ]
+        mock_get_conn.side_effect = Exception('Connection timeout')
 
         with self.assertRaises(Exception):
-            fetch_ldap_data(max_retries=3, delay=5.0)
+            fetch_ldap_data(attempts=4, delay=5.0)
 
-        # Assert custom delay: 5.0 * 2^0 = 5.0, 5.0 * 2^1 = 10.0, 5.0 * 2^2 = 20.0
         expected_sleep_calls = [call(5.0), call(10.0), call(20.0)]
         mock_sleep.assert_has_calls(expected_sleep_calls)
-        self.assertEqual(mock_get_conn.call_count, 4)
+        self.assertEqual(mock_sleep.call_count, 3)
 
-    def test_negative_max_retries(self) -> None:
-        """Verify a negative `max_retries` argument raises a `RuntimeError`."""
+    def test_zero_attempts(self) -> None:
+        """Verify a zero `attempts` argument raises a `RuntimeError`."""
 
-        with self.assertRaisesRegex(RuntimeError, "`max_retries` argument must be greater or equal to 0"):
-            fetch_ldap_data(max_retries=-1)
+        with self.assertRaisesRegex(RuntimeError, "`attempts` argument must be greater or equal to 1"):
+            fetch_ldap_data(attempts=0)
+
+    def test_negative_attempts(self) -> None:
+        """Verify a negative `attempts` argument raises a `RuntimeError`."""
+
+        with self.assertRaisesRegex(RuntimeError, "`attempts` argument must be greater or equal to 1"):
+            fetch_ldap_data(attempts=-1)
 
     def test_negative_delay(self) -> None:
         """Verify a negative `delay` argument raises a `RuntimeError`."""
