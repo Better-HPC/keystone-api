@@ -7,7 +7,9 @@ paths:
   /allocations/allocations/:
     get:
       operationId: allocations_allocations_list
-      description: Returns a filtered list of resource allocations.
+      description: Returns a list of resource allocations. Non-staff users are only
+        returned allocations belonging to teams where they hold membership. Staff
+        users are returned all allocations.
       summary: List resource allocations.
       parameters:
       - name: _limit
@@ -214,7 +216,8 @@ paths:
           description: ''
     post:
       operationId: allocations_allocations_create
-      description: Creates a new resource allocation.
+      description: Creates a new resource allocation. Write access is restricted to
+        staff users.
       summary: Create a resource allocation.
       tags:
       - Allocations - Allocated Resources
@@ -243,7 +246,8 @@ paths:
   /allocations/allocations/{id}/:
     get:
       operationId: allocations_allocations_retrieve
-      description: Returns a single resource allocation by ID.
+      description: Returns a single resource allocation by ID. Read access is granted
+        to staff users and team members.
       summary: Retrieve a resource allocation.
       parameters:
       - in: path
@@ -266,7 +270,8 @@ paths:
           description: ''
     put:
       operationId: allocations_allocations_update
-      description: Replaces an existing resource allocation with new values.
+      description: Replaces an existing resource allocation with new values. Write
+        access is restricted to staff users.
       summary: Update a resource allocation.
       parameters:
       - in: path
@@ -302,6 +307,7 @@ paths:
     patch:
       operationId: allocations_allocations_partial_update
       description: Partially updates an existing resource allocation with new values.
+        Write access is restricted to staff users.
       summary: Partially update a resource allocation.
       parameters:
       - in: path
@@ -335,7 +341,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_allocations_destroy
-      description: Deletes a resource allocation by ID.
+      description: Deletes a resource allocation by ID. Write access is restricted
+        to staff users.
       summary: Delete a resource allocation.
       parameters:
       - in: path
@@ -355,7 +362,9 @@ paths:
   /allocations/attachments/:
     get:
       operationId: allocations_attachments_list
-      description: Returns a filtered list of file attachments.
+      description: Returns a list of file attachments. Non-staff users are only returned
+        attachments belonging to teams where they hold membership. Staff users are
+        returned all attachments.
       summary: List file attachments.
       parameters:
       - name: _limit
@@ -546,7 +555,8 @@ paths:
           description: ''
     post:
       operationId: allocations_attachments_create
-      description: Creates a new file attachment on an allocation request.
+      description: Creates a new file attachment on an allocation request. Write access
+        is restricted to staff users.
       summary: Create a file attachment.
       tags:
       - Allocations - Request Attachments
@@ -575,7 +585,8 @@ paths:
   /allocations/attachments/{id}/:
     get:
       operationId: allocations_attachments_retrieve
-      description: Returns a single file attachment by ID.
+      description: Returns a single file attachment by ID. Read access is granted
+        to staff users and team members.
       summary: Retrieve a file attachment.
       parameters:
       - in: path
@@ -598,7 +609,8 @@ paths:
           description: ''
     put:
       operationId: allocations_attachments_update
-      description: Replaces an existing file attachment with new values.
+      description: Replaces an existing file attachment with new values. Write access
+        is restricted to staff users.
       summary: Update a file attachment.
       parameters:
       - in: path
@@ -634,6 +646,7 @@ paths:
     patch:
       operationId: allocations_attachments_partial_update
       description: Partially updates an existing file attachment with new values.
+        Write access is restricted to staff users.
       summary: Partially update a file attachment.
       parameters:
       - in: path
@@ -667,7 +680,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_attachments_destroy
-      description: Deletes a file attachment by ID.
+      description: Deletes a file attachment by ID. Write access is restricted to
+        staff users.
       summary: Delete a file attachment.
       parameters:
       - in: path
@@ -687,7 +701,10 @@ paths:
   /allocations/clusters/:
     get:
       operationId: allocations_clusters_list
-      description: Returns a filtered list of HPC clusters.
+      description: Returns a list of HPC clusters. Non-staff users are only returned
+        clusters accessible based on each cluster's access mode (open, whitelist,
+        or blacklist) and the user's team memberships. Staff users are returned all
+        clusters.
       summary: List HPC clusters.
       parameters:
       - name: _limit
@@ -873,7 +890,8 @@ paths:
           description: ''
     post:
       operationId: allocations_clusters_create
-      description: Creates a new HPC cluster.
+      description: Creates a new HPC cluster. Write access is restricted to staff
+        users.
       summary: Create an HPC cluster.
       tags:
       - Allocations - Clusters
@@ -902,7 +920,8 @@ paths:
   /allocations/clusters/{id}/:
     get:
       operationId: allocations_clusters_retrieve
-      description: Returns a single HPC cluster by ID.
+      description: Returns a single HPC cluster by ID. Read access is granted to all
+        users regardless of the cluster access policy.
       summary: Retrieve an HPC cluster.
       parameters:
       - in: path
@@ -925,7 +944,8 @@ paths:
           description: ''
     put:
       operationId: allocations_clusters_update
-      description: Replaces an existing HPC cluster with new values.
+      description: Replaces an existing HPC cluster with new values. Write access
+        is restricted to staff users.
       summary: Update an HPC cluster.
       parameters:
       - in: path
@@ -960,7 +980,8 @@ paths:
           description: ''
     patch:
       operationId: allocations_clusters_partial_update
-      description: Partially updates an existing HPC cluster with new values.
+      description: Partially updates an existing HPC cluster with new values. Write
+        access is restricted to staff users.
       summary: Partially update an HPC cluster.
       parameters:
       - in: path
@@ -994,7 +1015,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_clusters_destroy
-      description: Deletes an HPC cluster by ID.
+      description: Deletes an HPC cluster by ID. Write access is restricted to staff
+        users.
       summary: Delete an HPC cluster.
       parameters:
       - in: path
@@ -1014,7 +1036,9 @@ paths:
   /allocations/comments/:
     get:
       operationId: allocations_comments_list
-      description: Returns a filtered list of comments made on allocation requests.
+      description: Returns a list of comments made on allocation requests. Non-staff
+        users are only returned public comments belonging to teams where they hold
+        membership. Staff users are returned all comments, including private comments.
       summary: List comments.
       parameters:
       - name: _limit
@@ -1239,7 +1263,9 @@ paths:
           description: ''
     post:
       operationId: allocations_comments_create
-      description: Creates a new comment on an allocation request.
+      description: Creates a new comment on an allocation request. Write access is
+        granted to staff users and team members. Only staff users may create comments
+        marked as private.
       summary: Create a comment.
       tags:
       - Allocations - Request Comments
@@ -1268,7 +1294,9 @@ paths:
   /allocations/comments/{id}/:
     get:
       operationId: allocations_comments_retrieve
-      description: Returns a single comment by ID.
+      description: Returns a single comment by ID. Read access is granted to staff
+        users and team members for public comments. Private comments are only accessible
+        to staff users.
       summary: Retrieve a comment.
       parameters:
       - in: path
@@ -1291,7 +1319,9 @@ paths:
           description: ''
     put:
       operationId: allocations_comments_update
-      description: Replaces an existing comment with new values.
+      description: Replaces an existing comment with new values. Write access is granted
+        to staff users and team members for public comments. Only staff users may
+        modify private comments.
       summary: Update a comment.
       parameters:
       - in: path
@@ -1326,7 +1356,9 @@ paths:
           description: ''
     patch:
       operationId: allocations_comments_partial_update
-      description: Partially updates an existing comment with new values.
+      description: Partially updates an existing comment with new values. Write access
+        is granted to staff users and team members for public comments. Only staff
+        users may modify private comments.
       summary: Partially update a comment.
       parameters:
       - in: path
@@ -1360,7 +1392,9 @@ paths:
           description: ''
     delete:
       operationId: allocations_comments_destroy
-      description: Deletes a comment by ID.
+      description: Deletes a comment by ID. Write access is granted to staff users
+        and team members for public comments. Only staff users may delete private
+        comments.
       summary: Delete a comment.
       parameters:
       - in: path
@@ -1380,7 +1414,9 @@ paths:
   /allocations/jobs/:
     get:
       operationId: allocations_jobs_list
-      description: Returns a filtered list of Slurm jobs.
+      description: Returns a list of Slurm jobs. Non-staff users are only returned
+        jobs belonging to teams where they hold membership. Staff users are returned
+        all jobs.
       summary: List user Slurm jobs.
       parameters:
       - name: _limit
@@ -2244,7 +2280,8 @@ paths:
   /allocations/jobs/{id}/:
     get:
       operationId: allocations_jobs_retrieve
-      description: Returns a single Slurm job by Keystone ID.
+      description: Returns a single Slurm job by Keystone ID. Read access is granted
+        to staff users and team members.
       summary: Retrieve a user Slurm job.
       parameters:
       - in: path
@@ -2286,7 +2323,9 @@ paths:
   /allocations/requests/:
     get:
       operationId: allocations_requests_list
-      description: Returns a filtered list of allocation requests.
+      description: Returns a list of allocation requests. Non-staff users are only
+        returned requests belonging to teams where they hold membership. Staff users
+        are returned all requests.
       summary: List allocation requests.
       parameters:
       - name: _limit
@@ -2680,7 +2719,8 @@ paths:
           description: ''
     post:
       operationId: allocations_requests_create
-      description: Creates a new allocation request.
+      description: Creates a new allocation request. Write access is granted to staff
+        users and team owners/admins.
       summary: Create an allocation request.
       tags:
       - Allocations - Requests
@@ -2709,7 +2749,8 @@ paths:
   /allocations/requests/{id}/:
     get:
       operationId: allocations_requests_retrieve
-      description: Returns a single allocation request by ID.
+      description: Returns a single allocation request by ID. Read access is granted
+        to staff users and team members.
       summary: Retrieve an allocation request.
       parameters:
       - in: path
@@ -2732,7 +2773,8 @@ paths:
           description: ''
     put:
       operationId: allocations_requests_update
-      description: Replaces an existing allocation request with new values.
+      description: Replaces an existing allocation request with new values. Write
+        access is restricted to staff users.
       summary: Update an allocation request.
       parameters:
       - in: path
@@ -2768,6 +2810,7 @@ paths:
     patch:
       operationId: allocations_requests_partial_update
       description: Partially updates an existing allocation request with new values.
+        Write access is restricted to staff users.
       summary: Partially update an allocation request.
       parameters:
       - in: path
@@ -2801,7 +2844,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_requests_destroy
-      description: Deletes a single allocation request by ID.
+      description: Deletes a single allocation request by ID. Write access is restricted
+        to staff users.
       summary: Delete an allocation request.
       parameters:
       - in: path
@@ -2839,7 +2883,9 @@ paths:
   /allocations/reviews/:
     get:
       operationId: allocations_reviews_list
-      description: Returns a filtered list of allocation reviews.
+      description: Returns a list of allocation reviews. Non-staff users are only
+        returned reviews belonging to teams where they hold membership. Staff users
+        are returned all reviews.
       summary: List allocation reviews.
       parameters:
       - name: _limit
@@ -3055,7 +3101,9 @@ paths:
           description: ''
     post:
       operationId: allocations_reviews_create
-      description: Creates a new allocation review.
+      description: Creates a new allocation review. Write access is restricted to
+        staff users. The `reviewer` field defaults to the authenticated user if not
+        specified.
       summary: Create an allocation review.
       tags:
       - Allocations - Reviews
@@ -3084,7 +3132,8 @@ paths:
   /allocations/reviews/{id}/:
     get:
       operationId: allocations_reviews_retrieve
-      description: Returns a single allocation review by ID.
+      description: Returns a single allocation review by ID. Read access is granted
+        to staff users and team members.
       summary: Retrieve an allocation review.
       parameters:
       - in: path
@@ -3107,7 +3156,8 @@ paths:
           description: ''
     put:
       operationId: allocations_reviews_update
-      description: Replaces an existing allocation review with new values.
+      description: Replaces an existing allocation review with new values. Write access
+        is restricted to staff users.
       summary: Update an allocation review.
       parameters:
       - in: path
@@ -3143,6 +3193,7 @@ paths:
     patch:
       operationId: allocations_reviews_partial_update
       description: Partially updates an existing allocation review with new values.
+        Write access is restricted to staff users.
       summary: Partially update an allocation review.
       parameters:
       - in: path
@@ -3176,7 +3227,8 @@ paths:
           description: ''
     delete:
       operationId: allocations_reviews_destroy
-      description: Deletes a single allocation review by ID.
+      description: Deletes a single allocation review by ID. Write access is restricted
+        to staff users.
       summary: Delete an allocation review.
       parameters:
       - in: path
@@ -3237,9 +3289,9 @@ paths:
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
-      description: Returns metadata for the currently authenticated user, including
+      description: 'Returns metadata for the currently authenticated user, including
         personal data and team memberships. This endpoint can also be used to verify
-        general authentication status.
+        general authentication status. '
       summary: Retrieve metadata for the authenticated user.
       tags:
       - Authentication
@@ -3256,9 +3308,9 @@ paths:
   /health/:
     get:
       operationId: health_retrieve
-      description: Returns a 200 status if all application health checks pass and
+      description: 'Returns a 200 status if all application health checks pass and
         a 500 status otherwise. Health checks are performed on demand and cached for
-        60 seconds.
+        60 seconds. '
       summary: Retrieve the current application health status.
       tags:
       - Admin - Health Checks
@@ -3270,9 +3322,9 @@ paths:
   /health/json/:
     get:
       operationId: health_json_retrieve
-      description: Returns individual health check results in JSON format. Health
+      description: 'Returns individual health check results in JSON format. Health
         checks are performed on demand and cached for 60 seconds. A `200` status code
-        is returned regardless of whether individual health checks are passing.
+        is returned regardless of whether individual health checks are passing. '
       summary: Retrieve health check results in JSON format.
       tags:
       - Admin - Health Checks
@@ -3286,9 +3338,9 @@ paths:
   /health/prom/:
     get:
       operationId: health_prom_retrieve
-      description: Returns individual health check results in Prometheus format. Health
-        checks are performed on demand and cached for 60 seconds. A `200` status code
-        is returned regardless of whether individual health checks are passing.
+      description: 'Returns individual health check results in Prometheus format.
+        Health checks are performed on demand and cached for 60 seconds. A `200` status
+        code is returned regardless of whether individual health checks are passing. '
       summary: Retrieve health check results in Prometheus format.
       tags:
       - Admin - Health Checks
@@ -3303,8 +3355,8 @@ paths:
     get:
       operationId: logs_audit_list
       description: Returns a list of audit logs. Audit logs track changes to database
-        records and are used for compliance and security auditing. Access to log records
-        is restricted to staff users.
+        records and are used for compliance and security auditing. Access is restricted
+        to staff users.
       summary: List audit logs.
       parameters:
       - name: _limit
@@ -3757,7 +3809,7 @@ paths:
       operationId: logs_audit_retrieve
       description: Returns a single audit log by its ID. Audit logs track changes
         to database records and are used for compliance and security auditing. Access
-        to log records is restricted to staff users.
+        is restricted to staff users.
       summary: Retrieve a single audit log.
       parameters:
       - in: path
@@ -3782,8 +3834,8 @@ paths:
     get:
       operationId: logs_requests_list
       description: Returns a list of HTTP request logs. Request logs track incoming
-        API requests and their resulting HTTP responses. Access to log records is
-        restricted to staff users.
+        API requests and their resulting HTTP responses. Access is restricted to staff
+        users.
       summary: List HTTP request logs.
       parameters:
       - name: _limit
@@ -4096,8 +4148,8 @@ paths:
     get:
       operationId: logs_requests_retrieve
       description: Returns a single HTTP request log by its ID. Request logs track
-        incoming API requests and their resulting HTTP responses. Access to log records
-        is restricted to staff users.
+        incoming API requests and their resulting HTTP responses. Access is restricted
+        to staff users.
       summary: Retrieve a single HTTP request log.
       parameters:
       - in: path
@@ -4122,8 +4174,7 @@ paths:
     get:
       operationId: logs_tasks_list
       description: Returns a list of task logs. Task logs are collected from the Celery
-        backend to track background task outcomes. Access to log records is restricted
-        to staff users.
+        backend to track background task outcomes. Access is restricted to staff users.
       summary: List background task results.
       parameters:
       - name: _limit
@@ -4760,8 +4811,8 @@ paths:
     get:
       operationId: logs_tasks_retrieve
       description: Returns a single task log by its ID. Task logs are collected from
-        the Celery backend to track background task outcomes. Access to log records
-        is restricted to staff users.
+        the Celery backend to track background task outcomes. Access is restricted
+        to staff users.
       summary: Retrieve a single background task result.
       parameters:
       - in: path
@@ -4803,7 +4854,8 @@ paths:
   /notifications/notifications/:
     get:
       operationId: notifications_notifications_list
-      description: Returns a filtered list of user notifications.
+      description: Returns a list of user notifications. Non-staff users are only
+        returned their own notifications. Staff users are returned all notifications.
       summary: List notifications.
       parameters:
       - name: _limit
@@ -5107,7 +5159,8 @@ paths:
   /notifications/notifications/{id}/:
     get:
       operationId: notifications_notifications_retrieve
-      description: Returns a single notification by its ID.
+      description: Returns a single notification by its ID. Read and patch access
+        is limited to the notification owner.
       summary: Retrieve a notification.
       parameters:
       - in: path
@@ -5130,7 +5183,8 @@ paths:
           description: ''
     patch:
       operationId: notifications_notifications_partial_update
-      description: Updates the `read` status of a notification.
+      description: Updates the `read` status of a notification. Patch access is limited
+        to the notification owner.
       summary: Partially update a notification.
       parameters:
       - in: path
@@ -5165,7 +5219,8 @@ paths:
   /notifications/preferences/:
     get:
       operationId: notifications_preferences_list
-      description: Returns a filtered list of notification preferences.
+      description: Returns a list of notification preferences. Non-staff users are
+        only returned their own preferences. Staff users are returned all preferences.
       summary: List notification preferences.
       parameters:
       - name: _limit
@@ -5257,7 +5312,8 @@ paths:
     post:
       operationId: notifications_preferences_create
       description: Creates a custom notification preference in lieu of application
-        defaults.
+        defaults. The `user` field defaults to the authenticated user if not specified.
+        Access is granted to staff users and the preference owner.
       summary: Create a custom notification preference.
       tags:
       - Notifications - Preferences
@@ -5285,7 +5341,8 @@ paths:
   /notifications/preferences/{id}/:
     get:
       operationId: notifications_preferences_retrieve
-      description: Returns a single notification preference by its ID.
+      description: Returns a single notification preference by its ID. Access is granted
+        to staff users and the preference owner.
       summary: Retrieve a notification preference.
       parameters:
       - in: path
@@ -5308,7 +5365,8 @@ paths:
           description: ''
     put:
       operationId: notifications_preferences_update
-      description: Replaces an existing notification preference with new values.
+      description: Replaces an existing notification preference with new values. Access
+        is granted to staff users and the preference owner.
       summary: Update a notification preference.
       parameters:
       - in: path
@@ -5343,7 +5401,7 @@ paths:
     patch:
       operationId: notifications_preferences_partial_update
       description: Partially updates an existing notification preference with new
-        values.
+        values. Access is granted to staff users and the preference owner.
       summary: Partially update a notification preference.
       parameters:
       - in: path
@@ -5378,7 +5436,7 @@ paths:
     delete:
       operationId: notifications_preferences_destroy
       description: Deletes a single notification preference by ID, restoring default
-        settings.
+        settings. Access is granted to staff users and the preference owner.
       summary: Delete a notification preference.
       parameters:
       - in: path
@@ -5398,7 +5456,9 @@ paths:
   /research/grants/:
     get:
       operationId: research_grants_list
-      description: Returns a filtered list of funding grants.
+      description: Returns a list of funding grants. Non-staff users are only returned
+        grants belonging to teams where they hold membership. Staff users are returned
+        all grants.
       summary: List funding grants.
       parameters:
       - name: _limit
@@ -5756,7 +5816,8 @@ paths:
           description: ''
     post:
       operationId: research_grants_create
-      description: Create a new funding grant.
+      description: Creates a new funding grant. Write access is granted to staff users
+        and team members.
       summary: Create a funding grant.
       tags:
       - Research - Grants
@@ -5785,7 +5846,8 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Returns a single funding grant by its ID.
+      description: Returns a single funding grant by its ID. Read and write access
+        is granted to staff users and team members.
       summary: Retrieve a funding grant.
       parameters:
       - in: path
@@ -5808,7 +5870,8 @@ paths:
           description: ''
     put:
       operationId: research_grants_update
-      description: Replaces an existing funding grant with new values.
+      description: Replaces an existing funding grant with new values. Write access
+        is granted to staff users and team members.
       summary: Update a funding grant.
       parameters:
       - in: path
@@ -5843,7 +5906,8 @@ paths:
           description: ''
     patch:
       operationId: research_grants_partial_update
-      description: Partially updates an existing funding grant with new values.
+      description: Partially updates an existing funding grant with new values. Write
+        access is granted to staff users and team members.
       summary: Partially update a funding grant.
       parameters:
       - in: path
@@ -5877,7 +5941,8 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Deletes a single funding grant by its ID.
+      description: Deletes a single funding grant by its ID. Write access is granted
+        to staff users and team members.
       summary: Delete a funding grant.
       parameters:
       - in: path
@@ -5897,7 +5962,9 @@ paths:
   /research/publications/:
     get:
       operationId: research_publications_list
-      description: Returns a filtered list of publications.
+      description: Returns a list of publications. Non-staff users are only returned
+        publications belonging to teams where they hold membership. Staff users are
+        returned all publications.
       summary: List publications.
       parameters:
       - name: _limit
@@ -6280,7 +6347,8 @@ paths:
           description: ''
     post:
       operationId: research_publications_create
-      description: Create a new publication.
+      description: Creates a new publication. Write access is granted to staff users
+        and team members.
       summary: Create a publication.
       tags:
       - Research - Publications
@@ -6309,7 +6377,8 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Returns a single publication by its ID.
+      description: Returns a single publication by its ID. Read and write access is
+        granted to staff users and team members.
       summary: Retrieve a publication.
       parameters:
       - in: path
@@ -6332,7 +6401,8 @@ paths:
           description: ''
     put:
       operationId: research_publications_update
-      description: Replaces an existing publication with new values.
+      description: Replaces an existing publication with new values. Write access
+        is granted to staff users and team members.
       summary: Update a publication.
       parameters:
       - in: path
@@ -6367,7 +6437,8 @@ paths:
           description: ''
     patch:
       operationId: research_publications_partial_update
-      description: Partially updates an existing publication with new values.
+      description: Partially updates an existing publication with new values. Write
+        access is granted to staff users and team members.
       summary: Partially update a publication.
       parameters:
       - in: path
@@ -6401,7 +6472,8 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Deletes a single publication by its ID.
+      description: Deletes a single publication by its ID. Write access is granted
+        to staff users and team members.
       summary: Delete a publication.
       parameters:
       - in: path
@@ -6421,8 +6493,9 @@ paths:
   /stats/grants/:
     get:
       operationId: stats_grants_retrieve
-      description: Returns cumulative grant statistics. Staff users receive statistics
-        for all teams. Non-staff users are limited to teams where they hold membership.
+      description: Returns cumulative grant statistics. Staff users are returned statistics
+        across all teams. Non-staff users are returned statistics limited to teams
+        where they hold membership.
       summary: Retrieve aggregated grant statistics.
       parameters:
       - name: _order
@@ -6770,8 +6843,8 @@ paths:
     get:
       operationId: stats_notifications_retrieve
       description: Returns cumulative statistics for user notifications. Staff users
-        receive statistics for all users. Non-staff users are limited to their own
-        notifications.
+        are returned statistics across all users. Non-staff users are returned statistics
+        limited to their own notifications.
       summary: Retrieve aggregated user notification statistics.
       parameters:
       - name: _order
@@ -7063,9 +7136,9 @@ paths:
   /stats/publications/:
     get:
       operationId: stats_publications_retrieve
-      description: Returns cumulative publication statistics. Staff users receive
-        statistics for all teams. Non-staff users are limited to teams where they
-        hold membership.
+      description: Returns cumulative publication statistics. Staff users are returned
+        statistics across all teams. Non-staff users are returned statistics limited
+        to teams where they hold membership.
       summary: Retrieve aggregated publication statistics.
       parameters:
       - name: _order
@@ -7438,8 +7511,8 @@ paths:
     get:
       operationId: stats_requests_retrieve
       description: Returns cumulative statistics for allocation requests and awards.
-        Staff users receive statistics for all teams. Non-staff users are limited
-        to teams where they hold membership.
+        Staff users are returned statistics across all teams. Non-staff users are
+        returned statistics limited to teams where they hold membership.
       summary: Retrieve aggregated allocation request statistics.
       parameters:
       - name: _order
@@ -7840,7 +7913,7 @@ paths:
   /users/memberships/:
     get:
       operationId: users_memberships_list
-      description: Returns a filtered list of team memberships.
+      description: Returns a list of all team memberships.
       summary: List team memberships.
       parameters:
       - name: _limit
@@ -7985,7 +8058,8 @@ paths:
           description: ''
     post:
       operationId: users_memberships_create
-      description: Creates a new team membership.
+      description: Creates a new team membership. Write access is granted to staff
+        users and team owners/admins.
       summary: Create a team membership.
       tags:
       - Users - Team Membership
@@ -8014,7 +8088,7 @@ paths:
   /users/memberships/{id}/:
     get:
       operationId: users_memberships_retrieve
-      description: Returns a single team membership ID.
+      description: Returns a single team membership by ID.
       summary: Retrieve a team membership.
       parameters:
       - in: path
@@ -8037,7 +8111,8 @@ paths:
           description: ''
     put:
       operationId: users_memberships_update
-      description: Replaces an existing team membership with new values.
+      description: Replaces an existing team membership with new values. Write access
+        is granted to staff users and team owners/admins.
       summary: Update a team membership.
       parameters:
       - in: path
@@ -8073,6 +8148,7 @@ paths:
     patch:
       operationId: users_memberships_partial_update
       description: Partially updates an existing team membership with new values.
+        Write access is granted to staff users and team owners/admins.
       summary: Partially update a team membership.
       parameters:
       - in: path
@@ -8106,7 +8182,8 @@ paths:
           description: ''
     delete:
       operationId: users_memberships_destroy
-      description: Deletes a team membership by ID.
+      description: Deletes a team membership by ID. Write access is granted to staff
+        users, team owners/admins, and users deleting their own membership.
       summary: Delete a team membership.
       parameters:
       - in: path
@@ -8126,7 +8203,8 @@ paths:
   /users/teams/:
     get:
       operationId: users_teams_list
-      description: Returns a filtered list of user teams.
+      description: Returns a list of teams. Non-staff users are only returned teams
+        they are a member of. Staff users are returned all teams.
       summary: List teams.
       parameters:
       - name: _limit
@@ -8275,7 +8353,8 @@ paths:
           description: ''
     post:
       operationId: users_teams_create
-      description: Creates a new team.
+      description: Creates a new team. Write access is granted to staff users and
+        team owners/admins.
       summary: Create a team.
       tags:
       - Users - Teams
@@ -8327,7 +8406,8 @@ paths:
           description: ''
     put:
       operationId: users_teams_update
-      description: Replaces an existing team with new values.
+      description: Replaces an existing team with new values. Write access is granted
+        to staff users and team owners/admins.
       summary: Update a team.
       parameters:
       - in: path
@@ -8362,7 +8442,8 @@ paths:
           description: ''
     patch:
       operationId: users_teams_partial_update
-      description: Partially updates an existing team with new values.
+      description: Partially updates an existing team with new values. Write access
+        is granted to staff users and team owners/admins.
       summary: Partially update a team.
       parameters:
       - in: path
@@ -8396,7 +8477,8 @@ paths:
           description: ''
     delete:
       operationId: users_teams_destroy
-      description: Deletes a team by ID.
+      description: Deletes a team by ID. Write access is granted to staff users and
+        team owners/admins.
       summary: Delete a team.
       parameters:
       - in: path
@@ -8416,7 +8498,7 @@ paths:
   /users/users/:
     get:
       operationId: users_users_list
-      description: Returns a filtered list of user accounts.
+      description: Returns a list of all user accounts.
       summary: List user accounts.
       parameters:
       - name: _limit
@@ -8903,7 +8985,7 @@ paths:
           description: ''
     post:
       operationId: users_users_create
-      description: Creates a new user account.
+      description: Creates a new user account. Only staff users may create new accounts.
       summary: Create a user account.
       tags:
       - Users - Accounts
@@ -8932,7 +9014,9 @@ paths:
   /users/users/{id}/:
     get:
       operationId: users_users_retrieve
-      description: Returns a single user account by ID.
+      description: Returns a single user account by ID. Staff users are returned all
+        fields, including privileged values. Non-staff users are only returned restricted
+        fields.
       summary: Retrieve a user account.
       parameters:
       - in: path
@@ -8955,7 +9039,9 @@ paths:
           description: ''
     put:
       operationId: users_users_update
-      description: Replaces an existing user account with new values.
+      description: Replaces an existing user account with new values. Write access
+        is granted to staff users and the account owner. Non-staff users cannot modify
+        privileged fields.
       summary: Update a user account.
       parameters:
       - in: path
@@ -8990,7 +9076,9 @@ paths:
           description: ''
     patch:
       operationId: users_users_partial_update
-      description: Partially updates an existing user account with new values.
+      description: Partially updates an existing user account with new values. Write
+        access is granted to staff users and the account owner. Non-staff users cannot
+        modify privileged fields.
       summary: Partially update a user account.
       parameters:
       - in: path
@@ -9024,7 +9112,8 @@ paths:
           description: ''
     delete:
       operationId: users_users_destroy
-      description: Deletes a user account by ID.
+      description: Deletes a user account by ID. Write access is granted to staff
+        users and the account owner.
       summary: Delete a user.
       parameters:
       - in: path

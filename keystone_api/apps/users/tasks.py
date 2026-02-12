@@ -55,9 +55,6 @@ def fetch_ldap_data(attempts: int = 3, delay: float = 2.0) -> list:
 
     Returns:
         List of LDAP search results.
-
-    Raises:
-        RuntimeError: If the `attempts` or `delay` arguments are less than one or zero respectively.
     """
 
     if attempts < 1:

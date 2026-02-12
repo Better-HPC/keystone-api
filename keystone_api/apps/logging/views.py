@@ -22,22 +22,22 @@ __all__ = [
 
 @extend_schema_view(
     list=extend_schema(
+        tags=["Admin - Logging"],
         summary="List audit logs.",
         description=(
             "Returns a list of audit logs. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
-            "Access to log records is restricted to staff users."
+            "Access is restricted to staff users."
         ),
-        tags=["Admin - Logging"],
     ),
     retrieve=extend_schema(
+        tags=["Admin - Logging"],
         summary="Retrieve a single audit log.",
         description=(
             "Returns a single audit log by its ID. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
-            "Access to log records is restricted to staff users."
+            "Access is restricted to staff users."
         ),
-        tags=["Admin - Logging"],
     )
 )
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -51,22 +51,22 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
+        tags=["Admin - Logging"],
         summary="List HTTP request logs.",
         description=(
             "Returns a list of HTTP request logs. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
-            "Access to log records is restricted to staff users."
+            "Access is restricted to staff users."
         ),
-        tags=["Admin - Logging"],
     ),
     retrieve=extend_schema(
+        tags=["Admin - Logging"],
         summary="Retrieve a single HTTP request log.",
         description=(
             "Returns a single HTTP request log by its ID. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
-            "Access to log records is restricted to staff users."
+            "Access is restricted to staff users."
         ),
-        tags=["Admin - Logging"],
     )
 )
 class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -80,22 +80,22 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
+        tags=["Admin - Logging"],
         summary="List background task results.",
         description=(
             "Returns a list of task logs. "
             "Task logs are collected from the Celery backend to track background task outcomes. "
-            "Access to log records is restricted to staff users."
+            "Access is restricted to staff users."
         ),
-        tags=["Admin - Logging"],
     ),
     retrieve=extend_schema(
+        tags=["Admin - Logging"],
         summary="Retrieve a single background task result.",
         description=(
             "Returns a single task log by its ID. "
             "Task logs are collected from the Celery backend to track background task outcomes. "
-            "Access to log records is restricted to staff users."
+            "Access is restricted to staff users."
         ),
-        tags=["Admin - Logging"],
     )
 )
 class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):

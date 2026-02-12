@@ -53,13 +53,13 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Admin - Health Checks"],
         auth=[],
         summary="Retrieve the current application health status.",
         description=(
             "Returns a 200 status if all application health checks pass and a 500 status otherwise. "
-            "Health checks are performed on demand and cached for 60 seconds."
+            "Health checks are performed on demand and cached for 60 seconds. "
         ),
-        tags=["Admin - Health Checks"],
         responses={
             '200': inline_serializer('health_ok', fields=dict()),
             '500': inline_serializer('health_error', fields=dict()),
@@ -92,14 +92,14 @@ class HealthCheckView(BaseHealthCheckView):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Admin - Health Checks"],
         auth=[],
         summary="Retrieve health check results in JSON format.",
         description=(
             "Returns individual health check results in JSON format. "
             "Health checks are performed on demand and cached for 60 seconds. "
-            "A `200` status code is returned regardless of whether individual health checks are passing."
+            "A `200` status code is returned regardless of whether individual health checks are passing. "
         ),
-        tags=["Admin - Health Checks"],
         responses={
             '200': inline_serializer('health_json_ok', fields={
                 'healthCheckName': inline_serializer(
@@ -143,14 +143,14 @@ class HealthCheckJsonView(BaseHealthCheckView):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Admin - Health Checks"],
         auth=[],
         summary="Retrieve health check results in Prometheus format.",
         description=(
             "Returns individual health check results in Prometheus format. "
             "Health checks are performed on demand and cached for 60 seconds. "
-            "A `200` status code is returned regardless of whether individual health checks are passing."
+            "A `200` status code is returned regardless of whether individual health checks are passing. "
         ),
-        tags=["Admin - Health Checks"],
         responses={
             (200, 'text/plain'): OpenApiTypes.STR
         },

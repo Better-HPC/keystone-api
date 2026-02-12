@@ -29,9 +29,9 @@ __all__ = [
 
 @extend_schema_view(  # pragma: nocover
     get=extend_schema(
+        tags=["Users - Team Membership"],
         summary="Retrieve valid team role options.",
         description="Returns valid choices for the team `role` field mapped to human-readable labels.",
-        tags=["Users - Team Membership"],
         responses=inline_serializer(
             name="MembershipRoleChoices",
             fields={k: serializers.CharField(default=v) for k, v in Membership.Role.choices}
@@ -52,34 +52,47 @@ class MembershipRoleChoicesView(APIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List team memberships.",
-        description="Returns a filtered list of team memberships.",
         tags=["Users - Team Membership"],
+        summary="List team memberships.",
+        description="Returns a list of all team memberships.",
     ),
     retrieve=extend_schema(
-        summary="Retrieve a team membership.",
-        description="Returns a single team membership ID.",
         tags=["Users - Team Membership"],
+        summary="Retrieve a team membership.",
+        description="Returns a single team membership by ID.",
     ),
     create=extend_schema(
-        summary="Create a team membership.",
-        description="Creates a new team membership.",
         tags=["Users - Team Membership"],
+        summary="Create a team membership.",
+        description=(
+            "Creates a new team membership. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     update=extend_schema(
-        summary="Update a team membership.",
-        description="Replaces an existing team membership with new values.",
         tags=["Users - Team Membership"],
+        summary="Update a team membership.",
+        description=(
+            "Replaces an existing team membership with new values. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a team membership.",
-        description="Partially updates an existing team membership with new values.",
         tags=["Users - Team Membership"],
+        summary="Partially update a team membership.",
+        description=(
+            "Partially updates an existing team membership with new values. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a team membership.",
-        description="Deletes a team membership by ID.",
         tags=["Users - Team Membership"],
+        summary="Delete a team membership.",
+        description=(
+            "Deletes a team membership by ID. "
+            "Write access is granted to staff users, team owners/admins, "
+            "and users deleting their own membership."
+        ),
     )
 )
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -98,34 +111,49 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List teams.",
-        description="Returns a filtered list of user teams.",
         tags=["Users - Teams"],
+        summary="List teams.",
+        description=(
+            "Returns a list of teams. "
+            "Non-staff users are only returned teams they are a member of. Staff users are returned all teams."
+        ),
     ),
     retrieve=extend_schema(
+        tags=["Users - Teams"],
         summary="Retrieve a team.",
         description="Returns a single team by ID.",
-        tags=["Users - Teams"],
     ),
     create=extend_schema(
-        summary="Create a team.",
-        description="Creates a new team.",
         tags=["Users - Teams"],
+        summary="Create a team.",
+        description=(
+            "Creates a new team. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     update=extend_schema(
-        summary="Update a team.",
-        description="Replaces an existing team with new values.",
         tags=["Users - Teams"],
+        summary="Update a team.",
+        description=(
+            "Replaces an existing team with new values. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a team.",
-        description="Partially updates an existing team with new values.",
         tags=["Users - Teams"],
+        summary="Partially update a team.",
+        description=(
+            "Partially updates an existing team with new values. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a team.",
-        description="Deletes a team by ID.",
         tags=["Users - Teams"],
+        summary="Delete a team.",
+        description=(
+            "Deletes a team by ID. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
 )
 class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -147,34 +175,52 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List user accounts.",
-        description="Returns a filtered list of user accounts.",
         tags=["Users - Accounts"],
+        summary="List user accounts.",
+        description="Returns a list of all user accounts.",
     ),
     retrieve=extend_schema(
-        summary="Retrieve a user account.",
-        description="Returns a single user account by ID.",
         tags=["Users - Accounts"],
+        summary="Retrieve a user account.",
+        description=(
+            "Returns a single user account by ID. "
+            "Staff users are returned all fields, including privileged values. "
+            "Non-staff users are only returned restricted fields."
+        ),
     ),
     create=extend_schema(
-        summary="Create a user account.",
-        description="Creates a new user account.",
         tags=["Users - Accounts"],
+        summary="Create a user account.",
+        description=(
+            "Creates a new user account. "
+            "Only staff users may create new accounts."
+        ),
     ),
     update=extend_schema(
-        summary="Update a user account.",
-        description="Replaces an existing user account with new values.",
         tags=["Users - Accounts"],
+        summary="Update a user account.",
+        description=(
+            "Replaces an existing user account with new values. "
+            "Write access is granted to staff users and the account owner. "
+            "Non-staff users cannot modify privileged fields."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a user account.",
-        description="Partially updates an existing user account with new values.",
         tags=["Users - Accounts"],
+        summary="Partially update a user account.",
+        description=(
+            "Partially updates an existing user account with new values. "
+            "Write access is granted to staff users and the account owner. "
+            "Non-staff users cannot modify privileged fields."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a user.",
-        description="Deletes a user account by ID.",
         tags=["Users - Accounts"],
+        summary="Delete a user.",
+        description=(
+            "Deletes a user account by ID. "
+            "Write access is granted to staff users and the account owner."
+        ),
     )
 )
 class UserViewSet(viewsets.ModelViewSet):
