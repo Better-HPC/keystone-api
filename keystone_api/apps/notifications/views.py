@@ -29,10 +29,7 @@ __all__ = [
     get=extend_schema(
         tags=["Notifications - Notifications"],
         summary="Retrieve valid notification types.",
-        description=(
-            "Returns valid choices for the notification `type` field mapped to human-readable labels. "
-            "Requires authentication."
-        ),
+        description="Returns valid choices for the notification `type` field mapped to human-readable labels.",
         responses=inline_serializer(
             name="NotificationTypeChoices",
             fields={k: serializers.CharField(default=v) for k, v in Notification.NotificationType.choices}
@@ -57,8 +54,7 @@ class NotificationTypeChoicesView(GenericAPIView):
         summary="List notifications.",
         description=(
             "Returns a list of user notifications. "
-            "Requires authentication. "
-            "Non-staff users are returned only their own notifications. "
+            "Non-staff users are only returned their own notifications. "
             "Staff users are returned all notifications."
         ),
     ),
@@ -67,7 +63,6 @@ class NotificationTypeChoicesView(GenericAPIView):
         summary="Retrieve a notification.",
         description=(
             "Returns a single notification by its ID. "
-            "Requires authentication. "
             "Read and patch access is limited to the notification owner."
         ),
     ),
@@ -76,7 +71,6 @@ class NotificationTypeChoicesView(GenericAPIView):
         summary="Partially update a notification.",
         description=(
             "Updates the `read` status of a notification. "
-            "Requires authentication. "
             "Patch access is limited to the notification owner."
         ),
     ),
@@ -97,8 +91,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="List notification preferences.",
         description=(
             "Returns a list of notification preferences. "
-            "Requires authentication. "
-            "Non-staff users are returned only their own preferences. "
+            "Non-staff users are only returned their own preferences. "
             "Staff users are returned all preferences."
         ),
     ),
@@ -107,7 +100,6 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve a notification preference.",
         description=(
             "Returns a single notification preference by its ID. "
-            "Requires authentication. "
             "Access is granted to staff users and the preference owner."
         ),
     ),
@@ -116,7 +108,6 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Create a custom notification preference.",
         description=(
             "Creates a custom notification preference in lieu of application defaults. "
-            "Requires authentication. "
             "The `user` field defaults to the authenticated user if not specified. "
             "Access is granted to staff users and the preference owner."
         ),
@@ -126,7 +117,6 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Update a notification preference.",
         description=(
             "Replaces an existing notification preference with new values. "
-            "Requires authentication. "
             "Access is granted to staff users and the preference owner."
         ),
     ),
@@ -135,7 +125,6 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Partially update a notification preference.",
         description=(
             "Partially updates an existing notification preference with new values. "
-            "Requires authentication. "
             "Access is granted to staff users and the preference owner."
         ),
     ),
@@ -144,7 +133,6 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         summary="Delete a notification preference.",
         description=(
             "Deletes a single notification preference by ID, restoring default settings. "
-            "Requires authentication. "
             "Access is granted to staff users and the preference owner."
         ),
     ),

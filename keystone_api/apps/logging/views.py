@@ -27,7 +27,7 @@ __all__ = [
         description=(
             "Returns a list of audit logs. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
-            "Requires authentication. Access is restricted to staff users."
+            "Access is restricted to staff users."
         ),
     ),
     retrieve=extend_schema(
@@ -36,7 +36,7 @@ __all__ = [
         description=(
             "Returns a single audit log by its ID. "
             "Audit logs track changes to database records and are used for compliance and security auditing. "
-            "Requires authentication. Access is restricted to staff users."
+            "Access is restricted to staff users."
         ),
     )
 )
@@ -56,7 +56,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a list of HTTP request logs. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
-            "Requires authentication. Access is restricted to staff users."
+            "Access is restricted to staff users."
         ),
     ),
     retrieve=extend_schema(
@@ -65,7 +65,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a single HTTP request log by its ID. "
             "Request logs track incoming API requests and their resulting HTTP responses. "
-            "Requires authentication. Access is restricted to staff users."
+            "Access is restricted to staff users."
         ),
     )
 )
@@ -85,7 +85,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a list of task logs. "
             "Task logs are collected from the Celery backend to track background task outcomes. "
-            "Requires authentication. Access is restricted to staff users."
+            "Access is restricted to staff users."
         ),
     ),
     retrieve=extend_schema(
@@ -94,7 +94,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
         description=(
             "Returns a single task log by its ID. "
             "Task logs are collected from the Celery backend to track background task outcomes. "
-            "Requires authentication. Access is restricted to staff users."
+            "Access is restricted to staff users."
         ),
     )
 )

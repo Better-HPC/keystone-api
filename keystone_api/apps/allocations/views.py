@@ -37,10 +37,7 @@ __all__ = [
     get=extend_schema(
         tags=["Allocations - Requests"],
         summary="Retrieve valid request status options.",
-        description=(
-            "Returns valid choices for the request `status` field mapped to human-readable labels. "
-            "Requires authentication."
-        ),
+        description="Returns valid choices for the request `status` field mapped to human-readable labels.",
         responses=inline_serializer(
             name="AllocationRequestStatusChoices",
             fields={k: serializers.CharField(default=v) for k, v in AllocationRequest.StatusChoices.choices}
@@ -65,8 +62,7 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
         summary="List allocation requests.",
         description=(
             "Returns a list of allocation requests. "
-            "Requires authentication. "
-            "Non-staff users are returned only requests belonging to teams where they hold membership. "
+            "Non-staff users are only returned requests belonging to teams where they hold membership. "
             "Staff users are returned all requests."
         ),
     ),
@@ -75,7 +71,6 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
         summary="Retrieve an allocation request.",
         description=(
             "Returns a single allocation request by ID. "
-            "Requires authentication. "
             "Read access is granted to staff users and team members."
         ),
     ),
@@ -84,7 +79,6 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
         summary="Create an allocation request.",
         description=(
             "Creates a new allocation request. "
-            "Requires authentication. "
             "Write access is granted to staff users and team owners/admins."
         ),
     ),
@@ -93,7 +87,6 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
         summary="Update an allocation request.",
         description=(
             "Replaces an existing allocation request with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -102,7 +95,6 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
         summary="Partially update an allocation request.",
         description=(
             "Partially updates an existing allocation request with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -111,7 +103,6 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
         summary="Delete an allocation request.",
         description=(
             "Deletes a single allocation request by ID. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -142,10 +133,7 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     get=extend_schema(
         tags=["Allocations - Reviews"],
         summary="Retrieve valid review status options.",
-        description=(
-            "Returns valid choices for the review `status` field mapped to human-readable labels. "
-            "Requires authentication."
-        ),
+        description="Returns valid choices for the review `status` field mapped to human-readable labels.",
         responses=inline_serializer(
             name="AllocationReviewStatusChoices",
             fields={k: serializers.CharField(default=v) for k, v in AllocationReview.StatusChoices.choices}
@@ -170,8 +158,7 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
         summary="List allocation reviews.",
         description=(
             "Returns a list of allocation reviews. "
-            "Requires authentication. "
-            "Non-staff users are returned only reviews belonging to teams where they hold membership. "
+            "Non-staff users are only returned reviews belonging to teams where they hold membership. "
             "Staff users are returned all reviews."
         ),
     ),
@@ -180,7 +167,6 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
         summary="Retrieve an allocation review.",
         description=(
             "Returns a single allocation review by ID. "
-            "Requires authentication. "
             "Read access is granted to staff users and team members."
         ),
     ),
@@ -189,7 +175,6 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
         summary="Create an allocation review.",
         description=(
             "Creates a new allocation review. "
-            "Requires authentication. "
             "Write access is restricted to staff users. "
             "The `reviewer` field defaults to the authenticated user if not specified."
         ),
@@ -199,7 +184,6 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
         summary="Update an allocation review.",
         description=(
             "Replaces an existing allocation review with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -208,7 +192,6 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
         summary="Partially update an allocation review.",
         description=(
             "Partially updates an existing allocation review with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -217,7 +200,6 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
         summary="Delete an allocation review.",
         description=(
             "Deletes a single allocation review by ID. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -258,8 +240,7 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="List resource allocations.",
         description=(
             "Returns a list of resource allocations. "
-            "Requires authentication. "
-            "Non-staff users are returned only allocations belonging to teams where they hold membership. "
+            "Non-staff users are only returned allocations belonging to teams where they hold membership. "
             "Staff users are returned all allocations."
         ),
     ),
@@ -268,7 +249,6 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve a resource allocation.",
         description=(
             "Returns a single resource allocation by ID. "
-            "Requires authentication. "
             "Read access is granted to staff users and team members."
         ),
     ),
@@ -277,7 +257,6 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create a resource allocation.",
         description=(
             "Creates a new resource allocation. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -286,7 +265,6 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Update a resource allocation.",
         description=(
             "Replaces an existing resource allocation with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -295,7 +273,6 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Partially update a resource allocation.",
         description=(
             "Partially updates an existing resource allocation with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -304,7 +281,6 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Delete a resource allocation.",
         description=(
             "Deletes a resource allocation by ID. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -332,8 +308,7 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="List file attachments.",
         description=(
             "Returns a list of file attachments. "
-            "Requires authentication. "
-            "Non-staff users are returned only attachments belonging to teams where they hold membership. "
+            "Non-staff users are only returned attachments belonging to teams where they hold membership. "
             "Staff users are returned all attachments."
         ),
     ),
@@ -342,7 +317,6 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve a file attachment.",
         description=(
             "Returns a single file attachment by ID. "
-            "Requires authentication. "
             "Read access is granted to staff users and team members."
         ),
     ),
@@ -351,7 +325,6 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create a file attachment.",
         description=(
             "Creates a new file attachment on an allocation request. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -360,7 +333,6 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Update a file attachment.",
         description=(
             "Replaces an existing file attachment with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -369,7 +341,6 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Partially update a file attachment.",
         description=(
             "Partially updates an existing file attachment with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -378,7 +349,6 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Delete a file attachment.",
         description=(
             "Deletes a file attachment by ID. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -405,8 +375,7 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="List HPC clusters.",
         description=(
             "Returns a list of HPC clusters. "
-            "Requires authentication. "
-            "Non-staff users are returned only clusters accessible based on each cluster's access mode "
+            "Non-staff users are only returned clusters accessible based on each cluster's access mode "
             "(open, whitelist, or blacklist) and the user's team memberships. "
             "Staff users are returned all clusters."
         ),
@@ -416,7 +385,7 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve an HPC cluster.",
         description=(
             "Returns a single HPC cluster by ID. "
-            "Requires authentication."
+            "Read access is granted to all users regardless of the cluster access policy."
         ),
     ),
     create=extend_schema(
@@ -424,7 +393,6 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create an HPC cluster.",
         description=(
             "Creates a new HPC cluster. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -433,7 +401,6 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Update an HPC cluster.",
         description=(
             "Replaces an existing HPC cluster with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -442,7 +409,6 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Partially update an HPC cluster.",
         description=(
             "Partially updates an existing HPC cluster with new values. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -451,7 +417,6 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Delete an HPC cluster.",
         description=(
             "Deletes an HPC cluster by ID. "
-            "Requires authentication. "
             "Write access is restricted to staff users."
         ),
     ),
@@ -513,8 +478,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
         summary="List comments.",
         description=(
             "Returns a list of comments made on allocation requests. "
-            "Requires authentication. "
-            "Non-staff users are returned only public comments belonging to teams where they hold membership. "
+            "Non-staff users are only returned public comments belonging to teams where they hold membership. "
             "Staff users are returned all comments, including private comments."
         ),
     ),
@@ -523,7 +487,6 @@ class ClusterViewSet(viewsets.ModelViewSet):
         summary="Retrieve a comment.",
         description=(
             "Returns a single comment by ID. "
-            "Requires authentication. "
             "Read access is granted to staff users and team members for public comments. "
             "Private comments are only accessible to staff users."
         ),
@@ -533,7 +496,6 @@ class ClusterViewSet(viewsets.ModelViewSet):
         summary="Create a comment.",
         description=(
             "Creates a new comment on an allocation request. "
-            "Requires authentication. "
             "Write access is granted to staff users and team members. "
             "Only staff users may create comments marked as private."
         ),
@@ -543,7 +505,6 @@ class ClusterViewSet(viewsets.ModelViewSet):
         summary="Update a comment.",
         description=(
             "Replaces an existing comment with new values. "
-            "Requires authentication. "
             "Write access is granted to staff users and team members for public comments. "
             "Only staff users may modify private comments."
         ),
@@ -553,7 +514,6 @@ class ClusterViewSet(viewsets.ModelViewSet):
         summary="Partially update a comment.",
         description=(
             "Partially updates an existing comment with new values. "
-            "Requires authentication. "
             "Write access is granted to staff users and team members for public comments. "
             "Only staff users may modify private comments."
         ),
@@ -563,7 +523,6 @@ class ClusterViewSet(viewsets.ModelViewSet):
         summary="Delete a comment.",
         description=(
             "Deletes a comment by ID. "
-            "Requires authentication. "
             "Write access is granted to staff users and team members for public comments. "
             "Only staff users may delete private comments."
         ),
@@ -603,8 +562,7 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="List user Slurm jobs.",
         description=(
             "Returns a list of Slurm jobs. "
-            "Requires authentication. "
-            "Non-staff users are returned only jobs belonging to teams where they hold membership. "
+            "Non-staff users are only returned jobs belonging to teams where they hold membership. "
             "Staff users are returned all jobs."
         ),
     ),
@@ -613,7 +571,6 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Retrieve a user Slurm job.",
         description=(
             "Returns a single Slurm job by Keystone ID. "
-            "Requires authentication. "
             "Read access is granted to staff users and team members."
         ),
     )

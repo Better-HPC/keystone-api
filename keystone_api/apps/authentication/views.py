@@ -32,7 +32,7 @@ class LoginView(GenericAPIView):
         tags=["Authentication"],
         auth=[],
         summary="Authenticate a new user session.",
-        description="Validates user provided credentials and returns new session/CSRF tokens as cookie data. ",
+        description="Validates user provided credentials and returns new session/CSRF tokens as cookie data.",
         responses=RestrictedUserSerializer,
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
@@ -60,7 +60,7 @@ class LogoutView(GenericAPIView):
     @extend_schema(
         tags=["Authentication"],
         summary="Terminate an active user session.",
-        description="Terminates the authenticated user session and invalidates the associated tokens. ",
+        description="Terminates the authenticated user session and invalidates the associated tokens.",
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
         """Logout an authenticated user.

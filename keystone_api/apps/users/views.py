@@ -31,10 +31,7 @@ __all__ = [
     get=extend_schema(
         tags=["Users - Team Membership"],
         summary="Retrieve valid team role options.",
-        description=(
-            "Returns valid choices for the team `role` field mapped to human-readable labels. "
-            "Requires authentication."
-        ),
+        description="Returns valid choices for the team `role` field mapped to human-readable labels.",
         responses=inline_serializer(
             name="MembershipRoleChoices",
             fields={k: serializers.CharField(default=v) for k, v in Membership.Role.choices}
@@ -57,25 +54,19 @@ class MembershipRoleChoicesView(APIView):
     list=extend_schema(
         tags=["Users - Team Membership"],
         summary="List team memberships.",
-        description=(
-            "Returns a list of all team memberships. "
-            "Requires authentication."
-        ),
+        description="Returns a list of all team memberships.",
     ),
     retrieve=extend_schema(
         tags=["Users - Team Membership"],
         summary="Retrieve a team membership.",
-        description=(
-            "Returns a single team membership by ID. "
-            "Requires authentication."
-        ),
+        description="Returns a single team membership by ID.",
     ),
     create=extend_schema(
         tags=["Users - Team Membership"],
         summary="Create a team membership.",
         description=(
             "Creates a new team membership. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
     update=extend_schema(
@@ -83,7 +74,7 @@ class MembershipRoleChoicesView(APIView):
         summary="Update a team membership.",
         description=(
             "Replaces an existing team membership with new values. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
     partial_update=extend_schema(
@@ -91,7 +82,7 @@ class MembershipRoleChoicesView(APIView):
         summary="Partially update a team membership.",
         description=(
             "Partially updates an existing team membership with new values. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
     destroy=extend_schema(
@@ -99,7 +90,7 @@ class MembershipRoleChoicesView(APIView):
         summary="Delete a team membership.",
         description=(
             "Deletes a team membership by ID. "
-            "Requires authentication. Write access is granted to staff users, team owners/admins, "
+            "Write access is granted to staff users, team owners/admins, "
             "and users deleting their own membership."
         ),
     )
@@ -124,24 +115,20 @@ class MembershipViewSet(viewsets.ModelViewSet):
         summary="List teams.",
         description=(
             "Returns a list of teams. "
-            "Non-staff users are returned only teams they are a member of. Staff users are returned all teams. "
-            "Requires authentication."
+            "Non-staff users are only returned teams they are a member of. Staff users are returned all teams."
         ),
     ),
     retrieve=extend_schema(
         tags=["Users - Teams"],
         summary="Retrieve a team.",
-        description=(
-            "Returns a single team by ID. "
-            "Requires authentication."
-        ),
+        description="Returns a single team by ID.",
     ),
     create=extend_schema(
         tags=["Users - Teams"],
         summary="Create a team.",
         description=(
             "Creates a new team. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
     update=extend_schema(
@@ -149,7 +136,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
         summary="Update a team.",
         description=(
             "Replaces an existing team with new values. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
     partial_update=extend_schema(
@@ -157,7 +144,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
         summary="Partially update a team.",
         description=(
             "Partially updates an existing team with new values. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
     destroy=extend_schema(
@@ -165,7 +152,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
         summary="Delete a team.",
         description=(
             "Deletes a team by ID. "
-            "Requires authentication. Write access is granted to staff users and team owners/admins."
+            "Write access is granted to staff users and team owners/admins."
         ),
     ),
 )
@@ -190,17 +177,14 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     list=extend_schema(
         tags=["Users - Accounts"],
         summary="List user accounts.",
-        description=(
-            "Returns a list of all user accounts. "
-            "Requires authentication."
-        ),
+        description="Returns a list of all user accounts.",
     ),
     retrieve=extend_schema(
         tags=["Users - Accounts"],
         summary="Retrieve a user account.",
         description=(
             "Returns a single user account by ID. "
-            "Requires authentication. Staff users are returned all fields, including privileged values. "
+            "Staff users are returned all fields, including privileged values. "
             "Non-staff users are only returned restricted fields."
         ),
     ),
@@ -209,7 +193,7 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create a user account.",
         description=(
             "Creates a new user account. "
-            "Requires authentication. Only staff users may create new accounts."
+            "Only staff users may create new accounts."
         ),
     ),
     update=extend_schema(
@@ -217,7 +201,7 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Update a user account.",
         description=(
             "Replaces an existing user account with new values. "
-            "Requires authentication. Write access is granted to staff users and the account owner. "
+            "Write access is granted to staff users and the account owner. "
             "Non-staff users cannot modify privileged fields."
         ),
     ),
@@ -226,7 +210,7 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Partially update a user account.",
         description=(
             "Partially updates an existing user account with new values. "
-            "Requires authentication. Write access is granted to staff users and the account owner. "
+            "Write access is granted to staff users and the account owner. "
             "Non-staff users cannot modify privileged fields."
         ),
     ),
@@ -235,7 +219,7 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Delete a user.",
         description=(
             "Deletes a user account by ID. "
-            "Requires authentication. Write access is granted to staff users and the account owner."
+            "Write access is granted to staff users and the account owner."
         ),
     )
 )

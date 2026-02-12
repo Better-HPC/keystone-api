@@ -64,7 +64,6 @@ class AbstractTeamStatsView(ABC):
         summary="Retrieve aggregated allocation request statistics.",
         description=(
             "Returns cumulative statistics for allocation requests and awards. "
-            "Requires authentication. "
             "Staff users are returned statistics across all teams. "
             "Non-staff users are returned statistics limited to teams where they hold membership."
         ),
@@ -158,7 +157,6 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
         summary="Retrieve aggregated grant statistics.",
         description=(
             "Returns cumulative grant statistics. "
-            "Requires authentication. "
             "Staff users are returned statistics across all teams. "
             "Non-staff users are returned statistics limited to teams where they hold membership."
         ),
@@ -222,7 +220,6 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
         summary="Retrieve aggregated user notification statistics.",
         description=(
             "Returns cumulative statistics for user notifications. "
-            "Requires authentication. "
             "Staff users are returned statistics across all users. "
             "Non-staff users are returned statistics limited to their own notifications."
         ),
@@ -263,7 +260,6 @@ class NotificationStatsView(GenericAPIView):
         summary="Retrieve aggregated publication statistics.",
         description=(
             "Returns cumulative publication statistics. "
-            "Requires authentication. "
             "Staff users are returned statistics across all teams. "
             "Non-staff users are returned statistics limited to teams where they hold membership."
         ),
