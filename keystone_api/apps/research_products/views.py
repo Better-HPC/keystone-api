@@ -20,34 +20,54 @@ __all__ = ['GrantViewSet', 'PublicationViewSet']
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List funding grants.",
-        description="Returns a filtered list of funding grants.",
         tags=["Research - Grants"],
+        summary="List funding grants.",
+        description=(
+            "Returns a list of funding grants. "
+            "Requires authentication. "
+            "Non-staff users are returned only grants belonging to teams where they hold membership. "
+            "Staff users are returned all grants."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a funding grant.",
-        description="Returns a single funding grant by its ID.",
         tags=["Research - Grants"],
+        summary="Retrieve a funding grant.",
+        description=(
+            "Returns a single funding grant by its ID. "
+            "Requires authentication. Read and write access is granted to staff users and team members."
+        ),
     ),
     create=extend_schema(
-        summary="Create a funding grant.",
-        description="Create a new funding grant.",
         tags=["Research - Grants"],
+        summary="Create a funding grant.",
+        description=(
+            "Creates a new funding grant. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
     update=extend_schema(
-        summary="Update a funding grant.",
-        description="Replaces an existing funding grant with new values.",
         tags=["Research - Grants"],
+        summary="Update a funding grant.",
+        description=(
+            "Replaces an existing funding grant with new values. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a funding grant.",
-        description="Partially updates an existing funding grant with new values.",
         tags=["Research - Grants"],
+        summary="Partially update a funding grant.",
+        description=(
+            "Partially updates an existing funding grant with new values. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a funding grant.",
-        description="Deletes a single funding grant by its ID.",
         tags=["Research - Grants"],
+        summary="Delete a funding grant.",
+        description=(
+            "Deletes a single funding grant by its ID. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
 )
 class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -68,34 +88,54 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List publications.",
-        description="Returns a filtered list of publications.",
         tags=["Research - Publications"],
+        summary="List publications.",
+        description=(
+            "Returns a list of publications. "
+            "Requires authentication. "
+            "Non-staff users are returned only publications belonging to teams where they hold membership. "
+            "Staff users are returned all publications."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a publication.",
-        description="Returns a single publication by its ID.",
         tags=["Research - Publications"],
+        summary="Retrieve a publication.",
+        description=(
+            "Returns a single publication by its ID. "
+            "Requires authentication. Read and write access is granted to staff users and team members."
+        ),
     ),
     create=extend_schema(
-        summary="Create a publication.",
-        description="Create a new publication.",
         tags=["Research - Publications"],
+        summary="Create a publication.",
+        description=(
+            "Creates a new publication. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
     update=extend_schema(
-        summary="Update a publication.",
-        description="Replaces an existing publication with new values.",
         tags=["Research - Publications"],
+        summary="Update a publication.",
+        description=(
+            "Replaces an existing publication with new values. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a publication.",
-        description="Partially updates an existing publication with new values.",
         tags=["Research - Publications"],
+        summary="Partially update a publication.",
+        description=(
+            "Partially updates an existing publication with new values. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a publication.",
-        description="Deletes a single publication by its ID.",
         tags=["Research - Publications"],
+        summary="Delete a publication.",
+        description=(
+            "Deletes a single publication by its ID. "
+            "Requires authentication. Write access is granted to staff users and team members."
+        ),
     ),
 )
 class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):

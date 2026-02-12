@@ -35,9 +35,12 @@ __all__ = [
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Retrieve valid request status options.",
-        description="Returns valid choices for the request `status` field mapped to human-readable labels.",
         tags=["Allocations - Requests"],
+        summary="Retrieve valid request status options.",
+        description=(
+            "Returns valid choices for the request `status` field mapped to human-readable labels. "
+            "Requires authentication."
+        ),
         responses=inline_serializer(
             name="AllocationRequestStatusChoices",
             fields={k: serializers.CharField(default=v) for k, v in AllocationRequest.StatusChoices.choices}
@@ -58,34 +61,59 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List allocation requests.",
-        description="Returns a filtered list of allocation requests.",
         tags=["Allocations - Requests"],
+        summary="List allocation requests.",
+        description=(
+            "Returns a list of allocation requests. "
+            "Requires authentication. "
+            "Non-staff users are returned only requests belonging to teams where they hold membership. "
+            "Staff users are returned all requests."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve an allocation request.",
-        description="Returns a single allocation request by ID.",
         tags=["Allocations - Requests"],
+        summary="Retrieve an allocation request.",
+        description=(
+            "Returns a single allocation request by ID. "
+            "Requires authentication. "
+            "Read access is granted to staff users and team members."
+        ),
     ),
     create=extend_schema(
-        summary="Create an allocation request.",
-        description="Creates a new allocation request.",
         tags=["Allocations - Requests"],
+        summary="Create an allocation request.",
+        description=(
+            "Creates a new allocation request. "
+            "Requires authentication. "
+            "Write access is granted to staff users and team owners/admins."
+        ),
     ),
     update=extend_schema(
-        summary="Update an allocation request.",
-        description="Replaces an existing allocation request with new values.",
         tags=["Allocations - Requests"],
+        summary="Update an allocation request.",
+        description=(
+            "Replaces an existing allocation request with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update an allocation request.",
-        description="Partially updates an existing allocation request with new values.",
         tags=["Allocations - Requests"],
+        summary="Partially update an allocation request.",
+        description=(
+            "Partially updates an existing allocation request with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete an allocation request.",
-        description="Deletes a single allocation request by ID.",
         tags=["Allocations - Requests"],
+        summary="Delete an allocation request.",
+        description=(
+            "Deletes a single allocation request by ID. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
 )
 class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -112,9 +140,12 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Retrieve valid review status options.",
-        description="Returns valid choices for the review `status` field mapped to human-readable labels.",
         tags=["Allocations - Reviews"],
+        summary="Retrieve valid review status options.",
+        description=(
+            "Returns valid choices for the review `status` field mapped to human-readable labels. "
+            "Requires authentication."
+        ),
         responses=inline_serializer(
             name="AllocationReviewStatusChoices",
             fields={k: serializers.CharField(default=v) for k, v in AllocationReview.StatusChoices.choices}
@@ -135,34 +166,60 @@ class AllocationReviewStatusChoicesView(GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List allocation reviews.",
-        description="Returns a filtered list of allocation reviews.",
         tags=["Allocations - Reviews"],
+        summary="List allocation reviews.",
+        description=(
+            "Returns a list of allocation reviews. "
+            "Requires authentication. "
+            "Non-staff users are returned only reviews belonging to teams where they hold membership. "
+            "Staff users are returned all reviews."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve an allocation review.",
-        description="Returns a single allocation review by ID.",
         tags=["Allocations - Reviews"],
+        summary="Retrieve an allocation review.",
+        description=(
+            "Returns a single allocation review by ID. "
+            "Requires authentication. "
+            "Read access is granted to staff users and team members."
+        ),
     ),
     create=extend_schema(
-        summary="Create an allocation review.",
-        description="Creates a new allocation review.",
         tags=["Allocations - Reviews"],
+        summary="Create an allocation review.",
+        description=(
+            "Creates a new allocation review. "
+            "Requires authentication. "
+            "Write access is restricted to staff users. "
+            "The `reviewer` field defaults to the authenticated user if not specified."
+        ),
     ),
     update=extend_schema(
-        summary="Update an allocation review.",
-        description="Replaces an existing allocation review with new values.",
         tags=["Allocations - Reviews"],
+        summary="Update an allocation review.",
+        description=(
+            "Replaces an existing allocation review with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update an allocation review.",
-        description="Partially updates an existing allocation review with new values.",
         tags=["Allocations - Reviews"],
+        summary="Partially update an allocation review.",
+        description=(
+            "Partially updates an existing allocation review with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete an allocation review.",
-        description="Deletes a single allocation review by ID.",
         tags=["Allocations - Reviews"],
+        summary="Delete an allocation review.",
+        description=(
+            "Deletes a single allocation review by ID. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
 )
 class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -197,34 +254,59 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List resource allocations.",
-        description="Returns a filtered list of resource allocations.",
         tags=["Allocations - Allocated Resources"],
+        summary="List resource allocations.",
+        description=(
+            "Returns a list of resource allocations. "
+            "Requires authentication. "
+            "Non-staff users are returned only allocations belonging to teams where they hold membership. "
+            "Staff users are returned all allocations."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a resource allocation.",
-        description="Returns a single resource allocation by ID.",
         tags=["Allocations - Allocated Resources"],
+        summary="Retrieve a resource allocation.",
+        description=(
+            "Returns a single resource allocation by ID. "
+            "Requires authentication. "
+            "Read access is granted to staff users and team members."
+        ),
     ),
     create=extend_schema(
-        summary="Create a resource allocation.",
-        description="Creates a new resource allocation.",
         tags=["Allocations - Allocated Resources"],
+        summary="Create a resource allocation.",
+        description=(
+            "Creates a new resource allocation. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     update=extend_schema(
-        summary="Update a resource allocation.",
-        description="Replaces an existing resource allocation with new values.",
         tags=["Allocations - Allocated Resources"],
+        summary="Update a resource allocation.",
+        description=(
+            "Replaces an existing resource allocation with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a resource allocation.",
-        description="Partially updates an existing resource allocation with new values.",
         tags=["Allocations - Allocated Resources"],
+        summary="Partially update a resource allocation.",
+        description=(
+            "Partially updates an existing resource allocation with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a resource allocation.",
-        description="Deletes a resource allocation by ID.",
         tags=["Allocations - Allocated Resources"],
+        summary="Delete a resource allocation.",
+        description=(
+            "Deletes a resource allocation by ID. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
 )
 class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -246,34 +328,59 @@ class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List file attachments.",
-        description="Returns a filtered list of file attachments.",
         tags=["Allocations - Request Attachments"],
+        summary="List file attachments.",
+        description=(
+            "Returns a list of file attachments. "
+            "Requires authentication. "
+            "Non-staff users are returned only attachments belonging to teams where they hold membership. "
+            "Staff users are returned all attachments."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a file attachment.",
-        description="Returns a single file attachment by ID.",
         tags=["Allocations - Request Attachments"],
+        summary="Retrieve a file attachment.",
+        description=(
+            "Returns a single file attachment by ID. "
+            "Requires authentication. "
+            "Read access is granted to staff users and team members."
+        ),
     ),
     create=extend_schema(
-        summary="Create a file attachment.",
-        description="Creates a new file attachment on an allocation request.",
         tags=["Allocations - Request Attachments"],
+        summary="Create a file attachment.",
+        description=(
+            "Creates a new file attachment on an allocation request. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     update=extend_schema(
-        summary="Update a file attachment.",
-        description="Replaces an existing file attachment with new values.",
         tags=["Allocations - Request Attachments"],
+        summary="Update a file attachment.",
+        description=(
+            "Replaces an existing file attachment with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a file attachment.",
-        description="Partially updates an existing file attachment with new values.",
         tags=["Allocations - Request Attachments"],
+        summary="Partially update a file attachment.",
+        description=(
+            "Partially updates an existing file attachment with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a file attachment.",
-        description="Deletes a file attachment by ID.",
         tags=["Allocations - Request Attachments"],
+        summary="Delete a file attachment.",
+        description=(
+            "Deletes a file attachment by ID. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
 )
 class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -294,34 +401,59 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List HPC clusters.",
-        description="Returns a filtered list of HPC clusters.",
         tags=["Allocations - Clusters"],
+        summary="List HPC clusters.",
+        description=(
+            "Returns a list of HPC clusters. "
+            "Requires authentication. "
+            "Non-staff users are returned only clusters accessible based on each cluster's access mode "
+            "(open, whitelist, or blacklist) and the user's team memberships. "
+            "Staff users are returned all clusters."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve an HPC cluster.",
-        description="Returns a single HPC cluster by ID.",
         tags=["Allocations - Clusters"],
+        summary="Retrieve an HPC cluster.",
+        description=(
+            "Returns a single HPC cluster by ID. "
+            "Requires authentication."
+        ),
     ),
     create=extend_schema(
-        summary="Create an HPC cluster.",
-        description="Creates a new HPC cluster.",
         tags=["Allocations - Clusters"],
+        summary="Create an HPC cluster.",
+        description=(
+            "Creates a new HPC cluster. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     update=extend_schema(
-        summary="Update an HPC cluster.",
-        description="Replaces an existing HPC cluster with new values.",
         tags=["Allocations - Clusters"],
+        summary="Update an HPC cluster.",
+        description=(
+            "Replaces an existing HPC cluster with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update an HPC cluster.",
-        description="Partially updates an existing HPC cluster with new values.",
         tags=["Allocations - Clusters"],
+        summary="Partially update an HPC cluster.",
+        description=(
+            "Partially updates an existing HPC cluster with new values. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete an HPC cluster.",
-        description="Deletes an HPC cluster by ID.",
         tags=["Allocations - Clusters"],
+        summary="Delete an HPC cluster.",
+        description=(
+            "Deletes an HPC cluster by ID. "
+            "Requires authentication. "
+            "Write access is restricted to staff users."
+        ),
     ),
 )
 class ClusterViewSet(viewsets.ModelViewSet):
@@ -377,34 +509,64 @@ class ClusterViewSet(viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List comments.",
-        description="Returns a filtered list of comments made on allocation requests.",
         tags=["Allocations - Request Comments"],
+        summary="List comments.",
+        description=(
+            "Returns a list of comments made on allocation requests. "
+            "Requires authentication. "
+            "Non-staff users are returned only public comments belonging to teams where they hold membership. "
+            "Staff users are returned all comments, including private comments."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a comment.",
-        description="Returns a single comment by ID.",
         tags=["Allocations - Request Comments"],
+        summary="Retrieve a comment.",
+        description=(
+            "Returns a single comment by ID. "
+            "Requires authentication. "
+            "Read access is granted to staff users and team members for public comments. "
+            "Private comments are only accessible to staff users."
+        ),
     ),
     create=extend_schema(
-        summary="Create a comment.",
-        description="Creates a new comment on an allocation request.",
         tags=["Allocations - Request Comments"],
+        summary="Create a comment.",
+        description=(
+            "Creates a new comment on an allocation request. "
+            "Requires authentication. "
+            "Write access is granted to staff users and team members. "
+            "Only staff users may create comments marked as private."
+        ),
     ),
     update=extend_schema(
-        summary="Update a comment.",
-        description="Replaces an existing comment with new values.",
         tags=["Allocations - Request Comments"],
+        summary="Update a comment.",
+        description=(
+            "Replaces an existing comment with new values. "
+            "Requires authentication. "
+            "Write access is granted to staff users and team members for public comments. "
+            "Only staff users may modify private comments."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a comment.",
-        description="Partially updates an existing comment with new values.",
         tags=["Allocations - Request Comments"],
+        summary="Partially update a comment.",
+        description=(
+            "Partially updates an existing comment with new values. "
+            "Requires authentication. "
+            "Write access is granted to staff users and team members for public comments. "
+            "Only staff users may modify private comments."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a comment.",
-        description="Deletes a comment by ID.",
         tags=["Allocations - Request Comments"],
+        summary="Delete a comment.",
+        description=(
+            "Deletes a comment by ID. "
+            "Requires authentication. "
+            "Write access is granted to staff users and team members for public comments. "
+            "Only staff users may delete private comments."
+        ),
     ),
 )
 class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
@@ -437,14 +599,23 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List user Slurm jobs.",
-        description="Returns a filtered list of Slurm jobs.",
         tags=["Allocations - User Jobs"],
+        summary="List user Slurm jobs.",
+        description=(
+            "Returns a list of Slurm jobs. "
+            "Requires authentication. "
+            "Non-staff users are returned only jobs belonging to teams where they hold membership. "
+            "Staff users are returned all jobs."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a user Slurm job.",
-        description="Returns a single Slurm job by Keystone ID.",
         tags=["Allocations - User Jobs"],
+        summary="Retrieve a user Slurm job.",
+        description=(
+            "Returns a single Slurm job by Keystone ID. "
+            "Requires authentication. "
+            "Read access is granted to staff users and team members."
+        ),
     )
 )
 class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):

@@ -29,10 +29,10 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     @extend_schema(
+        tags=["Authentication"],
         auth=[],
         summary="Authenticate a new user session.",
-        description="Validates user provided credentials and returns new session/CSRF tokens as cookie data.",
-        tags=["Authentication"],
+        description="Validates user provided credentials and returns new session/CSRF tokens as cookie data. ",
         responses=RestrictedUserSerializer,
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
@@ -58,9 +58,9 @@ class LogoutView(GenericAPIView):
     serializer_class = LogoutSerializer
 
     @extend_schema(
+        tags=["Authentication"],
         summary="Terminate an active user session.",
-        description="Terminates the authenticated user session and invalidates the associated tokens.",
-        tags=["Authentication"]
+        description="Terminates the authenticated user session and invalidates the associated tokens. ",
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
         """Logout an authenticated user.
@@ -80,12 +80,12 @@ class WhoAmIView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
+        tags=["Authentication"],
         summary="Retrieve metadata for the authenticated user.",
         description=(
             "Returns metadata for the currently authenticated user, including personal data and team memberships. "
-            "This endpoint can also be used to verify general authentication status."
+            "This endpoint can also be used to verify general authentication status. "
         ),
-        tags=["Authentication"],
     )
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Return metadata for the currently authenticated user.

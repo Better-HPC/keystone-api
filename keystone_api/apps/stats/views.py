@@ -60,13 +60,14 @@ class AbstractTeamStatsView(ABC):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Statistics"],
         summary="Retrieve aggregated allocation request statistics.",
         description=(
             "Returns cumulative statistics for allocation requests and awards. "
-            "Staff users receive statistics for all teams. "
-            "Non-staff users are limited to teams where they hold membership."
+            "Requires authentication. "
+            "Staff users are returned statistics across all teams. "
+            "Non-staff users are returned statistics limited to teams where they hold membership."
         ),
-        tags=["Statistics"],
     ),
 )
 class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
@@ -153,13 +154,14 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Statistics"],
         summary="Retrieve aggregated grant statistics.",
         description=(
             "Returns cumulative grant statistics. "
-            "Staff users receive statistics for all teams. "
-            "Non-staff users are limited to teams where they hold membership."
+            "Requires authentication. "
+            "Staff users are returned statistics across all teams. "
+            "Non-staff users are returned statistics limited to teams where they hold membership."
         ),
-        tags=["Statistics"],
     ),
 )
 class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
@@ -216,13 +218,14 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Statistics"],
         summary="Retrieve aggregated user notification statistics.",
         description=(
             "Returns cumulative statistics for user notifications. "
-            "Staff users receive statistics for all users. "
-            "Non-staff users are limited to their own notifications."
+            "Requires authentication. "
+            "Staff users are returned statistics across all users. "
+            "Non-staff users are returned statistics limited to their own notifications."
         ),
-        tags=["Statistics"],
     ),
 )
 class NotificationStatsView(GenericAPIView):
@@ -256,13 +259,14 @@ class NotificationStatsView(GenericAPIView):
 
 @extend_schema_view(
     get=extend_schema(
+        tags=["Statistics"],
         summary="Retrieve aggregated publication statistics.",
         description=(
             "Returns cumulative publication statistics. "
-            "Staff users receive statistics for all teams. "
-            "Non-staff users are limited to teams where they hold membership."
+            "Requires authentication. "
+            "Staff users are returned statistics across all teams. "
+            "Non-staff users are returned statistics limited to teams where they hold membership."
         ),
-        tags=["Statistics"],
     ),
 )
 class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):

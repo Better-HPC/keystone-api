@@ -27,9 +27,12 @@ __all__ = [
 
 @extend_schema_view(
     get=extend_schema(
-        summary="Retrieve valid notification types.",
-        description="Returns valid choices for the notification `type` field mapped to human-readable labels.",
         tags=["Notifications - Notifications"],
+        summary="Retrieve valid notification types.",
+        description=(
+            "Returns valid choices for the notification `type` field mapped to human-readable labels. "
+            "Requires authentication."
+        ),
         responses=inline_serializer(
             name="NotificationTypeChoices",
             fields={k: serializers.CharField(default=v) for k, v in Notification.NotificationType.choices}
@@ -50,19 +53,32 @@ class NotificationTypeChoicesView(GenericAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List notifications.",
-        description="Returns a filtered list of user notifications.",
         tags=["Notifications - Notifications"],
+        summary="List notifications.",
+        description=(
+            "Returns a list of user notifications. "
+            "Requires authentication. "
+            "Non-staff users are returned only their own notifications. "
+            "Staff users are returned all notifications."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a notification.",
-        description="Returns a single notification by its ID.",
         tags=["Notifications - Notifications"],
+        summary="Retrieve a notification.",
+        description=(
+            "Returns a single notification by its ID. "
+            "Requires authentication. "
+            "Read and patch access is limited to the notification owner."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a notification.",
-        description="Updates the `read` status of a notification.",
         tags=["Notifications - Notifications"],
+        summary="Partially update a notification.",
+        description=(
+            "Updates the `read` status of a notification. "
+            "Requires authentication. "
+            "Patch access is limited to the notification owner."
+        ),
     ),
 )
 class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
@@ -77,34 +93,60 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(
-        summary="List notification preferences.",
-        description="Returns a filtered list of notification preferences.",
         tags=["Notifications - Preferences"],
+        summary="List notification preferences.",
+        description=(
+            "Returns a list of notification preferences. "
+            "Requires authentication. "
+            "Non-staff users are returned only their own preferences. "
+            "Staff users are returned all preferences."
+        ),
     ),
     retrieve=extend_schema(
-        summary="Retrieve a notification preference.",
-        description="Returns a single notification preference by its ID.",
         tags=["Notifications - Preferences"],
+        summary="Retrieve a notification preference.",
+        description=(
+            "Returns a single notification preference by its ID. "
+            "Requires authentication. "
+            "Access is granted to staff users and the preference owner."
+        ),
     ),
     create=extend_schema(
-        summary="Create a custom notification preference.",
-        description="Creates a custom notification preference in lieu of application defaults.",
         tags=["Notifications - Preferences"],
+        summary="Create a custom notification preference.",
+        description=(
+            "Creates a custom notification preference in lieu of application defaults. "
+            "Requires authentication. "
+            "The `user` field defaults to the authenticated user if not specified. "
+            "Access is granted to staff users and the preference owner."
+        ),
     ),
     update=extend_schema(
-        summary="Update a notification preference.",
-        description="Replaces an existing notification preference with new values.",
         tags=["Notifications - Preferences"],
+        summary="Update a notification preference.",
+        description=(
+            "Replaces an existing notification preference with new values. "
+            "Requires authentication. "
+            "Access is granted to staff users and the preference owner."
+        ),
     ),
     partial_update=extend_schema(
-        summary="Partially update a notification preference.",
-        description="Partially updates an existing notification preference with new values.",
         tags=["Notifications - Preferences"],
+        summary="Partially update a notification preference.",
+        description=(
+            "Partially updates an existing notification preference with new values. "
+            "Requires authentication. "
+            "Access is granted to staff users and the preference owner."
+        ),
     ),
     destroy=extend_schema(
-        summary="Delete a notification preference.",
-        description="Deletes a single notification preference by ID, restoring default settings.",
         tags=["Notifications - Preferences"],
+        summary="Delete a notification preference.",
+        description=(
+            "Deletes a single notification preference by ID, restoring default settings. "
+            "Requires authentication. "
+            "Access is granted to staff users and the preference owner."
+        ),
     ),
 )
 class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
