@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 from celery import shared_task
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from apps.allocations.models import AllocationRequest
 from apps.users.models import User
@@ -35,7 +35,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
 
     preference = Preference.get_user_preference(user)
 
-    # Do not notify if there is no configured notification threshold
+    # Do not notify if there is no expiration threshold in user preferences
     days_until_expire = (request.expire - date.today()).days
     next_threshold = preference.get_expiration_threshold(days_until_expire)
     if next_threshold is None:
@@ -96,43 +96,62 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
     """
 
     user = User.objects.get(id=user_id)
-    request = AllocationRequest.objects \
+    expiring_request = AllocationRequest.objects \
         .select_related("team") \
         .prefetch_related("allocation_set__cluster") \
         .only("id", "title", "team__name", "submitted", "active", "expire") \
         .get(id=req_id)
 
-    days_until_expire = (request.expire - date.today()).days if request.expire else None
+    # Check notification preferences and database state incase they changed
+    # since the task was scheduled
+    if not should_notify_upcoming_expiration(user, expiring_request):
+        return
 
+    upcoming_requests = AllocationRequest.objects \
+        .filter(
+            Q(status=AllocationRequest.StatusChoices.PENDING) |
+            Q(status=AllocationRequest.StatusChoices.APPROVED, expire__gt=date.today()) |
+            Q(status=AllocationRequest.StatusChoices.APPROVED, expire__isnull=True),
+            team=expiring_request.team,
+        ) \
+        .only("id", "title", "submitted", "active", "expire", "status")
+
+    # Metadata used to track the uniqueness of the notification
+    days_until_expire = (expiring_request.expire - date.today()).days if expiring_request.expire else None
     metadata = {
         'request_id': req_id,
         'days_to_expire': days_until_expire
     }
 
+    # Values injected into the HTML template
     context = {
         'user_name': user.username,
         'user_first': user.first_name,
         'user_last': user.last_name,
-        'req_id': request.id,
-        'req_title': request.title,
-        'req_team': request.team.name,
-        'req_submitted': request.submitted,
-        'req_active': request.active,
-        'req_expire': request.expire,
+        'req_id': expiring_request.id,
+        'req_title': expiring_request.title,
+        'req_team': expiring_request.team.name,
+        'req_submitted': expiring_request.submitted,
+        'req_active': expiring_request.active,
+        'req_expire': expiring_request.expire,
         'req_days_left': days_until_expire,
         'allocations': tuple(
             {
                 'alloc_cluster': alloc.cluster.name,
                 'alloc_requested': alloc.requested or 0,
                 'alloc_awarded': alloc.awarded or 0,
-            } for alloc in request.allocation_set.all()
-        )
+            } for alloc in expiring_request.allocation_set.all()
+        ),
+        'upcoming_requests': tuple(
+            {
+                'id': req.id,
+                'title': req.title,
+                'submitted': req.submitted,
+                'active': req.active,
+                'expire': req.expire,
+            } for req in upcoming_requests.all()
+        ),
     }
-
-    # Perform check in case user preferences or database state
-    # changed since the task was scheduled
-    if not should_notify_upcoming_expiration(user, request):
-        return
 
     send_notification_template(
         user=user,

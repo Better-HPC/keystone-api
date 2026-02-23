@@ -44,6 +44,10 @@ _EXPIRING_TEMPLATE_CONTEXT = {
         {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000},
         {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000},
     ),
+    "upcoming_requests": (
+        {"id": 5678, "title": "Pending Project", "submitted": date(2024, 11, 15), "active": None, "expire":None, "status": "Pending"},
+        {"id": 9012, "title": "Active Project", "submitted": date(2024, 3, 1), "active": date(2024, 3, 15), "expire": date(2025, 3, 15), "status": "Approved"},
+    ),
 }
 
 # Template context for expired allocation notifications
