@@ -8,21 +8,54 @@
   {% endif %}
 
   <p>
-    This is an automated reminder for members of the <em>{{ req_team }}</em> HPC team.
+    This is a reminder that the <em>{{ req_team }}</em> team's HPC allocation
+    <strong>"{{ req_title }}"</strong> (ID: {{ req_id }}) is expiring in
+    <strong>{{ req_days_left }} day{{ "s" if req_days_left != 1 }}</strong>,
+    on <strong>{{ req_expire.strftime('%B %d, %Y') }}</strong>. After this
+    date, any unused service units granted by this allocation will no longer
+    be accessible to your team.
   </p>
 
   <p>
-    Your team's allocation request <strong>"{{ req_title }}"</strong> (ID: {{ req_id }}) is set to expire in
-    <strong>{{ req_days_left }} day{{ "s" if req_days_left != 1 }}</strong>, on
-    {{ req_expire.strftime('%B %d, %Y') }}. After this date, any unused resource under
-    this allocation will no longer be available to your team.
+    This expiration only applies to service units awarded under the allocation
+    mentioned above. Any service units awarded under different allocations held
+    by your team remain unaffected. The table below summarizes the service units
+    associated with the expiring allocation:
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px;">
+    <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th style="text-align: center; padding: 8px; border: 1px solid #ccc;">Cluster</th>
+      <th style="text-align: center; padding: 8px; border: 1px solid #ccc;">Awarded SUs</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for alloc in allocations %}
+      <tr>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+          {{ alloc.alloc_cluster }}
+        </td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+          {{ "{:,}".format(alloc.alloc_awarded) }}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="padding-top: 10px;">
+    <strong>Recommended Actions</strong>
   </p>
 
   {% if upcoming_requests %}
     <p>
-      The table below lists all active or pending allocation requests currently associated with the
-      <em>{{ req_team }}</em> team. We recommend reviewing each one to confirm your team's HPC
-      needs will be covered after the upcoming expiration.
+      The following table includes all allocations currently associated with
+      the <strong>{{ req_team }}</strong> team. Please take a moment to review
+      each allocation and confirm your team has sufficient resources moving
+      forward. If your team anticipates needing resources beyond those listed
+      below, please have a team administrator submit a new allocation request
+      at their earliest convenience.
     </p>
 
     <table
@@ -33,40 +66,46 @@
         <th style="width: 30%; text-align: left; padding: 8px; border: 1px solid #ccc;">Title</th>
         <th style="width: 12%; text-align: center; padding: 8px; border: 1px solid #ccc;">Status</th>
         <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Submitted</th>
-        <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Active</th>
+        <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Begins</th>
         <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Expires</th>
       </tr>
       </thead>
       <tbody>
       {% for req in upcoming_requests %}
         <tr>
-          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">{{ req.id }}</td>
-          <td style="text-align: left; padding: 8px; border: 1px solid #ccc; overflow-wrap: break-word; word-break: break-word;">{{ req.title }}</td>
-          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">{{ req.status }}</td>
           <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
-            {{ req.submitted.strftime('%B %d, %Y') if req.submitted else '—' }}</td>
+            {{ req.id }}
+          </td>
+          <td style="text-align: left; padding: 8px; border: 1px solid #ccc; overflow-wrap: break-word; word-break: break-word;">
+            {{ req.title }}
+          </td>
           <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
-            {{ req.active.strftime('%B %d, %Y') if req.active else '—' }}</td>
+            {{ req.status }}
+          </td>
           <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
-            {{ req.expire.strftime('%B %d, %Y') if req.expire else '—' }}</td>
+            {{ req.submitted.strftime('%B %d, %Y') if req.submitted else '—' }}
+          </td>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.active.strftime('%B %d, %Y') if req.active else '—' }}
+          </td>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.expire.strftime('%B %d, %Y') if req.expire else '—' }}
+          </td>
         </tr>
       {% endfor %}
       </tbody>
     </table>
 
-    <p>
-      If your team expects to need resources beyond what is listed above, please have a team
-      administrator submit a new allocation request at their earliest convenience.
-    </p>
   {% else %}
     <p style="padding-top: 10px;">
-      Your team currently has no other active or pending allocation requests. Once this allocation
-      expires, no service units will remain. To avoid any interruption to your HPC access, we
-      encourage a team administrator to submit a new allocation request before the expiration date.
+      Your team has no other allocation requests at this time. When this allocation
+      expires, your team will have no remaining service units will be available. To prevent any disruption to your HPC
+      access, we strongly recommend that a team administrator submit a new request before the
+      expiration date.
     </p>
   {% endif %}
 
   <p style="padding-top: 10px;">
-    Sincerely,<br>The Keystone HPC Utility
+    Best regards,<br>The Keystone HPC Utility
   </p>
 {% endblock %}
