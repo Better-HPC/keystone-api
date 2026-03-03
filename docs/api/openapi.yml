@@ -9208,9 +9208,27 @@ components:
       - id
       - request
       - requested
+    AllocationInline:
+      type: object
+      description: Accepts cluster and requested service units for inline allocation
+        creation.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          minimum: 0
+      required:
+      - cluster
+      - requested
     AllocationRequest:
       type: object
-      description: Object serializer for the `AllocationRequest` class.
+      description: |-
+        Object serializer for the `AllocationRequest` class.
+
+        Supports an optional `allocations` field on create, allowing callers to
+        submit an allocation request and its associated resource allocations in a
+        single POST request.
       properties:
         id:
           type: integer
@@ -9261,6 +9279,11 @@ components:
             $ref: '#/components/schemas/CommentSummary'
           readOnly: true
           title: ' comments'
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationInline'
+          writeOnly: true
         title:
           type: string
           maxLength: 250
@@ -10570,7 +10593,12 @@ components:
           type: integer
     PatchedAllocationRequest:
       type: object
-      description: Object serializer for the `AllocationRequest` class.
+      description: |-
+        Object serializer for the `AllocationRequest` class.
+
+        Supports an optional `allocations` field on create, allowing callers to
+        submit an allocation request and its associated resource allocations in a
+        single POST request.
       properties:
         id:
           type: integer
@@ -10621,6 +10649,11 @@ components:
             $ref: '#/components/schemas/CommentSummary'
           readOnly: true
           title: ' comments'
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationInline'
+          writeOnly: true
         title:
           type: string
           maxLength: 250

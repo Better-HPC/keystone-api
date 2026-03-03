@@ -11,6 +11,7 @@ from mimetypes import guess_type
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
 from django.db import transaction
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
@@ -60,6 +61,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
             'submitted': {'read_only': True},
         }
 
+    @extend_schema_field(CommentSummarySerializer(many=True))
     def get__comments(self, obj: AllocationRequest) -> list:
         """Filter returned comments based on the requesting user's staff status."""
 
