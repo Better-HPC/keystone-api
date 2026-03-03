@@ -102,7 +102,7 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
         .only("id", "title", "team__name", "submitted", "active", "expire") \
         .get(id=req_id)
 
-    # Check notification preferences and database state incase they changed
+    # Check notification preferences and database state in case they changed
     # since the task was scheduled
     if not should_notify_upcoming_expiration(user, expiring_request):
         return
