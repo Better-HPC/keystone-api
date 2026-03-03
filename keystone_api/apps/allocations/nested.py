@@ -14,6 +14,7 @@ from .models import *
 
 __all__ = [
     'AllocationRequestSummarySerializer',
+    'AllocationInlineSerializer',
     'AllocationSummarySerializer',
     'ClusterSummarySerializer',
     'CommentSummarySerializer',
@@ -28,6 +29,15 @@ class ClusterSummarySerializer(serializers.ModelSerializer):
 
         model = Cluster
         fields = ['id', 'name', 'enabled']
+
+
+class AllocationInlineSerializer(serializers.Serializer):
+    """Accepts cluster and requested service units for inline allocation creation."""
+
+    cluster = serializers.PrimaryKeyRelatedField(
+        queryset=__import__('apps.allocations.models', fromlist=['Cluster']).Cluster.objects.all()
+    )
+    requested = serializers.IntegerField(min_value=0)
 
 
 class AllocationRequestSummarySerializer(serializers.ModelSerializer):
