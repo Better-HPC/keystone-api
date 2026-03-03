@@ -20,6 +20,8 @@ from .models import *
 
 __all__ = ["NotificationFactory", "PreferenceFactory"]
 
+_YEAR = date.today().year
+
 # Template context for general notifications
 _GENERAL_TEMPLATE_CONTEXT = {
     "user_name": "jsmith",
@@ -36,13 +38,17 @@ _EXPIRING_TEMPLATE_CONTEXT = {
     "req_id": 1234,
     "req_title": "Project Title",
     "req_team": "Team Name",
-    "req_submitted": date(2024, 1, 1),
-    "req_active": date(2024, 1, 8),
-    "req_expire": date(2024, 12, 31),
+    "req_submitted": date(_YEAR, 1, 1),
+    "req_active": date(_YEAR, 1, 8),
+    "req_expire": date(_YEAR, 12, 31),
     "req_days_left": 7,
     "allocations": (
         {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000},
         {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000},
+    ),
+    "upcoming_requests": (
+        {"id": 5678, "title": "Pending Project", "submitted": date(_YEAR, 11, 15), "active": None, "expire": None, "status": "Pending"},
+        {"id": 9012, "title": "Active Project", "submitted": date(_YEAR, 3, 1), "active": date(_YEAR, 3, 15), "expire": date(2025, 3, 15), "status": "Approved"},
     ),
 }
 
@@ -54,12 +60,16 @@ _EXPIRED_TEMPLATE_CONTEXT = {
     "req_id": 1234,
     "req_title": "Project Title",
     "req_team": "Team Name",
-    "req_submitted": date(2024, 1, 1),
-    "req_active": date(2024, 1, 8),
-    "req_expire": date(2024, 12, 31),
+    "req_submitted": date(_YEAR, 1, 1),
+    "req_active": date(_YEAR, 1, 8),
+    "req_expire": date(_YEAR, 12, 31),
     "allocations": (
         {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000, "alloc_final": 50_000},
         {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000, "alloc_final": 175_000},
+    ),
+    "upcoming_requests": (
+        {"id": 5678, "title": "Pending Project", "submitted": date(_YEAR, 11, 15), "active": None, "expire": None, "status": "Pending"},
+        {"id": 9012, "title": "Active Project", "submitted": date(_YEAR, 3, 1), "active": date(_YEAR, 3, 15), "expire": date(_YEAR + 1, 3, 15), "status": "Approved"},
     ),
 }
 

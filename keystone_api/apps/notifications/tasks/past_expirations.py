@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 from celery import shared_task
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
 
 from apps.allocations.models import AllocationRequest
@@ -81,6 +81,20 @@ def send_past_expiration_notice(user_id: int, req_id: int) -> None:
         .only("id", "title", "team__name", "submitted", "active", "expire") \
         .get(id=req_id)
 
+    # Perform check in case user preferences or database state
+    # changed since the task was scheduled
+    if not should_notify_past_expiration(user, request):
+        return
+
+    upcoming_requests = AllocationRequest.objects \
+        .filter(
+            Q(status=AllocationRequest.StatusChoices.PENDING) |
+            Q(status=AllocationRequest.StatusChoices.APPROVED, expire__gt=date.today()) |
+            Q(status=AllocationRequest.StatusChoices.APPROVED, expire__isnull=True),
+            team=request.team,
+        ) \
+        .only("id", "title", "submitted", "active", "expire", "status")
+
     metadata = {'request_id': req_id}
     context = {
         'user_name': user.username,
@@ -99,13 +113,18 @@ def send_past_expiration_notice(user_id: int, req_id: int) -> None:
                 'alloc_awarded': alloc.awarded or 0,
                 'alloc_final': alloc.final or 0,
             } for alloc in request.allocation_set.all()
-        )
+        ),
+        'upcoming_requests': tuple(
+            {
+                'id': req.id,
+                'title': req.title,
+                'submitted': req.submitted,
+                'active': req.active,
+                'expire': req.expire,
+                'status': req.status,
+            } for req in upcoming_requests.all()
+        ),
     }
-
-    # Perform check in case user preferences or database state
-    # changed since the task was scheduled
-    if not should_notify_past_expiration(user, request):
-        return
 
     send_notification_template(
         user=user,

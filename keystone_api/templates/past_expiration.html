@@ -16,12 +16,15 @@
   {% endif %}
 
   <p>
-    This is an automated notification that the HPC allocation request <strong>"{{ req_title }}"</strong>
-    (ID: {{ req_id }}) submitted by the <em>{{ req_team }}</em> team has expired.
+    This is a reminder that the <em>{{ req_team }}</em> team's HPC allocation
+    <strong>"{{ req_title }}"</strong> (ID: {{ req_id }}) expired on
+    <strong>{{ req_expire.strftime('%B %d, %Y') }}</strong>. Moving forward,
+    any unused service units granted by this allocation are no longer usable
+    by your team.
   </p>
 
   <p>
-    Your team's total resource usage under this allocation request is provided below.
+    The table below summarizes your team's total resource usage under this allocation:
   </p>
 
   <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px;">
@@ -35,8 +38,12 @@
     <tbody>
     {% for alloc in allocations %}
       <tr>
-        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">{{ alloc.alloc_cluster }}</td>
-        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">{{ "{:,}".format(alloc.alloc_awarded) }}</td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+          {{ alloc.alloc_cluster }}
+        </td>
+        <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+          {{ "{:,}".format(alloc.alloc_awarded) }}
+        </td>
         <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
           {{ "{:,}".format(alloc.alloc_final) }} {{ percent(alloc.alloc_final, alloc.alloc_awarded) }}
         </td>
@@ -50,37 +57,81 @@
   </p>
 
   <p>
-    On {{ req_submitted.strftime('%B %d, %Y') }} your team requested the HPC service units listed above.
-    Access to these resources went into effect on {{ req_active.strftime('%B %d, %Y') }} and expired on
-    {{ req_expire.strftime('%B %d, %Y') }}.
-    Now that the allocation request has expired, any unused service units are no longer available for use by your team.
+    On {{ req_active.strftime('%B %d, %Y') }} your team was granted the
+    service unit allocation listed above. This allocation expired on
+    {{ req_expire.strftime('%B %d, %Y') }} and any unused service units
+    are no longer available for use.
   </p>
 
   <p>
-    Any resources granted to your team by other allocation requests remain unaffected.
-    The system will automatically apply as much of your system usage as possible to the expiring request, maximizing
-    the total service units available in any remaining allocations.
+    Any resources granted to your team by other allocation requests remain
+    unaffected. The system will automatically apply as much of your system
+    usage as possible to the expiring request, maximizing the total service
+    units available in any remaining allocations.
   </p>
 
-  <p style="padding-top: 10px">
-    <strong>What Happens Now</strong>
+  <p style="padding-top: 10px;">
+    <strong>Recommended Actions</strong>
   </p>
 
-  <p>
-    If you no longer require HPC service units, have already submitted a follow-up request, or have sufficient service
-    units through a different request, then no action is required at this time.
-  </p>
+  {% if upcoming_requests %}
+    <p>
+      The following table includes all active or upcoming allocations currently
+      associated with the <em>{{ req_team }}</em> team. Please take a moment to
+      review each allocation and confirm your team has sufficient resources moving
+      forward. If your team anticipates needing resources beyond those listed
+      below, please have a team administrator submit a new allocation request
+      at their earliest convenience.
+    </p>
 
-  <p>
-    If you require additional HPC service units, an administrator for the <em>{{ req_team }}</em> team
-    will need to submit a new request for additional resources.
-  </p>
+    <table
+        style="width: 100%; border-collapse: collapse; table-layout: fixed; font-family: sans-serif; font-size: 14px;">
+      <thead>
+      <tr style="background-color: #f2f2f2;">
+        <th style="width: 8%; text-align: center; padding: 8px; border: 1px solid #ccc;">ID</th>
+        <th style="width: 30%; text-align: left; padding: 8px; border: 1px solid #ccc;">Title</th>
+        <th style="width: 12%; text-align: center; padding: 8px; border: 1px solid #ccc;">Status</th>
+        <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Submitted</th>
+        <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Begins</th>
+        <th style="width: 16%; text-align: center; padding: 8px; border: 1px solid #ccc;">Expires</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for req in upcoming_requests %}
+        <tr>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.id }}
+          </td>
+          <td style="text-align: left; padding: 8px; border: 1px solid #ccc; overflow-wrap: break-word; word-break: break-word;">
+            {{ req.title }}
+          </td>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.status }}
+          </td>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.submitted.strftime('%B %d, %Y') if req.submitted else '—' }}
+          </td>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.active.strftime('%B %d, %Y') if req.active else '—' }}
+          </td>
+          <td style="text-align: center; padding: 8px; border: 1px solid #ccc;">
+            {{ req.expire.strftime('%B %d, %Y') if req.expire else '—' }}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
 
-  <p>
-    For any additional questions, please contact your system administrator(s).
-  </p>
+  {% else %}
+    <p>
+      The <em>{{ req_team }}</em> team has no upcoming or active allocations.
+      If your team requires additional service units, please have a team administrator submit a new allocation request
+      at their earliest convenience.
+      If your team does not require additional service units, then no action is required at this time.
+    </p>
+  {% endif %}
 
-  <p style="padding-top: 10px">
-    Sincerely,<br>The Keystone HPC Utility
+  <p style="padding-top: 10px;">
+    Best regards,<br>The Keystone HPC Utility
   </p>
 {% endblock %}
