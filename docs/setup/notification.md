@@ -60,22 +60,28 @@ its expiration date.
 
 ??? info "Available Template Fields"
 
-    | Field Name           | Type             | Description                                                               |
-    |----------------------|------------------|---------------------------------------------------------------------------|
-    | `user_name`          | `str`            | Username of the notified user.                                            |
-    | `user_first`         | `str`            | First name of the notified user.                                          |
-    | `user_last`          | `str`            | Last name of the notified user.                                           |
-    | `req_id`             | `int`            | ID of the allocation request being notified about.                        |
-    | `req_title`          | `str`            | Title or of the allocation request.                                       |
-    | `req_team`           | `str`            | Name of the team associated with the allocation request.                  |
-    | `req_submitted`      | `date`           | Date when the allocation request was submitted.                           |
-    | `req_active`         | `date`           | Date when the allocation request became active.                           |
-    | `req_expire`         | `date` or `None` | Date when the allocation request expires.                                 |
-    | `req_days_left`      | `int` or `None`  | Number of days remaining until expiration (calculated from current date). |
-    | `allocations`        | `list[dict]`     | List of allocated resources tied to the request. Each item includes:      |
-    | ├ `alloc_cluster`    | `str`            | Name of the cluster where the resource is allocated.                      |
-    | ├ `alloc_requested`  | `int`            | Number of service units requested (or `0` if unavailable).                |
-    | └ `alloc_awarded`    | `int`            | Number of service units awarded (or `0` if unavailable).                  |
+    | Field Name                    | Type             | Description                                                               |
+    |-------------------------------|------------------|---------------------------------------------------------------------------|
+    | `user_name`                   | `str`            | Username of the notified user.                                            |
+    | `user_first`                  | `str`            | First name of the notified user.                                          |
+    | `user_last`                   | `str`            | Last name of the notified user.                                           |
+    | `req_id`                      | `int`            | ID of the allocation request being notified about.                        |
+    | `req_title`                   | `str`            | Title of the allocation request.                                          |
+    | `req_team`                    | `str`            | Name of the team associated with the allocation request.                  |
+    | `req_submitted`               | `date`           | Date when the allocation request was submitted.                           |
+    | `req_active`                  | `date`           | Date when the allocation request became active.                           |
+    | `req_expire`                  | `date` or `None` | Date when the allocation request expires.                                 |
+    | `req_days_left`               | `int` or `None`  | Number of days remaining until expiration (calculated from current date). |
+    | `allocations`                 | `list[dict]`     | List of allocated resources tied to the request. Each item includes:      |
+    | ├ `alloc_cluster`             | `str`            | Name of the cluster where the resource is allocated.                      |
+    | ├ `alloc_requested`           | `int`            | Number of service units requested (or `0` if unavailable).                |
+    | └ `alloc_awarded`             | `int`            | Number of service units awarded (or `0` if unavailable).                  |
+    | `upcoming_requests`           | `list[dict]`     | List of upcoming or active requests for the same team. Each item includes:|
+    | ├ `id`                        | `int`            | ID of the upcoming allocation request.                                    |
+    | ├ `title`                     | `str`            | Title of the upcoming allocation request.                                 |
+    | ├ `submitted`                 | `date`           | Date when the upcoming request was submitted.                             |
+    | ├ `active`                    | `date`           | Date when the upcoming request became active.                             |
+    | └ `expire`                    | `date` or `None` | Date when the upcoming request expires.                                   |
 
 ??? abstract "Default Template Content"
 
@@ -92,22 +98,29 @@ and that the resources granted under that allocation are no longer available for
 
 ??? info "Available Template Fields"
 
-    | Field Name           | Type             | Description                                                          |
-    |----------------------|------------------|----------------------------------------------------------------------|
-    | `user_name`          | `str`            | Username of the notified user.                                       |
-    | `user_first`         | `str`            | First name of the notified user.                                     |
-    | `user_last`          | `str`            | Last name of the notified user.                                      |
-    | `req_id`             | `int`            | ID of the allocation request being notified about.                   |
-    | `req_title`          | `str`            | Title or of the allocation request.                                  |
-    | `req_team`           | `str`            | Name of the team associated with the allocation request.             |
-    | `req_submitted`      | `date`           | Date when the allocation request was submitted.                      |
-    | `req_active`         | `date`           | Date when the allocation request became active.                      |
-    | `req_expire`         | `date` or `None` | Date when the allocation request expires.                            |
-    | `allocations`        | `list[dict]`     | List of allocated resources tied to the request. Each item includes: |
-    | ├ `alloc_cluster`    | `str`            | Name of the cluster where the resource is allocated.                 |
-    | ├ `alloc_requested`  | `int`            | Number of service units requested (or `0` if unavailable).           |
-    | ├ `alloc_awarded`    | `int`            | Number of service units awarded (or `0` if unavailable).             |
-    | └ `alloc_awarded`    | `int`            | Number of service unitss used by the team (or `0` if unavailable).   |
+    | Field Name                    | Type             | Description                                                               |
+    |-------------------------------|------------------|---------------------------------------------------------------------------|
+    | `user_name`                   | `str`            | Username of the notified user.                                            |
+    | `user_first`                  | `str`            | First name of the notified user.                                          |
+    | `user_last`                   | `str`            | Last name of the notified user.                                           |
+    | `req_id`                      | `int`            | ID of the allocation request being notified about.                        |
+    | `req_title`                   | `str`            | Title of the allocation request.                                          |
+    | `req_team`                    | `str`            | Name of the team associated with the allocation request.                  |
+    | `req_submitted`               | `date`           | Date when the allocation request was submitted.                           |
+    | `req_active`                  | `date`           | Date when the allocation request became active.                           |
+    | `req_expire`                  | `date` or `None` | Date when the allocation request expires.                                 |
+    | `allocations`                 | `list[dict]`     | List of allocated resources tied to the request. Each item includes:      |
+    | ├ `alloc_cluster`             | `str`            | Name of the cluster where the resource is allocated.                      |
+    | ├ `alloc_requested`           | `int`            | Number of service units requested (or `0` if unavailable).                |
+    | ├ `alloc_awarded`             | `int`            | Number of service units awarded (or `0` if unavailable).                  |
+    | └ `alloc_final`               | `int`            | Number of service units used by the team (or `0` if unavailable).         |
+    | `upcoming_requests`           | `list[dict]`     | List of upcoming or active requests for the same team. Each item includes:|
+    | ├ `id`                        | `int`            | ID of the upcoming allocation request.                                    |
+    | ├ `title`                     | `str`            | Title of the upcoming allocation request.                                 |
+    | ├ `submitted`                 | `date`           | Date when the upcoming request was submitted.                             |
+    | ├ `active`                    | `date`           | Date when the upcoming request became active.                             |
+    | ├ `expire`                    | `date` or `None` | Date when the upcoming request expires.                                   |
+    | └ `status`                    | `str`            | Status of the upcoming allocation request.                                |
 
 ??? abstract "Default Template Content"
 
