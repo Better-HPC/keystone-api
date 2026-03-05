@@ -13,7 +13,7 @@ class SampleModel(models.Model):
     """Sample database model for testing"""
 
     class Meta:
-        app_label = 'plugins'
+        app_label = 'test_AutoFilterBackend'
 
     bool_field = models.BooleanField()
     char_field = models.CharField(max_length=100)

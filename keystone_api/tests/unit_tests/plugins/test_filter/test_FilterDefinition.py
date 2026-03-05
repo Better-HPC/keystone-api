@@ -11,7 +11,7 @@ class SampleModel(models.Model):
     """Sample database model for testing"""
 
     class Meta:
-        app_label = 'plugins'
+        app_label = 'test_FilterDefinition'
 
     char_field = models.CharField(max_length=100)
     integer_field = models.IntegerField()
