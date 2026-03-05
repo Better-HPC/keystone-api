@@ -37,7 +37,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: awarded__exact
+        name: awarded
         schema:
           type: integer
       - in: query
@@ -83,7 +83,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: cluster__exact
+        name: cluster
         schema:
           type: integer
       - in: query
@@ -113,7 +113,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: final__exact
+        name: final
         schema:
           type: integer
       - in: query
@@ -159,7 +159,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -205,7 +205,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: request__exact
+        name: request
         schema:
           type: integer
       - in: query
@@ -235,7 +235,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: requested__exact
+        name: requested
         schema:
           type: integer
       - in: query
@@ -470,7 +470,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -516,15 +516,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
         name: name__contains
         schema:
           type: string
       - in: query
         name: name__endswith
-        schema:
-          type: string
-      - in: query
-        name: name__exact
         schema:
           type: string
       - in: query
@@ -562,7 +562,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: request__exact
+        name: request
         schema:
           type: integer
       - in: query
@@ -592,14 +592,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: uploaded__day
-        schema:
-          type: number
-      - in: query
-        name: uploaded__exact
+        name: uploaded
         schema:
           type: string
           format: date-time
+      - in: query
+        name: uploaded__day
+        schema:
+          type: number
       - in: query
         name: uploaded__gt
         schema:
@@ -867,15 +867,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: access_mode__contains
-        schema:
-          type: string
-      - in: query
-        name: access_mode__endswith
-        schema:
-          type: string
-      - in: query
-        name: access_mode__exact
+        name: access_mode
         schema:
           type: string
           enum:
@@ -886,6 +878,14 @@ paths:
           * `WL` - Whitelist
           * `BL` - Blacklist
           * `OP` - Open
+      - in: query
+        name: access_mode__contains
+        schema:
+          type: string
+      - in: query
+        name: access_mode__endswith
+        schema:
+          type: string
       - in: query
         name: access_mode__in
         schema:
@@ -921,15 +921,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
         name: description__contains
         schema:
           type: string
       - in: query
         name: description__endswith
-        schema:
-          type: string
-      - in: query
-        name: description__exact
         schema:
           type: string
       - in: query
@@ -967,7 +967,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: enabled__exact
+        name: enabled
         schema:
           type: boolean
       - in: query
@@ -997,7 +997,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -1043,15 +1043,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
         name: name__contains
         schema:
           type: string
       - in: query
         name: name__endswith
-        schema:
-          type: string
-      - in: query
-        name: name__exact
         schema:
           type: string
       - in: query
@@ -1278,15 +1278,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: content
+        schema:
+          type: string
+      - in: query
         name: content__contains
         schema:
           type: string
       - in: query
         name: content__endswith
-        schema:
-          type: string
-      - in: query
-        name: content__exact
         schema:
           type: string
       - in: query
@@ -1324,14 +1324,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: created__day
-        schema:
-          type: number
-      - in: query
-        name: created__exact
+        name: created
         schema:
           type: string
           format: date-time
+      - in: query
+        name: created__day
+        schema:
+          type: number
       - in: query
         name: created__gt
         schema:
@@ -1409,7 +1409,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -1455,7 +1455,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: private__exact
+        name: private
         schema:
           type: boolean
       - in: query
@@ -1485,7 +1485,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: request__exact
+        name: request
         schema:
           type: integer
       - in: query
@@ -1515,7 +1515,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: user__exact
+        name: user
         schema:
           type: integer
       - in: query
@@ -1739,15 +1739,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: account
+        schema:
+          type: string
+      - in: query
         name: account__contains
         schema:
           type: string
       - in: query
         name: account__endswith
-        schema:
-          type: string
-      - in: query
-        name: account__exact
         schema:
           type: string
       - in: query
@@ -1785,15 +1785,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: allocnodes
+        schema:
+          type: string
+      - in: query
         name: allocnodes__contains
         schema:
           type: string
       - in: query
         name: allocnodes__endswith
-        schema:
-          type: string
-      - in: query
-        name: allocnodes__exact
         schema:
           type: string
       - in: query
@@ -1831,15 +1831,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: alloctres
+        schema:
+          type: string
+      - in: query
         name: alloctres__contains
         schema:
           type: string
       - in: query
         name: alloctres__endswith
-        schema:
-          type: string
-      - in: query
-        name: alloctres__exact
         schema:
           type: string
       - in: query
@@ -1877,7 +1877,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: cluster__exact
+        name: cluster
         schema:
           type: integer
       - in: query
@@ -1907,14 +1907,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: created_at__day
-        schema:
-          type: number
-      - in: query
-        name: created_at__exact
+        name: created_at
         schema:
           type: string
           format: date-time
+      - in: query
+        name: created_at__day
+        schema:
+          type: number
       - in: query
         name: created_at__gt
         schema:
@@ -1992,15 +1992,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: derivedexitcode
+        schema:
+          type: string
+      - in: query
         name: derivedexitcode__contains
         schema:
           type: string
       - in: query
         name: derivedexitcode__endswith
-        schema:
-          type: string
-      - in: query
-        name: derivedexitcode__exact
         schema:
           type: string
       - in: query
@@ -2038,7 +2038,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: elapsed__exact
+        name: elapsed
         schema:
           type: string
           format: duration
@@ -2071,14 +2071,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: end__day
-        schema:
-          type: number
-      - in: query
-        name: end__exact
+        name: end
         schema:
           type: string
           format: date-time
+      - in: query
+        name: end__day
+        schema:
+          type: number
       - in: query
         name: end__gt
         schema:
@@ -2156,15 +2156,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: group
+        schema:
+          type: string
+      - in: query
         name: group__contains
         schema:
           type: string
       - in: query
         name: group__endswith
-        schema:
-          type: string
-      - in: query
-        name: group__exact
         schema:
           type: string
       - in: query
@@ -2202,7 +2202,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -2248,15 +2248,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: jobid
+        schema:
+          type: string
+      - in: query
         name: jobid__contains
         schema:
           type: string
       - in: query
         name: jobid__endswith
-        schema:
-          type: string
-      - in: query
-        name: jobid__exact
         schema:
           type: string
       - in: query
@@ -2294,15 +2294,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: jobname
+        schema:
+          type: string
+      - in: query
         name: jobname__contains
         schema:
           type: string
       - in: query
         name: jobname__endswith
-        schema:
-          type: string
-      - in: query
-        name: jobname__exact
         schema:
           type: string
       - in: query
@@ -2340,15 +2340,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: nodelist
+        schema:
+          type: string
+      - in: query
         name: nodelist__contains
         schema:
           type: string
       - in: query
         name: nodelist__endswith
-        schema:
-          type: string
-      - in: query
-        name: nodelist__exact
         schema:
           type: string
       - in: query
@@ -2386,15 +2386,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: partition
+        schema:
+          type: string
+      - in: query
         name: partition__contains
         schema:
           type: string
       - in: query
         name: partition__endswith
-        schema:
-          type: string
-      - in: query
-        name: partition__exact
         schema:
           type: string
       - in: query
@@ -2432,7 +2432,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: priority__exact
+        name: priority
         schema:
           type: integer
       - in: query
@@ -2478,15 +2478,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: qos
+        schema:
+          type: string
+      - in: query
         name: qos__contains
         schema:
           type: string
       - in: query
         name: qos__endswith
-        schema:
-          type: string
-      - in: query
-        name: qos__exact
         schema:
           type: string
       - in: query
@@ -2524,14 +2524,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: start__day
-        schema:
-          type: number
-      - in: query
-        name: start__exact
+        name: start
         schema:
           type: string
           format: date-time
+      - in: query
+        name: start__day
+        schema:
+          type: number
       - in: query
         name: start__gt
         schema:
@@ -2609,15 +2609,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: state
+        schema:
+          type: string
+      - in: query
         name: state__contains
         schema:
           type: string
       - in: query
         name: state__endswith
-        schema:
-          type: string
-      - in: query
-        name: state__exact
         schema:
           type: string
       - in: query
@@ -2655,14 +2655,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: submit__day
-        schema:
-          type: number
-      - in: query
-        name: submit__exact
+        name: submit
         schema:
           type: string
           format: date-time
+      - in: query
+        name: submit__day
+        schema:
+          type: number
       - in: query
         name: submit__gt
         schema:
@@ -2740,7 +2740,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -2770,14 +2770,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: updated_at__day
-        schema:
-          type: number
-      - in: query
-        name: updated_at__exact
+        name: updated_at
         schema:
           type: string
           format: date-time
+      - in: query
+        name: updated_at__day
+        schema:
+          type: number
       - in: query
         name: updated_at__gt
         schema:
@@ -2855,15 +2855,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: username
+        schema:
+          type: string
+      - in: query
         name: username__contains
         schema:
           type: string
       - in: query
         name: username__endswith
-        schema:
-          type: string
-      - in: query
-        name: username__exact
         schema:
           type: string
       - in: query
@@ -2988,14 +2988,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: active__day
-        schema:
-          type: number
-      - in: query
-        name: active__exact
+        name: active
         schema:
           type: string
           format: date
+      - in: query
+        name: active__day
+        schema:
+          type: number
       - in: query
         name: active__gt
         schema:
@@ -3061,15 +3061,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
         name: description__contains
         schema:
           type: string
       - in: query
         name: description__endswith
-        schema:
-          type: string
-      - in: query
-        name: description__exact
         schema:
           type: string
       - in: query
@@ -3107,14 +3107,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: expire__day
-        schema:
-          type: number
-      - in: query
-        name: expire__exact
+        name: expire
         schema:
           type: string
           format: date
+      - in: query
+        name: expire__day
+        schema:
+          type: number
       - in: query
         name: expire__gt
         schema:
@@ -3180,7 +3180,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -3226,15 +3226,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: status__contains
-        schema:
-          type: string
-      - in: query
-        name: status__endswith
-        schema:
-          type: string
-      - in: query
-        name: status__exact
+        name: status
         schema:
           type: string
           enum:
@@ -3247,6 +3239,14 @@ paths:
           * `AP` - Approved
           * `DC` - Declined
           * `CR` - Changes Requested
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
       - in: query
         name: status__in
         schema:
@@ -3282,14 +3282,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: submitted__day
-        schema:
-          type: number
-      - in: query
-        name: submitted__exact
+        name: submitted
         schema:
           type: string
           format: date-time
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
       - in: query
         name: submitted__gt
         schema:
@@ -3367,7 +3367,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: submitter__exact
+        name: submitter
         schema:
           type: integer
       - in: query
@@ -3397,7 +3397,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -3427,15 +3427,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
         name: title__contains
         schema:
           type: string
       - in: query
         name: title__endswith
-        schema:
-          type: string
-      - in: query
-        name: title__exact
         schema:
           type: string
       - in: query
@@ -3680,7 +3680,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -3726,7 +3726,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: request__exact
+        name: request
         schema:
           type: integer
       - in: query
@@ -3756,7 +3756,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: reviewer__exact
+        name: reviewer
         schema:
           type: integer
       - in: query
@@ -3786,15 +3786,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: status__contains
-        schema:
-          type: string
-      - in: query
-        name: status__endswith
-        schema:
-          type: string
-      - in: query
-        name: status__exact
+        name: status
         schema:
           type: string
           enum:
@@ -3805,6 +3797,14 @@ paths:
           * `AP` - Approved
           * `DC` - Declined
           * `CR` - Changes Requested
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
       - in: query
         name: status__in
         schema:
@@ -3840,14 +3840,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: submitted__day
-        schema:
-          type: number
-      - in: query
-        name: submitted__exact
+        name: submitted
         schema:
           type: string
           format: date-time
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
       - in: query
         name: submitted__gt
         schema:
@@ -4221,7 +4221,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: action__exact
+        name: action
         schema:
           type: integer
           enum:
@@ -4277,7 +4277,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: actor__exact
+        name: actor
         schema:
           type: integer
       - in: query
@@ -4307,15 +4307,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: actor_email
+        schema:
+          type: string
+      - in: query
         name: actor_email__contains
         schema:
           type: string
       - in: query
         name: actor_email__endswith
-        schema:
-          type: string
-      - in: query
-        name: actor_email__exact
         schema:
           type: string
       - in: query
@@ -4353,15 +4353,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: changes_text
+        schema:
+          type: string
+      - in: query
         name: changes_text__contains
         schema:
           type: string
       - in: query
         name: changes_text__endswith
-        schema:
-          type: string
-      - in: query
-        name: changes_text__exact
         schema:
           type: string
       - in: query
@@ -4399,15 +4399,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
         name: cid__contains
         schema:
           type: string
       - in: query
         name: cid__endswith
-        schema:
-          type: string
-      - in: query
-        name: cid__exact
         schema:
           type: string
       - in: query
@@ -4445,7 +4445,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: content_type__exact
+        name: content_type
         schema:
           type: integer
       - in: query
@@ -4475,7 +4475,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -4521,7 +4521,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: object_id__exact
+        name: object_id
         schema:
           type: integer
       - in: query
@@ -4567,15 +4567,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: object_pk
+        schema:
+          type: string
+      - in: query
         name: object_pk__contains
         schema:
           type: string
       - in: query
         name: object_pk__endswith
-        schema:
-          type: string
-      - in: query
-        name: object_pk__exact
         schema:
           type: string
       - in: query
@@ -4613,15 +4613,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: object_repr
+        schema:
+          type: string
+      - in: query
         name: object_repr__contains
         schema:
           type: string
       - in: query
         name: object_repr__endswith
-        schema:
-          type: string
-      - in: query
-        name: object_repr__exact
         schema:
           type: string
       - in: query
@@ -4659,7 +4659,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: remote_addr__exact
+        name: remote_addr
         schema:
           type: string
       - in: query
@@ -4689,7 +4689,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: remote_port__exact
+        name: remote_port
         schema:
           type: integer
       - in: query
@@ -4735,14 +4735,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: timestamp__day
-        schema:
-          type: number
-      - in: query
-        name: timestamp__exact
+        name: timestamp
         schema:
           type: string
           format: date-time
+      - in: query
+        name: timestamp__day
+        schema:
+          type: number
       - in: query
         name: timestamp__gt
         schema:
@@ -4890,15 +4890,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
         name: cid__contains
         schema:
           type: string
       - in: query
         name: cid__endswith
-        schema:
-          type: string
-      - in: query
-        name: cid__exact
         schema:
           type: string
       - in: query
@@ -4936,15 +4936,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: endpoint
+        schema:
+          type: string
+      - in: query
         name: endpoint__contains
         schema:
           type: string
       - in: query
         name: endpoint__endswith
-        schema:
-          type: string
-      - in: query
-        name: endpoint__exact
         schema:
           type: string
       - in: query
@@ -4982,7 +4982,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -5028,15 +5028,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: method
+        schema:
+          type: string
+      - in: query
         name: method__contains
         schema:
           type: string
       - in: query
         name: method__endswith
-        schema:
-          type: string
-      - in: query
-        name: method__exact
         schema:
           type: string
       - in: query
@@ -5074,15 +5074,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: remote_address
+        schema:
+          type: string
+      - in: query
         name: remote_address__contains
         schema:
           type: string
       - in: query
         name: remote_address__endswith
-        schema:
-          type: string
-      - in: query
-        name: remote_address__exact
         schema:
           type: string
       - in: query
@@ -5120,7 +5120,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: response_code__exact
+        name: response_code
         schema:
           type: integer
       - in: query
@@ -5166,14 +5166,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: timestamp__day
-        schema:
-          type: number
-      - in: query
-        name: timestamp__exact
+        name: timestamp
         schema:
           type: string
           format: date-time
+      - in: query
+        name: timestamp__day
+        schema:
+          type: number
       - in: query
         name: timestamp__gt
         schema:
@@ -5251,7 +5251,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: user__exact
+        name: user
         schema:
           type: integer
       - in: query
@@ -5350,15 +5350,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: content_encoding
+        schema:
+          type: string
+      - in: query
         name: content_encoding__contains
         schema:
           type: string
       - in: query
         name: content_encoding__endswith
-        schema:
-          type: string
-      - in: query
-        name: content_encoding__exact
         schema:
           type: string
       - in: query
@@ -5396,15 +5396,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: content_type
+        schema:
+          type: string
+      - in: query
         name: content_type__contains
         schema:
           type: string
       - in: query
         name: content_type__endswith
-        schema:
-          type: string
-      - in: query
-        name: content_type__exact
         schema:
           type: string
       - in: query
@@ -5442,14 +5442,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: date_created__day
-        schema:
-          type: number
-      - in: query
-        name: date_created__exact
+        name: date_created
         schema:
           type: string
           format: date-time
+      - in: query
+        name: date_created__day
+        schema:
+          type: number
       - in: query
         name: date_created__gt
         schema:
@@ -5527,14 +5527,14 @@ paths:
         schema:
           type: number
       - in: query
-        name: date_done__day
-        schema:
-          type: number
-      - in: query
-        name: date_done__exact
+        name: date_done
         schema:
           type: string
           format: date-time
+      - in: query
+        name: date_done__day
+        schema:
+          type: number
       - in: query
         name: date_done__gt
         schema:
@@ -5612,14 +5612,14 @@ paths:
         schema:
           type: number
       - in: query
-        name: date_started__day
-        schema:
-          type: number
-      - in: query
-        name: date_started__exact
+        name: date_started
         schema:
           type: string
           format: date-time
+      - in: query
+        name: date_started__day
+        schema:
+          type: number
       - in: query
         name: date_started__gt
         schema:
@@ -5697,7 +5697,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -5743,15 +5743,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: meta
+        schema:
+          type: string
+      - in: query
         name: meta__contains
         schema:
           type: string
       - in: query
         name: meta__endswith
-        schema:
-          type: string
-      - in: query
-        name: meta__exact
         schema:
           type: string
       - in: query
@@ -5789,15 +5789,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: periodic_task_name
+        schema:
+          type: string
+      - in: query
         name: periodic_task_name__contains
         schema:
           type: string
       - in: query
         name: periodic_task_name__endswith
-        schema:
-          type: string
-      - in: query
-        name: periodic_task_name__exact
         schema:
           type: string
       - in: query
@@ -5835,15 +5835,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: result
+        schema:
+          type: string
+      - in: query
         name: result__contains
         schema:
           type: string
       - in: query
         name: result__endswith
-        schema:
-          type: string
-      - in: query
-        name: result__exact
         schema:
           type: string
       - in: query
@@ -5881,15 +5881,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: status
+        schema:
+          type: string
+      - in: query
         name: status__contains
         schema:
           type: string
       - in: query
         name: status__endswith
-        schema:
-          type: string
-      - in: query
-        name: status__exact
         schema:
           type: string
       - in: query
@@ -5927,15 +5927,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_args
+        schema:
+          type: string
+      - in: query
         name: task_args__contains
         schema:
           type: string
       - in: query
         name: task_args__endswith
-        schema:
-          type: string
-      - in: query
-        name: task_args__exact
         schema:
           type: string
       - in: query
@@ -5973,15 +5973,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_id
+        schema:
+          type: string
+      - in: query
         name: task_id__contains
         schema:
           type: string
       - in: query
         name: task_id__endswith
-        schema:
-          type: string
-      - in: query
-        name: task_id__exact
         schema:
           type: string
       - in: query
@@ -6019,15 +6019,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_kwargs
+        schema:
+          type: string
+      - in: query
         name: task_kwargs__contains
         schema:
           type: string
       - in: query
         name: task_kwargs__endswith
-        schema:
-          type: string
-      - in: query
-        name: task_kwargs__exact
         schema:
           type: string
       - in: query
@@ -6065,15 +6065,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_name
+        schema:
+          type: string
+      - in: query
         name: task_name__contains
         schema:
           type: string
       - in: query
         name: task_name__endswith
-        schema:
-          type: string
-      - in: query
-        name: task_name__exact
         schema:
           type: string
       - in: query
@@ -6111,15 +6111,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: traceback
+        schema:
+          type: string
+      - in: query
         name: traceback__contains
         schema:
           type: string
       - in: query
         name: traceback__endswith
-        schema:
-          type: string
-      - in: query
-        name: traceback__exact
         schema:
           type: string
       - in: query
@@ -6157,15 +6157,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: worker
+        schema:
+          type: string
+      - in: query
         name: worker__contains
         schema:
           type: string
       - in: query
         name: worker__endswith
-        schema:
-          type: string
-      - in: query
-        name: worker__exact
         schema:
           type: string
       - in: query
@@ -6290,7 +6290,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -6336,15 +6336,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: message_html
+        schema:
+          type: string
+      - in: query
         name: message_html__contains
         schema:
           type: string
       - in: query
         name: message_html__endswith
-        schema:
-          type: string
-      - in: query
-        name: message_html__exact
         schema:
           type: string
       - in: query
@@ -6382,15 +6382,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: message_text
+        schema:
+          type: string
+      - in: query
         name: message_text__contains
         schema:
           type: string
       - in: query
         name: message_text__endswith
-        schema:
-          type: string
-      - in: query
-        name: message_text__exact
         schema:
           type: string
       - in: query
@@ -6428,15 +6428,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: notification_type__contains
-        schema:
-          type: string
-      - in: query
-        name: notification_type__endswith
-        schema:
-          type: string
-      - in: query
-        name: notification_type__exact
+        name: notification_type
         schema:
           type: string
           enum:
@@ -6447,6 +6439,14 @@ paths:
           * `GM` - General Message
           * `RE` - Upcoming Request Expiration
           * `RD` - Request Past Expiration
+      - in: query
+        name: notification_type__contains
+        schema:
+          type: string
+      - in: query
+        name: notification_type__endswith
+        schema:
+          type: string
       - in: query
         name: notification_type__in
         schema:
@@ -6482,7 +6482,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: read__exact
+        name: read
         schema:
           type: boolean
       - in: query
@@ -6512,15 +6512,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: subject
+        schema:
+          type: string
+      - in: query
         name: subject__contains
         schema:
           type: string
       - in: query
         name: subject__endswith
-        schema:
-          type: string
-      - in: query
-        name: subject__exact
         schema:
           type: string
       - in: query
@@ -6558,14 +6558,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: time__day
-        schema:
-          type: number
-      - in: query
-        name: time__exact
+        name: time
         schema:
           type: string
           format: date-time
+      - in: query
+        name: time__day
+        schema:
+          type: number
       - in: query
         name: time__gt
         schema:
@@ -6643,7 +6643,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: user__exact
+        name: user
         schema:
           type: integer
       - in: query
@@ -6776,7 +6776,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -6822,7 +6822,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: notify_on_expiration__exact
+        name: notify_on_expiration
         schema:
           type: boolean
       - in: query
@@ -7040,15 +7040,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: agency
+        schema:
+          type: string
+      - in: query
         name: agency__contains
         schema:
           type: string
       - in: query
         name: agency__endswith
-        schema:
-          type: string
-      - in: query
-        name: agency__exact
         schema:
           type: string
       - in: query
@@ -7086,7 +7086,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: amount__exact
+        name: amount
         schema:
           type: number
       - in: query
@@ -7132,15 +7132,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
         name: description__contains
         schema:
           type: string
       - in: query
         name: description__endswith
-        schema:
-          type: string
-      - in: query
-        name: description__exact
         schema:
           type: string
       - in: query
@@ -7178,14 +7178,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: end_date__day
-        schema:
-          type: number
-      - in: query
-        name: end_date__exact
+        name: end_date
         schema:
           type: string
           format: date
+      - in: query
+        name: end_date__day
+        schema:
+          type: number
       - in: query
         name: end_date__gt
         schema:
@@ -7251,15 +7251,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: grant_number
+        schema:
+          type: string
+      - in: query
         name: grant_number__contains
         schema:
           type: string
       - in: query
         name: grant_number__endswith
-        schema:
-          type: string
-      - in: query
-        name: grant_number__exact
         schema:
           type: string
       - in: query
@@ -7297,7 +7297,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -7343,14 +7343,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: start_date__day
-        schema:
-          type: number
-      - in: query
-        name: start_date__exact
+        name: start_date
         schema:
           type: string
           format: date
+      - in: query
+        name: start_date__day
+        schema:
+          type: number
       - in: query
         name: start_date__gt
         schema:
@@ -7416,7 +7416,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -7446,15 +7446,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
         name: title__contains
         schema:
           type: string
       - in: query
         name: title__endswith
-        schema:
-          type: string
-      - in: query
-        name: title__exact
         schema:
           type: string
       - in: query
@@ -7681,15 +7681,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: abstract
+        schema:
+          type: string
+      - in: query
         name: abstract__contains
         schema:
           type: string
       - in: query
         name: abstract__endswith
-        schema:
-          type: string
-      - in: query
-        name: abstract__exact
         schema:
           type: string
       - in: query
@@ -7727,15 +7727,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: doi
+        schema:
+          type: string
+      - in: query
         name: doi__contains
         schema:
           type: string
       - in: query
         name: doi__endswith
-        schema:
-          type: string
-      - in: query
-        name: doi__exact
         schema:
           type: string
       - in: query
@@ -7773,7 +7773,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -7819,15 +7819,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: issue
+        schema:
+          type: string
+      - in: query
         name: issue__contains
         schema:
           type: string
       - in: query
         name: issue__endswith
-        schema:
-          type: string
-      - in: query
-        name: issue__exact
         schema:
           type: string
       - in: query
@@ -7865,15 +7865,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: journal
+        schema:
+          type: string
+      - in: query
         name: journal__contains
         schema:
           type: string
       - in: query
         name: journal__endswith
-        schema:
-          type: string
-      - in: query
-        name: journal__exact
         schema:
           type: string
       - in: query
@@ -7911,14 +7911,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: published__day
-        schema:
-          type: number
-      - in: query
-        name: published__exact
+        name: published
         schema:
           type: string
           format: date
+      - in: query
+        name: published__day
+        schema:
+          type: number
       - in: query
         name: published__gt
         schema:
@@ -7984,14 +7984,14 @@ paths:
         schema:
           type: number
       - in: query
-        name: submitted__day
-        schema:
-          type: number
-      - in: query
-        name: submitted__exact
+        name: submitted
         schema:
           type: string
           format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
       - in: query
         name: submitted__gt
         schema:
@@ -8057,7 +8057,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -8087,15 +8087,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
         name: title__contains
         schema:
           type: string
       - in: query
         name: title__endswith
-        schema:
-          type: string
-      - in: query
-        name: title__exact
         schema:
           type: string
       - in: query
@@ -8133,15 +8133,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: volume
+        schema:
+          type: string
+      - in: query
         name: volume__contains
         schema:
           type: string
       - in: query
         name: volume__endswith
-        schema:
-          type: string
-      - in: query
-        name: volume__exact
         schema:
           type: string
       - in: query
@@ -8356,15 +8356,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: agency
+        schema:
+          type: string
+      - in: query
         name: agency__contains
         schema:
           type: string
       - in: query
         name: agency__endswith
-        schema:
-          type: string
-      - in: query
-        name: agency__exact
         schema:
           type: string
       - in: query
@@ -8402,7 +8402,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: amount__exact
+        name: amount
         schema:
           type: number
       - in: query
@@ -8448,15 +8448,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
         name: description__contains
         schema:
           type: string
       - in: query
         name: description__endswith
-        schema:
-          type: string
-      - in: query
-        name: description__exact
         schema:
           type: string
       - in: query
@@ -8494,14 +8494,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: end_date__day
-        schema:
-          type: number
-      - in: query
-        name: end_date__exact
+        name: end_date
         schema:
           type: string
           format: date
+      - in: query
+        name: end_date__day
+        schema:
+          type: number
       - in: query
         name: end_date__gt
         schema:
@@ -8567,15 +8567,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: grant_number
+        schema:
+          type: string
+      - in: query
         name: grant_number__contains
         schema:
           type: string
       - in: query
         name: grant_number__endswith
-        schema:
-          type: string
-      - in: query
-        name: grant_number__exact
         schema:
           type: string
       - in: query
@@ -8613,7 +8613,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -8659,14 +8659,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: start_date__day
-        schema:
-          type: number
-      - in: query
-        name: start_date__exact
+        name: start_date
         schema:
           type: string
           format: date
+      - in: query
+        name: start_date__day
+        schema:
+          type: number
       - in: query
         name: start_date__gt
         schema:
@@ -8732,7 +8732,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -8762,15 +8762,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
         name: title__contains
         schema:
           type: string
       - in: query
         name: title__endswith
-        schema:
-          type: string
-      - in: query
-        name: title__exact
         schema:
           type: string
       - in: query
@@ -8840,7 +8840,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -8886,15 +8886,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: message_html
+        schema:
+          type: string
+      - in: query
         name: message_html__contains
         schema:
           type: string
       - in: query
         name: message_html__endswith
-        schema:
-          type: string
-      - in: query
-        name: message_html__exact
         schema:
           type: string
       - in: query
@@ -8932,15 +8932,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: message_text
+        schema:
+          type: string
+      - in: query
         name: message_text__contains
         schema:
           type: string
       - in: query
         name: message_text__endswith
-        schema:
-          type: string
-      - in: query
-        name: message_text__exact
         schema:
           type: string
       - in: query
@@ -8978,15 +8978,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: notification_type__contains
-        schema:
-          type: string
-      - in: query
-        name: notification_type__endswith
-        schema:
-          type: string
-      - in: query
-        name: notification_type__exact
+        name: notification_type
         schema:
           type: string
           enum:
@@ -8997,6 +8989,14 @@ paths:
           * `GM` - General Message
           * `RE` - Upcoming Request Expiration
           * `RD` - Request Past Expiration
+      - in: query
+        name: notification_type__contains
+        schema:
+          type: string
+      - in: query
+        name: notification_type__endswith
+        schema:
+          type: string
       - in: query
         name: notification_type__in
         schema:
@@ -9032,7 +9032,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: read__exact
+        name: read
         schema:
           type: boolean
       - in: query
@@ -9062,15 +9062,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: subject
+        schema:
+          type: string
+      - in: query
         name: subject__contains
         schema:
           type: string
       - in: query
         name: subject__endswith
-        schema:
-          type: string
-      - in: query
-        name: subject__exact
         schema:
           type: string
       - in: query
@@ -9108,14 +9108,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: time__day
-        schema:
-          type: number
-      - in: query
-        name: time__exact
+        name: time
         schema:
           type: string
           format: date-time
+      - in: query
+        name: time__day
+        schema:
+          type: number
       - in: query
         name: time__gt
         schema:
@@ -9193,7 +9193,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: user__exact
+        name: user
         schema:
           type: integer
       - in: query
@@ -9255,15 +9255,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: abstract
+        schema:
+          type: string
+      - in: query
         name: abstract__contains
         schema:
           type: string
       - in: query
         name: abstract__endswith
-        schema:
-          type: string
-      - in: query
-        name: abstract__exact
         schema:
           type: string
       - in: query
@@ -9301,15 +9301,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: doi
+        schema:
+          type: string
+      - in: query
         name: doi__contains
         schema:
           type: string
       - in: query
         name: doi__endswith
-        schema:
-          type: string
-      - in: query
-        name: doi__exact
         schema:
           type: string
       - in: query
@@ -9347,7 +9347,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -9393,15 +9393,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: issue
+        schema:
+          type: string
+      - in: query
         name: issue__contains
         schema:
           type: string
       - in: query
         name: issue__endswith
-        schema:
-          type: string
-      - in: query
-        name: issue__exact
         schema:
           type: string
       - in: query
@@ -9439,15 +9439,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: journal
+        schema:
+          type: string
+      - in: query
         name: journal__contains
         schema:
           type: string
       - in: query
         name: journal__endswith
-        schema:
-          type: string
-      - in: query
-        name: journal__exact
         schema:
           type: string
       - in: query
@@ -9485,14 +9485,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: published__day
-        schema:
-          type: number
-      - in: query
-        name: published__exact
+        name: published
         schema:
           type: string
           format: date
+      - in: query
+        name: published__day
+        schema:
+          type: number
       - in: query
         name: published__gt
         schema:
@@ -9558,14 +9558,14 @@ paths:
         schema:
           type: number
       - in: query
-        name: submitted__day
-        schema:
-          type: number
-      - in: query
-        name: submitted__exact
+        name: submitted
         schema:
           type: string
           format: date
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
       - in: query
         name: submitted__gt
         schema:
@@ -9631,7 +9631,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -9661,15 +9661,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
         name: title__contains
         schema:
           type: string
       - in: query
         name: title__endswith
-        schema:
-          type: string
-      - in: query
-        name: title__exact
         schema:
           type: string
       - in: query
@@ -9707,15 +9707,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: volume
+        schema:
+          type: string
+      - in: query
         name: volume__contains
         schema:
           type: string
       - in: query
         name: volume__endswith
-        schema:
-          type: string
-      - in: query
-        name: volume__exact
         schema:
           type: string
       - in: query
@@ -9785,14 +9785,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: active__day
-        schema:
-          type: number
-      - in: query
-        name: active__exact
+        name: active
         schema:
           type: string
           format: date
+      - in: query
+        name: active__day
+        schema:
+          type: number
       - in: query
         name: active__gt
         schema:
@@ -9858,15 +9858,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
         name: description__contains
         schema:
           type: string
       - in: query
         name: description__endswith
-        schema:
-          type: string
-      - in: query
-        name: description__exact
         schema:
           type: string
       - in: query
@@ -9904,14 +9904,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: expire__day
-        schema:
-          type: number
-      - in: query
-        name: expire__exact
+        name: expire
         schema:
           type: string
           format: date
+      - in: query
+        name: expire__day
+        schema:
+          type: number
       - in: query
         name: expire__gt
         schema:
@@ -9977,7 +9977,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -10023,15 +10023,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: status__contains
-        schema:
-          type: string
-      - in: query
-        name: status__endswith
-        schema:
-          type: string
-      - in: query
-        name: status__exact
+        name: status
         schema:
           type: string
           enum:
@@ -10044,6 +10036,14 @@ paths:
           * `AP` - Approved
           * `DC` - Declined
           * `CR` - Changes Requested
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
       - in: query
         name: status__in
         schema:
@@ -10079,14 +10079,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: submitted__day
-        schema:
-          type: number
-      - in: query
-        name: submitted__exact
+        name: submitted
         schema:
           type: string
           format: date-time
+      - in: query
+        name: submitted__day
+        schema:
+          type: number
       - in: query
         name: submitted__gt
         schema:
@@ -10164,7 +10164,7 @@ paths:
         schema:
           type: number
       - in: query
-        name: submitter__exact
+        name: submitter
         schema:
           type: integer
       - in: query
@@ -10194,7 +10194,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -10224,15 +10224,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
         name: title__contains
         schema:
           type: string
       - in: query
         name: title__endswith
-        schema:
-          type: string
-      - in: query
-        name: title__exact
         schema:
           type: string
       - in: query
@@ -10330,7 +10330,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -10376,15 +10376,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: role__contains
-        schema:
-          type: string
-      - in: query
-        name: role__endswith
-        schema:
-          type: string
-      - in: query
-        name: role__exact
+        name: role
         schema:
           type: string
           enum:
@@ -10395,6 +10387,14 @@ paths:
           * `OW` - Owner
           * `AD` - Admin
           * `MB` - Member
+      - in: query
+        name: role__contains
+        schema:
+          type: string
+      - in: query
+        name: role__endswith
+        schema:
+          type: string
       - in: query
         name: role__in
         schema:
@@ -10430,7 +10430,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: team__exact
+        name: team
         schema:
           type: integer
       - in: query
@@ -10460,7 +10460,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: user__exact
+        name: user
         schema:
           type: integer
       - in: query
@@ -10677,7 +10677,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -10723,7 +10723,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: is_active__exact
+        name: is_active
         schema:
           type: boolean
       - in: query
@@ -10753,15 +10753,15 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
         name: name__contains
         schema:
           type: string
       - in: query
         name: name__endswith
-        schema:
-          type: string
-      - in: query
-        name: name__exact
         schema:
           type: string
       - in: query
@@ -10799,15 +10799,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: slug
+        schema:
+          type: string
+      - in: query
         name: slug__contains
         schema:
           type: string
       - in: query
         name: slug__endswith
-        schema:
-          type: string
-      - in: query
-        name: slug__exact
         schema:
           type: string
       - in: query
@@ -11031,14 +11031,14 @@ paths:
         schema:
           type: string
       - in: query
-        name: date_joined__day
-        schema:
-          type: number
-      - in: query
-        name: date_joined__exact
+        name: date_joined
         schema:
           type: string
           format: date-time
+      - in: query
+        name: date_joined__day
+        schema:
+          type: number
       - in: query
         name: date_joined__gt
         schema:
@@ -11116,15 +11116,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: department
+        schema:
+          type: string
+      - in: query
         name: department__contains
         schema:
           type: string
       - in: query
         name: department__endswith
-        schema:
-          type: string
-      - in: query
-        name: department__exact
         schema:
           type: string
       - in: query
@@ -11162,15 +11162,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
         name: email__contains
         schema:
           type: string
       - in: query
         name: email__endswith
-        schema:
-          type: string
-      - in: query
-        name: email__exact
         schema:
           type: string
       - in: query
@@ -11208,15 +11208,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: first_name
+        schema:
+          type: string
+      - in: query
         name: first_name__contains
         schema:
           type: string
       - in: query
         name: first_name__endswith
-        schema:
-          type: string
-      - in: query
-        name: first_name__exact
         schema:
           type: string
       - in: query
@@ -11254,7 +11254,7 @@ paths:
         schema:
           type: string
       - in: query
-        name: id__exact
+        name: id
         schema:
           type: integer
       - in: query
@@ -11300,7 +11300,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: is_active__exact
+        name: is_active
         schema:
           type: boolean
       - in: query
@@ -11330,7 +11330,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: is_ldap_user__exact
+        name: is_ldap_user
         schema:
           type: boolean
       - in: query
@@ -11360,7 +11360,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: is_staff__exact
+        name: is_staff
         schema:
           type: boolean
       - in: query
@@ -11390,7 +11390,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: is_superuser__exact
+        name: is_superuser
         schema:
           type: boolean
       - in: query
@@ -11420,14 +11420,14 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: last_login__day
-        schema:
-          type: number
-      - in: query
-        name: last_login__exact
+        name: last_login
         schema:
           type: string
           format: date-time
+      - in: query
+        name: last_login__day
+        schema:
+          type: number
       - in: query
         name: last_login__gt
         schema:
@@ -11505,15 +11505,15 @@ paths:
         schema:
           type: number
       - in: query
+        name: last_name
+        schema:
+          type: string
+      - in: query
         name: last_name__contains
         schema:
           type: string
       - in: query
         name: last_name__endswith
-        schema:
-          type: string
-      - in: query
-        name: last_name__exact
         schema:
           type: string
       - in: query
@@ -11551,15 +11551,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: password
+        schema:
+          type: string
+      - in: query
         name: password__contains
         schema:
           type: string
       - in: query
         name: password__endswith
-        schema:
-          type: string
-      - in: query
-        name: password__exact
         schema:
           type: string
       - in: query
@@ -11597,15 +11597,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: role
+        schema:
+          type: string
+      - in: query
         name: role__contains
         schema:
           type: string
       - in: query
         name: role__endswith
-        schema:
-          type: string
-      - in: query
-        name: role__exact
         schema:
           type: string
       - in: query
@@ -11643,15 +11643,15 @@ paths:
         schema:
           type: string
       - in: query
+        name: username
+        schema:
+          type: string
+      - in: query
         name: username__contains
         schema:
           type: string
       - in: query
         name: username__endswith
-        schema:
-          type: string
-      - in: query
-        name: username__exact
         schema:
           type: string
       - in: query

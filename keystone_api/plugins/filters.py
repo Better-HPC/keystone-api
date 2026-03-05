@@ -13,10 +13,18 @@ from django_filters import rest_framework as filters
 
 __all__ = ['AdvancedFilterBackend', 'FactoryBuiltFilterSet', 'FilterExpression']
 
+# Sentinel value indicating that the query parameter suffix should
+# default to the lookup expression name (e.g., "contains" -> __contains).
+_DEFAULT_SUFFIX = object()
+
 
 @dataclass(frozen=True)
 class FilterExpression:
     """Defines a filter lookup expression and its behavior.
+
+    The `suffix` value defaults to `expr` if not provided. The value
+    `None` can be used to soecify no suffix (e.g., `?field=value`
+    instead of `?field__exact=value`).
 
     Attributes:
         expr: The ORM lookup expression used by `django-filter` (e.g., "exact", "contains", "in").
@@ -26,13 +34,30 @@ class FilterExpression:
 
     expr: str
     negate: bool = False
-    suffix: str = ""
+    suffix: object = _DEFAULT_SUFFIX
 
     def __post_init__(self) -> None:
         # Default the query parameter suffix to match the ORM lookup expression
-
-        if not self.suffix:
+        if self.suffix is _DEFAULT_SUFFIX:
             object.__setattr__(self, 'suffix', self.expr)
+
+    def param_name(self, field_name: str) -> str:
+        """Build the query parameter name for a given field.
+
+        Returns the field name with the suffix appended (e.g., "name__contains"),
+        or just the field name if no suffix is set (e.g., "name" for exact lookups).
+
+        Args:
+            field_name: The name of the model field this expression applies to.
+
+        Returns:
+            The query parameter name string.
+        """
+
+        if self.suffix is not None:
+            return f"{field_name}__{self.suffix}"
+
+        return field_name
 
     def to_filter(self, field: models.Field) -> filters.Filter:
         """Create a django-filter Filter instance for a given model field.
@@ -89,7 +114,7 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
     """
 
     _default_filters = [
-        FilterExpression("exact"),
+        FilterExpression("exact", suffix=None),
         FilterExpression("in"),
         FilterExpression("in", negate=True, suffix="not_in"),
         FilterExpression("isnull"),
@@ -191,8 +216,7 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
         for field in model._meta.get_fields():
             field_type = type(field)
             for expression in self._field_expression_map.get(field_type, []):
-                param_name = f"{field.name}__{expression.suffix}"
-                filter_attrs[param_name] = expression.to_filter(field)
+                filter_attrs[expression.param_name(field.name)] = expression.to_filter(field)
 
         return filter_attrs
 
