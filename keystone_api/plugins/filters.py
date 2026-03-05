@@ -19,20 +19,22 @@ class FilterExpression:
     """Defines a filter lookup expression and its behavior.
 
     Attributes:
-        expr: The ORM lookup expression (e.g., "exact", "contains", "in")
-        negate: Whether to generate a negated (exclude) filter instead of a standard one
-        param: The suffix used in the query parameter name. Defaults to `expr` if not provided.
+        expr: The ORM lookup expression used by `django-filter` (e.g., "exact", "contains", "in").
+        negate: Whether to generate a negated (exclude) filter instead of a standard one.
+        suffix: The suffix used in the query parameter name (e.g., "not_in").
     """
 
     expr: str
     negate: bool = False
-    param: str = ""
+    suffix: str = ""
 
     def __post_init__(self) -> None:
-        if not self.param:
-            object.__setattr__(self, 'param', self.expr)
+        # Default the query parameter suffix to match the ORM lookup expression
 
-    def to_filter(self, field: models.Field) -> filters.Filter | None:
+        if not self.suffix:
+            object.__setattr__(self, 'suffix', self.expr)
+
+    def to_filter(self, field: models.Field) -> filters.Filter:
         """Create a django-filter Filter instance for a given model field.
 
         Uses django-filter's built-in field resolution to determine the
@@ -40,18 +42,21 @@ class FilterExpression:
         as needed.
 
         Args:
-            field: The Django model field to create a filter for
+            field: The Django model field to create a filter for.
 
         Returns:
-            A configured Filter instance
+            A configured Filter instance.
         """
 
-        # Create a filter for the specific database field type
+        # Resolve the correct filter class for the model field type and lookup expression
+        # (e.g., CharField + "exact" resolves to CharFilter)
         filt = filters.FilterSet.filter_for_field(field, field.name, self.expr)
         filt.exclude = self.negate
 
-        # Wrap in BaseInFilter for list-based lookups
-        if self.expr == "in" and filters.BaseInFilter not in type(filt).__mro__:
+        # List-based lookups like "in" need to accept comma-separated values (e.g., ?id__in=1,2,3).
+        # Django-filter requires wrapping the base filter class with BaseInFilter to enable this behavior.
+        list_lookups = ("in",)
+        if self.expr in list_lookups and filters.BaseInFilter not in type(filt).__mro__:
             wrapped_class = type(
                 f"BaseIn{type(filt).__name__}",
                 (filters.BaseInFilter, type(filt)),
@@ -86,9 +91,9 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
     _default_filters = [
         FilterExpression("exact"),
         FilterExpression("in"),
-        FilterExpression("in", negate=True, param="not_in"),
+        FilterExpression("in", negate=True, suffix="not_in"),
         FilterExpression("isnull"),
-        FilterExpression("isnull", negate=True, param="not_isnull"),
+        FilterExpression("isnull", negate=True, suffix="not_isnull"),
     ]
 
     _numeric_filters = _default_filters + [
@@ -100,7 +105,7 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
 
     _text_filters = _default_filters + [
         FilterExpression("contains"),
-        FilterExpression("contains", negate=True, param="not_contains"),
+        FilterExpression("contains", negate=True, suffix="not_contains"),
         FilterExpression("startswith"),
         FilterExpression("endswith"),
     ]
@@ -130,7 +135,9 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
         FilterExpression("second"),
     ]
 
-    _field_filter_map: dict[type[models.Field], list[FilterExpression]] = {
+    # Maps database field types to the filter expressions supported by that field type.
+    # This drives the dynamic FilterSet generation in `get_filterset_class`.
+    _field_expression_map: dict[type[models.Field], list[FilterExpression]] = {
         models.AutoField: _numeric_filters,
         models.BigAutoField: _numeric_filters,
         models.BigIntegerField: _numeric_filters,
@@ -162,42 +169,46 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
     }
 
     @property
-    def field_filter_map(self) -> dict[type[models.Field], list[FilterExpression]]:
+    def field_expression_map(self) -> dict[type[models.Field], list[FilterExpression]]:
         """A mapping of database field types to their corresponding filter definitions."""
 
-        return self._field_filter_map.copy()
+        return self._field_expression_map.copy()
 
     def _build_filter_attrs(self, model: type[models.Model]) -> dict[str, filters.Filter]:
         """Build a dictionary of filter instances for all fields on a model.
 
+        Iterates returns a mapping from url query parameters to filter
+        instances suitable for use as class attributes on a `FilterSet`.
+
         Args:
-            model: The Django model class to generate filters for
+            model: The Django model class to generate filters for.
 
         Returns:
-            A dictionary mapping query parameter names to filter instances
+            A dictionary mapping query parameter names to filter instances.
         """
 
-        attrs = {}
+        filter_attrs = {}
         for field in model._meta.get_fields():
             field_type = type(field)
-            for filter_expression in self._field_filter_map.get(field_type, []):
-                attrs[f"{field.name}__{filter_expression.param}"] = filter_expression.to_filter(field)
+            for expression in self._field_expression_map.get(field_type, []):
+                param_name = f"{field.name}__{expression.suffix}"
+                filter_attrs[param_name] = expression.to_filter(field)
 
-        return attrs
+        return filter_attrs
 
     def get_filterset_class(self, view: views.View, queryset: models.Manager = None) -> type[filters.FilterSet]:
-        """Get the FilterSet class for a given view.
+        """Get the `FilterSet` class for a given view.
 
         If the view defines a custom filterset class, that class is used.
-        Otherwise, a FilterSet is dynamically generated with standard and
-        negated filters for every supported model field.
+        Otherwise, a `FilterSet` is dynamically generated with standard
+        filters for every supported model field.
 
         Args:
             view: The view used to handle requests that will be filtered
             queryset: The queryset returning the data that will be filtered
 
         Returns:
-            A FilterSet class
+            A `FilterSet` subclass.
         """
 
         # Default to the user defined filterset class
@@ -205,12 +216,12 @@ class AdvancedFilterBackend(filters.DjangoFilterBackend):
         if filterset_class := super().get_filterset_class(view, queryset=queryset):
             return filterset_class
 
-        # Build all filter instances
-        attrs = self._build_filter_attrs(queryset.model)
+        # Build all filter instances for the model
+        filter_attrs = self._build_filter_attrs(queryset.model)
 
-        # Attach a Meta class with the model reference
-        # `fields` is empty because filters are defined explicitly as attributes
-        attrs['Meta'] = type('Meta', (), {'model': queryset.model, 'fields': []})
+        # Create a `Meta` class with the model reference.
+        # `fields` is empty because filters are defined explicitly as attributes.
+        filter_attrs['Meta'] = type('Meta', (), {'model': queryset.model, 'fields': []})
 
-        # Dynamically construct the FilterSet class
-        return type('FactoryFilterSet', (self.filterset_base, FactoryBuiltFilterSet), attrs)
+        # Dynamically construct a FilterSet subclass using the (class name, base classes, class attributes)
+        return type('FactoryFilterSet', (self.filterset_base, FactoryBuiltFilterSet), filter_attrs)
