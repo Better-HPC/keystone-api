@@ -1,8 +1,14 @@
 # Filtering Queries
 
-Keystone-API uses query parameters to sort and filter returned records.
-Query parameters with a preceding underscore (`_limit`, `_offset`, `_order`, `_search`) are used to control API
-behavior, while parameters without an underscore are used to filter returned values.
+Many API endpoints are designed to return more than one record at once (e.g., `/users/teams/`).
+By default, these endpoints return all records the current user has permission to see.
+This response can be refined further using Query parameters to search and filter the returned values.
+
+Query parameters with a preceding underscore (`_limit`, `_offset`, `_order`, `_search`) are used to perform high level
+data operations, including pagination, sorting, and searching. Parameters without an underscore are used to apply
+filters on individual record fields, allowing users to construct complex, data driven queries.
+
+
 
 ## Paginating Responses
 
@@ -38,8 +44,8 @@ In the following example, `field1` is sorted in ascending order followed by `fie
 
 ## Searching Records
 
-Most API endpoints support semantic search via the `_search` parameter (see the [API specification](openapi.md) for specifics).
-When provided with search text, the API will compare the search value against the record fields and return case-insensitive partial matches.
+The `_search` parameter provides support for semantic text searching. When defined, the API will compare the search
+value against each record's text fields and return any case-insensitive partial matches.
 
 ```bash
 .../endpoint/?_search=user%20search%20input
@@ -68,10 +74,13 @@ The available query filters depend on a field's data type and are summarized in 
 
 The following filters are available for all data types.
 
-| Query Expression | Description                                              | Example              |
-|------------------|----------------------------------------------------------|----------------------|
-| `in`             | Whether the value is in a comma-separated list of values | `field__in=1,2,3`    |
-| `isnull`         | Whether the value is None                                | `field__isnull=true` |
+| Query Expression | Description                                                    | Example                  |
+|------------------|----------------------------------------------------------------|--------------------------|
+| (none)           | Whether the value exactly matches                              | `field=value`            |
+| `in`             | Whether the value is in a comma-separated list of values       | `field__in=1,2,3`        |
+| `not_in`         | Whether the value is *not* in a comma-separated list of values | `field__not_in=1,2,3`    |
+| `isnull`         | Whether the value is None                                      | `field__isnull=true`     |
+| `not_isnull`     | Whether the value is *not* None                                | `field__not_isnull=true` |
 
 ### Numeric Filters
 
@@ -88,11 +97,12 @@ The following filters are available for numerical data such as floats and intege
 
 The following filters are available for text and character values.
 
-| Query Expression | Description                                  | Example                     |
-|------------------|----------------------------------------------|-----------------------------|
-| `contains`       | Whether the value contains subtext           | `field__contains=subtext`   |
-| `startswith`     | Whether the value starts with the given text | `field__startswith=subtext` |
-| `endswith`       | Whether the value ends with the given text   | `field__endswith=subtext`   |
+| Query Expression | Description                                         | Example                       |
+|------------------|-----------------------------------------------------|-------------------------------|
+| `contains`       | Whether the value contains subtext                  | `field__contains=subtext`     |
+| `not_contains`   | Whether the value does *not* contain the given text | `field__not_contains=subtext` |
+| `startswith`     | Whether the value starts with the given text        | `field__startswith=subtext`   |
+| `endswith`       | Whether the value ends with the given text          | `field__endswith=subtext`     |
 
 ### Date Filters
 
@@ -118,7 +128,7 @@ The following filters are available for time and datetime values in ISO-8601 for
 |------------------|-------------------------------------------------------------|-----------------------|
 | `hour`           | Whether the time value matches a given hour                 | `field__hour=8`       |
 | `minute`         | Whether the time value matches a given minute               | `field__minute=30`    |
-| `second`         | Whether the time value matches a given second               | `field__second=45`    | 
+| `second`         | Whether the time value matches a given second               | `field__second=45`    |
 | `lt`             | Whether the value is less than another value                | `field__lt=19:20:15`  |
 | `lte`            | Whether the value is less than or equal to another value    | `field__lte=19:20:15` |
 | `gt`             | Whether the value is greater than another value             | `field__gt=19:20:15`  |
