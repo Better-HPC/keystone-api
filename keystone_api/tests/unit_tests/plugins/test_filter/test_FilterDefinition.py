@@ -122,7 +122,7 @@ class ToFilterMethod(TestCase):
         self.assertNotIsInstance(result, filters.BaseInFilter)
 
     def test_resolves_correct_filter_class_for_field_type(self) -> None:
-        """Verify django-filter resolves different filter classes for different field types."""
+        """Verify different filter classes are resolved for different field types."""
 
         definition = FilterDefinition("exact", suffix=None)
         char_filter = definition.to_filter(self._get_model_field("char_field"))

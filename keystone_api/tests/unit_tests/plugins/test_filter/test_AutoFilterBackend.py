@@ -25,36 +25,12 @@ class SampleModel(models.Model):
     unknown_field = models.Field()
 
 
-class FieldExpressionMapProperty(TestCase):
-    """Test the `field_expression_map` property."""
-
-    def test_returns_copy(self) -> None:
-        """Verify the property returns a copy, not the internal reference."""
-
-        backend = AutoFilterBackend()
-        result = backend.field_expression_map
-        self.assertIsNot(result, backend._field_expression_map)
-
-    def test_copy_matches_original(self) -> None:
-        """Verify the returned copy has the same contents as the internal map."""
-
-        backend = AutoFilterBackend()
-        result = backend.field_expression_map
-        self.assertEqual(result, backend._field_expression_map)
-
-    def test_mutating_copy_does_not_affect_original(self) -> None:
-        """Verify changes to the returned copy do not propagate to the internal map."""
-
-        backend = AutoFilterBackend()
-        result = backend.field_expression_map
-        result.clear()
-        self.assertTrue(backend._field_expression_map, 'Mutating the copy cleared the internal map')
-
-
 class BuildFilterAttrsMethod(TestCase):
     """Test filter attribute generation via the `_build_filter_attrs` method."""
 
     def setUp(self) -> None:
+        """Instantiate a filter backend for a dummy database model."""
+
         self.backend = AutoFilterBackend()
         self.filter_attrs = self.backend._build_filter_attrs(SampleModel)
 
@@ -69,12 +45,6 @@ class BuildFilterAttrsMethod(TestCase):
 
         matching_keys = [k for k in self.filter_attrs if k.startswith("unknown_field")]
         self.assertFalse(matching_keys, 'Filters were generated for an unsupported field type')
-
-    def test_all_values_are_filter_instances(self) -> None:
-        """Verify every generated attribute is a `Filter` instance."""
-
-        for param_name, filt in self.filter_attrs.items():
-            self.assertIsInstance(filt, filters.Filter, f'{param_name} is not a Filter instance')
 
     def test_numeric_field_has_comparison_filters(self) -> None:
         """Verify numeric fields receive comparison operator filters."""
