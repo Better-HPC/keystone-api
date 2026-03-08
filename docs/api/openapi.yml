@@ -3495,13 +3495,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocationRequest'
+              $ref: '#/components/schemas/AllocationRequestCreate'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocationRequest'
+              $ref: '#/components/schemas/AllocationRequestCreate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocationRequest'
+              $ref: '#/components/schemas/AllocationRequestCreate'
         required: true
       security:
       - tokenAuth: []
@@ -3511,7 +3511,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocationRequest'
+                $ref: '#/components/schemas/AllocationRequestCreate'
           description: ''
   /allocations/requests/{id}/:
     get:
@@ -11943,9 +11943,116 @@ components:
       description: |-
         Object serializer for the `AllocationRequest` class.
 
-        Supports an optional `allocations` field on create, allowing callers to
-        submit an allocation request and its associated resource allocations in a
-        single POST request.
+        Used for retrieve, list, update, and partial update operations.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _submitter:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' submitter'
+        _team:
+          allOf:
+          - $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' team'
+        _assignees:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' assignees'
+        _publications:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicationSummary'
+          readOnly: true
+          title: ' publications'
+        _grants:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantSummary'
+          readOnly: true
+          title: ' grants'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        _allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationSummary'
+          readOnly: true
+          title: ' allocations'
+        _comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentSummary'
+          readOnly: true
+          title: ' comments'
+        title:
+          type: string
+          maxLength: 250
+        description:
+          type: string
+          maxLength: 20000
+        submitted:
+          type: string
+          format: date-time
+          readOnly: true
+        active:
+          type: string
+          format: date
+          nullable: true
+        expire:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/RequestStatusChoices'
+        submitter:
+          type: integer
+          nullable: true
+        team:
+          type: integer
+        assignees:
+          type: array
+          items:
+            type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
+          type: array
+          items:
+            type: integer
+      required:
+      - _allocations
+      - _assignees
+      - _comments
+      - _grants
+      - _history
+      - _publications
+      - _submitter
+      - _team
+      - description
+      - id
+      - submitted
+      - team
+      - title
+    AllocationRequestCreate:
+      type: object
+      description: |-
+        Object serializer for creating `AllocationRequest` instances.
+
+        Supports an optional `allocations` field, allowing callers to submit an
+        allocation request and its associated resource allocations in a single
+        POST request.
       properties:
         id:
           type: integer
@@ -13313,9 +13420,7 @@ components:
       description: |-
         Object serializer for the `AllocationRequest` class.
 
-        Supports an optional `allocations` field on create, allowing callers to
-        submit an allocation request and its associated resource allocations in a
-        single POST request.
+        Used for retrieve, list, update, and partial update operations.
       properties:
         id:
           type: integer
@@ -13366,11 +13471,6 @@ components:
             $ref: '#/components/schemas/CommentSummary'
           readOnly: true
           title: ' comments'
-        allocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationInline'
-          writeOnly: true
         title:
           type: string
           maxLength: 250

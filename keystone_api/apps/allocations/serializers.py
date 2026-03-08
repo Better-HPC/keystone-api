@@ -22,6 +22,8 @@ from .models import *
 from .nested import *
 
 __all__ = [
+    'AllocationRequestCreateSerializer',
+    'AllocationRequestCreateSerializer',
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
     'AllocationSerializer',
@@ -35,9 +37,7 @@ __all__ = [
 class AllocationRequestSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationRequest` class.
 
-    Supports an optional `allocations` field on create, allowing callers to
-    submit an allocation request and its associated resource allocations in a
-    single POST request.
+    Used for retrieve, list, update, and partial update operations.
     """
 
     _submitter = UserSummarySerializer(source='submitter', read_only=True)
@@ -48,9 +48,6 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
     _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
     _comments = serializers.SerializerMethodField()
-
-    # Write-only nested field for creating allocations alongside the request
-    allocations = AllocationInlineSerializer(many=True, required=False, write_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -73,6 +70,17 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
             qs = qs.filter(private=False)
 
         return CommentSummarySerializer(qs, many=True).data
+
+
+class AllocationRequestCreateSerializer(AllocationRequestSerializer):
+    """Object serializer for creating `AllocationRequest` instances.
+
+    Supports an optional `allocations` field, allowing callers to submit an
+    allocation request and its associated resource allocations in a single
+    POST request.
+    """
+
+    allocations = AllocationInlineSerializer(many=True, required=False, write_only=True)
 
     @transaction.atomic
     def create(self, validated_data: dict) -> AllocationRequest:
