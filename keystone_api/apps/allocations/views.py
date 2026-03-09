@@ -130,7 +130,7 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     )
 
     def get_serializer_class(self):
-        """Use the create-specific serializer for the create action."""
+        """Return the appropriate data serializer based on the requested action."""
 
         if self.action == 'create':
             return AllocationRequestCreateSerializer
