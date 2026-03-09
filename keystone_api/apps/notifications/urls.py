@@ -12,5 +12,5 @@ router.register('notifications', NotificationViewSet, basename="notification")
 router.register('preferences', PreferenceViewSet, basename="preference")
 
 urlpatterns = router.urls + [
-    path('notification-choices/type', NotificationTypeChoicesView.as_view(), name='notification-type-choices'),
+    path('notification-choices/type/', NotificationTypeChoicesView.as_view(), name='notification-type-choices'),
 ]
