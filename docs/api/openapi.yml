@@ -6240,7 +6240,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaskResult'
           description: ''
-  /notifications/notification-choices/type:
+  /notifications/notification-choices/type/:
     get:
       operationId: notifications_notification_choices_type_retrieve
       description: Returns valid choices for the notification `type` field mapped
