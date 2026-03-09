@@ -23,7 +23,6 @@ from .nested import *
 
 __all__ = [
     'AllocationRequestCreateSerializer',
-    'AllocationRequestCreateSerializer',
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
     'AllocationSerializer',
