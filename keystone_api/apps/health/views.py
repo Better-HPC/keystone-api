@@ -1,7 +1,9 @@
-"""Application logic for rendering HTML templates and handling HTTP requests.
+"""Application logic for rendering responses to HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
 import re
@@ -77,7 +79,7 @@ class HealthCheckView(BaseHealthCheckView):
         """Return an HTTP response with a status code matching system health checks.
 
         Args:
-            plugins: A mapping of healthcheck names to health check objects.
+            plugins: A mapping of health check names to health check objects.
 
         Returns:
             An HttpResponse with status 200 if all checks are passing or 500 otherwise.
@@ -124,7 +126,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
         """Return a JSON response summarizing a collection of health checks.
 
         Args:
-            plugins: A mapping of healthcheck names to health check objects.
+            plugins: A mapping of health check names to health check objects.
 
         Returns:
             A JSON response.
@@ -188,7 +190,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
         """Return an HTTP response summarizing a collection of health checks.
 
         Args:
-            plugins: A mapping of healthcheck names to health check objects.
+            plugins: A mapping of health check names to health check objects.
 
         Returns:
             An HTTP response.
@@ -207,8 +209,8 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
                     name=self.sanitize_metric_name(plugin_name),
                     critical_service=plugin.critical_service,
                     message=plugin.pretty_status(),
-                    status=200 if plugin.status else 500,
-                    module=plugin.__class__.__module__ + plugin.__class__.__name__
+                    status=200 if plugin.status == 1 else 500,
+                    module=plugin.__class__.__module__ + '.' + plugin.__class__.__name__
                 )
             )
 

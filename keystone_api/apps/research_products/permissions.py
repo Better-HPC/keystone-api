@@ -48,7 +48,7 @@ class IsTeamMember(permissions.BasePermission):
         team = self.get_team(request)
         return team is None or request.user in team.get_all_members()
 
-    def has_object_permission(self, request: Request, view: View, obj: Publication) -> None:
+    def has_object_permission(self, request: Request, view: View, obj: Grant | Publication) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
         is_staff = request.user.is_staff

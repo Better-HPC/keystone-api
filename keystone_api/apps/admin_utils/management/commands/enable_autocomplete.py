@@ -27,7 +27,7 @@ class Command(BaseCommand):
         # Find the user's shell config files
         profile_paths = self.get_profile_paths()
         if not profile_paths:
-            self.stderr.write('No .bash_profile or .bashrc file found.')
+            self.stderr.write('No .bashrc or .zshrc file found.')
             exit(1)
 
         if not self.prompt_for_confirmation(profile_paths):

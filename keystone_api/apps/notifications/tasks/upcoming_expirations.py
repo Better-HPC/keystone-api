@@ -1,3 +1,5 @@
+"""Celery tasks for notifying users about upcoming allocation request expirations."""
+
 from datetime import date, timedelta
 
 from celery import shared_task
@@ -109,11 +111,11 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
 
     upcoming_requests = AllocationRequest.objects \
         .filter(
-            Q(status=AllocationRequest.StatusChoices.PENDING) |
-            Q(status=AllocationRequest.StatusChoices.APPROVED, expire__gt=date.today()) |
-            Q(status=AllocationRequest.StatusChoices.APPROVED, expire__isnull=True),
-            team=expiring_request.team,
-        ) \
+        Q(status=AllocationRequest.StatusChoices.PENDING) |
+        Q(status=AllocationRequest.StatusChoices.APPROVED, expire__gt=date.today()) |
+        Q(status=AllocationRequest.StatusChoices.APPROVED, expire__isnull=True),
+        team=expiring_request.team,
+    ) \
         .only("id", "title", "submitted", "active", "expire", "status")
 
     # Metadata used to track the uniqueness of the notification
@@ -162,4 +164,3 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
         notification_type=Notification.NotificationType.request_expiring,
         notification_metadata=metadata,
     )
-

@@ -80,6 +80,6 @@ class UserManager(BaseUserManager):
             raise ValueError('When creating a superuser you must set `is_staff=True`.')
 
         if not extra_fields['is_superuser']:
-            raise ValueError('When creating a superuser you must set  `is_superuser=True`.')
+            raise ValueError('When creating a superuser you must set `is_superuser=True`.')
 
         return self.create_user(username, password, **extra_fields)

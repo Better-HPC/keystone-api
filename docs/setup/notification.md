@@ -81,7 +81,8 @@ its expiration date.
     | ├ `title`                     | `str`            | Title of the upcoming allocation request.                                 |
     | ├ `submitted`                 | `date`           | Date when the upcoming request was submitted.                             |
     | ├ `active`                    | `date`           | Date when the upcoming request became active.                             |
-    | └ `expire`                    | `date` or `None` | Date when the upcoming request expires.                                   |
+    | ├ `expire`                    | `date` or `None` | Date when the upcoming request expires.                                   |
+    | └ `status`                    | `str`            | Status of the upcoming allocation request.                                |
 
 ??? abstract "Default Template Content"
 

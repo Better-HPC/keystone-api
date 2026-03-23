@@ -1,4 +1,4 @@
-"""Application logic for rendering HTML templates and handling HTTP requests.
+"""Application logic for rendering responses to HTTP requests.
 
 View objects encapsulate logic for interpreting request data, interacting with
 models or services, and generating the appropriate HTTP response(s). Views
@@ -441,7 +441,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     def get_queryset(self) -> QuerySet[Cluster]:
         """Return a queryset of clusters visible to the requesting user.
 
-        For the 'list' action, clusters are filters by the cluster's access
+        For the 'list' action, clusters are filtered by the cluster's access
         mode and the requesting user's team memberships.
 
         - OPEN clusters are always included.

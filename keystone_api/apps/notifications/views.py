@@ -1,4 +1,4 @@
-"""Application logic for rendering HTML templates and handling HTTP requests.
+"""Application logic for rendering responses to HTTP requests.
 
 View objects encapsulate logic for interpreting request data, interacting with
 models or services, and generating the appropriate HTTP response(s). Views

@@ -15,6 +15,7 @@ from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
+from apps.research_products.models import Grant, Publication
 from apps.users.factories import TeamFactory, UserFactory
 from apps.users.models import User
 from .models import *
@@ -110,7 +111,7 @@ class AllocationRequestFactory(DjangoModelFactory):
 
     @factory.lazy_attribute
     def expire(self: AllocationRequest) -> date | None:
-        """Generate the request active date.
+        """Generate the request expiration date.
 
         For approved allocation requests, the expiration date is set to one
         year after the active date. For all other requests, `None` is returned.
@@ -129,14 +130,14 @@ class AllocationRequestFactory(DjangoModelFactory):
             self.assignees.set(extracted)
 
     @factory.post_generation
-    def publications(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
+    def publications(self: AllocationRequest, create: bool, extracted: list[Publication] | None, **kwargs):
         """Populate the many-to-many `publications` relationship."""
 
         if create and extracted:
             self.publications.set(extracted)
 
     @factory.post_generation
-    def grants(self: AllocationRequest, create: bool, extracted: list[User] | None, **kwargs):
+    def grants(self: AllocationRequest, create: bool, extracted: list[Grant] | None, **kwargs):
         """Populate the many-to-many `grants` relationship."""
 
         if create and extracted:

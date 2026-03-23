@@ -1,7 +1,9 @@
-"""Application logic for rendering HTML templates and handling HTTP requests.
+"""Application logic for rendering responses to HTTP requests.
 
-View objects handle the processing of incoming HTTP requests and return the
-appropriately rendered HTML template or other HTTP response.
+View objects encapsulate logic for interpreting request data, interacting with
+models or services, and generating the appropriate HTTP response(s). Views
+serve as the controller layer in Django's MVC-inspired architecture, bridging
+URLs to business logic.
 """
 
 from django.conf import settings
@@ -17,7 +19,7 @@ __all__ = ['VersionView']
 class VersionView(GenericAPIView):
     """API endpoints for exposing the API version."""
 
-    permission_classes = []
+    permission_classes = []  # Public endpoint - no authentication required
 
     @extend_schema(
         auth=[],

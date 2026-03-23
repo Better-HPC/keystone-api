@@ -18,11 +18,11 @@ class RenderResponseMethod(TestCase):
         }
 
         expected_response = (
-            '# HELP plugin1 unittest.mockMagicMock\n'
+            '# HELP plugin1 unittest.mock.MagicMock\n'
             '# TYPE plugin1 gauge\n'
             'plugin1{critical_service="True",message="OK"} 200.0\n'
             '\n'
-            '# HELP plugin2 unittest.mockMagicMock\n'
+            '# HELP plugin2 unittest.mock.MagicMock\n'
             '# TYPE plugin2 gauge\n'
             'plugin2{critical_service="False",message="Error"} 500.0'
         )

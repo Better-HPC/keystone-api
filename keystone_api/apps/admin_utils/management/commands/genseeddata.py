@@ -204,6 +204,9 @@ class Command(StdOutUtils, BaseCommand):
             teams: List of teams to create records for.
             n_min: Minimum records to create per team.
             n_max: Maximum records to create per team.
+
+        Returns:
+            A dictionary mapping user teams to generated grant records.
         """
 
         grants = {}
@@ -221,6 +224,9 @@ class Command(StdOutUtils, BaseCommand):
             teams: List of teams to create records for.
             n_min: Minimum records to create per team.
             n_max: Maximum records to create per team.
+
+        Returns:
+            A dictionary mapping user teams to generated publication records.
         """
 
         pubs = {}

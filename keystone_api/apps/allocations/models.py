@@ -2,8 +2,8 @@
 
 Model objects are used to define the expected schema for individual database
 tables and provide an object-oriented interface for executing database logic.
-Each model reflects a different database and defines low-level defaults for how
-the associated table/fields/records are presented by parent interfaces.
+Each model reflects a different database table and defines low-level defaults
+for how the associated table/fields/records are presented by parent interfaces.
 """
 
 import os

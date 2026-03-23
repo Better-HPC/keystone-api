@@ -13,7 +13,7 @@ from main import settings
 
 
 class HealthAppConfig(AppConfig):
-    """Django configuration for the `scheduler` app."""
+    """Django configuration for the `health` app."""
 
     name = 'apps.health'
 

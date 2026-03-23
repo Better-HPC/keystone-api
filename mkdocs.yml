@@ -7,8 +7,10 @@ nav:
   - Setup:
       - Application Settings: setup/settings.md
       - setup/notification.md
+      - setup/tasks.md
   - REST API:
       - api/openapi.md
       - api/authentication.md
+      - api/permissions.md
       - api/filtering.md
       - api/logging.md
