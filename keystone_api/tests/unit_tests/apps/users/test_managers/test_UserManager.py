@@ -82,7 +82,7 @@ class CreateSuperUserMethod(TestCase):
     def test_superusers_must_be_superusers(self) -> None:
         """Verify superusers are required to have superuser permissions."""
 
-        with self.assertRaisesRegex(ValueError, 'must set  `is_superuser=True`'):
+        with self.assertRaisesRegex(ValueError, 'must set `is_superuser=True`'):
             User.objects.create_superuser(
                 username='foobar',
                 first_name='foo',
