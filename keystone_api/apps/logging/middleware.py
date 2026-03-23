@@ -68,7 +68,7 @@ class LogRequestMiddleware:
             request: The incoming HTTP request.
 
         Returns:
-            A tuple of (client_cid, final_cid).
+            The validated or newly generated CID string.
         """
 
         # Convert a custom header name (e.g., "X-CID") into the format used by Django's request.META

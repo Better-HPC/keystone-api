@@ -13,6 +13,9 @@ celery_app = Celery('scheduler')
 celery_app.config_from_object('django.conf:settings', namespace='CELERY')
 celery_app.autodiscover_tasks()
 
+# Task schedule for Celery Beat. Dictionary keys serve as human-readable
+# identifiers and must be unique. The 'task' value in each entry is the
+# fully qualified import path that Celery uses to locate and execute the task.
 celery_app.conf.beat_schedule = {
     'apps.users.tasks.ldap_update_users': {
         'task': 'apps.users.tasks.ldap_update_users',

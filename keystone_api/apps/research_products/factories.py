@@ -83,7 +83,7 @@ class PublicationFactory(DjangoModelFactory):
         two months prior to today. This leaves room for time between the
         `submitted` and `published` dates.
 
-        Has a 20% chance of returning `None`, indicating a pulication that
+        Has a 20% chance of returning `None`, indicating a publication that
         is still in preparation.
         """
 

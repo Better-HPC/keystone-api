@@ -1,3 +1,5 @@
+"""Celery tasks for notifying users about expired allocation requests."""
+
 from datetime import date, timedelta
 
 from celery import shared_task
@@ -27,7 +29,7 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
     """
 
     # Do not notify if the request is not expired
-    if not request.expire <= timezone.now().date():
+    if request.expire > timezone.now().date() :
         return False
 
     if Notification.objects.filter(

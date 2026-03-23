@@ -7,6 +7,7 @@
 | --static   | Delete the static root directory                                 |
 | --uploads  | Delete all user uploaded file data                               |
 | --sqlite   | Delete all SQLite database files                                 |
+| --log      | Delete the application log file                                  |
 | --all      | Shorthand for deleting everything                                |
 """
 
@@ -42,7 +43,8 @@ class Command(StdOutUtils, BaseCommand):
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
-        if not any([options['static'], options['uploads'], options['sqlite'], options['all']]):
+        arg_names = ["static", "uploads", "sqlite", "log", "all"]
+        if not any(options[a] for a in arg_names):
             self.stderr.write('At least one deletion target is required. See `clean --help` for details.')
             return
 
