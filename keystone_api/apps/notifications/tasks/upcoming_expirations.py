@@ -149,6 +149,7 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
                 'submitted': req.submitted,
                 'active': req.active,
                 'expire': req.expire,
+                'status': req.status,
             } for req in upcoming_requests.all()
         ),
     }
@@ -161,3 +162,4 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
         notification_type=Notification.NotificationType.request_expiring,
         notification_metadata=metadata,
     )
+
