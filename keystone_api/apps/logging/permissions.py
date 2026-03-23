@@ -17,7 +17,7 @@ class IsAdminRead(permissions.BasePermission):
     """Restricts read access to administrators without restricting other actions.
 
     Permissions:
-        - Grants read access administrators.
+        - Grants read access to administrators.
         - Does not affect write operations.
     """
 

@@ -28,7 +28,6 @@ API's standard [query parameters](./filtering.md).
 |----------------------|--------------------------------------------------------------------|
 | `/logging/requests/` | Logs incoming HTTP requests and related metadata.                  |
 | `/logging/audit/`    | Audit trail for user actions against select application resources. |
-| `/logging/apps/`     | Application-level logs (e.g., debug, info, warning).               |
 | `/logging/tasks/`    | Results and status of scheduled background tasks.                  |
 
 Clients may optionally specify a unique correlation ID (`cid`) using the `X-KEYSTONE-CID` header.
@@ -36,7 +35,7 @@ This value is propagated through internal logs, enabling record correlation acro
 Clients should leverage this feature to organize log records around a common transaction or user session.
 If A CID value is not provided, a unique value is assigned by the server to each incoming request.
 
-CID values must be a valid UUIDv4 string, including dashes (e.g. `d61eef0b-258d-42ca-b14b-852860a54259`).
+CID values must be a valid UUID string, including dashes (e.g. `d61eef0b-258d-42ca-b14b-852860a54259`).
 
 ## Performance Metrics
 

@@ -72,7 +72,7 @@ class FilterDefinition:
         """Create a `Filter` instance for a given model field.
 
         Uses django-filter's built-in field resolution to determine the
-        appropriate filter class, then applies negation and as needed.
+        appropriate filter class, then applies negation as needed.
 
         Args:
             field: The Django model field to create a filter for.
@@ -210,8 +210,8 @@ class AutoFilterBackend(filters.DjangoFilterBackend):
     def _build_filter_attrs(self, model: type[models.Model]) -> dict[str, filters.Filter]:
         """Build a dictionary of filter instances for all fields on a model.
 
-        Iterates returns a mapping from url query parameters to filter
-        instances suitable for use as class attributes on a `FilterSet`.
+        Returns a mapping from url query parameters to filter instances
+        suitable for use as class attributes on a `FilterSet`.
 
         Args:
             model: The Django model class to generate filters for.

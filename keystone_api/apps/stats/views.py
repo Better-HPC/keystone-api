@@ -1,4 +1,4 @@
-"""Application logic for rendering HTML templates and handling HTTP requests.
+"""Application logic for rendering responses to HTTP requests.
 
 View objects encapsulate logic for interpreting request data, interacting with
 models or services, and generating the appropriate HTTP response(s). Views
@@ -34,7 +34,17 @@ __all__ = [
 
 
 class AbstractTeamStatsView(ABC):
-    """Abstract base class for team-based statistics views."""
+    """Abstract base class for team-based statistics views.
+
+    Filters querysets so non-staff users only see statistics for teams
+    they belong to. Staff users see statistics across all teams.
+
+    Subclasses must implement ``_summarize()`` to compute view-specific
+    statistics. THis class should be combined with ``GenericAPIView`` (or a
+    subclass) using multiple inheritance. This class must appear before
+    ``GenericAPIView`` in the MRO so that ``get_queryset`` correctly
+    calls through to the DRF base implementation via ``super()``.
+    """
 
     @abstractmethod
     def _summarize(self) -> dict:
@@ -70,7 +80,7 @@ class AbstractTeamStatsView(ABC):
     ),
 )
 class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
-    """ViewSet providing aggregated allocation request statistics."""
+    """View providing aggregated allocation request statistics."""
 
     queryset = AllocationRequest.objects.all()
     serializer_class = AllocationRequestStatsSerializer
@@ -163,7 +173,7 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
     ),
 )
 class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
-    """ViewSet providing aggregated grant statistics."""
+    """View providing aggregated grant statistics."""
 
     queryset = Grant.objects.all()
     serializer_class = GrantStatsSerializer
@@ -226,7 +236,7 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
     ),
 )
 class NotificationStatsView(GenericAPIView):
-    """ViewSet providing aggregated notification statistics."""
+    """View providing aggregated notification statistics."""
 
     queryset = Notification.objects.all()
     serializer_class = NotificationStatsSerializer
@@ -266,7 +276,7 @@ class NotificationStatsView(GenericAPIView):
     ),
 )
 class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):
-    """ViewSet providing aggregated publication statistics."""
+    """View providing aggregated publication statistics."""
 
     queryset = Publication.objects.all()
     serializer_class = PublicationStatsSerializer

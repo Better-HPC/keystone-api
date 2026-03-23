@@ -37,7 +37,7 @@ class NotificationPermissions(BasePermission):
 
 
 class PreferencePermissions(BasePermission):
-    """Greats read/write access to users accessing their own preferences.
+    """Grants read/write access to users accessing their own preferences.
 
     Permissions:
         - Grants full permissions to users accessing their own preferences.

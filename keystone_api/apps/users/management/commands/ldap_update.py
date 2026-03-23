@@ -16,13 +16,6 @@ class Command(BaseCommand):
 
     help = __doc__
 
-    def add_arguments(self, parser: ArgumentParser) -> None:
-        """Add command-line arguments to the parser.
-
-        Args:
-            parser: The argument parser instance.
-        """
-
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 

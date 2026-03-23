@@ -2,8 +2,8 @@
 
 Model objects are used to define the expected schema for individual database
 tables and provide an object-oriented interface for executing database logic.
-Each model reflects a different database and defines low-level defaults for how
-the associated table/fields/records are presented by parent interfaces.
+Each model reflects a different database table and defines low-level defaults
+for how the associated table/fields/records are presented by parent interfaces.
 """
 
 import hashlib
@@ -87,7 +87,7 @@ class Team(models.Model):
         return self.users.all()
 
     def get_privileged_members(self) -> models.QuerySet:
-        """Return a queryset of all team with admin privileges."""
+        """Return a queryset of all team members with admin privileges."""
 
         return self.users.filter(membership__role__in=[
             Membership.Role.ADMIN,
@@ -135,7 +135,7 @@ class Team(models.Model):
 
 @auditlog.register(exclude_fields=["last_login"], mask_fields=["password"])
 class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
-    """Proxy model for the built-in django `User` model."""
+    """Custom user model that extends the built-in django `User`."""
 
     class Meta:
         """Database model settings."""

@@ -105,7 +105,7 @@ def send_notification(
         subject: The subject line of the email.
         plain_text: The plain text version of the email content.
         html_text: The HTML version of the email content.
-        notification_type: Optionally categorize the notification type.
+        notification_type: Categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
     """
 
@@ -142,7 +142,7 @@ def send_notification_template(
         subject: The subject line of the email.
         template: The name of the template file to render.
         context: Variable definitions used to populate the template.
-        notification_type: Optionally categorize the notification type.
+        notification_type: Categorize the notification type.
         notification_metadata: Metadata to store alongside the notification.
 
     Raises:
