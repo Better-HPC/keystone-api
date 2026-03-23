@@ -5,7 +5,8 @@ Access rules are evaluated per-request based on the authenticated user's relatio
 
 ## User Roles
 
-User permissions are determined by a combination of system-level and team-level roles.
+User permissions are determined by a combination of system and team-level roles.
+When evaluating user permissions, system roles are verified first followed by any relevant team roles.
 
 ### System Level Roles
 
