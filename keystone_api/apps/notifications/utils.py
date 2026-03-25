@@ -94,7 +94,7 @@ def _sanitize_html_tags(html: str) -> str:
             },
             "a": {"download", "href", "hreflang", "name", "target", "type"},
             "abbr": {"title"},
-            "area": {"alt", "coords", "download", "href", "rel", "shape", "target"},
+            "area": {"alt", "coords", "download", "href", "shape", "target"},
             "bdi": set(),
             "bdo": {"dir"},
             "blockquote": {"cite"},
