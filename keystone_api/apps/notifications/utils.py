@@ -83,6 +83,7 @@ def _sanitize_html_tags(html: str) -> str:
         },
         clean_content_tags={'script'},
         strip_comments=True,
+        link_rel="noopener noreferrer",
         url_schemes={"http", "https", "mailto"},
         attributes={
             "*": {
@@ -93,7 +94,7 @@ def _sanitize_html_tags(html: str) -> str:
             },
             "a": {"download", "href", "hreflang", "name", "target", "type"},
             "abbr": {"title"},
-            "area": {"alt", "coords", "download", "href", "rel", "shape", "target"},
+            "area": {"alt", "coords", "download", "href", "shape", "target"},
             "bdi": set(),
             "bdo": {"dir"},
             "blockquote": {"cite"},
