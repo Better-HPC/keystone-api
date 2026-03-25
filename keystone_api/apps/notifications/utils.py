@@ -83,7 +83,6 @@ def _sanitize_html_tags(html: str) -> str:
         },
         clean_content_tags={'script'},
         strip_comments=True,
-        link_rel="noopener noreferrer",
         url_schemes={"http", "https", "mailto"},
         attributes={
             "*": {
