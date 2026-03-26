@@ -80,6 +80,7 @@ class AllocationRequestCreateSerializer(AllocationRequestSerializer):
     """
 
     allocations = AllocationInlineSerializer(many=True, required=False, write_only=True)
+    attachments = serializers.ListField(required=False, child=serializers.FileField())
 
     @transaction.atomic
     def create(self, validated_data: dict) -> AllocationRequest:
@@ -91,6 +92,7 @@ class AllocationRequestCreateSerializer(AllocationRequestSerializer):
         """
 
         allocations_data = validated_data.pop('allocations', [])
+        attachments_data = validated_data.pop('attachments', [])
         allocation_request = super().create(validated_data)
 
         if allocations_data:
@@ -102,6 +104,15 @@ class AllocationRequestCreateSerializer(AllocationRequestSerializer):
                 )
                 for alloc in allocations_data
             ])
+
+        for file in attachments_data:
+            attachment_serializer = AttachmentSerializer(data={
+                'file': file,
+                'request': allocation_request.pk,
+            })
+
+            attachment_serializer.is_valid(raise_exception=True)
+            attachment_serializer.save()
 
         return allocation_request
 
