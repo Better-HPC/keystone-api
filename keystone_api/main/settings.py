@@ -358,7 +358,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Static file handling (CSS, JavaScript, Images)
 
 MAX_FILE_SIZE = env.int('CONFIG_UPLOAD_SIZE', 2.5 * 1024 * 1024)  # 2.5 MB
-MAX_FILE_COUNT = env.int('CONFIG_UPLOAD_COUNT', 5)
+MAX_FILE_COUNT = env.int('CONFIG_UPLOAD_COUNT', 15)
 
 STATIC_URL = '/static/'
 STATIC_ROOT = Path(env.path('CONFIG_STATIC_DIR', BASE_DIR / 'static_files'))
