@@ -80,7 +80,7 @@ class AllocationRequestCreateSerializer(AllocationRequestSerializer):
     """
 
     allocations = AllocationInlineSerializer(many=True, required=False, write_only=True)
-    attachments = serializers.ListField(required=False, child=serializers.FileField(max_length=20))
+    attachments = serializers.ListField(required=False, child=serializers.FileField())
 
     @transaction.atomic
     def create(self, validated_data: dict) -> AllocationRequest:
