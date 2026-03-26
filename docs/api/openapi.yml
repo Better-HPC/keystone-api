@@ -12108,6 +12108,11 @@ components:
           items:
             $ref: '#/components/schemas/AllocationInline'
           writeOnly: true
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
         title:
           type: string
           maxLength: 250

@@ -132,6 +132,11 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     def get_serializer_class(self):
         """Return the appropriate data serializer based on the requested action."""
 
+        # Note: When generating OpenAPI specifications, schema decorators (including `extend_schema_view`)
+        # will not resolve dynamic serializer classes and will default to the VIewSet's`serializer_class`
+        # attribute. The decorators must be manually configured to identify the correct Serializer for
+        # each request type.
+
         if self.action == 'create':
             return AllocationRequestCreateSerializer
 
