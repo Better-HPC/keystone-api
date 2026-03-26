@@ -19,6 +19,7 @@ class ConfigSerializer(serializers.Serializer):
 
     # File upload constraints
     max_upload_size = serializers.IntegerField()
+    max_upload_count = serializers.IntegerField()
     allowed_file_types = serializers.ListField(child=serializers.CharField())
 
     # Feature flags

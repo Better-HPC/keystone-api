@@ -40,6 +40,7 @@ class ConfigView(GenericAPIView):
         data = {
             "version": settings.VERSION,
             "max_upload_size": settings.MAX_FILE_SIZE,
+            "max_upload_count": settings.MAX_FILE_COUNT,
             "allowed_file_types": settings.ALLOWED_FILE_TYPES,
             "session_age": int(settings.SESSION_COOKIE_AGE),
         }
