@@ -22,8 +22,5 @@ class ConfigSerializer(serializers.Serializer):
     max_upload_count = serializers.IntegerField()
     allowed_file_types = serializers.ListField(child=serializers.CharField())
 
-    # Feature flags
-    ldap_enabled = serializers.BooleanField()
-
     # Session settings
     session_age = serializers.IntegerField()
