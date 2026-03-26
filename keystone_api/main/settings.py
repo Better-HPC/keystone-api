@@ -147,6 +147,7 @@ INSTALLED_APPS = [
     'apps.admin_utils',
     'apps.allocations',
     'apps.authentication',
+    'apps.config',
     'apps.health',
     'apps.logging',
     'apps.notifications',

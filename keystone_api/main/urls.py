@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('allocations/', include('apps.allocations.urls', namespace='alloc')),
     path('authentication/', include('apps.authentication.urls', namespace='authentication')),
+    path('config/', include('apps.config.urls', namespace='config')),
     path('health/', include('apps.health.urls', namespace='health')),
     path('logs/', include('apps.logging.urls', namespace='logs')),
     path("notifications/", include('apps.notifications.urls', namespace="notifications")),
