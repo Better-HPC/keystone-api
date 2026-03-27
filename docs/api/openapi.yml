@@ -12132,7 +12132,7 @@ components:
           items:
             type: string
             format: uri
-          maxItems: 5
+          maxItems: 15
         title:
           type: string
           maxLength: 250
@@ -12631,13 +12631,10 @@ components:
           type: array
           items:
             type: string
-        ldap_enabled:
-          type: boolean
         session_age:
           type: integer
       required:
       - allowed_file_types
-      - ldap_enabled
       - max_upload_count
       - max_upload_size
       - session_age
