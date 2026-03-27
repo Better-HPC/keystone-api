@@ -78,6 +78,7 @@ By default, these files are stored in subdirectories of the installed applicatio
 | `CONFIG_STATIC_DIR`    | `<app>/static_files`  | Where to store internal static files required by the application.        |
 | `CONFIG_UPLOAD_DIR`    | `<app>/media`         | Where to store file data uploaded by users.                              |
 | `CONFIG_UPLOAD_SIZE`   | `2621440` (2.5 MB)    | Maximum allowed file upload size in bytes.                               |
+| `CONFIG_UPLOAD_COUNT`  | `15`                  | Maximum files allowed in a single upload request.                        |
 | `CONFIG_METRICS_PORTS` | `9101` through `9150` | Port numbers used to expose prometheus metrics (e.g., `9101,9102,9103`). |
 
 ## Logging

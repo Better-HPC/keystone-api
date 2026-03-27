@@ -4142,6 +4142,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestrictedUser'
           description: ''
+  /config/:
+    get:
+      operationId: config_retrieve
+      description: Returns application settings relevant to the frontend client. Includes
+        application metadata, file upload constraints, feature flags, and session
+        settings.
+      summary: Retrieve application configuration.
+      tags:
+      - Configuration
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+          description: ''
   /health/:
     get:
       operationId: health_retrieve
@@ -12113,6 +12132,7 @@ components:
           items:
             type: string
             format: uri
+          maxItems: 15
         title:
           type: string
           maxLength: 250
@@ -12597,6 +12617,28 @@ components:
       - content
       - created
       - id
+    Config:
+      type: object
+      description: Serializer for exposing application configuration to the frontend.
+      properties:
+        version:
+          type: string
+        max_upload_size:
+          type: integer
+        max_upload_count:
+          type: integer
+        allowed_file_types:
+          type: array
+          items:
+            type: string
+        session_age:
+          type: integer
+      required:
+      - allowed_file_types
+      - max_upload_count
+      - max_upload_size
+      - session_age
+      - version
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
