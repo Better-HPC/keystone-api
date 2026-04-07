@@ -123,7 +123,7 @@ def send_past_expiration_notice(user_id: int, req_id: int) -> None:
                 'submitted': req.submitted,
                 'active': req.active,
                 'expire': req.expire,
-                'status': req.status,
+                'status': AllocationRequest.StatusChoices(req.status).label,
             } for req in upcoming_requests.all()
         ),
     }

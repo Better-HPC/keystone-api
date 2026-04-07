@@ -14,6 +14,7 @@ from factory import LazyFunction
 from factory.django import DjangoModelFactory
 from factory.random import randgen
 
+from apps.allocations.models import AllocationRequest
 from apps.notifications.shortcuts import format_template, get_template
 from apps.users.factories import UserFactory
 from .models import *
@@ -43,12 +44,32 @@ _EXPIRING_TEMPLATE_CONTEXT = {
     "req_expire": date(_YEAR, 12, 31),
     "req_days_left": 7,
     "allocations": (
-        {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000},
-        {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000},
+        {
+            "alloc_cluster": "Cluster 1",
+            "alloc_requested": 100_000,
+            "alloc_awarded": 100_000
+        }, {
+            "alloc_cluster": "Cluster 2",
+            "alloc_requested": 250_000,
+            "alloc_awarded": 200_000
+        },
     ),
     "upcoming_requests": (
-        {"id": 5678, "title": "Pending Project", "submitted": date(_YEAR, 11, 15), "active": None, "expire": None, "status": "Pending"},
-        {"id": 9012, "title": "Active Project", "submitted": date(_YEAR, 3, 1), "active": date(_YEAR, 3, 15), "expire": date(2025, 3, 15), "status": "Approved"},
+        {
+            "id": 5678,
+            "title": "Pending Project",
+            "submitted": date(_YEAR, 11, 15),
+            "active": None,
+            "expire": None,
+            "status": AllocationRequest.StatusChoices.PENDING.label
+        }, {
+            "id": 9012,
+            "title": "Active Project",
+            "submitted": date(_YEAR, 3, 1),
+            "active": date(_YEAR, 3, 15),
+            "expire": date(2025, 3, 15),
+            "status": AllocationRequest.StatusChoices.APPROVED.label
+        },
     ),
 }
 
@@ -64,12 +85,34 @@ _EXPIRED_TEMPLATE_CONTEXT = {
     "req_active": date(_YEAR, 1, 8),
     "req_expire": date(_YEAR, 12, 31),
     "allocations": (
-        {"alloc_cluster": "Cluster 1", "alloc_requested": 100_000, "alloc_awarded": 100_000, "alloc_final": 50_000},
-        {"alloc_cluster": "Cluster 2", "alloc_requested": 250_000, "alloc_awarded": 200_000, "alloc_final": 175_000},
+        {
+            "alloc_cluster": "Cluster 1",
+            "alloc_requested": 100_000,
+            "alloc_awarded": 100_000,
+            "alloc_final": 50_000
+        }, {
+            "alloc_cluster": "Cluster 2",
+            "alloc_requested": 250_000,
+            "alloc_awarded": 200_000,
+            "alloc_final": 175_000
+        },
     ),
     "upcoming_requests": (
-        {"id": 5678, "title": "Pending Project", "submitted": date(_YEAR, 11, 15), "active": None, "expire": None, "status": "Pending"},
-        {"id": 9012, "title": "Active Project", "submitted": date(_YEAR, 3, 1), "active": date(_YEAR, 3, 15), "expire": date(_YEAR + 1, 3, 15), "status": "Approved"},
+        {
+            "id": 5678,
+            "title": "Pending Project",
+            "submitted": date(_YEAR, 11, 15),
+            "active": None,
+            "expire": None,
+            "status": AllocationRequest.StatusChoices.PENDING.label
+        }, {
+            "id": 9012,
+            "title": "Active Project",
+            "submitted": date(_YEAR, 3, 1),
+            "active": date(_YEAR, 3, 15),
+            "expire": date(_YEAR + 1, 3, 15),
+            "status": AllocationRequest.StatusChoices.APPROVED.label
+        },
     ),
 }
 
