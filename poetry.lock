@@ -6,7 +6,8 @@ version = "1.4.6"
 description = "aiosmtpd - asyncio based SMTP server"
 optional = true
 python-versions = ">=3.8"
-groups = ["main", "smtp"]
+groups = ["main"]
+markers = "extra == \"smtp\" or extra == \"all\""
 files = [
     {file = "aiosmtpd-1.4.6-py3-none-any.whl", hash = "sha256:72c99179ba5aa9ae0abbda6994668239b64a5ce054471955fe75f581d2592475"},
     {file = "aiosmtpd-1.4.6.tar.gz", hash = "sha256:5a811826e1a5a06c25ebc3e6c4a704613eb9a1bcf6b78428fbe865f4f6c9a4b8"},
@@ -37,7 +38,7 @@ version = "3.11.1"
 description = "ASGI specs, helper code, and adapters"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "ldap"]
+groups = ["main"]
 files = [
     {file = "asgiref-3.11.1-py3-none-any.whl", hash = "sha256:e8667a091e69529631969fd45dc268fa79b99c92c5fcdda727757e52146ec133"},
     {file = "asgiref-3.11.1.tar.gz", hash = "sha256:5f184dc43b7e763efe848065441eac62229c9f7b0475f41f80e207a114eda4ce"},
@@ -65,7 +66,8 @@ version = "7.0.0"
 description = "Keep all y'all's __all__'s in sync"
 optional = true
 python-versions = ">=3.10"
-groups = ["main", "smtp"]
+groups = ["main"]
+markers = "extra == \"smtp\" or extra == \"all\""
 files = [
     {file = "atpublic-7.0.0-py3-none-any.whl", hash = "sha256:6702bd9e7245eb4e8220a3e222afcef7f87412154732271ee7deee4433b72b4b"},
     {file = "atpublic-7.0.0.tar.gz", hash = "sha256:466ef10d0c8bbd14fd02a5fbd5a8b6af6a846373d91106d3a07c16d72d96b63e"},
@@ -77,7 +79,7 @@ version = "26.1.0"
 description = "Classes Without Boilerplate"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "smtp"]
+groups = ["main"]
 files = [
     {file = "attrs-26.1.0-py3-none-any.whl", hash = "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"},
     {file = "attrs-26.1.0.tar.gz", hash = "sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32"},
@@ -239,7 +241,8 @@ version = "7.13.5"
 description = "Code coverage measurement for Python"
 optional = true
 python-versions = ">=3.10"
-groups = ["main", "tests"]
+groups = ["main"]
+markers = "extra == \"tests\" or extra == \"all\""
 files = [
     {file = "coverage-7.13.5-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:e0723d2c96324561b9aa76fb982406e11d93cdb388a7a7da2b16e04719cf7ca5"},
     {file = "coverage-7.13.5-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:52f444e86475992506b32d4e5ca55c24fc88d73bcbda0e9745095b28ef4dc0cf"},
@@ -373,7 +376,7 @@ version = "5.2.13"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.10"
-groups = ["main", "ldap"]
+groups = ["main"]
 files = [
     {file = "django-5.2.13-py3-none-any.whl", hash = "sha256:5788fce61da23788a8ce6f02583765ab060d396720924789f97fa42119d37f7a"},
     {file = "django-5.2.13.tar.gz", hash = "sha256:a31589db5188d074c63f0945c3888fad104627dfcc236fb2b97f71f89da33bc4"},
@@ -410,7 +413,8 @@ version = "5.2.0"
 description = "Django LDAP authentication backend"
 optional = true
 python-versions = ">=3.9"
-groups = ["main", "ldap"]
+groups = ["main"]
+markers = "extra == \"ldap\" or extra == \"all\""
 files = [
     {file = "django_auth_ldap-5.2.0-py3-none-any.whl", hash = "sha256:7dc6eb576ba36051850b580e4bdf4464e04bbe7367c3827a3121b4d7c51fb175"},
     {file = "django_auth_ldap-5.2.0.tar.gz", hash = "sha256:08ba6efc0340d9874725a962311b14991e29a33593eb150a8fb640709dbfa80f"},
@@ -1236,7 +1240,8 @@ version = "0.6.3"
 description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
 optional = true
 python-versions = ">=3.8"
-groups = ["main", "ldap"]
+groups = ["main"]
+markers = "extra == \"ldap\" or extra == \"all\""
 files = [
     {file = "pyasn1-0.6.3-py3-none-any.whl", hash = "sha256:a80184d120f0864a52a073acc6fc642847d0be408e7c7252f31390c0f4eadcde"},
     {file = "pyasn1-0.6.3.tar.gz", hash = "sha256:697a8ecd6d98891189184ca1fa05d1bb00e2f84b5977c481452050549c8a72cf"},
@@ -1248,7 +1253,8 @@ version = "0.4.2"
 description = "A collection of ASN.1-based protocols modules"
 optional = true
 python-versions = ">=3.8"
-groups = ["main", "ldap"]
+groups = ["main"]
+markers = "extra == \"ldap\" or extra == \"all\""
 files = [
     {file = "pyasn1_modules-0.4.2-py3-none-any.whl", hash = "sha256:29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a"},
     {file = "pyasn1_modules-0.4.2.tar.gz", hash = "sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6"},
@@ -1294,7 +1300,8 @@ version = "3.4.5"
 description = "Python modules for implementing LDAP clients"
 optional = true
 python-versions = ">=3.6"
-groups = ["main", "ldap"]
+groups = ["main"]
+markers = "extra == \"ldap\" or extra == \"all\""
 files = [
     {file = "python_ldap-3.4.5.tar.gz", hash = "sha256:b2f6ef1c37fe2c6a5a85212efe71311ee21847766a7d45fcb711f3b270a5f79a"},
 ]
@@ -1600,7 +1607,7 @@ version = "0.5.5"
 description = "A non-validating SQL parser."
 optional = false
 python-versions = ">=3.8"
-groups = ["main", "ldap"]
+groups = ["main"]
 files = [
     {file = "sqlparse-0.5.5-py3-none-any.whl", hash = "sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba"},
     {file = "sqlparse-0.5.5.tar.gz", hash = "sha256:e20d4a9b0b8585fdf63b10d30066c7c94c5d7a7ec47c889a2d83a3caa93ff28e"},
@@ -1671,12 +1678,11 @@ version = "2026.1"
 description = "Provider of IANA time zone data"
 optional = false
 python-versions = ">=2"
-groups = ["main", "ldap"]
+groups = ["main"]
 files = [
     {file = "tzdata-2026.1-py2.py3-none-any.whl", hash = "sha256:4b1d2be7ac37ceafd7327b961aa3a54e467efbdb563a23655fbfe0d39cfc42a9"},
     {file = "tzdata-2026.1.tar.gz", hash = "sha256:67658a1903c75917309e753fdc349ac0efd8c27db7a0cb406a25be4840f87f98"},
 ]
-markers = {ldap = "sys_platform == \"win32\""}
 
 [[package]]
 name = "tzlocal"
@@ -1760,4 +1766,4 @@ tests = ["coverage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "c0a017c6fe495247cb01f83ca6a0a11b3a999971e5f933be8e4bab0c3a23e65e"
+content-hash = "24af21491c3d5caab307d9b900e7955440f7c89b7bc32a5e499efa48ac7a16ad"
