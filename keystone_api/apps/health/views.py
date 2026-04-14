@@ -234,7 +234,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
 
         for row in results:
             metric_value = 200 if row["healthy"] else 500
-            lines.append(f'keystone_health_check_status{{check="{row["check"]}"}} {metric_value:d}')
+            lines.append(f'keystone_health_check_status{{check="{row["check"]}"}} {metric_value:.1f}')
 
         lines += [
             "",

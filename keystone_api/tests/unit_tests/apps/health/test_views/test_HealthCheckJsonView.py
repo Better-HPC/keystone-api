@@ -19,7 +19,7 @@ class RenderResponseMethod(TestCase):
         self.assertIn("application/json", response.headers.get("Content-Type", ""))
 
     def test_status_code_is_always_200(self) -> None:
-        """Verify the status code is 200 regardless of individual health check results."""
+        """Verify a `200` status code is returned regardless of individual health check results."""
 
         results = [
             {"check": "Database", "healthy": False, "error": "DB unavailable", "time_taken": 0.5},
@@ -29,7 +29,7 @@ class RenderResponseMethod(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_results_wrapped_in_data_key(self) -> None:
-        """Verify health check results are nested under a `data` key."""
+        """Verify health check results are correctly serialized under a `data` key."""
 
         results = [
             {"check": "Database", "healthy": True, "error": None, "time_taken": 0.01},
@@ -41,6 +41,7 @@ class RenderResponseMethod(TestCase):
 
         self.assertIn("data", body)
         self.assertEqual(body["data"], results)
+        self.assertEqual(response.status_code, 200)
 
     def test_empty_results(self) -> None:
         """Verify an empty result list is correctly serialized."""
@@ -48,3 +49,4 @@ class RenderResponseMethod(TestCase):
         response = HealthCheckJsonView().render_response([])
         body = json.loads(response.content)
         self.assertEqual(body, {"data": []})
+        self.assertEqual(response.status_code, 200)

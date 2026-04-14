@@ -9,7 +9,7 @@ class RenderResponseMethod(TestCase):
     """Test the rendering of HTTP responses by the `render_response` method."""
 
     def test_status_code_is_always_200(self) -> None:
-        """Verify the status code is 200 regardless of individual health check results."""
+        """Verify the returned status code is `200` regardless of individual health check results."""
 
         results = [
             {"check": "Database", "healthy": False, "error": "DB unavailable", "time_taken": 0.5},
@@ -43,22 +43,22 @@ class RenderResponseMethod(TestCase):
         self.assertIn("# TYPE keystone_health_check_eval_time_seconds gauge", body)
 
     def test_healthy_check_emits_correct_status_value(self) -> None:
-        """Verify a passing check emits a truthy status value (1)."""
+        """Verify a passing check emits a `200.0` status value."""
 
         results = [{"check": "Storage", "healthy": True, "error": None, "time_taken": 0.008}]
         response = HealthCheckPrometheusView().render_response(results)
         body = response.content.decode()
 
-        self.assertIn('keystone_health_check_status{check="Storage"} 1', body)
+        self.assertIn('keystone_health_check_status{check="Storage"} 200.0', body)
 
     def test_unhealthy_check_emits_correct_status_value(self) -> None:
-        """Verify a failing check emits a falsy status value (0)."""
+        """Verify a failing check emits a `500.0` status value."""
 
         results = [{"check": "Celery", "healthy": False, "error": "Workers unavailable", "time_taken": 1.001}]
         response = HealthCheckPrometheusView().render_response(results)
         body = response.content.decode()
 
-        self.assertIn('keystone_health_check_status{check="Celery"} 0', body)
+        self.assertIn('keystone_health_check_status{check="Celery"} 500.0', body)
 
     def test_timing_metric_uses_six_decimal_places(self) -> None:
         """Verify timing values are formatted to six decimal places."""
@@ -94,8 +94,8 @@ class RenderResponseMethod(TestCase):
         expected = (
             "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)\n"
             "# TYPE keystone_health_check_status gauge\n"
-            'keystone_health_check_status{check="Storage"} 1\n'
-            'keystone_health_check_status{check="Celery"} 0\n'
+            'keystone_health_check_status{check="Storage"} 200.0\n'
+            'keystone_health_check_status{check="Celery"} 500.0\n'
             "\n"
             "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds\n"
             "# TYPE keystone_health_check_eval_time_seconds gauge\n"

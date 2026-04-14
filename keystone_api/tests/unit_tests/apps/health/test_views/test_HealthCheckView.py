@@ -9,7 +9,7 @@ class RenderResponseMethod(TestCase):
     """Test the rendering of HTTP responses by the `render_response` method."""
 
     def test_partial_failing_health_checks_returns_500(self) -> None:
-        """Verify a 500 is returned when at least one health check is failing."""
+        """Verify a `500` status code is returned when at least one health check is failing."""
 
         results = [
             {"check": "Database", "healthy": True, "error": None, "time_taken": 0.01},
@@ -20,7 +20,7 @@ class RenderResponseMethod(TestCase):
         self.assertEqual(response.status_code, 500)
 
     def test_all_failing_health_checks_returns_500(self) -> None:
-        """Verify a 500 is returned when all health checks are failing."""
+        """Verify a `500` status code is returned when all health checks are failing."""
 
         results = [
             {"check": "Database", "healthy": False, "error": "DB unavailable", "time_taken": 0.5},
@@ -31,7 +31,7 @@ class RenderResponseMethod(TestCase):
         self.assertEqual(response.status_code, 500)
 
     def test_passing_health_checks_returns_200(self) -> None:
-        """Verify a 200 is returned when all health checks are passing."""
+        """Verify a `200` status code is returned when all health checks are passing."""
 
         results = [
             {"check": "Database", "healthy": True, "error": None, "time_taken": 0.01},
@@ -42,7 +42,7 @@ class RenderResponseMethod(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_empty_results_returns_200(self) -> None:
-        """Verify a 200 is returned when there are no health checks."""
+        """Verify a `200` status code is returned when there are no health checks."""
 
         response = HealthCheckView().render_response([])
         self.assertEqual(response.status_code, 200)
