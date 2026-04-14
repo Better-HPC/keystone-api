@@ -7,7 +7,6 @@ URLs to business logic.
 """
 
 import asyncio
-from typing import Collection
 
 import health_check
 from asgiref.sync import async_to_sync
@@ -16,8 +15,10 @@ from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiParameter
-from health_check.base import HealthCheck, HealthCheckResult
-from health_check.views import HealthCheckView as BaseHealthCheckView
+from health_check.base import HealthCheck
+from health_check.contrib.celery import Ping
+from health_check.contrib.redis import Redis
+from redis.asyncio import Redis as RedisClient
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
@@ -28,17 +29,19 @@ __all__ = ['HealthCheckView']
 # Cache duration for health check results in seconds
 CACHE_TIMEOUT = 60
 
-# The health checks to evaluate
-CHECKS = [
-    health_check.Mail(),
-    health_check.Cache(),
-    health_check.Database(),
-    health_check.Storage(),
-]
+# Mapping of human-friendly names to health check instances
+CHECKS: dict[str, HealthCheck] = {
+    "SMTP": health_check.Mail(),
+    "Cache": health_check.Cache(),
+    "Database": health_check.Database(),
+    "Storage": health_check.Storage(),
+    "Redis": Redis(client_factory=lambda: RedisClient.from_url(settings.REDIS_URL)),
+    "Celery": Ping(),
+}
 
 # Register the LDAP health check only when an LDAP server is configured
 if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
-    CHECKS.append(LDAPHealthCheck())
+    CHECKS["LDAP"] = LDAPHealthCheck()
 
 
 @extend_schema_view(
@@ -49,7 +52,7 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
         description=(
             "Returns health check results in the requested format. "
             "Use the `format` path parameter to select the response format: "
-            "omit for HTTP status only (200/500), `json` for JSON, or `prometheus` for Prometheus. "
+            "omit for HTTP status only (200/500), `json` for JSON, or `prom` for Prometheus. "
             "Health checks are performed on demand and cached for 60 seconds."
         ),
         parameters=[
@@ -80,38 +83,38 @@ class HealthCheckView(GenericAPIView):
     checks = CHECKS
 
     @staticmethod
-    async def run_checks(checks: Collection[HealthCheck]) -> list[dict]:
+    async def run_checks(checks: dict[str, HealthCheck]) -> list[dict]:
         """Execute the provided health checks.
 
         Args:
-            checks: The health checks to execute.
+            checks: Mapping of human-friendly names to health check instances.
 
         Returns:
-            Parsed health check results as a JSON dictionary.
+            Parsed health check results as a JSON serializable dictionary.
         """
 
         results = await asyncio.gather(
-            *(check.get_result() for check in checks)
+            *(check.get_result() for check in checks.values())
         )
 
         return [
             {
-                "check": result.check.__class__.__name__,
+                "check": name,
                 "healthy": not bool(result.error),
                 "error": str(result.error) if result.error else None,
                 "time_taken": result.time_taken,
             }
-            for result in results
+            for name, result in zip(checks.keys(), results)
         ]
 
     @staticmethod
-    def render_to_custom_json(results: Collection[HealthCheckResult]) -> HttpResponse:
+    def render_to_custom_json(results: list[dict]) -> HttpResponse:
         """Return health check results as a JSON response."""
 
         return JsonResponse({'data': results}, content_type="application/json", status=200)
 
     @staticmethod
-    def render_to_custom_prometheus(results: Collection[HealthCheckResult]) -> HttpResponse:
+    def render_to_custom_prometheus(results: list[dict]) -> HttpResponse:
         """Return health check results in Prometheus format as a plain-text response."""
 
         lines = [

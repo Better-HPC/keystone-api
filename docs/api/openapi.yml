@@ -4166,8 +4166,8 @@ paths:
       operationId: health_retrieve
       description: 'Returns health check results in the requested format. Use the
         `format` path parameter to select the response format: omit for HTTP status
-        only (200/500), `json` for JSON, or `prometheus` for Prometheus. Health checks
-        are performed on demand and cached for 60 seconds.'
+        only (200/500), `json` for JSON, or `prom` for Prometheus. Health checks are
+        performed on demand and cached for 60 seconds.'
       summary: Retrieve the current application health status.
       parameters:
       - in: path
