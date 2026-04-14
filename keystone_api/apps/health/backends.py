@@ -1,21 +1,28 @@
 """Health check backends for verifying the status of supporting services.
 
 This module defines custom health checks for supporting application services.
-These checks supplement third-party health checks that come bundled with the
+These checks supplement the built-in health checks provided by the
 `django-health-check` package.
 """
 
+import dataclasses
+
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import get_connection
-from health_check.backends import BaseHealthCheckBackend
-from health_check.exceptions import HealthCheckException
+from health_check.base import HealthCheck
+from health_check.exceptions import ServiceUnavailable
+
+__all__ = ["LDAPHealthCheck"]
 
 
-class LDAPHealthCheck(BaseHealthCheckBackend):
-    """Custom health check backend for LDAP connectivity."""
+@dataclasses.dataclass
+class LDAPHealthCheck(HealthCheck):
+    """Custom health check for LDAP connectivity.
 
-    def check_status(self) -> None:
+    Performs an LDAP `whoami` query to verify server availability using
+    the LDAP connection parameters defined in application settings.
+    """
+
+    def run(self) -> None:
         """Perform an LDAP `whoami` query to verify server availability."""
 
         import ldap
@@ -34,41 +41,11 @@ class LDAPHealthCheck(BaseHealthCheckBackend):
 
             conn.whoami_s()
 
-        except ldap.INVALID_CREDENTIALS:
-            raise HealthCheckException("Invalid LDAP credentials.")
+        except ldap.INVALID_CREDENTIALS as e:
+            raise ServiceUnavailable("Invalid LDAP credentials.") from e
 
-        except ldap.SERVER_DOWN:
-            raise HealthCheckException("LDAP server not reachable.")
-
-        except Exception:
-            raise HealthCheckException("Unexpected error")
-
-
-class SMTPHealthCheck(BaseHealthCheckBackend):
-    """Health check plugin for the SMTP server defined in application settings."""
-
-    def check_status(self) -> None:
-        """Check the status of the SMTP server."""
-
-        connection = None
-
-        try:
-            connection = get_connection(fail_silently=False)
-
-            # Check if the connection is configured in settings
-            if not connection.host:
-                raise ImproperlyConfigured("Email backend is not configured.")
-
-            # Check if the server is accessible
-            connection.open()
-            connection.connection.noop()
-
-        except ImproperlyConfigured as e:
-            self.add_error("Email backend is not configured properly.", e)
+        except ldap.SERVER_DOWN as e:
+            raise ServiceUnavailable("LDAP server not reachable.") from e
 
         except Exception as e:
-            self.add_error(str(e), e)
-
-        finally:
-            if connection:  # pragma: no branch
-                connection.close()
+            raise ServiceUnavailable("Unexpected error") from e

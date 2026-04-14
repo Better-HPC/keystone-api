@@ -4161,52 +4161,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Config'
           description: ''
-  /health/:
-    get:
-      operationId: health_retrieve
-      description: 'Returns a 200 status if all application health checks pass and
-        a 500 status otherwise. Health checks are performed on demand and cached for
-        60 seconds. '
-      summary: Retrieve the current application health status.
-      tags:
-      - Admin - Health Checks
-      responses:
-        '200':
-          description: No response body
-        '500':
-          description: No response body
-  /health/json/:
-    get:
-      operationId: health_json_retrieve
-      description: 'Returns individual health check results in JSON format. Health
-        checks are performed on demand and cached for 60 seconds. A `200` status code
-        is returned regardless of whether individual health checks are passing. '
-      summary: Retrieve health check results in JSON format.
-      tags:
-      - Admin - Health Checks
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/health_json_ok'
-          description: ''
-  /health/prom/:
-    get:
-      operationId: health_prom_retrieve
-      description: 'Returns individual health check results in Prometheus format.
-        Health checks are performed on demand and cached for 60 seconds. A `200` status
-        code is returned regardless of whether individual health checks are passing. '
-      summary: Retrieve health check results in Prometheus format.
-      tags:
-      - Admin - Health Checks
-      responses:
-        '200':
-          content:
-            text/plain:
-              schema:
-                type: string
-          description: ''
   /logs/audit/:
     get:
       operationId: logs_audit_list
@@ -12943,18 +12897,6 @@ components:
         MB:
           type: string
           default: Member
-    NestedInlineOneOff:
-      type: object
-      properties:
-        status:
-          type: integer
-          default: 200
-        message:
-          type: string
-          default: working
-        critical_service:
-          type: boolean
-          default: true
     Notification:
       type: object
       description: Object serializer for the `Notification` class.
@@ -14553,13 +14495,6 @@ components:
       - display_name
       - id
       - username
-    health_json_ok:
-      type: object
-      properties:
-        healthCheckName:
-          $ref: '#/components/schemas/NestedInlineOneOff'
-      required:
-      - healthCheckName
   securitySchemes:
     cookieAuth:
       type: apiKey
