@@ -6,6 +6,8 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+import asyncio
+
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -48,7 +50,7 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
                 name='format',
                 location='query',
                 required=False,
-                enum=['json', 'openmetrics', 'text', 'rss', 'atom'],
+                enum=['text', 'json', 'prom'],
                 description='The format of the returned health metrics.',
             )],
         responses={
@@ -72,13 +74,31 @@ class HealthCheckView(BaseHealthCheckView):
     checks = CHECKS
 
     async def get(self, request: Request, *args, **kwargs) -> HttpResponse:
-        """Return a cached health check response, running checks only when the cache is cold."""
+        """Return a health response rendered fresh each time, but with check results cached."""
 
-        cache_key = 'healthcheck_cache'
-        cached_response = cache.get(cache_key)
-        if cached_response is not None:
-            return cached_response
+        cache_key = 'healthcheck_results'
+        results = cache.get(cache_key)
 
-        response = await super().get(request, *args, **kwargs)
-        cache.set(cache_key, response, CACHE_TIMEOUT)
-        return response
+        if results is None:
+            results = await asyncio.gather(
+                *(check.get_result() for check in self.get_checks())
+            )
+
+            cache.set(cache_key, results, CACHE_TIMEOUT)
+
+        # Render into the requested format
+        response_format = request.GET.get("format")
+        match response_format:
+            case "text":
+                return self.render_to_response_text(status=200)
+
+            case "json":
+                return self.render_to_response_json(status=200)
+
+            case "prometheus":
+                return self.render_to_response_openmetrics()
+
+        # No format requested - return a single status code reflecting overall health
+        has_errors = any(result.error for result in results)
+        status_code = 500 if has_errors else 200
+        return HttpResponse(status=status_code)
