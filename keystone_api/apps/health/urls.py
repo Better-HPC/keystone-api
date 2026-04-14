@@ -1,11 +1,13 @@
-"""URL routing for the parent application."""
+"""URL routing for the health check application."""
 
-from django.urls import re_path
+from django.urls import path
 
 from .views import *
 
 app_name = 'health'
 
 urlpatterns = [
-    re_path(r'^(?:(?P<format>\w+)/)?$', HealthCheckView.as_view()),
+    path('', HealthCheckView.as_view(), name='health'),
+    path('json/', HealthCheckJsonView.as_view(), name='health-json'),
+    path('prom/', HealthCheckPrometheusView.as_view(), name='health-prom'),
 ]

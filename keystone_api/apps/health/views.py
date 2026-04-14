@@ -14,7 +14,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from drf_spectacular.openapi import AutoSchema
-from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiExample, OpenApiResponse
 from health_check.base import HealthCheck
 from health_check.contrib.celery import Ping
 from health_check.contrib.redis import Redis
@@ -24,7 +25,7 @@ from rest_framework.request import Request
 
 from apps.health.checks import LDAPHealthCheck
 
-__all__ = ['HealthCheckView']
+__all__ = ['HealthCheckView', 'HealthCheckJsonView', 'HealthCheckPrometheusView']
 
 # Cache duration for health check results in seconds
 CACHE_TIMEOUT = 60
@@ -44,38 +45,11 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
     CHECKS["LDAP"] = LDAPHealthCheck()
 
 
-@extend_schema_view(
-    get=extend_schema(
-        tags=["Admin - Health Checks"],
-        auth=[],
-        summary="Retrieve the current application health status.",
-        description=(
-            "Returns health check results in the requested format. "
-            "Use the `format` path parameter to select the response format: "
-            "omit for HTTP status only (200/500), `json` for JSON, or `prom` for Prometheus. "
-            "Health checks are performed on demand and cached for 60 seconds."
-        ),
-        parameters=[
-            OpenApiParameter(
-                name='format',
-                location='path',
-                required=False,
-                enum=['json', 'prom'],
-                description='The format of the returned health metrics.',
-            )],
-        responses={
-            '200': inline_serializer('health_ok', fields=dict()),
-            '500': inline_serializer('health_error', fields=dict()),
-        },
-    )
-)
-class HealthCheckView(GenericAPIView):
-    """Health check view with response caching.
+class BaseHealthCheckView(GenericAPIView):
+    """Base view providing shared health check execution and caching logic.
 
-    Wraps the django-health-check `HealthCheckView` to cache responses for
-    60 seconds, reducing load on downstream services during high-frequency
-    polling. The response format is selected via the `format` path parameter
-    (e.g. ``/health/json/``); omitting it returns a bare 200/500 status code.
+    Subclasses implement `render` to format the cached results into the
+    appropriate HTTP response for their endpoint.
     """
 
     schema = AutoSchema()
@@ -90,7 +64,7 @@ class HealthCheckView(GenericAPIView):
             checks: Mapping of human-friendly names to health check instances.
 
         Returns:
-            Parsed health check results as a JSON serializable dictionary.
+            Parsed health check results as a JSON serializable list.
         """
 
         results = await asyncio.gather(
@@ -108,14 +82,150 @@ class HealthCheckView(GenericAPIView):
         ]
 
     @staticmethod
-    def render_to_custom_json(results: list[dict]) -> HttpResponse:
-        """Return health check results as a JSON response."""
+    def get_cached_results() -> list[dict]:
+        """Return cached health check results, running checks if the cache is cold."""
+
+        cache_key = 'healthcheck_results'
+        results = cache.get(cache_key)
+        if results is None:
+            results = async_to_sync(BaseHealthCheckView.run_checks)(CHECKS)
+            cache.set(cache_key, results, CACHE_TIMEOUT)
+
+        return results
+
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Render health check results into an HTTP response.
+
+        Args:
+            results: Parsed health check results as returned by ``run_checks``.
+
+        Returns:
+            An HTTP response in the format appropriate for the subclass.
+        """
+
+        raise NotImplementedError
+
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
+        """Handle an incoming HTTP GET request.
+
+        Evaluate system health checks, using cached results if possible, and
+        return the rendered results.
+        """
+
+        return self.render_response(self.get_cached_results())
+
+
+@extend_schema_view(
+    get=extend_schema(
+        tags=["Admin - Health Checks"],
+        auth=[],
+        summary="Retrieve the current application health status.",
+        description=(
+            "Returns a 200 status if all application health checks pass and a 500 status otherwise. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+        ),
+        responses={
+            '200': inline_serializer('health_ok', fields=dict()),
+            '500': inline_serializer('health_error', fields=dict()),
+        }
+    )
+)
+class HealthCheckView(BaseHealthCheckView):
+    """Returns a bare 200 or 500 status code reflecting overall health."""
+
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        has_errors = not all(result['healthy'] for result in results)
+        return HttpResponse(status=500 if has_errors else 200)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        tags=["Admin - Health Checks"],
+        auth=[],
+        summary="Retrieve health status as JSON.",
+        description=(
+            "Returns individual health check results in JSON format. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+            "A `200` status code is returned regardless of whether individual health checks are passing. "
+        ),
+        responses={
+            '200': OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                description='Health check results.',
+                examples=[
+                    OpenApiExample(
+                        'JSON response',
+                        response_only=True,
+                        value={'data': [
+                            {"check": "Storage", "healthy": True, "error": None, "time_taken": 0.012},
+                            {"check": "Celery", "healthy": False, "error": "Celery workers unavailable", "time_taken": 1.001},
+                        ]},
+                    ),
+                ],
+            ),
+        },
+    )
+)
+class HealthCheckJsonView(BaseHealthCheckView):
+    """Returns health check results as a JSON response."""
+
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Render health check results into a JSON response.
+
+        Args:
+            results: The health check results to render.
+
+        Returns:
+            An HTTP response with health check results in JSON format.
+        """
 
         return JsonResponse({'data': results}, content_type="application/json", status=200)
 
-    @staticmethod
-    def render_to_custom_prometheus(results: list[dict]) -> HttpResponse:
-        """Return health check results in Prometheus format as a plain-text response."""
+
+@extend_schema_view(
+    get=extend_schema(
+        tags=["Admin - Health Checks"],
+        auth=[],
+        summary="Retrieve health check results in Prometheus format.",
+        description=(
+            "Returns individual health check results in Prometheus format. "
+            "Health checks are performed on demand and cached for 60 seconds. "
+            "A `200` status code is returned regardless of whether individual health checks are passing. "
+        ),
+        responses={
+            '200': OpenApiResponse(
+                response=OpenApiTypes.STR,
+                description='Prometheus plain-text metrics.',
+                examples=[
+                    OpenApiExample(
+                        'Prometheus response',
+                        response_only=True,
+                        value=(
+                                "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)\n"
+                                "# TYPE keystone_health_check_status gauge\nkeystone_health_check_status{check=\"Storage\"} 200\n"
+                                "keystone_health_check_status{check=\"Celery\"} 500\n\n"
+                                "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds\n"
+                                "# TYPE keystone_health_check_eval_time_seconds gauge\nkeystone_health_check_eval_time_seconds{check=\"Storage\"} 0.008000\n"
+                                "keystone_health_check_eval_time_seconds{check=\"Celery\"} 1.001000",
+                        )
+                    ),
+                ],
+            ),
+        },
+    )
+)
+class HealthCheckPrometheusView(BaseHealthCheckView):
+    """Returns health check results in Prometheus plain-text exposition format."""
+
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Render health check results into an HTTP text response.
+
+        Args:
+            results: The health check results to render.
+
+        Returns:
+            An HTTP response with health check results in Prometheus text format.
+        """
 
         lines = [
             "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)",
@@ -141,26 +251,3 @@ class HealthCheckView(GenericAPIView):
             content_type="text/plain; charset=utf-8",
             status=200,
         )
-
-    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
-        """Return a health response rendered fresh each time, but with check results cached."""
-
-        cache_key = 'healthcheck_results'
-        results = cache.get(cache_key)
-        if results is None:
-            results = async_to_sync(self.run_checks)(CHECKS)
-            cache.set(cache_key, results, CACHE_TIMEOUT)
-
-        # Render into the requested format
-        response_format = kwargs.get("format")
-        match response_format:
-            case "json":
-                return self.render_to_custom_json(results)
-
-            case "prom":
-                return self.render_to_custom_prometheus(results)
-
-        # No format requested - return a single status code reflecting overall health
-        has_errors = not all(result['healthy'] for result in results)
-        status_code = 500 if has_errors else 200
-        return HttpResponse(status=status_code)
