@@ -96,28 +96,27 @@ class HealthCheckView(BaseHealthCheckView):
 
         return JsonResponse({'data': results}, content_type="application/json", status=200)
 
-    def render_to_custom_prometheus(self, results: Collection[HealthCheckResult]) -> HttpResponse:
+    @staticmethod
+    def render_to_custom_prometheus(results: Collection[HealthCheckResult]) -> HttpResponse:
         """Return health check results in Prometheus format as a plain-text response."""
 
         lines = [
-            "# HELP keystone_health_check_status Health check status (1 = healthy, 0 = unhealthy)",
+            "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)",
             "# TYPE keystone_health_check_status gauge",
         ]
 
         for row in results:
-            safe_label = self._escape_openmetrics_label_value(row["check"])
-            lines.append(f'keystone_health_check_status{{check="{safe_label}"}} {row["healthy"]:d}')
+            lines.append(f'keystone_health_check_status{{check="{row["check"]}"}} {row["healthy"]:d}')
 
         lines += [
             "",
-            "# HELP keystone_health_check_response_time_seconds Health check response time in seconds",
-            "# TYPE keystone_health_check_response_time_seconds gauge",
+            "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds",
+            "# TYPE keystone_health_check_eval_time_seconds gauge",
         ]
 
         for row in results:
-            safe_label = self._escape_openmetrics_label_value(row["check"])
             lines.append(
-                f'keystone_health_check_response_time_seconds{{check="{safe_label}"}} {row["time_taken"]:.6f}'
+                f'keystone_health_check_eval_time_seconds{{check="{row["check"]}"}} {row["time_taken"]:.6f}'
             )
 
         return HttpResponse(
@@ -141,7 +140,7 @@ class HealthCheckView(BaseHealthCheckView):
             case "json":
                 return self.render_to_custom_json(results)
 
-            case "prometheus":
+            case "prom":
                 return self.render_to_custom_prometheus(results)
 
         # No format requested - return a single status code reflecting overall health
