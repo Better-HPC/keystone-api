@@ -7,12 +7,14 @@ URLs to business logic.
 """
 
 import asyncio
+from typing import Collection
 
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiParameter
+from health_check.base import HealthCheckResult
 from health_check.views import HealthCheckView as BaseHealthCheckView
 from rest_framework.request import Request
 
@@ -41,16 +43,16 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
         summary="Retrieve the current application health status.",
         description=(
             "Returns health check results in the requested format. "
-            "Use the `format` query parameter to select the response format: "
-            "omit for HTTP status only (200/500), `json` for JSON, or `openmetrics` for Prometheus. "
+            "Use the `format` path parameter to select the response format: "
+            "omit for HTTP status only (200/500), `json` for JSON, or `prometheus` for Prometheus. "
             "Health checks are performed on demand and cached for 60 seconds."
         ),
         parameters=[
             OpenApiParameter(
                 name='format',
-                location='query',
+                location='path',
                 required=False,
-                enum=['text', 'json', 'prom'],
+                enum=['text', 'json', 'prometheus'],
                 description='The format of the returned health metrics.',
             )],
         responses={
@@ -64,30 +66,30 @@ class HealthCheckView(BaseHealthCheckView):
 
     Wraps the django-health-check `HealthCheckView` to cache responses for
     60 seconds, reducing load on downstream services during high-frequency
-    polling. Format negotiation (JSON, OpenMetrics/Prometheus, text, RSS,
-    Atom) is handled natively by the parent view via the `format` query
-    parameter or `Accept` header.
+    polling. The response format is selected via the `format` path parameter
+    (e.g. ``/health/json/``); omitting it returns a bare 200/500 status code.
     """
 
     schema = AutoSchema()
     permission_classes = []
     checks = CHECKS
 
+
     async def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return a health response rendered fresh each time, but with check results cached."""
 
         cache_key = 'healthcheck_results'
-        results = cache.get(cache_key)
+        self.results = cache.get(cache_key)
 
-        if results is None:
-            results = await asyncio.gather(
+        if self.results is None:
+            self.results = await asyncio.gather(
                 *(check.get_result() for check in self.get_checks())
             )
 
-            cache.set(cache_key, results, CACHE_TIMEOUT)
+            cache.set(cache_key, self.results, CACHE_TIMEOUT)
 
         # Render into the requested format
-        response_format = request.GET.get("format")
+        response_format = kwargs.get("format")
         match response_format:
             case "text":
                 return self.render_to_response_text(status=200)
@@ -99,6 +101,6 @@ class HealthCheckView(BaseHealthCheckView):
                 return self.render_to_response_openmetrics()
 
         # No format requested - return a single status code reflecting overall health
-        has_errors = any(result.error for result in results)
+        has_errors = any(result.error for result in self.results)
         status_code = 500 if has_errors else 200
         return HttpResponse(status=status_code)
