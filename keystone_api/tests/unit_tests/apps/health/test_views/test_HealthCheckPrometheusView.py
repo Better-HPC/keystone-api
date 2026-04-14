@@ -3,79 +3,105 @@
 from django.test import TestCase
 
 from apps.health.views import HealthCheckPrometheusView
-from .utils import create_mock_plugin
 
 
 class RenderResponseMethod(TestCase):
-    """Test the `render_response` method correctly returns the health check status."""
+    """Test the rendering of HTTP responses by the `render_response` method."""
 
-    def test_return_matches_health_checks(self) -> None:
-        """Verify health checks are correctly rendered in Prometheus format."""
+    def test_status_code_is_always_200(self) -> None:
+        """Verify the status code is 200 regardless of individual health check results."""
 
-        health_checks = {
-            'plugin1': create_mock_plugin(1, 'OK', True),
-            'plugin2': create_mock_plugin(0, 'Error', False)
-        }
+        results = [
+            {"check": "Database", "healthy": False, "error": "DB unavailable", "time_taken": 0.5},
+        ]
 
-        expected_response = (
-            '# HELP plugin1 unittest.mock.MagicMock\n'
-            '# TYPE plugin1 gauge\n'
-            'plugin1{critical_service="True",message="OK"} 200.0\n'
-            '\n'
-            '# HELP plugin2 unittest.mock.MagicMock\n'
-            '# TYPE plugin2 gauge\n'
-            'plugin2{critical_service="False",message="Error"} 500.0'
-        )
-
-        response = HealthCheckPrometheusView().render_response(health_checks)
+        response = HealthCheckPrometheusView().render_response(results)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(expected_response, response.content.decode())
 
+    def test_content_type_is_plain_text(self) -> None:
+        """Verify the response uses the Prometheus plain-text content type."""
 
-class SanitizeMetricNameMethod(TestCase):
-    """Test metric name sanitation via the `sanitize_metric_name` method."""
+        response = HealthCheckPrometheusView().render_response([])
+        self.assertIn("text/plain", response.headers.get("Content-Type", ""))
 
-    def test_valid_name_remains_unchanged(self) -> None:
-        """Verify valid metric names remain unchanged."""
+    def test_status_metric_block_is_present(self) -> None:
+        """Verify the HELP and TYPE lines for the status metric are present."""
 
-        self.assertEqual(
-            'valid_metric_name',
-            HealthCheckPrometheusView.sanitize_metric_name('valid_metric_name')
+        response = HealthCheckPrometheusView().render_response([])
+        body = response.content.decode()
+
+        self.assertIn("# HELP keystone_health_check_status", body)
+        self.assertIn("# TYPE keystone_health_check_status gauge", body)
+
+    def test_timing_metric_block_is_present(self) -> None:
+        """Verify the HELP and TYPE lines for the timing metric are present."""
+
+        response = HealthCheckPrometheusView().render_response([])
+        body = response.content.decode()
+
+        self.assertIn("# HELP keystone_health_check_eval_time_seconds", body)
+        self.assertIn("# TYPE keystone_health_check_eval_time_seconds gauge", body)
+
+    def test_healthy_check_emits_correct_status_value(self) -> None:
+        """Verify a passing check emits a truthy status value (1)."""
+
+        results = [{"check": "Storage", "healthy": True, "error": None, "time_taken": 0.008}]
+        response = HealthCheckPrometheusView().render_response(results)
+        body = response.content.decode()
+
+        self.assertIn('keystone_health_check_status{check="Storage"} 1', body)
+
+    def test_unhealthy_check_emits_correct_status_value(self) -> None:
+        """Verify a failing check emits a falsy status value (0)."""
+
+        results = [{"check": "Celery", "healthy": False, "error": "Workers unavailable", "time_taken": 1.001}]
+        response = HealthCheckPrometheusView().render_response(results)
+        body = response.content.decode()
+
+        self.assertIn('keystone_health_check_status{check="Celery"} 0', body)
+
+    def test_timing_metric_uses_six_decimal_places(self) -> None:
+        """Verify timing values are formatted to six decimal places."""
+
+        results = [{"check": "Storage", "healthy": True, "error": None, "time_taken": 0.008}]
+        response = HealthCheckPrometheusView().render_response(results)
+        body = response.content.decode()
+
+        self.assertIn('keystone_health_check_eval_time_seconds{check="Storage"} 0.008000', body)
+
+    def test_multiple_checks_all_appear(self) -> None:
+        """Verify all checks are represented in the output."""
+
+        results = [
+            {"check": "Storage", "healthy": True, "error": None, "time_taken": 0.012},
+            {"check": "Celery", "healthy": False, "error": "Workers unavailable", "time_taken": 1.001},
+        ]
+
+        response = HealthCheckPrometheusView().render_response(results)
+        body = response.content.decode()
+
+        self.assertIn('check="Storage"', body)
+        self.assertIn('check="Celery"', body)
+
+    def test_full_output_format(self) -> None:
+        """Verify the complete Prometheus output matches the expected format exactly."""
+
+        results = [
+            {"check": "Storage", "healthy": True, "error": None, "time_taken": 0.012},
+            {"check": "Celery", "healthy": False, "error": "Workers unavailable", "time_taken": 1.001},
+        ]
+
+        expected = (
+            "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)\n"
+            "# TYPE keystone_health_check_status gauge\n"
+            'keystone_health_check_status{check="Storage"} 1\n'
+            'keystone_health_check_status{check="Celery"} 0\n'
+            "\n"
+            "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds\n"
+            "# TYPE keystone_health_check_eval_time_seconds gauge\n"
+            'keystone_health_check_eval_time_seconds{check="Storage"} 0.012000\n'
+            'keystone_health_check_eval_time_seconds{check="Celery"} 1.001000\n'
         )
 
-    def test_replaces_invalid_chars_with_underscore(self) -> None:
-        """Verify invalid characters are be replaced with underscores."""
-
-        self.assertEqual(
-            'metric_name_',
-            HealthCheckPrometheusView.sanitize_metric_name('metric[name]')
-        )
-
-        self.assertEqual(
-            'DatabaseBackend_default_',
-            HealthCheckPrometheusView.sanitize_metric_name('DatabaseBackend[default]')
-        )
-
-    def test_starts_with_invalid_char(self) -> None:
-        """Verify metric starting with invalid characters are prefixed."""
-
-        self.assertEqual(
-            '_1metric',
-            HealthCheckPrometheusView.sanitize_metric_name('1metric'),
-        )
-
-    def test_empty_string(self) -> None:
-        """Verify an empty input returns a valid metric."""
-
-        self.assertEqual(
-            '_',
-            HealthCheckPrometheusView.sanitize_metric_name('')
-        )
-
-    def test_complex_case(self) -> None:
-        """Verify sanitation of a complex, invalid name."""
-
-        self.assertEqual(
-            HealthCheckPrometheusView.sanitize_metric_name('Some@Strange#Name!With$Chars'),
-            'Some_Strange_Name_With_Chars'
-        )
+        response = HealthCheckPrometheusView().render_response(results)
+        self.assertEqual(response.content.decode(), expected)

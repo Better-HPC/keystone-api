@@ -3,30 +3,46 @@
 from django.test import TestCase
 
 from apps.health.views import HealthCheckView
-from .utils import create_mock_plugin
 
 
 class RenderResponseMethod(TestCase):
-    """Tests the `render_response` method correctly returns the health check status."""
+    """Test the rendering of HTTP responses by the `render_response` method."""
 
-    def test_failing_health_checks(self) -> None:
-        """Verify the returned status code is 500 when some health checks are failing."""
+    def test_partial_failing_health_checks_returns_500(self) -> None:
+        """Verify a 500 is returned when at least one health check is failing."""
 
-        health_checks = {
-            'plugin1': create_mock_plugin(1, 'OK', True),
-            'plugin2': create_mock_plugin(0, 'Error', False)
-        }
+        results = [
+            {"check": "Database", "healthy": True, "error": None, "time_taken": 0.01},
+            {"check": "Redis", "healthy": False, "error": "Connection refused", "time_taken": 1.0},
+        ]
 
-        response = HealthCheckView().render_response(health_checks)
+        response = HealthCheckView().render_response(results)
         self.assertEqual(response.status_code, 500)
 
-    def test_passing_health_checks(self) -> None:
-        """Verify the returned status code is 200 when all health checks are passing."""
+    def test_all_failing_health_checks_returns_500(self) -> None:
+        """Verify a 500 is returned when all health checks are failing."""
 
-        health_checks = {
-            'plugin1': create_mock_plugin(1, 'OK', True),
-            'plugin2': create_mock_plugin(1, 'OK', False)
-        }
+        results = [
+            {"check": "Database", "healthy": False, "error": "DB unavailable", "time_taken": 0.5},
+            {"check": "Redis", "healthy": False, "error": "Connection refused", "time_taken": 1.0},
+        ]
 
-        response = HealthCheckView().render_response(health_checks)
+        response = HealthCheckView().render_response(results)
+        self.assertEqual(response.status_code, 500)
+
+    def test_passing_health_checks_returns_200(self) -> None:
+        """Verify a 200 is returned when all health checks are passing."""
+
+        results = [
+            {"check": "Database", "healthy": True, "error": None, "time_taken": 0.01},
+            {"check": "Redis", "healthy": True, "error": None, "time_taken": 0.02},
+        ]
+
+        response = HealthCheckView().render_response(results)
+        self.assertEqual(response.status_code, 200)
+
+    def test_empty_results_returns_200(self) -> None:
+        """Verify a 200 is returned when there are no health checks."""
+
+        response = HealthCheckView().render_response([])
         self.assertEqual(response.status_code, 200)
