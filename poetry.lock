@@ -513,28 +513,23 @@ drf = ["djangorestframework"]
 
 [[package]]
 name = "django-health-check"
-version = "4.2.2"
+version = "3.20.0"
 description = "Monitor the health of your Django app and its connected services."
 optional = false
-python-versions = ">=3.10"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django_health_check-4.2.2-py3-none-any.whl", hash = "sha256:86689c6d5f1cdfe7d9ca6830df17b26fdd920fb1b1d221314cb1e6d60eaeecd8"},
-    {file = "django_health_check-4.2.2.tar.gz", hash = "sha256:66f9861be1c53607fd26037eb8c9dae58db8c23e34af0792bc6f9d78f28fa64c"},
+    {file = "django_health_check-3.20.0-py3-none-any.whl", hash = "sha256:bcb2b8f36f463cead0564a028345c5b17e2a2d18e9cc88ecd611b13a26521926"},
+    {file = "django_health_check-3.20.0.tar.gz", hash = "sha256:cd69ac5facf73fe7241d9492d939b57bd20e24f46c4edea91e6a900bf22c2d8e"},
 ]
 
 [package.dependencies]
-Django = ">=5.2"
-dnspython = ">=2.0.0"
+Django = ">=4.2"
 
 [package.extras]
-atlassian = ["httpx (>=0.27.0)"]
-celery = ["celery (>=5.0.0)"]
-kafka = ["confluent-kafka (>=2.0.0)"]
-psutil = ["psutil (>=7.2.0)"]
-rabbitmq = ["aio-pika (>=9.0.0)"]
-redis = ["redis (>=4.2.0)"]
-rss = ["feedparser (>=6.0.0)", "httpx (>=0.27.0)"]
+docs = ["sphinx"]
+lint = ["ruff (==0.11.13)"]
+test = ["boto3", "celery", "django-storages", "pytest", "pytest-cov", "pytest-django", "redis"]
 
 [[package]]
 name = "django-jazzmin"
@@ -596,27 +591,6 @@ files = [
 
 [package.dependencies]
 django = ">=4.2"
-
-[[package]]
-name = "dnspython"
-version = "2.8.0"
-description = "DNS toolkit"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "dnspython-2.8.0-py3-none-any.whl", hash = "sha256:01d9bbc4a2d76bf0db7c1f729812ded6d912bd318d3b1cf81d30c0f845dbf3af"},
-    {file = "dnspython-2.8.0.tar.gz", hash = "sha256:181d3c6996452cb1189c4046c61599b84a5a86e099562ffde77d26984ff26d0f"},
-]
-
-[package.extras]
-dev = ["black (>=25.1.0)", "coverage (>=7.0)", "flake8 (>=7)", "hypercorn (>=0.17.0)", "mypy (>=1.17)", "pylint (>=3)", "pytest (>=8.4)", "pytest-cov (>=6.2.0)", "quart-trio (>=0.12.0)", "sphinx (>=8.2.0)", "sphinx-rtd-theme (>=3.0.0)", "twine (>=6.1.0)", "wheel (>=0.45.0)"]
-dnssec = ["cryptography (>=45)"]
-doh = ["h2 (>=4.2.0)", "httpcore (>=1.0.0)", "httpx (>=0.28.0)"]
-doq = ["aioquic (>=1.2.0)"]
-idna = ["idna (>=3.10)"]
-trio = ["trio (>=0.30)"]
-wmi = ["wmi (>=1.5.1)"]
 
 [[package]]
 name = "drf-spectacular"
@@ -1766,4 +1740,4 @@ tests = ["coverage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "24af21491c3d5caab307d9b900e7955440f7c89b7bc32a5e499efa48ac7a16ad"
+content-hash = "b44345ee702bf254e1d70765ca88ceb74c83aff6a16c868613f91ba3d169fab9"
