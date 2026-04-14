@@ -7,6 +7,7 @@ URLs to business logic.
 """
 
 import asyncio
+import json
 from typing import Collection
 
 from django.conf import settings
@@ -74,33 +75,114 @@ class HealthCheckView(BaseHealthCheckView):
     permission_classes = []
     checks = CHECKS
 
+    async def run_checks(self) -> list[dict]:
+
+        results = await asyncio.gather(
+            *(check.get_result() for check in self.get_checks())
+        )
+
+        return [
+            {
+                "check": repr(result.check),
+                "healthy": not bool(result.error),
+                "error": str(result.error) if result.error else None,
+                "time_taken": result.time_taken,
+            }
+            for result in results
+        ]
+
+    def render_to_custom_json(self, results: Collection[HealthCheckResult]) -> HttpResponse:
+        """Return a JSON response with health check results."""
+
+        payload = {
+            "healthy": all(row["healthy"] for row in results),
+            "checks": results,
+        }
+
+        return HttpResponse(
+            json.dumps(payload, indent=2),
+            content_type="application/json",
+            status=200,
+        )
+
+    def render_to_custom_text(self, results: Collection[HealthCheckResult]) -> HttpResponse:
+        """Return a plain-text response with health check results."""
+
+        lines = []
+        for row in results:
+            status = "OK" if row["healthy"] else f"ERROR: {row['error']}"
+            lines.append(f"{row['check']}: {status} ({row['time_taken']:.6f}s)")
+
+        overall = "OK" if all(row["healthy"] for row in results) else "ERROR"
+        lines.append(f"\nOverall: {overall}")
+
+        return HttpResponse(
+            "\n".join(lines) + "\n",
+            content_type="text/plain; charset=utf-8",
+            status=200,
+        )
+
+    def render_to_custom_prometheus(self, results: Collection[HealthCheckResult]) -> HttpResponse:
+        """Return an OpenMetrics response with health check results."""
+
+        lines = [
+            "# HELP keystone_health_check_status Health check status (1 = healthy, 0 = unhealthy)",
+            "# TYPE keystone_health_check_status gauge",
+        ]
+
+        for row in results:
+            safe_label = self._escape_openmetrics_label_value(row["check"])
+            lines.append(f'keystone_health_check_status{{check="{safe_label}"}} {row["healthy"]:d}')
+
+        lines += [
+            "",
+            "# HELP keystone_health_check_response_time_seconds Health check response time in seconds",
+            "# TYPE keystone_health_check_response_time_seconds gauge",
+        ]
+
+        for row in results:
+            safe_label = self._escape_openmetrics_label_value(row["check"])
+            lines.append(
+                f'keystone_health_check_response_time_seconds{{check="{safe_label}"}} {row["time_taken"]:.6f}'
+            )
+
+        overall_healthy = all(row["healthy"] for row in results)
+        lines += [
+            "",
+            "# HELP keystone_health_check_overall_status Overall health check status (1 = all healthy, 0 = at least one unhealthy)",
+            "# TYPE keystone_health_check_overall_status gauge",
+            f"keystone_health_check_overall_status {overall_healthy:d}",
+            "# EOF",
+        ]
+
+        return HttpResponse(
+            "\n".join(lines) + "\n",
+            content_type="application/openmetrics-text; version=1.0.0; charset=utf-8",
+            status=200,
+        )
 
     async def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return a health response rendered fresh each time, but with check results cached."""
 
         cache_key = 'healthcheck_results'
-        self.results = cache.get(cache_key)
-
-        if self.results is None:
-            self.results = await asyncio.gather(
-                *(check.get_result() for check in self.get_checks())
-            )
-
-            cache.set(cache_key, self.results, CACHE_TIMEOUT)
+        results = cache.get(cache_key)
+        if results is None:
+            results = await self.run_checks()
+            cache.set(cache_key, results, CACHE_TIMEOUT)
 
         # Render into the requested format
         response_format = kwargs.get("format")
         match response_format:
             case "text":
-                return self.render_to_response_text(status=200)
+                return self.render_to_custom_text(results)
 
             case "json":
-                return self.render_to_response_json(status=200)
+                return self.render_to_custom_json(results)
 
             case "prometheus":
-                return self.render_to_response_openmetrics()
+                return self.render_to_custom_prometheus(results)
 
         # No format requested - return a single status code reflecting overall health
-        has_errors = any(result.error for result in self.results)
+        has_errors = not all(result['healthy'] for result in results)
         status_code = 500 if has_errors else 200
         return HttpResponse(status=status_code)
