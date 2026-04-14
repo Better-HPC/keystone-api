@@ -9,31 +9,36 @@ URLs to business logic.
 import asyncio
 from typing import Collection
 
+import health_check
+from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiParameter
-from health_check.base import HealthCheckResult
+from health_check.base import HealthCheck, HealthCheckResult
 from health_check.views import HealthCheckView as BaseHealthCheckView
+from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
-from apps.health.backends import *
+from apps.health.checks import LDAPHealthCheck
 
 __all__ = ['HealthCheckView']
 
-CACHE_TIMEOUT = 60  # seconds
+# Cache duration for health check results in seconds
+CACHE_TIMEOUT = 60
 
+# The health checks to evaluate
 CHECKS = [
-    'health_check.Mail',
-    'health_check.Cache',
-    'health_check.Database',
-    'health_check.Storage',
+    health_check.Mail(),
+    health_check.Cache(),
+    health_check.Database(),
+    health_check.Storage(),
 ]
 
-# Register the LDAP check only when an LDAP server is configured.
+# Register the LDAP health check only when an LDAP server is configured
 if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
-    CHECKS.append(LDAPHealthCheck)
+    CHECKS.append(LDAPHealthCheck())
 
 
 @extend_schema_view(
@@ -52,7 +57,7 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
                 name='format',
                 location='path',
                 required=False,
-                enum=['json', 'prometheus'],
+                enum=['json', 'prom'],
                 description='The format of the returned health metrics.',
             )],
         responses={
@@ -61,7 +66,7 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
         },
     )
 )
-class HealthCheckView(BaseHealthCheckView):
+class HealthCheckView(GenericAPIView):
     """Health check view with response caching.
 
     Wraps the django-health-check `HealthCheckView` to cache responses for
@@ -74,10 +79,19 @@ class HealthCheckView(BaseHealthCheckView):
     permission_classes = []
     checks = CHECKS
 
-    async def run_checks(self) -> list[dict]:
+    @staticmethod
+    async def run_checks(checks: Collection[HealthCheck]) -> list[dict]:
+        """Execute the provided health checks.
+
+        Args:
+            checks: The health checks to execute.
+
+        Returns:
+            Parsed health check results as a JSON dictionary.
+        """
 
         results = await asyncio.gather(
-            *(check.get_result() for check in self.get_checks())
+            *(check.get_result() for check in checks)
         )
 
         return [
@@ -125,13 +139,13 @@ class HealthCheckView(BaseHealthCheckView):
             status=200,
         )
 
-    async def get(self, request: Request, *args, **kwargs) -> HttpResponse:
+    def get(self, request: Request, *args, **kwargs) -> HttpResponse:
         """Return a health response rendered fresh each time, but with check results cached."""
 
         cache_key = 'healthcheck_results'
         results = cache.get(cache_key)
         if results is None:
-            results = await self.run_checks()
+            results = async_to_sync(self.run_checks)(CHECKS)
             cache.set(cache_key, results, CACHE_TIMEOUT)
 
         # Render into the requested format
