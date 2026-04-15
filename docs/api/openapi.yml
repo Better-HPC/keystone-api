@@ -4181,7 +4181,7 @@ paths:
       description: 'Returns individual health check results in JSON format. Health
         checks are performed on demand and cached for 60 seconds. A `200` status code
         is returned regardless of whether individual health checks are passing. '
-      summary: Retrieve health check results in JSON format.
+      summary: Retrieve health status as JSON.
       tags:
       - Admin - Health Checks
       responses:
@@ -4189,8 +4189,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/health_json_ok'
-          description: ''
+                type: object
+                additionalProperties: {}
+              examples:
+                JSONResponse:
+                  value:
+                    data:
+                    - check: Storage
+                      healthy: true
+                      error: null
+                      time_taken: 0.012
+                    - check: Celery
+                      healthy: false
+                      error: Celery workers unavailable
+                      time_taken: 1.001
+                  summary: JSON response
+          description: Health check results.
   /health/prom/:
     get:
       operationId: health_prom_retrieve
@@ -4203,10 +4217,24 @@ paths:
       responses:
         '200':
           content:
-            text/plain:
+            application/json:
               schema:
                 type: string
-          description: ''
+              examples:
+                PrometheusResponse:
+                  value:
+                  - |-
+                    # HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)
+                    # TYPE keystone_health_check_status gauge
+                    keystone_health_check_status{check="Storage"} 200
+                    keystone_health_check_status{check="Celery"} 500
+
+                    # HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds
+                    # TYPE keystone_health_check_eval_time_seconds gauge
+                    keystone_health_check_eval_time_seconds{check="Storage"} 0.008000
+                    keystone_health_check_eval_time_seconds{check="Celery"} 1.001000
+                  summary: Prometheus response
+          description: Prometheus plain-text metrics.
   /logs/audit/:
     get:
       operationId: logs_audit_list
@@ -12943,18 +12971,6 @@ components:
         MB:
           type: string
           default: Member
-    NestedInlineOneOff:
-      type: object
-      properties:
-        status:
-          type: integer
-          default: 200
-        message:
-          type: string
-          default: working
-        critical_service:
-          type: boolean
-          default: true
     Notification:
       type: object
       description: Object serializer for the `Notification` class.
@@ -14553,13 +14569,6 @@ components:
       - display_name
       - id
       - username
-    health_json_ok:
-      type: object
-      properties:
-        healthCheckName:
-          $ref: '#/components/schemas/NestedInlineOneOff'
-      required:
-      - healthCheckName
   securitySchemes:
     cookieAuth:
       type: apiKey

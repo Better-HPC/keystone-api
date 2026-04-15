@@ -6,51 +6,112 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-import re
-from abc import ABC, abstractmethod
+import asyncio
 
+import health_check
+from asgiref.sync import async_to_sync
+from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse, JsonResponse
+from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
-from health_check.mixins import CheckMixin
-from rest_framework import serializers
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer, OpenApiExample, OpenApiResponse
+from health_check.base import HealthCheck
+from health_check.contrib.celery import Ping
+from health_check.contrib.redis import Redis
+from redis.asyncio import Redis as RedisClient
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
+from apps.health.checks import LDAPHealthCheck
+
 __all__ = ['HealthCheckView', 'HealthCheckJsonView', 'HealthCheckPrometheusView']
 
+# Cache duration for health check results in seconds
+CACHE_TIMEOUT = 60
 
-class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
-    """Abstract base view for rendering health checks.
+# Mapping of human-friendly names to health check instances
+CHECKS: dict[str, HealthCheck] = {
+    "SMTP": health_check.Mail(),
+    "Database": health_check.Database(),
+    "Storage": health_check.Storage(),
+    "Redis": Redis(client_factory=lambda: RedisClient.from_url(settings.REDIS_URL)),
+    "Celery": Ping(),
+}
 
-    Subclasses must implement the `render_response` method to define the
-    desired format of rendered health check results.
+# Register the LDAP health check only when an LDAP server is configured
+if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
+    CHECKS["LDAP"] = LDAPHealthCheck()
+
+
+class BaseHealthCheckView(GenericAPIView):
+    """Base view providing shared health check execution and caching logic.
+
+    Subclasses must implement `render` to format the cached results into the
+    appropriate HTTP response for their endpoint.
     """
 
-    @property
-    @abstractmethod
-    def cache_key(self) -> str:
-        """Cache key used to store and retrieve the view's health check response."""
+    schema = AutoSchema()
+    permission_classes = []
+    checks = CHECKS
 
     @staticmethod
-    @abstractmethod
-    def render_response(plugins: dict) -> HttpResponse:
-        """Render the response based on the view's specific format."""
+    async def run_checks(checks: dict[str, HealthCheck]) -> list[dict]:
+        """Execute the provided health checks.
+
+        Args:
+            checks: Mapping of human-friendly names to health check instances.
+
+        Returns:
+            Parsed health check results as a JSON serializable list.
+        """
+
+        results = await asyncio.gather(
+            *(check.get_result() for check in checks.values())
+        )
+
+        return [
+            {
+                "check": name,
+                "healthy": not bool(result.error),
+                "error": str(result.error) if result.error else None,
+                "time_taken": result.time_taken,
+            }
+            for name, result in zip(checks.keys(), results)
+        ]
+
+    @staticmethod
+    def get_cached_results() -> list[dict]:
+        """Return cached health check results, running checks if the cache is cold."""
+
+        cache_key = 'healthcheck_results'
+        results = cache.get(cache_key)
+        if results is None:
+            results = async_to_sync(BaseHealthCheckView.run_checks)(CHECKS)
+            cache.set(cache_key, results, CACHE_TIMEOUT)
+
+        return results
+
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Render health check results into an HTTP response.
+
+        Args:
+            results: Parsed health check results as returned by ``run_checks``.
+
+        Returns:
+            An HTTP response in the format appropriate for the subclass.
+        """
+
+        raise NotImplementedError
 
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
-        """Check system health and return the appropriate response."""
+        """Handle an incoming HTTP GET request.
 
-        cached_response = cache.get(self.cache_key)
-        if cached_response:
-            return cached_response
+        Evaluate system health checks, using cached results if possible, and
+        return the rendered results.
+        """
 
-        self.check()
-        response = self.render_response(self.plugins)
-
-        # Cache the full HttpResponse object for 60 seconds
-        cache.set(self.cache_key, response, 60)
-        return response
+        return self.render_response(self.get_cached_results())
 
 
 @extend_schema_view(
@@ -69,78 +130,64 @@ class BaseHealthCheckView(GenericAPIView, CheckMixin, ABC):
     )
 )
 class HealthCheckView(BaseHealthCheckView):
-    """Return a 200 status code if all health checks pass and 500 otherwise."""
+    """Returns a bare `200` or 500` status code reflecting overall health."""
 
-    permission_classes = []
-    cache_key = 'healthcheck_cache'
-
-    @staticmethod
-    def render_response(plugins: dict) -> HttpResponse:
-        """Return an HTTP response with a status code matching system health checks.
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Return an empty HTTP response with a status code reflecting overall health.
 
         Args:
-            plugins: A mapping of health check names to health check objects.
+            results: The health check results to render.
 
         Returns:
-            An HttpResponse with status 200 if all checks are passing or 500 otherwise.
+            An empty HTTP response with a `200` or 500` status code.
         """
 
-        for plugin in plugins.values():
-            if plugin.status != 1:
-                return HttpResponse(status=500)
-
-        return HttpResponse()
+        has_errors = not all(result['healthy'] for result in results)
+        return HttpResponse(status=500 if has_errors else 200)
 
 
 @extend_schema_view(
     get=extend_schema(
         tags=["Admin - Health Checks"],
         auth=[],
-        summary="Retrieve health check results in JSON format.",
+        summary="Retrieve health status as JSON.",
         description=(
             "Returns individual health check results in JSON format. "
             "Health checks are performed on demand and cached for 60 seconds. "
             "A `200` status code is returned regardless of whether individual health checks are passing. "
         ),
         responses={
-            '200': inline_serializer('health_json_ok', fields={
-                'healthCheckName': inline_serializer(
-                    name='NestedInlineOneOffSerializer',
-                    fields={
-                        'status': serializers.IntegerField(default=200),
-                        'message': serializers.CharField(default='working'),
-                        'critical_service': serializers.BooleanField(default=True),
-                    })
-            })
+            '200': OpenApiResponse(
+                response=OpenApiTypes.OBJECT,
+                description='Health check results.',
+                examples=[
+                    OpenApiExample(
+                        'JSON response',
+                        response_only=True,
+                        value={'data': [
+                            {"check": "Storage", "healthy": True, "error": None, "time_taken": 0.012},
+                            {"check": "Celery", "healthy": False, "error": "Celery workers unavailable", "time_taken": 1.001},
+                        ]},
+                    ),
+                ],
+            ),
         },
     )
 )
 class HealthCheckJsonView(BaseHealthCheckView):
-    """API endpoints for fetching application health checks in JSON format."""
+    """Returns health check results as a JSON response."""
 
-    permission_classes = []
-    cache_key = 'healthcheck_json_cache'
-
-    @staticmethod
-    def render_response(plugins: dict) -> JsonResponse:
-        """Return a JSON response summarizing a collection of health checks.
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Render health check results into a JSON response.
 
         Args:
-            plugins: A mapping of health check names to health check objects.
+            results: The health check results to render.
 
         Returns:
-            A JSON response.
+            An HTTP response with health check results in JSON format.
         """
 
-        data = dict()
-        for plugin_name, plugin in plugins.items():
-            data[plugin_name] = {
-                'status': 200 if plugin.status == 1 else 500,
-                'message': plugin.pretty_status(),
-                'critical_service': plugin.critical_service
-            }
-
-        return JsonResponse(data=data)
+        return JsonResponse({'data': results}, content_type="application/json", status=200)
 
 
 @extend_schema_view(
@@ -154,64 +201,62 @@ class HealthCheckJsonView(BaseHealthCheckView):
             "A `200` status code is returned regardless of whether individual health checks are passing. "
         ),
         responses={
-            (200, 'text/plain'): OpenApiTypes.STR
+            '200': OpenApiResponse(
+                response=OpenApiTypes.STR,
+                description='Prometheus plain-text metrics.',
+                examples=[
+                    OpenApiExample(
+                        'Prometheus response',
+                        response_only=True,
+                        value=(
+                                "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)\n"
+                                "# TYPE keystone_health_check_status gauge\nkeystone_health_check_status{check=\"Storage\"} 200\n"
+                                "keystone_health_check_status{check=\"Celery\"} 500\n\n"
+                                "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds\n"
+                                "# TYPE keystone_health_check_eval_time_seconds gauge\nkeystone_health_check_eval_time_seconds{check=\"Storage\"} 0.008000\n"
+                                "keystone_health_check_eval_time_seconds{check=\"Celery\"} 1.001000",
+                        )
+                    ),
+                ],
+            ),
         },
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):
-    """API endpoints for fetching application health checks in Prometheus format."""
+    """Returns health check results in Prometheus text format."""
 
-    permission_classes = []
-    cache_key = 'healthcheck_prom_cache'
-
-    @staticmethod
-    def sanitize_metric_name(name: str) -> str:
-        """Sanitize a Prometheus metric name.
-
-        Replaces invalid characters found in health check names with underscores.
+    def render_response(self, results: list[dict]) -> HttpResponse:
+        """Render health check results into an HTTP text response.
 
         Args:
-            name: The metric name to sanitize.
+            results: The health check results to render.
 
         Returns:
-            The sanitized metric name.
+            An HTTP response with health check results in Prometheus format.
         """
 
-        # Replace invalid characters with '_'
-        name = re.sub(r'[^a-zA-Z0-9_:]', '_', name)
+        lines = [
+            "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)",
+            "# TYPE keystone_health_check_status gauge",
+        ]
 
-        # Ensure the first character is valid (letter, '_' or ':')
-        if not re.match(r'^[a-zA-Z_:]', name):
-            name = '_' + name
+        for row in results:
+            metric_value = 200 if row["healthy"] else 500
+            lines.append(f'keystone_health_check_status{{check="{row["check"]}"}} {metric_value:.1f}')
 
-        return name
+        lines += [
+            "",
+            "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds",
+            "# TYPE keystone_health_check_eval_time_seconds gauge",
+        ]
 
-    def render_response(self, plugins: dict) -> HttpResponse:
-        """Return an HTTP response summarizing a collection of health checks.
-
-        Args:
-            plugins: A mapping of health check names to health check objects.
-
-        Returns:
-            An HTTP response.
-        """
-
-        prom_format = (
-            '# HELP {name} {module}\n'
-            '# TYPE {name} gauge\n'
-            '{name}{{critical_service="{critical_service}",message="{message}"}} {status:.1f}'
-        )
-
-        status_data = []
-        for plugin_name, plugin in plugins.items():
-            status_data.append(
-                prom_format.format(
-                    name=self.sanitize_metric_name(plugin_name),
-                    critical_service=plugin.critical_service,
-                    message=plugin.pretty_status(),
-                    status=200 if plugin.status == 1 else 500,
-                    module=plugin.__class__.__module__ + '.' + plugin.__class__.__name__
-                )
+        for row in results:
+            lines.append(
+                f'keystone_health_check_eval_time_seconds{{check="{row["check"]}"}} {row["time_taken"]:.6f}'
             )
 
-        return HttpResponse('\n\n'.join(status_data), content_type="text/plain")
+        return HttpResponse(
+            "\n".join(lines) + "\n",
+            content_type="text/plain; charset=utf-8",
+            status=200,
+        )

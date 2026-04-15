@@ -1,93 +1,72 @@
 """Unit tests for the `BaseHealthCheckView` class."""
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from django.core.cache import cache
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 from rest_framework.request import Request
 
-from apps.health.views import BaseHealthCheckView
+from apps.health.views import BaseHealthCheckView, CACHE_TIMEOUT
+
+HEALTH_CHECK_CACHE_KEY = 'healthcheck_results'
+
+MOCK_RESULTS = [
+    {"check": "Database", "healthy": True, "error": None, "time_taken": 0.01},
+]
 
 
 class ConcreteHealthCheckView(BaseHealthCheckView):
     """Concrete implementation of the abstract `BaseHealthCheckView` class."""
 
-    cache_key = "concrete_health_check_key"
-
-    @staticmethod
-    def render_response(plugins: dict) -> HttpResponse:
+    def render_response(self, results: list[dict]) -> HttpResponse:
         return HttpResponse("OK", status=200)
 
 
-@patch.object(BaseHealthCheckView, 'check')
 class GetMethod(TestCase):
-    """Test the handling of `GET` requests via the `get` method."""
+    """Test the handling of `GET` requests by the `get` method."""
 
     def setUp(self) -> None:
-        """Clear any cached request/response data before running tests."""
+        """Clear the health check cache before each test."""
 
+        cache.delete(HEALTH_CHECK_CACHE_KEY)
         self.view = ConcreteHealthCheckView()
-        cache.delete(self.view.cache_key)
 
-    def test_status_checks_are_run(self, mock_check: Mock) -> None:
-        """Verify status checks are updated when processing get requests"""
-
-        request = Request(RequestFactory().get('/'))
-        self.view.get(request)
-
-        # Test the method for updating health checks was run
-        mock_check.assert_called_once()
-
-    def test_response_is_cached(self, mock_check: Mock) -> None:
-        """Verify responses are cached after processing get requests."""
+    def test_checks_are_run_on_cache_miss(self) -> None:
+        """Verify health checks are executed when the cache is cold."""
 
         request = Request(RequestFactory().get('/'))
-        response = self.view.get(request)
+        with patch.object(BaseHealthCheckView, 'get_cached_results', return_value=MOCK_RESULTS) as mock_get:
+            self.view.get(request)
+            mock_get.assert_called_once()
 
-        # Response should now be cached
-        cached_response = cache.get(self.view.cache_key)
-        self.assertIsNotNone(cached_response)
-        self.assertEqual(response.status_code, cached_response.status_code)
-        self.assertEqual(response.content, cached_response.content)
-
-    def test_cached_response_skips_checks(self, mock_check: Mock) -> None:
-        """Verify cached responses are returned instead of evaluating system checks."""
+    def test_results_are_cached_after_request(self) -> None:
+        """Verify health check results are stored in the cache after a GET request."""
 
         request = Request(RequestFactory().get('/'))
+        with patch('apps.health.views.async_to_sync') as mock_sync:
+            mock_sync.return_value = lambda _: MOCK_RESULTS
+            self.view.get(request)
 
-        # Create and cache a fake HttpResponse
-        fake_response = HttpResponse("cached content")
-        cache.set(self.view.cache_key, fake_response, 60)
+        cached = cache.get('healthcheck_results')
+        self.assertIsNotNone(cached)
+        self.assertEqual(cached, MOCK_RESULTS)
 
-        response = self.view.get(request)
+    def test_cached_results_skip_checks(self) -> None:
+        """Verify cached results are returned without re-running health checks."""
 
-        mock_check.assert_not_called()
-        self.assertEqual(fake_response.status_code, response.status_code)
-        self.assertEqual(fake_response.content, response.content)
-
-    def test_cache_on_500(self, mock_check: Mock) -> None:
-        """Verify responses are cached even if they have a 500 status code."""
-
-        class ErrorHealthCheckView(BaseHealthCheckView):
-            """A mock system health check view that always fails."""
-
-            cache_key = "error_health_check_key"
-
-            @staticmethod
-            def render_response(plugins: dict) -> HttpResponse:
-                return HttpResponse("Internal Server Error", status=500)
+        cache.set('healthcheck_results', MOCK_RESULTS, CACHE_TIMEOUT)
 
         request = Request(RequestFactory().get('/'))
-        view = ErrorHealthCheckView()
+        with patch.object(BaseHealthCheckView, 'run_checks') as mock_run:
+            self.view.get(request)
+            mock_run.assert_not_called()
 
-        # Verify the response has 500 code, otherwise this test has no meaning
-        cache.delete(view.cache_key)
-        response = view.get(request)
-        self.assertEqual(response.status_code, 500)
+    def test_render_response_receives_results(self) -> None:
+        """Verify `render_response` is called with the results from `get_cached_results`."""
 
-        # Verify 5xx responses are cached
-        cached_response = cache.get(view.cache_key)
-        self.assertIsNotNone(cached_response)
-        self.assertEqual(500, cached_response.status_code)
-        self.assertEqual(response.content, cached_response.content)
+        request = Request(RequestFactory().get('/'))
+        with patch.object(BaseHealthCheckView, 'get_cached_results', return_value=MOCK_RESULTS):
+            with patch.object(self.view, 'render_response', return_value=HttpResponse()) as mock_render:
+                self.view.get(request)
+                mock_render.assert_called_once_with(MOCK_RESULTS)
