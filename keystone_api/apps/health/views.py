@@ -48,7 +48,7 @@ if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
 class BaseHealthCheckView(GenericAPIView):
     """Base view providing shared health check execution and caching logic.
 
-    Subclasses implement `render` to format the cached results into the
+    Subclasses must implement `render` to format the cached results into the
     appropriate HTTP response for their endpoint.
     """
 
@@ -131,9 +131,18 @@ class BaseHealthCheckView(GenericAPIView):
     )
 )
 class HealthCheckView(BaseHealthCheckView):
-    """Returns a bare 200 or 500 status code reflecting overall health."""
+    """Returns a bare `200` or 500` status code reflecting overall health."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
+        """Return an empty HTTP response with a status code reflecting overall health.
+
+        Args:
+            results: The health check results to render.
+
+        Returns:
+            An empty HTTP response with a `200` or 500` status code.
+        """
+
         has_errors = not all(result['healthy'] for result in results)
         return HttpResponse(status=500 if has_errors else 200)
 
@@ -215,7 +224,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):
-    """Returns health check results in Prometheus plain-text exposition format."""
+    """Returns health check results in Prometheus text format."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Render health check results into an HTTP text response.
@@ -224,7 +233,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
             results: The health check results to render.
 
         Returns:
-            An HTTP response with health check results in Prometheus text format.
+            An HTTP response with health check results in Prometheus format.
         """
 
         lines = [
