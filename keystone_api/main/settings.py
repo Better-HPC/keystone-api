@@ -423,3 +423,4 @@ LOGGING = {
         },
     }
 }
+DEBUG=True

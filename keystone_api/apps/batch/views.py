@@ -37,6 +37,7 @@ class JobViewSet(APIView):
                 serializer.validated_data['actions'],
                 user=request.user,
                 server_name=request.get_host(),
+                dry_run=serializer.validated_data['dry_run'],
             )
 
         except ReferenceResolutionError as exc:
@@ -59,5 +60,6 @@ class JobViewSet(APIView):
         return Response({
             'id': str(job.id),
             'status': job.status,
+            'dry_run': serializer.validated_data['dry_run'],
             'results': results,
         })

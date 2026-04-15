@@ -13,9 +13,9 @@ from django.db import transaction
 from django.urls import resolve, Resolver404
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from .exceptions import JobExecutionError
-from .models import JobStatus
-from .references import resolve_references
+from .exceptions import *
+from .models import *
+from .references import *
 
 __all__ = ['execute_job']
 
@@ -137,6 +137,7 @@ def execute_job(
     steps: list[dict],
     user: AbstractBaseUser | None = None,
     server_name: str = 'localhost',
+    dry_run: bool = False,
 ) -> tuple[JobStatus, list[dict]]:
     """Execute a list of steps inside a single database transaction.
 
@@ -147,13 +148,15 @@ def execute_job(
         - `payload` (dict, optional): The JSON body.
         - `query_params` (dict, optional): Query string parameters.
 
-    Path and payload values matching the `@ref:<alias>.<dotpath>` pattern are
+    Path and payload values matching the ``@ref{alias.dotpath}`` pattern are
     resolved against the response bodies of previously executed steps.
     References are optional -- steps without them behave identically to
     plain requests.
 
-    All steps execute sequentially within a `transaction.atomic()`
-    block. If any step fails, the entire transaction is rolled back.
+    All steps execute sequentially within a ``transaction.atomic()`` block.
+    If any step fails, the entire transaction is rolled back. When
+    ``dry_run=True``, the transaction is always rolled back after all steps
+    complete successfully, leaving the database unchanged.
 
     Args:
         steps: An ordered list of step descriptors.
@@ -165,6 +168,9 @@ def execute_job(
             construct the internal sub-requests. Defaults to 'localhost'.
             Pass ``request.get_host()`` from the outer view to ensure
             sub-request URLs are valid in all deployment configurations.
+        dry_run: When ``True``, all steps are executed and their results
+            returned, but the transaction is rolled back so no changes are
+            persisted to the database.
 
     Returns:
         A tuple of (JobStatus, results) where results is a list of
@@ -179,7 +185,6 @@ def execute_job(
     results = []
 
     job = JobStatus.objects.create(status=JobStatus.Status.CREATED)
-    index = 0
 
     try:
         with transaction.atomic():
@@ -216,10 +221,18 @@ def execute_job(
                 if status_code >= 400:
                     raise JobExecutionError(index, method, resolved_path, status_code, body)
 
+            if dry_run:
+                raise DryRunRollbackError
+
+    except DryRunRollbackError:
+        job.status = JobStatus.Status.SUCCEEDED
+        job.save()
+        return job, results
+
     except Exception as exc:
         job.status = JobStatus.Status.FAILED
         job.save()
-        raise exc
+        raise
 
     job.status = JobStatus.Status.SUCCEEDED
     job.save()

@@ -24,7 +24,10 @@ class JobStepSerializer(serializers.Serializer):
     query_params = serializers.DictField(required=False, default=dict)
 
     def validate_ref(self, value: str) -> str:
-        """Ensure the ref alias contains only alphanumeric characters and underscores."""
+        """Ensure the ref alias contains only alphanumeric characters and underscores.
+
+        The alias is used as the identifier inside `@ref{alias.dotpath}` tokens.
+        """
 
         if value and not value.replace('_', '').isalnum():
             raise serializers.ValidationError(
@@ -37,6 +40,7 @@ class JobStepSerializer(serializers.Serializer):
 class JobSerializer(serializers.Serializer):
     """Object serializer for a batch job."""
 
+    dry_run = serializers.BooleanField(required=False, default=False)
     actions = JobStepSerializer(many=True, allow_empty=False)
 
     def validate_actions(self, value: list[dict]) -> list[dict]:
