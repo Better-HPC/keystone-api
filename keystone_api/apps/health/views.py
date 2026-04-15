@@ -33,7 +33,6 @@ CACHE_TIMEOUT = 60
 # Mapping of human-friendly names to health check instances
 CHECKS: dict[str, HealthCheck] = {
     "SMTP": health_check.Mail(),
-    "Cache": health_check.Cache(),
     "Database": health_check.Database(),
     "Storage": health_check.Storage(),
     "Redis": Redis(client_factory=lambda: RedisClient.from_url(settings.REDIS_URL)),
