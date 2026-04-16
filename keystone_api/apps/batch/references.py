@@ -1,9 +1,9 @@
 """Symbolic reference resolution for batch job payloads.
 
 Provides utilities for resolving forward references between steps
-within a single batch job. References use the ``@ref{<alias>.<dotpath>}``
-syntax, where ``<alias>`` identifies a previously executed step and
-``<dotpath>`` navigates into that step's response body.
+within a single batch job. References use the `@ref{<alias>.<dotpath>}`
+syntax, where `<alias>` identifies a previously executed step and
+`<dotpath>` navigates into that step's response body.
 
 References may appear in two positions:
 
@@ -13,7 +13,7 @@ References may appear in two positions:
 
   The resolved value is returned as-is, preserving its original type
   (int, bool, list, ...). Use this form inside JSON payloads or
-  ``query_params`` values where type fidelity matters.
+  `query_params` values where type fidelity matters.
 
 * **Embedded** -- the token appears within a larger string::
 
@@ -23,7 +23,7 @@ References may appear in two positions:
   Use this form inside URL paths or any field where static text surrounds
   the reference.
 
-References are optional. Values that contain no ``@ref{`` tokens pass
+References are optional. Values that contain no `@ref{` tokens pass
 through unchanged.
 """
 
@@ -46,7 +46,7 @@ def _traverse(data: Any, dotpath: str, token: str) -> Any:
 
     Args:
         data: The root object to traverse.
-        dotpath: A dot-separated path string (e.g., ``id`` or ``results.0.name``).
+        dotpath: A dot-separated path string (e.g., `id` or `results.0.name`).
         token: The original reference token, used for error messages.
 
     Returns:
@@ -106,14 +106,14 @@ def _lookup(alias: str, dotpath: str, token: str, result_map: dict[str, dict]) -
 
 
 def _resolve_value(value: Any, result_map: dict[str, dict]) -> Any:
-    """Resolve a single value, substituting any ``@ref:`` tokens.
+    """Resolve a single value, substituting any `@ref:` tokens.
 
     When the entire string is a single token, the resolved value is returned
     directly so that non-string types (int, bool, list, ...) are preserved.
     When the token is embedded within surrounding text, it is resolved,
     stringified, and substituted in place.
 
-    Non-string values and strings with no ``@ref:`` tokens are returned
+    Non-string values and strings with no `@ref:` tokens are returned
     unchanged.
 
     Args:
@@ -151,10 +151,10 @@ def _resolve_value(value: Any, result_map: dict[str, dict]) -> Any:
 
 
 def resolve_references(data: Any, result_map: dict[str, dict]) -> Any:
-    """Recursively resolve all ``@ref:`` tokens within a data structure.
+    """Recursively resolve all `@ref:` tokens within a data structure.
 
     Walks dictionaries, lists, and scalar values. String values are
-    inspected for ``@ref:`` tokens and resolved via :func:`_resolve_value`.
+    inspected for `@ref:` tokens and resolved via :func:`_resolve_value`.
     Non-matching values pass through unchanged.
 
     Args:

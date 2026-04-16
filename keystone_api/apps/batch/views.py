@@ -10,11 +10,9 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .exceptions import JobExecutionError
-from .models import *
-from .references import ReferenceResolutionError
+from .exceptions import *
 from .serializers import *
-from .shortcuts import execute_job
+from .shortcuts import *
 
 __all__ = ['JobViewSet']
 
@@ -23,8 +21,6 @@ class JobViewSet(APIView):
     """API endpoints for executing and inspecting batch jobs."""
 
     permission_classes = [permissions.IsAuthenticated]
-    search_fields = ['status']
-    queryset = JobStatus.objects.all()
 
     def post(self, request) -> Response:
         """Execute all submitted steps atomically in a single transaction."""
@@ -50,9 +46,9 @@ class JobViewSet(APIView):
             return Response(
                 {
                     'detail': str(exc),
-                    'failed_step': exc.index,
-                    'failed_status': exc.status_code,
-                    'failed_body': exc.body,
+                    'step': exc.index,
+                    'status': exc.status_code,
+                    'body': exc.body,
                 },
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )

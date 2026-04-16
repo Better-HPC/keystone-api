@@ -14,7 +14,7 @@ __all__ = ['JobStatus']
 
 
 class JobStatus(models.Model):
-    """The current status of a batch job."""
+    """A batch job and its execution status."""
 
     class Status(models.TextChoices):
         """Enumerated choices for the `status` field."""

@@ -38,7 +38,7 @@ class JobStepSerializer(serializers.Serializer):
 
 
 class JobSerializer(serializers.Serializer):
-    """Object serializer for a batch job."""
+    """Object serializer for a batch job comprising multiple steps."""
 
     dry_run = serializers.BooleanField(required=False, default=False)
     actions = JobStepSerializer(many=True, allow_empty=False)
