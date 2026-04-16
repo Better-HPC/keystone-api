@@ -13099,18 +13099,18 @@ components:
           default: Member
     MethodEnum:
       enum:
-      - PUT
-      - DELETE
       - GET
       - POST
+      - PUT
       - PATCH
+      - DELETE
       type: string
       description: |-
-        * `PUT` - PUT
-        * `DELETE` - DELETE
         * `GET` - GET
         * `POST` - POST
+        * `PUT` - PUT
         * `PATCH` - PATCH
+        * `DELETE` - DELETE
     Notification:
       type: object
       description: Object serializer for the `Notification` class.

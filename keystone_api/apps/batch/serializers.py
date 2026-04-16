@@ -48,7 +48,7 @@ class JobStepSerializer(serializers.Serializer):
     """Object serializer for a single step within a batch job."""
 
     ref = serializers.CharField(required=False, default='', allow_blank=True)
-    method = serializers.ChoiceField(choices={'GET', 'POST', 'PUT', 'PATCH', 'DELETE'})
+    method = serializers.ChoiceField(choices=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     path = serializers.CharField(max_length=2048)
     payload = serializers.DictField(required=False, default=dict)
     query_params = serializers.DictField(required=False, default=dict)

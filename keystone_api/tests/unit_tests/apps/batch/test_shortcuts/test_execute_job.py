@@ -8,10 +8,10 @@ from apps.batch.exceptions import JobExecutionError
 from apps.batch.shortcuts import execute_job
 
 
+@patch('apps.batch.shortcuts.execute_step')
 class ExecuteJobFunction(TestCase):
     """Test the execution of batch jobs via the `execute_job` function."""
 
-    @patch('shortcuts.execute_step')
     def test_returns_results_for_successful_steps(self, mock_execute_step: Mock) -> None:
         """Verify execute_job returns one result dict per step on success."""
 
@@ -26,7 +26,6 @@ class ExecuteJobFunction(TestCase):
         self.assertEqual(results[0]['path'], '/items/')
         self.assertIsNone(results[0]['ref'], 'Steps without a ref alias should record None')
 
-    @patch('shortcuts.execute_step')
     def test_records_ref_alias_in_result(self, mock_execute_step: Mock) -> None:
         """Verify a step's ref alias is recorded in the result dict."""
 
@@ -37,7 +36,6 @@ class ExecuteJobFunction(TestCase):
 
         self.assertEqual(results[0]['ref'], 'created')
 
-    @patch('shortcuts.execute_step')
     def test_resolves_path_reference_from_previous_step(self, mock_execute_step: Mock) -> None:
         """Verify @ref tokens in a later step's path are resolved from an earlier step's body."""
 
@@ -57,7 +55,6 @@ class ExecuteJobFunction(TestCase):
         second_path = mock_execute_step.call_args_list[1][0][1]
         self.assertEqual(second_path, '/items/42/')
 
-    @patch('shortcuts.execute_step')
     def test_raises_job_execution_error_on_4xx(self, mock_execute_step: Mock) -> None:
         """Verify a step returning a 4xx status raises `JobExecutionError`."""
 
@@ -67,7 +64,6 @@ class ExecuteJobFunction(TestCase):
         with self.assertRaises(JobExecutionError):
             execute_job(steps)
 
-    @patch('shortcuts.execute_step')
     def test_raises_job_execution_error_on_5xx(self, mock_execute_step: Mock) -> None:
         """Verify a step returning a 5xx status raises `JobExecutionError`."""
 
@@ -77,7 +73,6 @@ class ExecuteJobFunction(TestCase):
         with self.assertRaises(JobExecutionError):
             execute_job(steps)
 
-    @patch('shortcuts.execute_step')
     def test_dry_run_returns_results_without_committing(self, mock_execute_step: Mock) -> None:
         """Verify dry_run=True returns results but rolls back the transaction."""
 
@@ -91,7 +86,6 @@ class ExecuteJobFunction(TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['status'], 201)
 
-    @patch('shortcuts.execute_step')
     def test_empty_steps_list_returns_empty_results(self, mock_execute_step: Mock) -> None:
         """Verify an empty step list produces an empty result list."""
 
@@ -100,7 +94,6 @@ class ExecuteJobFunction(TestCase):
         mock_execute_step.assert_not_called()
         self.assertEqual(results, [])
 
-    @patch('shortcuts.execute_step')
     def test_step_index_is_one_based(self, mock_execute_step: Mock) -> None:
         """Verify step results indices start at 1, not 0."""
 
@@ -112,7 +105,6 @@ class ExecuteJobFunction(TestCase):
         self.assertEqual(results[0]['index'], 1)
         self.assertEqual(results[1]['index'], 2)
 
-    @patch('shortcuts.execute_step')
     def test_passes_user_to_execute_step(self, mock_execute_step: Mock) -> None:
         """Verify the `user` argument is forwarded to `execute_step` on every call."""
 
@@ -125,7 +117,6 @@ class ExecuteJobFunction(TestCase):
         _, kwargs = mock_execute_step.call_args
         self.assertEqual(kwargs.get('user'), mock_user)
 
-    @patch('shortcuts.execute_step')
     def test_passes_server_name_to_execute_step(self, mock_execute_step: Mock) -> None:
         """Verify the `server_name` argument is forwarded to `execute_step`."""
 
