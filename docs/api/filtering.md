@@ -1,14 +1,13 @@
 # Filtering Queries
 
-Many API endpoints are designed to return more than one record at once (e.g., `/users/teams/`).
-By default, these endpoints return all records the current user has permission to see.
-This response can be refined further using Query parameters to search and filter the returned values.
+Many of Keystone's API endpoints are designed to return a list of records (e.g., `/users/teams/`).
+By default, these endpoints paginate all records available to the current user.
+Query parameters provide a mechanism to refine the returned records according to user defined filters.
 
 Query parameters with a preceding underscore (`_limit`, `_offset`, `_order`, `_search`) are used to perform high level
-data operations, including pagination, sorting, and searching. Parameters without an underscore are used to apply
-filters on individual record fields, allowing users to construct complex, data driven queries.
-
-
+data operations, including pagination, sorting, and searching.
+Parameters without an underscore are used to apply filters on individual record fields, allowing users to construct
+complex, data driven queries.
 
 ## Paginating Responses
 
