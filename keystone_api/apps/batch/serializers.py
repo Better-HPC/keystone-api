@@ -17,7 +17,7 @@ __all__ = [
 class JobStepSerializer(serializers.Serializer):
     """Object serializer for a single step within a batch job."""
 
-    ref = serializers.CharField(required=False, default='')
+    ref = serializers.CharField(required=False, default='', allow_blank=True)
     method = serializers.ChoiceField(choices={'GET', 'POST', 'PUT', 'PATCH', 'DELETE'})
     path = serializers.CharField(max_length=2048)
     payload = serializers.DictField(required=False, default=dict)
@@ -40,6 +40,7 @@ class JobStepSerializer(serializers.Serializer):
 class JobSerializer(serializers.Serializer):
     """Object serializer for a batch job comprising multiple steps."""
 
+    dry_run = serializers.BooleanField(required=False, default=False)
     actions = JobStepSerializer(many=True, allow_empty=False)
 
     def validate_actions(self, value: list[dict]) -> list[dict]:
