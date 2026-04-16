@@ -14,10 +14,10 @@ from .exceptions import *
 from .serializers import *
 from .shortcuts import *
 
-__all__ = ['JobViewSet']
+__all__ = ['JobApiView']
 
 
-class JobViewSet(APIView):
+class JobApiView(APIView):
     """API endpoints for executing and inspecting batch jobs."""
 
     permission_classes = [permissions.IsAuthenticated]
