@@ -4,27 +4,6 @@ Provides utilities for resolving forward references between steps
 within a single batch job. References use the `@ref{<alias>.<dotpath>}`
 syntax, where `<alias>` identifies a previously executed step and
 `<dotpath>` navigates into that step's response body.
-
-References may appear in two positions:
-
-* **Whole-value** -- the entire string is a single token::
-
-      "@ref{create_user.id}"
-
-  The resolved value is returned as-is, preserving its original type
-  (int, bool, list, ...). Use this form inside JSON payloads or
-  `query_params` values where type fidelity matters.
-
-* **Embedded** -- the token appears within a larger string::
-
-      "/users/@ref{create_user.id}/profile/"
-
-  The token is resolved, coerced to a string, and substituted in place.
-  Use this form inside URL paths or any field where static text surrounds
-  the reference.
-
-References are optional. Values that contain no `@ref{` tokens pass
-through unchanged.
 """
 
 import re
@@ -34,8 +13,7 @@ from apps.batch.exceptions import ReferenceResolutionError
 
 __all__ = ['resolve_references']
 
-# Matches any @ref{alias.dotpath} token, anchored or embedded.
-# Capturing groups: (alias, dotpath)
+# Matches any @ref{alias.dotpath} token, capturing the `alias` and `dotpath`
 _REF_PATTERN = re.compile(r'@ref\{([a-zA-Z0-9_]+)\.([^}]+)\}')
 
 

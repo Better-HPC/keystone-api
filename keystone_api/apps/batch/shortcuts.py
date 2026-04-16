@@ -14,7 +14,6 @@ from django.urls import resolve, Resolver404
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from .exceptions import *
-from .models import *
 from .references import *
 
 __all__ = ['execute_job']
@@ -138,7 +137,7 @@ def execute_job(
     user: AbstractBaseUser | None = None,
     server_name: str = 'localhost',
     dry_run: bool = False,
-) -> tuple[JobStatus, list[dict]]:
+) -> list[dict]:
     """Execute a list of steps inside a single database transaction.
 
     Each step dict may contain:
@@ -184,8 +183,6 @@ def execute_job(
     result_map = {}
     results = []
 
-    job = JobStatus.objects.create(status=JobStatus.Status.CREATED)
-
     try:
         with transaction.atomic():
             for index, step in enumerate(steps, start=1):
@@ -225,15 +222,6 @@ def execute_job(
                 raise DryRunRollbackError
 
     except DryRunRollbackError:
-        job.status = JobStatus.Status.SUCCEEDED
-        job.save()
-        return job, results
+        pass
 
-    except Exception as exc:
-        job.status = JobStatus.Status.FAILED
-        job.save()
-        raise
-
-    job.status = JobStatus.Status.SUCCEEDED
-    job.save()
-    return job, results
+    return results

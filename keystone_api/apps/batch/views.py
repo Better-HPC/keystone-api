@@ -6,8 +6,8 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from django.http import JsonResponse
 from rest_framework import permissions, status
-from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .exceptions import *
@@ -22,14 +22,14 @@ class JobViewSet(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request) -> Response:
+    def post(self, request) -> JsonResponse:
         """Execute all submitted steps atomically in a single transaction."""
 
         serializer = JobSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
-            job, results = execute_job(
+            results = execute_job(
                 serializer.validated_data['actions'],
                 user=request.user,
                 server_name=request.get_host(),
@@ -37,13 +37,13 @@ class JobViewSet(APIView):
             )
 
         except ReferenceResolutionError as exc:
-            return Response(
+            return JsonResponse(
                 {'detail': str(exc), 'token': exc.token},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
 
         except JobExecutionError as exc:
-            return Response(
+            return JsonResponse(
                 {
                     'detail': str(exc),
                     'step': exc.index,
@@ -53,9 +53,4 @@ class JobViewSet(APIView):
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
 
-        return Response({
-            'id': str(job.id),
-            'status': job.status,
-            'dry_run': serializer.validated_data['dry_run'],
-            'results': results,
-        })
+        return JsonResponse({'results': results})
