@@ -12035,6 +12035,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationSummary'
+          readOnly: true
+          title: ' attachments'
         _comments:
           type: array
           items:
@@ -12081,6 +12087,7 @@ components:
       required:
       - _allocations
       - _assignees
+      - _attachments
       - _comments
       - _grants
       - _history
@@ -12144,6 +12151,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationSummary'
+          readOnly: true
+          title: ' attachments'
         _comments:
           type: array
           items:
@@ -12201,6 +12214,7 @@ components:
       required:
       - _allocations
       - _assignees
+      - _attachments
       - _comments
       - _grants
       - _history
@@ -13528,6 +13542,12 @@ components:
             $ref: '#/components/schemas/AllocationSummary'
           readOnly: true
           title: ' allocations'
+        _attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllocationSummary'
+          readOnly: true
+          title: ' attachments'
         _comments:
           type: array
           items:
