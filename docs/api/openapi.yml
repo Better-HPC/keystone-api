@@ -4145,15 +4145,42 @@ paths:
   /batch/:
     post:
       operationId: batch_create
-      description: Execute all submitted steps atomically in a single transaction.
+      description: Executes multiple HTTP operations atomically within a single atomic
+        transaction. If any step returns a 4xx or 5xx status, the job halts and all
+        changes are rolled back. Steps may reference the response body of previous
+        steps using @ref{alias.dotpath} tokens. When `dry_run` is true, all steps
+        execute but no database changes are persisted.
+      summary: Execute a batch job.
       tags:
-      - batch
+      - Utils - Batch Processing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobRequest'
+        required: true
       security:
       - tokenAuth: []
       - cookieAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobExecutionError'
+          description: ''
   /config/:
     get:
       operationId: config_retrieve
@@ -4162,7 +4189,7 @@ paths:
         settings.
       summary: Retrieve application configuration.
       tags:
-      - Configuration
+      - Utils - Configuration
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -12817,6 +12844,47 @@ components:
       - start_date
       - team
       - title
+    JobExecutionError:
+      type: object
+      description: Object serializer for a batch job failure caused by a `JobExecutionError`.
+      properties:
+        detail:
+          type: string
+        step:
+          type: integer
+        status:
+          type: integer
+        body:
+          type: object
+          additionalProperties: {}
+      required:
+      - body
+      - detail
+      - status
+      - step
+    JobRequest:
+      type: object
+      description: Object serializer for a batch job comprising multiple steps.
+      properties:
+        dry_run:
+          type: boolean
+          default: false
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStep'
+      required:
+      - actions
+    JobResponse:
+      type: object
+      description: Object serializer for a successful batch job.
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStepResult'
+      required:
+      - results
     JobStats:
       type: object
       description: Object serializer for the `JobStats` class.
@@ -12921,6 +12989,52 @@ components:
       - id
       - jobid
       - updated_at
+    JobStep:
+      type: object
+      description: Object serializer for a single step within a batch job.
+      properties:
+        ref:
+          type: string
+          default: ''
+        method:
+          $ref: '#/components/schemas/MethodEnum'
+        path:
+          type: string
+          maxLength: 2048
+        payload:
+          type: object
+          additionalProperties: {}
+        query_params:
+          type: object
+          additionalProperties: {}
+      required:
+      - method
+      - path
+    JobStepResult:
+      type: object
+      description: Object serializer for the outcome of a single executed batch step.
+      properties:
+        ref:
+          type: string
+          nullable: true
+        index:
+          type: integer
+        method:
+          type: string
+        path:
+          type: string
+        status:
+          type: integer
+        body:
+          type: object
+          additionalProperties: {}
+      required:
+      - body
+      - index
+      - method
+      - path
+      - ref
+      - status
     Login:
       type: object
       description: Data serializer for validating user credentials.
@@ -12983,6 +13097,20 @@ components:
         MB:
           type: string
           default: Member
+    MethodEnum:
+      enum:
+      - PUT
+      - DELETE
+      - GET
+      - POST
+      - PATCH
+      type: string
+      description: |-
+        * `PUT` - PUT
+        * `DELETE` - DELETE
+        * `GET` - GET
+        * `POST` - POST
+        * `PATCH` - PATCH
     Notification:
       type: object
       description: Object serializer for the `Notification` class.

@@ -7,6 +7,7 @@ URLs to business logic.
 """
 
 from django.http import JsonResponse
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 
@@ -22,10 +23,25 @@ class JobApiView(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        tags=['Utils - Batch Processing'],
+        summary='Execute a batch job.',
+        description=(
+            'Executes multiple HTTP operations atomically within a single atomic transaction. '
+            'If any step returns a 4xx or 5xx status, the job halts and all changes are rolled back. '
+            'Steps may reference the response body of previous steps using @ref{alias.dotpath} tokens. '
+            'When `dry_run` is true, all steps execute but no database changes are persisted.'
+        ),
+        request=JobRequestSerializer,
+        responses={
+            status.HTTP_200_OK: JobResponseSerializer,
+            status.HTTP_422_UNPROCESSABLE_ENTITY: JobExecutionErrorSerializer,
+        },
+    )
     def post(self, request) -> JsonResponse:
         """Execute all submitted steps atomically in a single transaction."""
 
-        serializer = JobSerializer(data=request.data)
+        serializer = JobRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:

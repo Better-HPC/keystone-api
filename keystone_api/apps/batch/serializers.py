@@ -9,9 +9,39 @@ creation.
 from rest_framework import serializers
 
 __all__ = [
-    'JobSerializer',
+    'JobExecutionErrorSerializer',
+    'JobResponseSerializer',
+    'JobRequestSerializer',
+    'JobStepResultSerializer',
     'JobStepSerializer',
+    'ReferenceResolutionErrorSerializer',
 ]
+
+
+class JobExecutionErrorSerializer(serializers.Serializer):
+    """Object serializer for a batch job failure caused by a `JobExecutionError`."""
+
+    detail = serializers.CharField()
+    step = serializers.IntegerField()
+    status = serializers.IntegerField()
+    body = serializers.DictField()
+
+
+class JobStepResultSerializer(serializers.Serializer):
+    """Object serializer for the outcome of a single executed batch step."""
+
+    ref = serializers.CharField(allow_null=True)
+    index = serializers.IntegerField()
+    method = serializers.CharField()
+    path = serializers.CharField()
+    status = serializers.IntegerField()
+    body = serializers.DictField()
+
+
+class JobResponseSerializer(serializers.Serializer):
+    """Object serializer for a successful batch job."""
+
+    results = JobStepResultSerializer(many=True)
 
 
 class JobStepSerializer(serializers.Serializer):
@@ -37,7 +67,7 @@ class JobStepSerializer(serializers.Serializer):
         return value
 
 
-class JobSerializer(serializers.Serializer):
+class JobRequestSerializer(serializers.Serializer):
     """Object serializer for a batch job comprising multiple steps."""
 
     dry_run = serializers.BooleanField(required=False, default=False)
@@ -51,3 +81,10 @@ class JobSerializer(serializers.Serializer):
             raise serializers.ValidationError('Reference aliases must be unique within a job.')
 
         return value
+
+
+class ReferenceResolutionErrorSerializer(serializers.Serializer):
+    """Object serializer for a batch job failure caused by a `ReferenceResolutionError`."""
+
+    detail = serializers.CharField()
+    token = serializers.CharField()
