@@ -13,4 +13,5 @@ nav:
       - api/authentication.md
       - api/permissions.md
       - api/filtering.md
+      - api/batch_jobs.md
       - api/logging.md
