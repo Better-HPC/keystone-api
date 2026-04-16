@@ -417,4 +417,3 @@ LOGGING = {
         },
     }
 }
-DEBUG=True
