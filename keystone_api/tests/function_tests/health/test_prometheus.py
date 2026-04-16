@@ -12,7 +12,7 @@ from tests.function_tests.utils import CustomAsserts
 VIEW_NAME = 'health:prometheus'
 
 
-@patch('health_check.backends.BaseHealthCheckBackend.run_check', return_value=None)
+@patch('apps.health.views.BaseHealthCheckView.get_cached_results', return_value=[])
 class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     """Test endpoint user permissions.
 
@@ -34,7 +34,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
         self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-    def test_unauthenticated_user_permissions(self, _mock_run_check: Mock) -> None:
+    def test_unauthenticated_user_permissions(self, _mock: Mock) -> None:
         """Verify unauthenticated users have read-only permissions."""
 
         self.assert_http_responses(
@@ -49,7 +49,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
-    def test_authenticated_user_permissions(self, _mock_run_check: Mock) -> None:
+    def test_authenticated_user_permissions(self, _mock: Mock) -> None:
         """Verify authenticated users have read-only permissions."""
 
         self.client.force_authenticate(user=self.generic_user)
@@ -65,7 +65,7 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
-    def test_staff_user_permissions(self, _mock_run_check: Mock) -> None:
+    def test_staff_user_permissions(self, _mock: Mock) -> None:
         """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
