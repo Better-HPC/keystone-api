@@ -17,7 +17,12 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from .exceptions import *
 
-__all__ = ['execute_job', 'resolve_references']
+__all__ = [
+    'execute_job',
+    'resolve_references',
+    'resolve_value',
+    'traverse_dotpath'
+]
 
 logger = logging.getLogger(__name__)
 factory = APIRequestFactory()
@@ -26,7 +31,7 @@ factory = APIRequestFactory()
 _REF_PATTERN = re.compile(r'@ref\{([a-zA-Z0-9_]+)\.([^}]+)\}')
 
 
-def _traverse(data: Any, dotpath: str, token: str) -> Any:
+def traverse_dotpath(data: Any, dotpath: str, token: str) -> Any:
     """Walk a nested structure using a dot-separated path.
 
     Supports dictionary key access and integer-based list indexing.
@@ -67,7 +72,7 @@ def _traverse(data: Any, dotpath: str, token: str) -> Any:
     return current
 
 
-def _lookup(alias: str, dotpath: str, token: str, result_map: dict[str, dict]) -> Any:
+def lookup_alias(alias: str, dotpath: str, token: str, result_map: dict[str, dict]) -> Any:
     """Resolve a single alias and dotpath against the result map.
 
     Args:
@@ -80,8 +85,7 @@ def _lookup(alias: str, dotpath: str, token: str, result_map: dict[str, dict]) -
         The resolved value.
 
     Raises:
-        ReferenceResolutionError: If the alias is unknown or the path cannot
-            be traversed.
+        ReferenceResolutionError: If the alias is unknown or the path cannot be traversed.
     """
 
     if alias not in result_map:
@@ -89,18 +93,18 @@ def _lookup(alias: str, dotpath: str, token: str, result_map: dict[str, dict]) -
             token, f'Alias "{alias}" has not been defined by a previous step'
         )
 
-    return _traverse(result_map[alias], dotpath, token)
+    return traverse_dotpath(result_map[alias], dotpath, token)
 
 
-def _resolve_value(value: Any, result_map: dict[str, dict]) -> Any:
-    """Resolve a single value, substituting any `@ref:` tokens.
+def resolve_value(value: Any, result_map: dict[str, dict]) -> Any:
+    """Resolve a single value, substituting any `@ref` tokens.
 
     When the entire string is a single token, the resolved value is returned
     directly so that non-string types (int, bool, list, ...) are preserved.
     When the token is embedded within surrounding text, it is resolved,
     stringified, and substituted in place.
 
-    Non-string values and strings with no `@ref:` tokens are returned
+    Non-string values and strings with no `@ref` tokens are returned
     unchanged.
 
     Args:
@@ -111,8 +115,7 @@ def _resolve_value(value: Any, result_map: dict[str, dict]) -> Any:
         The resolved value, or the original value if no token was found.
 
     Raises:
-        ReferenceResolutionError: If the reference syntax is valid but the
-            target cannot be found.
+        ReferenceResolutionError: If the reference target cannot be found.
     """
 
     if not isinstance(value, str) or '@ref{' not in value:
@@ -126,23 +129,23 @@ def _resolve_value(value: Any, result_map: dict[str, dict]) -> Any:
     # Return the resolved value directly to preserve its original type.
     if len(matches) == 1 and matches[0].group(0) == value:
         m = matches[0]
-        return _lookup(m.group(1), m.group(2), m.group(0), result_map)
+        return lookup_alias(m.group(1), m.group(2), m.group(0), result_map)
 
     # Embedded: one or more tokens sit within surrounding text.
     # Resolve each token to a string and substitute it in place.
     def _replace(m: re.Match) -> str:
-        resolved = _lookup(m.group(1), m.group(2), m.group(0), result_map)
+        resolved = lookup_alias(m.group(1), m.group(2), m.group(0), result_map)
         return str(resolved)
 
     return _REF_PATTERN.sub(_replace, value)
 
 
 def resolve_references(data: Any, result_map: dict[str, dict]) -> Any:
-    """Recursively resolve all `@ref:` tokens within a data structure.
+    """Recursively resolve all `@ref` tokens within a data structure.
 
     Walks dictionaries, lists, and scalar values. String values are
-    inspected for `@ref:` tokens and resolved via :func:`_resolve_value`.
-    Non-matching values pass through unchanged.
+    inspected for `@ref` tokens and resolved. Non-matching values pass
+    through unchanged.
 
     Args:
         data: The payload structure to resolve. May be a dict, list, or scalar.
@@ -161,7 +164,7 @@ def resolve_references(data: Any, result_map: dict[str, dict]) -> Any:
     if isinstance(data, list):
         return [resolve_references(item, result_map) for item in data]
 
-    return _resolve_value(data, result_map)
+    return resolve_value(data, result_map)
 
 
 def _build_request(
@@ -174,15 +177,17 @@ def _build_request(
 ):
     """Construct a DRF request object from step parameters.
 
+    The server hostname Should match the host of the outer incoming
+    request so that URLs constructed internally (e.g. pagination links)
+    are valid.
+
     Args:
         method: The HTTP method to use.
         path: The URL path to request.
         payload: The JSON body for the request.
         query_params: Query string parameters.
         user: An optional authenticated user to attach to the request.
-        server_name: The server hostname to set on the request. Should match
-            the host of the outer incoming request so that URLs constructed
-            internally (e.g. pagination links) are valid.
+        server_name: The server hostname to set on the request.
 
     Returns:
         A DRF-compatible request object.
@@ -196,6 +201,7 @@ def _build_request(
 
     if method in ('GET', 'DELETE', 'HEAD', 'OPTIONS'):
         request = factory.generic(method, path, **kwargs)
+
     else:
         request = factory.generic(method, path, data=json.dumps(payload or {}), **kwargs)
 
@@ -205,7 +211,7 @@ def _build_request(
     return request
 
 
-def _invoke_view(request, path: str) -> tuple[int, dict]:
+def _invoke_view(request, path: str) -> tuple[int, dict | None]:
     """Resolve a URL path and invoke the matched view.
 
     Args:
@@ -247,7 +253,7 @@ def _invoke_view(request, path: str) -> tuple[int, dict]:
     return response.status_code, None
 
 
-def _execute_step(
+def execute_step(
     method: str,
     path: str,
     payload: dict,
@@ -289,33 +295,24 @@ def execute_job(
         - `payload` (dict, optional): The JSON body.
         - `query_params` (dict, optional): Query string parameters.
 
-    Path and payload values matching the ``@ref{alias.dotpath}`` pattern are
+    Path and payload values matching the `@ref{alias.dotpath}` pattern are
     resolved against the response bodies of previously executed steps.
-    References are optional -- steps without them behave identically to
+    References are optional and steps without them behave identically to
     plain requests.
 
-    All steps execute sequentially within a ``transaction.atomic()`` block.
+    All steps execute sequentially within a `transaction.atomic()` block.
     If any step fails, the entire transaction is rolled back. When
-    ``dry_run=True``, the transaction is always rolled back after all steps
+    `dry_run=True`, the transaction is always rolled back after all steps
     complete successfully, leaving the database unchanged.
 
     Args:
         steps: An ordered list of step descriptors.
-        user: An optional authenticated user whose identity will be forwarded
-            to each sub-request. When provided, all internal requests are
-            force-authenticated as this user, avoiding 401 responses from
-            endpoints that require authentication.
-        server_name: The hostname of the outer incoming request, used to
-            construct the internal sub-requests. Defaults to 'localhost'.
-            Pass ``request.get_host()`` from the outer view to ensure
-            sub-request URLs are valid in all deployment configurations.
-        dry_run: When ``True``, all steps are executed and their results
-            returned, but the transaction is rolled back so no changes are
-            persisted to the database.
+        user: An optional authenticated user to run as during each sub-request.
+        server_name: The hostname of the outer incoming request.
+        dry_run: When `True`, all steps are executed but database state is not persisted.
 
     Returns:
-        A tuple of (JobStatus, results) where results is a list of
-        dicts containing the outcome of each executed step.
+        A list of dictionaries containing the outcome of each executed step.
 
     Raises:
         JobExecutionError: If any step returns a 4xx/5xx status code.
@@ -339,7 +336,7 @@ def execute_job(
                 resolved_payload = resolve_references(payload, result_map)
 
                 logger.info('Executing job step %s: %s %s', index, method, resolved_path)
-                status_code, body = _execute_step(
+                status_code, body = execute_step(
                     method, resolved_path, resolved_payload, query_params,
                     user=user, server_name=server_name,
                 )
@@ -361,6 +358,7 @@ def execute_job(
                     raise JobExecutionError(index, method, resolved_path, status_code, body)
 
             if dry_run:
+                # Force exit the DB transaction without committing
                 raise DryRunRollbackError
 
     except DryRunRollbackError:
