@@ -17,15 +17,15 @@ Every element of `actions` is a step describing a single API request to execute.
       "method": "POST",
       "path": "/research/grants/",
       "payload": {
-        "title": "My Grant",
+        "title": "First New Grant",
         "team": 1
       }
     },
     {
       "method": "POST",
-      "path": "/allocations/requests/",
+      "path": "/research/grants/",
       "payload": {
-        "title": "My Request",
+        "title": "Second New Grant",
         "team": 1
       }
     }
@@ -80,7 +80,7 @@ step:
 
 !!! note
 
-    References are resolved in order. 
+    Job steps are executed following the order in which they are defined. 
     A step can only reference the output of previous steps in the execution order.
     Forward references are not supported.
 
