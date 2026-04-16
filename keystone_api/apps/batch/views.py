@@ -37,20 +37,20 @@ class JobViewSet(APIView):
             )
 
         except ReferenceResolutionError as exc:
-            return JsonResponse(
-                {'detail': str(exc), 'token': exc.token},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            )
+            status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            payload = {'detail': str(exc), 'token': exc.token}
 
         except JobExecutionError as exc:
-            return JsonResponse(
-                {
-                    'detail': str(exc),
-                    'step': exc.index,
-                    'status': exc.status_code,
-                    'body': exc.body,
-                },
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            )
+            status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+            payload = {
+                'detail': str(exc),
+                'step': exc.index,
+                'status': exc.status_code,
+                'body': exc.body,
+            }
 
-        return JsonResponse({'results': results})
+        else:
+            status_code = status.HTTP_200_OK
+            payload = {'results': results}
+
+        return JsonResponse(payload, status=status_code)
