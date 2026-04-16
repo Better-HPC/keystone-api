@@ -54,12 +54,12 @@ class JobApiView(APIView):
 
         except ReferenceResolutionError as exc:
             status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-            payload = {'detail': str(exc), 'token': exc.token}
+            payload = {'detail': f'Cannot resolve reference "{exc.token}": {exc.reason}', 'token': exc.token}
 
         except JobExecutionError as exc:
             status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
             payload = {
-                'detail': str(exc),
+                'detail': f'Step #{exc.index} ({exc.method} {exc.path}) failed with status {exc.status_code}',
                 'step': exc.index,
                 'status': exc.status_code,
                 'body': exc.body,
