@@ -7,5 +7,5 @@ from .views import *
 app_name = 'batch'
 
 urlpatterns = [
-    path('', JobApiView.as_view()),
+    path('', JobApiView.as_view(), name='batch'),
 ]
