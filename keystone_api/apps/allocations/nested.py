@@ -16,6 +16,7 @@ __all__ = [
     'AllocationRequestSummarySerializer',
     'AllocationInlineSerializer',
     'AllocationSummarySerializer',
+    'AttachmentSummarySerializer',
     'ClusterSummarySerializer',
     'CommentSummarySerializer',
 ]
@@ -58,6 +59,19 @@ class AllocationSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Allocation
         fields = ['id', 'cluster', 'requested', 'awarded', 'final', '_cluster']
+
+
+class AttachmentSummarySerializer(serializers.ModelSerializer):
+    """Serializer for summarizing file attachments in nested responses."""
+
+    file = serializers.FileField(use_url=False)
+    name = serializers.CharField(required=False)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = Attachment
+        fields = ['file', 'name']
 
 
 class CommentSummarySerializer(serializers.ModelSerializer):
