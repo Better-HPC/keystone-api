@@ -64,9 +64,17 @@ class CustomAsserts:
             A dictionary containing formatted arguments.
         """
 
-        arg_names = ('data', 'headers')
-        arg_values = (kwargs.get(f'{method}_body', None), kwargs.get(f'{method}_headers', None))
-        return {name: value for name, value in zip(arg_names, arg_values) if value is not None}
+        args = {}
+        if body := kwargs.get(f'{method}_body'):
+            args['data'] = body
+
+        if headers := kwargs.get(f'{method}_headers'):
+            args['headers'] = headers
+
+        if content_type := kwargs.get('content_type'):
+            args['content_type'] = content_type
+
+        return args
 
 
 class GetResponseContentTests(ABC):
