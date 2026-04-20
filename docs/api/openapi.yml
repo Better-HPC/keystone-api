@@ -12038,7 +12038,7 @@ components:
         _attachments:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/AttachmentSummary'
           readOnly: true
           title: ' attachments'
         _comments:
@@ -12154,7 +12154,7 @@ components:
         _attachments:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/AttachmentSummary'
           readOnly: true
           title: ' attachments'
         _comments:
@@ -12459,6 +12459,16 @@ components:
       - id
       - request
       - uploaded
+    AttachmentSummary:
+      type: object
+      description: Serializer for summarizing file attachments in nested responses.
+      properties:
+        file:
+          type: string
+        name:
+          type: string
+      required:
+      - file
     AuditLog:
       type: object
       description: Object serializer for the `AuditLog` class.
@@ -13545,7 +13555,7 @@ components:
         _attachments:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/AttachmentSummary'
           readOnly: true
           title: ' attachments'
         _comments:
