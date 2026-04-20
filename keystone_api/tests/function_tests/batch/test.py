@@ -202,8 +202,14 @@ class SuccessfulJobExecution(APITestCase):
             },
         )
 
+        # Verify returned 200 response includes results
         self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(response.json()['results']), 2)
+
+        # Verify results from a user query include the correct user data
+        current_username = self.user.username
+        returned_username = response.json()['results'][1]['body']['username']
+        self.assertEqual(current_username, returned_username)
 
 
 class FailedJobExecution(APITestCase):
