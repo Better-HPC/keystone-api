@@ -1,4 +1,4 @@
-"""Unit tests for the `AllocationManager` class."""
+"""Unit tests for the `ResourceAllocationManager` class."""
 
 from datetime import timedelta
 

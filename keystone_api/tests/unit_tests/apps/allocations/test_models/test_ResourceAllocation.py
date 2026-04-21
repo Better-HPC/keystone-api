@@ -1,4 +1,4 @@
-"""Unit tests for the `Allocation` class."""
+"""Unit tests for the `ResourceAllocation` class."""
 
 from django.test import TestCase
 

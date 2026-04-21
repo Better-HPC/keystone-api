@@ -21,13 +21,13 @@ from apps.research_products.models import Grant, Publication
 from apps.users.models import Team, User
 
 __all__ = [
-    'ResourceAllocation',
     'AllocationRequest',
     'AllocationReview',
     'Attachment',
     'Cluster',
     'Comment',
     'JobStats',
+    'ResourceAllocation',
     'TeamModelInterface',
 ]
 

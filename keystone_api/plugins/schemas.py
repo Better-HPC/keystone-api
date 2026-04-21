@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.openapi import AutoSchema
 from rest_framework.filters import BaseFilterBackend
 
-__all__ = ['FilterGetAutoSchema', 'mark_readable_fields_required']
+__all__ = ['FilterGetAutoSchema', 'mark_all_get_fields_required']
 
 
 class FilterGetAutoSchema(AutoSchema):
@@ -32,8 +32,15 @@ class FilterGetAutoSchema(AutoSchema):
         return []
 
 
-def get_response_schema_names(result: dict) -> set[str]:
-    """Collect all schema names referenced in GET response bodies."""
+def _get_response_schema_names(result: dict) -> set[str]:
+    """Collect all schema names referenced in GET response bodies.
+
+    Args:
+        result: The full OpenAPI schema dict passed through by drf-spectacular.
+
+    Returns:
+        A set of schema component names referenced in GET response bodies.
+    """
 
     names = set()
     for path in result['paths'].values():
@@ -52,7 +59,7 @@ def get_response_schema_names(result: dict) -> set[str]:
     return names
 
 
-def mark_readable_fields_required(result: dict, generator, request, public) -> dict:
+def mark_all_get_fields_required(result: dict, generator, request, public) -> dict:
     """Mark all readable fields as required in GET response schemas.
 
     drf-spectacular omits fields from `required` when they are nullable or
@@ -60,9 +67,18 @@ def mark_readable_fields_required(result: dict, generator, request, public) -> d
     corrects response schemas by marking every non-writeOnly field as required,
     accurately reflecting that all readable fields are always present in GET
     responses.
+
+    Args:
+        result: The full OpenAPI schema dict passed through by drf-spectacular.
+        generator: The drf-spectacular schema generator instance.
+        request: The request that triggered schema generation, if any.
+        public: Whether the schema is being generated for public consumption.
+
+    Returns:
+        The mutated OpenAPI schema dict with required fields corrected.
     """
 
-    response_schema_names = get_response_schema_names(result)
+    response_schema_names = _get_response_schema_names(result)
 
     for name, schema in result['components']['schemas'].items():
         if name not in response_schema_names:

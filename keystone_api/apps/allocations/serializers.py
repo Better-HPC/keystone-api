@@ -11,7 +11,7 @@ from mimetypes import guess_type
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
 from django.db import transaction
-from drf_spectacular.utils import extend_schema_field, extend_schema_serializer
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.logging.nested import AuditLogSummarySerializer
@@ -147,6 +147,7 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
 
         return value
+
 
 class ResourceAllocationSerializer(serializers.ModelSerializer):
     """Object serializer for the `ResourceAllocation` class."""
