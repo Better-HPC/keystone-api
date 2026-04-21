@@ -27,6 +27,7 @@ from argparse import ArgumentParser
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from factory.random import randgen, reseed_random
+from kombu.resource import Resource
 
 from apps.allocations.factories import *
 from apps.allocations.models import *
@@ -296,7 +297,7 @@ class Command(StdOutUtils, BaseCommand):
                 if clusters:
                     num_clusters = min(randgen.randint(*n_req_clusters), len(clusters))
                     for cl in randgen.sample(clusters, k=num_clusters):
-                        AllocationFactory(request=request, cluster=cl)
+                        ResourceAllocationFactory(request=request, cluster=cl)
 
                     num_jobs = randgen.randint(*n_req_jobs)
                     for _ in range(num_jobs):

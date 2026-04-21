@@ -4,8 +4,6 @@ New accounts are created as necessary and existing accounts are updated to
 reflect their corresponding LDAP entries.
 """
 
-from argparse import ArgumentParser
-
 from django.core.management.base import BaseCommand
 
 from apps.users.tasks import ldap_update_users

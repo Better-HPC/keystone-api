@@ -16,12 +16,12 @@ from django.db import models
 from django.template.defaultfilters import truncatechars
 from django.utils import timezone
 
-from apps.allocations.managers import AllocationManager
+from apps.allocations.managers import ResourceAllocationManager
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team, User
 
 __all__ = [
-    'Allocation',
+    'ResourceAllocation',
     'AllocationRequest',
     'AllocationReview',
     'Attachment',
@@ -41,7 +41,7 @@ class TeamModelInterface:
 
 
 @auditlog.register()
-class Allocation(TeamModelInterface, models.Model):
+class ResourceAllocation(TeamModelInterface, models.Model):
     """User service unit allocation.
 
     Allocations are marked as "expired" when their `final` field is populated.
@@ -64,7 +64,7 @@ class Allocation(TeamModelInterface, models.Model):
     cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE)
     request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
 
-    objects = AllocationManager()
+    objects = ResourceAllocationManager()
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""

@@ -290,7 +290,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedAllocatedResourceList'
+                $ref: '#/components/schemas/PaginatedResourceAllocationList'
           description: ''
     post:
       operationId: allocations_allocations_create
@@ -303,13 +303,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocatedResourceRequest'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocatedResourceRequest'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocatedResourceRequest'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
         required: true
       security:
       - tokenAuth: []
@@ -319,7 +319,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocatedResource'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
   /allocations/allocations/{id}/:
     get:
@@ -332,7 +332,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -344,7 +344,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocatedResource'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
     put:
       operationId: allocations_allocations_update
@@ -356,7 +356,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -364,13 +364,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocatedResourceRequest'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocatedResourceRequest'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocatedResourceRequest'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
         required: true
       security:
       - tokenAuth: []
@@ -380,7 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocatedResource'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
     patch:
       operationId: allocations_allocations_partial_update
@@ -392,7 +392,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -400,13 +400,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAllocatedResourceRequest'
+              $ref: '#/components/schemas/PatchedResourceAllocationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAllocatedResourceRequest'
+              $ref: '#/components/schemas/PatchedResourceAllocationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAllocatedResourceRequest'
+              $ref: '#/components/schemas/PatchedResourceAllocationRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -415,7 +415,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocatedResource'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
     delete:
       operationId: allocations_allocations_destroy
@@ -427,7 +427,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -11918,115 +11918,6 @@ paths:
           description: ''
 components:
   schemas:
-    AllocatedResource:
-      type: object
-      description: Object serializer for the `Allocation` class.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        _cluster:
-          allOf:
-          - $ref: '#/components/schemas/ClusterSummary'
-          readOnly: true
-          title: ' cluster'
-        _request:
-          allOf:
-          - $ref: '#/components/schemas/AllocationRequestSummary'
-          readOnly: true
-          title: ' request'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        cluster:
-          type: integer
-        request:
-          type: integer
-      required:
-      - _cluster
-      - _history
-      - _request
-      - awarded
-      - cluster
-      - final
-      - id
-      - request
-      - requested
-    AllocatedResourceRequest:
-      type: object
-      description: Object serializer for the `Allocation` class.
-      properties:
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        cluster:
-          type: integer
-        request:
-          type: integer
-      required:
-      - cluster
-      - request
-      - requested
-    AllocationInline:
-      type: object
-      description: Accepts cluster and requested service units for inline allocation
-        creation.
-      properties:
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          minimum: 0
-      required:
-      - cluster
-      - requested
-    AllocationInlineRequest:
-      type: object
-      description: Accepts cluster and requested service units for inline allocation
-        creation.
-      properties:
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          minimum: 0
-      required:
-      - cluster
-      - requested
     AllocationRequest:
       type: object
       description: |-
@@ -12074,7 +11965,7 @@ components:
         _allocations:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/ResourceAllocationSummary'
           readOnly: true
           title: ' allocations'
         _attachments:
@@ -12208,7 +12099,7 @@ components:
         _allocations:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/ResourceAllocationSummary'
           readOnly: true
           title: ' allocations'
         _attachments:
@@ -12305,7 +12196,7 @@ components:
         allocations:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationInlineRequest'
+            $ref: '#/components/schemas/ResourceAllocationInlineRequest'
           writeOnly: true
         attachments:
           type: array
@@ -12668,68 +12559,6 @@ components:
       - AP
       - CR
       - DC
-    AllocationSummary:
-      type: object
-      description: Serializer for summarizing allocated service units in nested responses.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        _cluster:
-          allOf:
-          - $ref: '#/components/schemas/ClusterSummary'
-          readOnly: true
-          title: ' cluster'
-      required:
-      - _cluster
-      - cluster
-      - id
-      - requested
-    AllocationSummaryRequest:
-      type: object
-      description: Serializer for summarizing allocated service units in nested responses.
-      properties:
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-      required:
-      - cluster
-      - requested
     Attachment:
       type: object
       description: Object serializer for the `Attachment` class.
@@ -13636,31 +13465,6 @@ components:
       - GM
       - RD
       - RE
-    PaginatedAllocatedResourceList:
-      type: object
-      required:
-      - count
-      - next
-      - previous
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocatedResource'
     PaginatedAllocationRequestList:
       type: object
       required:
@@ -13986,6 +13790,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RequestLog'
+    PaginatedResourceAllocationList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceAllocation'
     PaginatedRestrictedUserList:
       type: object
       required:
@@ -14061,31 +13890,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
-    PatchedAllocatedResourceRequest:
-      type: object
-      description: Object serializer for the `Allocation` class.
-      properties:
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        cluster:
-          type: integer
-        request:
-          type: integer
     PatchedAllocationRequestRequest:
       type: object
       description: |-
@@ -14316,6 +14120,31 @@ components:
           nullable: true
           maxLength: 20
         team:
+          type: integer
+    PatchedResourceAllocationRequest:
+      type: object
+      description: Object serializer for the `ResourceAllocation` class.
+      properties:
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        cluster:
+          type: integer
+        request:
           type: integer
     PatchedRestrictedUserRequest:
       type: object
@@ -14672,6 +14501,177 @@ components:
       - response_code
       - timestamp
       - user
+    ResourceAllocation:
+      type: object
+      description: Object serializer for the `ResourceAllocation` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        cluster:
+          type: integer
+        request:
+          type: integer
+      required:
+      - _cluster
+      - _history
+      - _request
+      - awarded
+      - cluster
+      - final
+      - id
+      - request
+      - requested
+    ResourceAllocationInline:
+      type: object
+      description: Accepts cluster and requested service units for inline allocation
+        creation.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          minimum: 0
+      required:
+      - cluster
+      - requested
+    ResourceAllocationInlineRequest:
+      type: object
+      description: Accepts cluster and requested service units for inline allocation
+        creation.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          minimum: 0
+      required:
+      - cluster
+      - requested
+    ResourceAllocationRequest:
+      type: object
+      description: Object serializer for the `ResourceAllocation` class.
+      properties:
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        cluster:
+          type: integer
+        request:
+          type: integer
+      required:
+      - cluster
+      - request
+      - requested
+    ResourceAllocationSummary:
+      type: object
+      description: Serializer for summarizing allocated service units in nested responses.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+      required:
+      - _cluster
+      - cluster
+      - id
+      - requested
+    ResourceAllocationSummaryRequest:
+      type: object
+      description: Serializer for summarizing allocated service units in nested responses.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+      required:
+      - cluster
+      - requested
     RestrictedUser:
       type: object
       description: Object serializer for the `User` class with sensitive fields marked

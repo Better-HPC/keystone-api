@@ -8,7 +8,7 @@ from .views import *
 app_name = 'allocations'
 
 router = DefaultRouter()
-router.register('allocations', AllocationViewSet, basename='allocation')
+router.register('allocations', ResourceAllocationViewSet, basename='allocation')
 router.register('attachments', AttachmentViewSet, basename='attachment')
 router.register('clusters', ClusterViewSet, basename='cluster')
 router.register('comments', CommentViewSet, basename='comment')

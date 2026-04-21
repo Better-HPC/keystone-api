@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import AllocationFactory
+from apps.allocations.factories import ResourceAllocationFactory
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
@@ -28,7 +28,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        AllocationFactory()
+        ResourceAllocationFactory()
         self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
@@ -85,5 +85,5 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
     """Test the filtering of returned records based on user team membership."""
 
     endpoint = reverse(VIEW_NAME)
-    factory = AllocationFactory
+    factory = ResourceAllocationFactory
     team_field = 'request__team'

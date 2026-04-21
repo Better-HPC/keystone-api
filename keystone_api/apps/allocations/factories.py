@@ -21,7 +21,7 @@ from apps.users.models import User
 from .models import *
 
 __all__ = [
-    'AllocationFactory',
+    'ResourceAllocationFactory',
     'AllocationRequestFactory',
     'AllocationReviewFactory',
     'AttachmentFactory',
@@ -144,13 +144,13 @@ class AllocationRequestFactory(DjangoModelFactory):
             self.grants.set(extracted)
 
 
-class AllocationFactory(DjangoModelFactory):
+class ResourceAllocationFactory(DjangoModelFactory):
     """Factory for creating mock `Allocation` instances."""
 
     class Meta:
         """Factory settings."""
 
-        model = Allocation
+        model = ResourceAllocation
 
     requested = factory.Faker('pyint', min_value=1000, max_value=100000)
 
@@ -158,7 +158,7 @@ class AllocationFactory(DjangoModelFactory):
     request = factory.SubFactory(AllocationRequestFactory)
 
     @factory.lazy_attribute
-    def awarded(self: Allocation) -> int | None:
+    def awarded(self: ResourceAllocation) -> int | None:
         """Generate a number of awarded service units.
 
         Defaults to `None` for allocations attached to unapproved allocation requests.
@@ -170,7 +170,7 @@ class AllocationFactory(DjangoModelFactory):
             return randgen.randint(0, self.requested // 100) * 100
 
     @factory.lazy_attribute
-    def final(self: Allocation) -> int | None:
+    def final(self: ResourceAllocation) -> int | None:
         """Generate a number of final utilized service units.
 
         Returns `None` for allocations attached to unexpired allocation requests.

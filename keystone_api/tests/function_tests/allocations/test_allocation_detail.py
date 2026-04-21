@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import AllocationFactory
+from apps.allocations.factories import ResourceAllocationFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
@@ -29,7 +29,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.allocation = AllocationFactory()
+        self.allocation = ResourceAllocationFactory()
 
         self.team = self.allocation.request.team
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
