@@ -138,6 +138,8 @@ class SendUpcomingExpirationNoticeContext(TestCase):
     """Test the template context passed by the upcoming expiration notification task."""
 
     def setUp(self) -> None:
+        """Create a mock allocation request that expires in 5 days."""
+
         self.user = UserFactory(date_joined=timezone.now() - timedelta(days=365))
         self.request = AllocationRequestFactory(
             submitter=self.user,

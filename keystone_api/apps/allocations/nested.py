@@ -65,7 +65,7 @@ class AttachmentSummarySerializer(serializers.ModelSerializer):
     """Serializer for summarizing file attachments in nested responses."""
 
     file = serializers.FileField(use_url=False)
-    name = serializers.CharField(required=False)
+    name = serializers.CharField()
 
     class Meta:
         """Serializer settings."""
