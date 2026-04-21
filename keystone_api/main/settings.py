@@ -244,10 +244,15 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': SUMMARY,
     'VERSION': VERSION,
     'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'COMPONENT_SPLIT_PATCH': True,
     'ENUM_NAME_OVERRIDES': {
         'RequestStatusChoices': 'apps.allocations.models.AllocationRequest.StatusChoices',
         'ReviewStatusChoices': 'apps.allocations.models.AllocationReview.StatusChoices',
-    }
+    },
+    'POSTPROCESSING_HOOKS': [
+        'plugins.schemas.mark_readable_fields_required',
+    ],
 }
 
 # Redis backend and Celery scheduler

@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.openapi import AutoSchema
 from rest_framework.filters import BaseFilterBackend
 
-__all__ = ['FilterGetAutoSchema']
+__all__ = ['FilterGetAutoSchema', 'mark_readable_fields_required']
 
 
 class FilterGetAutoSchema(AutoSchema):
@@ -30,3 +30,49 @@ class FilterGetAutoSchema(AutoSchema):
             return getattr(self.view, 'filter_backends', [])
 
         return []
+
+
+def get_response_schema_names(result: dict) -> set[str]:
+    """Collect all schema names referenced in GET response bodies."""
+
+    names = set()
+    for path in result['paths'].values():
+        operation = path.get('get', {})
+        for response in operation.get('responses', {}).values():
+            ref = (
+                response
+                .get('content', {})
+                .get('application/json', {})
+                .get('schema', {})
+                .get('$ref', '')
+            )
+            if ref:
+                names.add(ref.split('/')[-1])
+
+    return names
+
+
+def mark_readable_fields_required(result: dict, generator, request, public) -> dict:
+    """Mark all readable fields as required in GET response schemas.
+
+    drf-spectacular omits fields from `required` when they are nullable or
+    have a model-level default, since they are optional on write. This hook
+    corrects response schemas by marking every non-writeOnly field as required,
+    accurately reflecting that all readable fields are always present in GET
+    responses.
+    """
+
+    response_schema_names = get_response_schema_names(result)
+
+    for name, schema in result['components']['schemas'].items():
+        if name not in response_schema_names:
+            continue
+
+        properties = schema.get('properties', {})
+        schema['required'] = sorted(
+            field_name
+            for field_name, field_schema in properties.items()
+            if not field_schema.get('writeOnly', False)
+        )
+
+    return result
