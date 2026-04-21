@@ -27,7 +27,6 @@ from argparse import ArgumentParser
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from factory.random import randgen, reseed_random
-from kombu.resource import Resource
 
 from apps.allocations.factories import *
 from apps.allocations.models import *
