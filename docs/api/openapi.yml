@@ -12097,6 +12097,7 @@ components:
       - description
       - id
       - submitted
+      - submitter
       - team
       - title
     AllocationRequestCreate:
@@ -12224,6 +12225,7 @@ components:
       - description
       - id
       - submitted
+      - submitter
       - team
       - title
     AllocationRequestStats:
