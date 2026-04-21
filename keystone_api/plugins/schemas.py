@@ -36,7 +36,7 @@ def _get_response_schema_names(result: dict) -> set[str]:
     """Collect all schema names referenced in GET response bodies.
 
     Args:
-        result: The full OpenAPI schema dict passed through by drf-spectacular.
+        result: The full OpenAPI schema dict from drf-spectacular.
 
     Returns:
         A set of schema component names referenced in GET response bodies.
@@ -62,14 +62,14 @@ def _get_response_schema_names(result: dict) -> set[str]:
 def mark_all_get_fields_required(result: dict, generator, request, public) -> dict:
     """Mark all readable fields as required in GET response schemas.
 
-    drf-spectacular omits fields from `required` when they are nullable or
-    have a model-level default, since they are optional on write. This hook
-    corrects response schemas by marking every non-writeOnly field as required,
-    accurately reflecting that all readable fields are always present in GET
-    responses.
+    drf-spectacular marks response body fields as optional when they are
+    nullable or have a model-level default. This hook corrects response
+    schemas by marking every non-writeOnly field as required in `GET`
+    responses, accurately reflecting that all readable fields are always
+    present.
 
     Args:
-        result: The full OpenAPI schema dict passed through by drf-spectacular.
+        result: The full OpenAPI schema dict.
         generator: The drf-spectacular schema generator instance.
         request: The request that triggered schema generation, if any.
         public: Whether the schema is being generated for public consumption.
