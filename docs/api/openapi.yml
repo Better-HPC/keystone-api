@@ -12136,6 +12136,7 @@ components:
       - description
       - id
       - submitted
+      - submitter
       - team
       - title
     AllocationRequestCreate:
@@ -12263,6 +12264,7 @@ components:
       - description
       - id
       - submitted
+      - submitter
       - team
       - title
     AllocationRequestStats:
@@ -12508,6 +12510,7 @@ components:
           type: string
       required:
       - file
+      - name
     AuditLog:
       type: object
       description: Object serializer for the `AuditLog` class.

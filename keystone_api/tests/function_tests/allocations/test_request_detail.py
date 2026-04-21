@@ -126,7 +126,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
-        record_data = {'title': 'foo', 'description': 'bar', 'team': self.team.pk}
+        record_data = {
+            'title': 'foo',
+            'description': 'bar',
+            'team': self.team.pk,
+            'submitter': self.staff_user.id
+        }
 
         self.assert_http_responses(
             self.endpoint,

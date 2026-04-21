@@ -43,7 +43,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.valid_record_data = {'title': 'foo', 'description': 'bar', 'team': self.team.pk}
+        self.valid_record_data = {
+            'title': 'foo',
+            'description': 'bar',
+            'team': self.team.pk,
+            'submitter': self.non_member.id
+        }
 
     def test_anonymous_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

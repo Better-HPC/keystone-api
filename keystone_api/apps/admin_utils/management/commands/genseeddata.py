@@ -60,7 +60,7 @@ class Command(StdOutUtils, BaseCommand):
         parser.add_argument('--n-team-grants', **range_options, help='Min/max grants to create per team.', default=[4, 8])
         parser.add_argument('--n-team-pubs', **range_options, help='Min/max publications to create per team.', default=[4, 8])
         parser.add_argument('--n-team-reqs', **range_options, help='Min/max allocation requests to create per team.', default=[4, 8])
-        parser.add_argument('--n-req-clusters', **range_options, help='Min/max clusters to include per request.', default=[0, 5])
+        parser.add_argument('--n-req-clusters', **range_options, help='Min/max clusters to include per request.', default=[1, 5])
         parser.add_argument('--n-req-jobs', **range_options, help='Min/max Slurm jobs to create per request.', default=[0, 30])
         parser.add_argument('--n-req-grants', **range_options, help='Min/max grants to attach to each request.', default=[1, 2])
         parser.add_argument('--n-req-pubs', **range_options, help='Min/max publications to attach to each request.', default=[1, 2])
