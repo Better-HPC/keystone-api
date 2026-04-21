@@ -251,7 +251,7 @@ SPECTACULAR_SETTINGS = {
         'ReviewStatusChoices': 'apps.allocations.models.AllocationReview.StatusChoices',
     },
     'POSTPROCESSING_HOOKS': [
-        'plugins.schemas.mark_readable_fields_required',
+        'plugins.schemas.mark_all_get_fields_required',
     ],
 }
 
