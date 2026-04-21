@@ -12471,6 +12471,7 @@ components:
           type: string
       required:
       - file
+      - name
     AuditLog:
       type: object
       description: Object serializer for the `AuditLog` class.
