@@ -61,8 +61,8 @@ class ResourceAllocation(TeamModelInterface, models.Model):
     final = models.PositiveIntegerField(null=True, blank=True)
     history = AuditlogHistoryField()
 
-    cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE)
-    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
+    cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE, related_name='allocation_set')
+    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='allocation_set')
 
     objects = ResourceAllocationManager()
 
