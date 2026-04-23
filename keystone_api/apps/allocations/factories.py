@@ -21,13 +21,13 @@ from apps.users.models import User
 from .models import *
 
 __all__ = [
-    'ResourceAllocationFactory',
     'AllocationRequestFactory',
     'AllocationReviewFactory',
     'AttachmentFactory',
     'ClusterFactory',
     'CommentFactory',
-    'JobStatsFactory'
+    'JobStatsFactory',
+    'ResourceAllocationFactory',
 ]
 
 
