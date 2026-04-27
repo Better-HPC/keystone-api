@@ -25,7 +25,7 @@ __all__ = [
     'AllocationRequestCreateSerializer',
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
-    'AllocationSerializer',
+    'ResourceAllocationSerializer',
     'AttachmentSerializer',
     'ClusterSerializer',
     'CommentSerializer',
@@ -45,7 +45,7 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     _publications = PublicationSummarySerializer(source='publications', many=True, read_only=True)
     _grants = GrantSummarySerializer(source='grants', many=True, read_only=True)
     _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
-    _allocations = AllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
+    _allocations = ResourceAllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
     _attachments = AttachmentSummarySerializer(source='attachment_set', many=True, read_only=True)
     _comments = serializers.SerializerMethodField()
 
@@ -81,7 +81,7 @@ class AllocationRequestCreateSerializer(AllocationRequestSerializer):
     POST request.
     """
 
-    allocations = AllocationInlineSerializer(many=True, required=False, write_only=True)
+    allocations = ResourceAllocationInlineSerializer(many=True, required=False, write_only=True)
     attachments = serializers.ListField(
         required=False,
         max_length=settings.MAX_FILE_COUNT,
@@ -102,8 +102,8 @@ class AllocationRequestCreateSerializer(AllocationRequestSerializer):
         allocation_request = super().create(validated_data)
 
         if allocations_data:
-            Allocation.objects.bulk_create([
-                Allocation(
+            ResourceAllocation.objects.bulk_create([
+                ResourceAllocation(
                     request=allocation_request,
                     cluster=alloc['cluster'],
                     requested=alloc['requested'],
@@ -149,8 +149,8 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
         return value
 
 
-class AllocationSerializer(serializers.ModelSerializer):
-    """Object serializer for the `Allocation` class."""
+class ResourceAllocationSerializer(serializers.ModelSerializer):
+    """Object serializer for the `ResourceAllocation` class."""
 
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
     _request = AllocationRequestSummarySerializer(source='request', read_only=True)
@@ -159,7 +159,7 @@ class AllocationSerializer(serializers.ModelSerializer):
     class Meta:
         """Serializer settings."""
 
-        model = Allocation
+        model = ResourceAllocation
         fields = '__all__'
 
 

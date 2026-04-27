@@ -113,16 +113,16 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
         request_expired_count = qs_expired.count()
 
         # Award totals across all related allocations
-        su_pending_total = qs_pending.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_declined_total = qs_declined.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_approved_total = qs_approved.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_upcoming_total = qs_upcoming.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_active_total = qs_active.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_expired_total = qs_expired.aggregate(total=Sum('allocation__awarded'))['total'] or 0
+        su_pending_total = qs_pending.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_declined_total = qs_declined.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_approved_total = qs_approved.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_upcoming_total = qs_upcoming.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_active_total = qs_active.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_expired_total = qs_expired.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
 
-        su_requested_total = qs.aggregate(total=Sum('allocation__requested'))['total'] or 0
-        su_awarded_total = qs.aggregate(total=Sum('allocation__awarded'))['total'] or 0
-        su_finalized_total = qs.aggregate(total=Sum('allocation__final'))['total'] or 0
+        su_requested_total = qs.aggregate(total=Sum('allocation_set__requested'))['total'] or 0
+        su_awarded_total = qs.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_finalized_total = qs.aggregate(total=Sum('allocation_set__final'))['total'] or 0
 
         # Timing metrics
         qs_annotated = qs.annotate(

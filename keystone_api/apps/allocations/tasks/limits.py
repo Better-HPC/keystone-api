@@ -75,8 +75,8 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
     # Retrieve service units (SUs) associated with:
     # - active_sus: Total SUs across all currently active allocations
     # - expiring_sus: Total SUs about to expire
-    active_sus = Allocation.objects.active_service_units(account, cluster)
-    expiring_sus = Allocation.objects.expiring_service_units(account, cluster)
+    active_sus = ResourceAllocation.objects.active_service_units(account, cluster)
+    expiring_sus = ResourceAllocation.objects.expiring_service_units(account, cluster)
 
     # Get the current TRES limit from Slurm and use it to estimate
     # previously consumed SUs not tied to active/expiring allocations
@@ -108,19 +108,19 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
 
     # Distribute current usage across expiring allocations proportionally,
     # capping each at its awarded value and reducing remaining usage
-    expired_allocations = Allocation.objects.expiring_allocations(account, cluster)
+    expired_allocations = ResourceAllocation.objects.expiring_allocations(account, cluster)
     for allocation in expired_allocations:
         allocation.final = min(current_usage, allocation.awarded)
         current_usage -= allocation.final
 
-    Allocation.objects.bulk_update(expired_allocations, ['final'])
+    ResourceAllocation.objects.bulk_update(expired_allocations, ['final'])
 
     # Sanity check: usage beyond the sum of active allocations may indicate a bug or abuse
     if current_usage > active_sus:
         log.warning(f"The system usage for account '{account.name}' exceeds its limit on cluster '{cluster.name}'")
 
     # Recalculate historical usage based on updated allocations, and set a new TRES limit in Slurm
-    updated_historical_usage = Allocation.objects.historical_usage(account, cluster)
+    updated_historical_usage = ResourceAllocation.objects.historical_usage(account, cluster)
     updated_limit = updated_historical_usage + active_sus
     slurm.set_cluster_limit(account.name, cluster.name, updated_limit)
 

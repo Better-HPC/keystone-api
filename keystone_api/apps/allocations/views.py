@@ -25,7 +25,7 @@ __all__ = [
     'AllocationRequestViewSet',
     'AllocationReviewStatusChoicesView',
     'AllocationReviewViewSet',
-    'AllocationViewSet',
+    'ResourceAllocationViewSet',
     'AttachmentViewSet',
     'ClusterViewSet',
     'CommentViewSet',
@@ -122,7 +122,7 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         'assignees',
         Prefetch('publications', queryset=Publication.objects.select_related('team').order_by('title')),
         Prefetch('grants', queryset=Grant.objects.select_related('team').order_by('title')),
-        Prefetch('allocation_set', queryset=Allocation.objects.select_related('cluster').order_by('cluster__name')),
+        Prefetch('allocation_set', queryset=ResourceAllocation.objects.select_related('cluster').order_by('cluster__name')),
         Prefetch('comments', queryset=Comment.objects.select_related('user').order_by('created')),
     ).select_related(
         'submitter',
@@ -299,16 +299,16 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         ),
     ),
 )
-class AllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
+class ResourceAllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing HPC resource allocations."""
 
-    model = Allocation
+    model = ResourceAllocation
     team_field = 'request__team'
 
-    serializer_class = AllocationSerializer
+    serializer_class = ResourceAllocationSerializer
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
     permission_classes = [IsAuthenticated, StaffWriteMemberRead]
-    queryset = Allocation.objects.prefetch_related(
+    queryset = ResourceAllocation.objects.prefetch_related(
         'history'
     ).select_related(
         'request',

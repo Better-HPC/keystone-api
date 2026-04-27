@@ -290,7 +290,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedAllocationList'
+                $ref: '#/components/schemas/PaginatedResourceAllocationList'
           description: ''
     post:
       operationId: allocations_allocations_create
@@ -303,13 +303,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Allocation'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Allocation'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Allocation'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
         required: true
       security:
       - tokenAuth: []
@@ -319,7 +319,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Allocation'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
   /allocations/allocations/{id}/:
     get:
@@ -332,7 +332,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -344,7 +344,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Allocation'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
     put:
       operationId: allocations_allocations_update
@@ -356,7 +356,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -364,13 +364,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Allocation'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Allocation'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Allocation'
+              $ref: '#/components/schemas/ResourceAllocationRequest'
         required: true
       security:
       - tokenAuth: []
@@ -380,7 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Allocation'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
     patch:
       operationId: allocations_allocations_partial_update
@@ -392,7 +392,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -400,13 +400,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAllocation'
+              $ref: '#/components/schemas/PatchedResourceAllocationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAllocation'
+              $ref: '#/components/schemas/PatchedResourceAllocationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAllocation'
+              $ref: '#/components/schemas/PatchedResourceAllocationRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -415,7 +415,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Allocation'
+                $ref: '#/components/schemas/ResourceAllocation'
           description: ''
     delete:
       operationId: allocations_allocations_destroy
@@ -427,7 +427,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this allocation.
+        description: A unique integer value identifying this resource allocation.
         required: true
       tags:
       - Allocations - Allocated Resources
@@ -699,13 +699,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Attachment'
+              $ref: '#/components/schemas/AttachmentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Attachment'
+              $ref: '#/components/schemas/AttachmentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Attachment'
+              $ref: '#/components/schemas/AttachmentRequest'
         required: true
       security:
       - tokenAuth: []
@@ -760,13 +760,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Attachment'
+              $ref: '#/components/schemas/AttachmentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Attachment'
+              $ref: '#/components/schemas/AttachmentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Attachment'
+              $ref: '#/components/schemas/AttachmentRequest'
         required: true
       security:
       - tokenAuth: []
@@ -796,13 +796,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAttachment'
+              $ref: '#/components/schemas/PatchedAttachmentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAttachment'
+              $ref: '#/components/schemas/PatchedAttachmentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAttachment'
+              $ref: '#/components/schemas/PatchedAttachmentRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -870,6 +870,7 @@ paths:
         name: access_mode
         schema:
           type: string
+          x-spec-enum-id: 2dede22a891e0d4a
           enum:
           - BL
           - OP
@@ -1111,13 +1112,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Cluster'
+              $ref: '#/components/schemas/ClusterRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Cluster'
+              $ref: '#/components/schemas/ClusterRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Cluster'
+              $ref: '#/components/schemas/ClusterRequest'
         required: true
       security:
       - tokenAuth: []
@@ -1172,13 +1173,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Cluster'
+              $ref: '#/components/schemas/ClusterRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Cluster'
+              $ref: '#/components/schemas/ClusterRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Cluster'
+              $ref: '#/components/schemas/ClusterRequest'
         required: true
       security:
       - tokenAuth: []
@@ -1208,13 +1209,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedCluster'
+              $ref: '#/components/schemas/PatchedClusterRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedCluster'
+              $ref: '#/components/schemas/PatchedClusterRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedCluster'
+              $ref: '#/components/schemas/PatchedClusterRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -1568,13 +1569,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentRequest'
         required: true
       security:
       - tokenAuth: []
@@ -1631,13 +1632,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: '#/components/schemas/CommentRequest'
         required: true
       security:
       - tokenAuth: []
@@ -1668,13 +1669,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedComment'
+              $ref: '#/components/schemas/PatchedCommentRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedComment'
+              $ref: '#/components/schemas/PatchedCommentRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedComment'
+              $ref: '#/components/schemas/PatchedCommentRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3229,6 +3230,7 @@ paths:
         name: status
         schema:
           type: string
+          x-spec-enum-id: 0f4bc72b4a7635f9
           enum:
           - AP
           - CR
@@ -3495,13 +3497,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocationRequestCreate'
+              $ref: '#/components/schemas/AllocationRequestCreateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocationRequestCreate'
+              $ref: '#/components/schemas/AllocationRequestCreateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocationRequestCreate'
+              $ref: '#/components/schemas/AllocationRequestCreateRequest'
         required: true
       security:
       - tokenAuth: []
@@ -3556,13 +3558,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocationRequest'
+              $ref: '#/components/schemas/AllocationRequestRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocationRequest'
+              $ref: '#/components/schemas/AllocationRequestRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocationRequest'
+              $ref: '#/components/schemas/AllocationRequestRequest'
         required: true
       security:
       - tokenAuth: []
@@ -3592,13 +3594,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAllocationRequest'
+              $ref: '#/components/schemas/PatchedAllocationRequestRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAllocationRequest'
+              $ref: '#/components/schemas/PatchedAllocationRequestRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAllocationRequest'
+              $ref: '#/components/schemas/PatchedAllocationRequestRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -3789,6 +3791,7 @@ paths:
         name: status
         schema:
           type: string
+          x-spec-enum-id: 32101d5410655ab2
           enum:
           - AP
           - CR
@@ -3948,13 +3951,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocationReview'
+              $ref: '#/components/schemas/AllocationReviewRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocationReview'
+              $ref: '#/components/schemas/AllocationReviewRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocationReview'
+              $ref: '#/components/schemas/AllocationReviewRequest'
         required: true
       security:
       - tokenAuth: []
@@ -4009,13 +4012,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocationReview'
+              $ref: '#/components/schemas/AllocationReviewRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocationReview'
+              $ref: '#/components/schemas/AllocationReviewRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocationReview'
+              $ref: '#/components/schemas/AllocationReviewRequest'
         required: true
       security:
       - tokenAuth: []
@@ -4045,13 +4048,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAllocationReview'
+              $ref: '#/components/schemas/PatchedAllocationReviewRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAllocationReview'
+              $ref: '#/components/schemas/PatchedAllocationReviewRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAllocationReview'
+              $ref: '#/components/schemas/PatchedAllocationReviewRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -4094,13 +4097,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/LoginRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/LoginRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/LoginRequest'
         required: true
       responses:
         '200':
@@ -4271,6 +4274,7 @@ paths:
         name: action
         schema:
           type: integer
+          x-spec-enum-id: f07ca4f574297d89
           enum:
           - 0
           - 1
@@ -6478,6 +6482,7 @@ paths:
         name: notification_type
         schema:
           type: string
+          x-spec-enum-id: 9e49c149530127de
           enum:
           - GM
           - RD
@@ -6774,13 +6779,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedNotification'
+              $ref: '#/components/schemas/PatchedNotificationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedNotification'
+              $ref: '#/components/schemas/PatchedNotificationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedNotification'
+              $ref: '#/components/schemas/PatchedNotificationRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6922,13 +6927,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Preference'
+              $ref: '#/components/schemas/PreferenceRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Preference'
+              $ref: '#/components/schemas/PreferenceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Preference'
+              $ref: '#/components/schemas/PreferenceRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -6982,13 +6987,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Preference'
+              $ref: '#/components/schemas/PreferenceRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Preference'
+              $ref: '#/components/schemas/PreferenceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Preference'
+              $ref: '#/components/schemas/PreferenceRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7017,13 +7022,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedPreference'
+              $ref: '#/components/schemas/PatchedPreferenceRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedPreference'
+              $ref: '#/components/schemas/PatchedPreferenceRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedPreference'
+              $ref: '#/components/schemas/PatchedPreferenceRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -7561,13 +7566,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Grant'
+              $ref: '#/components/schemas/GrantRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Grant'
+              $ref: '#/components/schemas/GrantRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Grant'
+              $ref: '#/components/schemas/GrantRequest'
         required: true
       security:
       - tokenAuth: []
@@ -7622,13 +7627,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Grant'
+              $ref: '#/components/schemas/GrantRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Grant'
+              $ref: '#/components/schemas/GrantRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Grant'
+              $ref: '#/components/schemas/GrantRequest'
         required: true
       security:
       - tokenAuth: []
@@ -7658,13 +7663,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedGrant'
+              $ref: '#/components/schemas/PatchedGrantRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedGrant'
+              $ref: '#/components/schemas/PatchedGrantRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedGrant'
+              $ref: '#/components/schemas/PatchedGrantRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -8248,13 +8253,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationRequest'
         required: true
       security:
       - tokenAuth: []
@@ -8309,13 +8314,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Publication'
+              $ref: '#/components/schemas/PublicationRequest'
         required: true
       security:
       - tokenAuth: []
@@ -8345,13 +8350,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedPublication'
+              $ref: '#/components/schemas/PatchedPublicationRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedPublication'
+              $ref: '#/components/schemas/PatchedPublicationRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedPublication'
+              $ref: '#/components/schemas/PatchedPublicationRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -9028,6 +9033,7 @@ paths:
         name: notification_type
         schema:
           type: string
+          x-spec-enum-id: 9e49c149530127de
           enum:
           - GM
           - RD
@@ -10073,6 +10079,7 @@ paths:
         name: status
         schema:
           type: string
+          x-spec-enum-id: 0f4bc72b4a7635f9
           enum:
           - AP
           - CR
@@ -10426,6 +10433,7 @@ paths:
         name: role
         schema:
           type: string
+          x-spec-enum-id: 56df4cdb9958fe19
           enum:
           - AD
           - MB
@@ -10559,13 +10567,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Membership'
+              $ref: '#/components/schemas/MembershipRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Membership'
+              $ref: '#/components/schemas/MembershipRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Membership'
+              $ref: '#/components/schemas/MembershipRequest'
         required: true
       security:
       - tokenAuth: []
@@ -10619,13 +10627,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Membership'
+              $ref: '#/components/schemas/MembershipRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Membership'
+              $ref: '#/components/schemas/MembershipRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Membership'
+              $ref: '#/components/schemas/MembershipRequest'
         required: true
       security:
       - tokenAuth: []
@@ -10655,13 +10663,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedMembership'
+              $ref: '#/components/schemas/PatchedMembershipRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedMembership'
+              $ref: '#/components/schemas/PatchedMembershipRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedMembership'
+              $ref: '#/components/schemas/PatchedMembershipRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -10914,13 +10922,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRequest'
         required: true
       security:
       - tokenAuth: []
@@ -10974,13 +10982,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/TeamRequest'
         required: true
       security:
       - tokenAuth: []
@@ -11010,13 +11018,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedTeam'
+              $ref: '#/components/schemas/PatchedTeamRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedTeam'
+              $ref: '#/components/schemas/PatchedTeamRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedTeam'
+              $ref: '#/components/schemas/PatchedTeamRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -11757,13 +11765,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RestrictedUser'
+              $ref: '#/components/schemas/RestrictedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/RestrictedUser'
+              $ref: '#/components/schemas/RestrictedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/RestrictedUser'
+              $ref: '#/components/schemas/RestrictedUserRequest'
         required: true
       security:
       - tokenAuth: []
@@ -11820,13 +11828,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RestrictedUser'
+              $ref: '#/components/schemas/RestrictedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/RestrictedUser'
+              $ref: '#/components/schemas/RestrictedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/RestrictedUser'
+              $ref: '#/components/schemas/RestrictedUserRequest'
         required: true
       security:
       - tokenAuth: []
@@ -11857,13 +11865,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedRestrictedUser'
+              $ref: '#/components/schemas/PatchedRestrictedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedRestrictedUser'
+              $ref: '#/components/schemas/PatchedRestrictedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedRestrictedUser'
+              $ref: '#/components/schemas/PatchedRestrictedUserRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -11910,81 +11918,6 @@ paths:
           description: ''
 components:
   schemas:
-    AccessModeEnum:
-      enum:
-      - WL
-      - BL
-      - OP
-      type: string
-      description: |-
-        * `WL` - Whitelist
-        * `BL` - Blacklist
-        * `OP` - Open
-    Allocation:
-      type: object
-      description: Object serializer for the `Allocation` class.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        _cluster:
-          allOf:
-          - $ref: '#/components/schemas/ClusterSummary'
-          readOnly: true
-          title: ' cluster'
-        _request:
-          allOf:
-          - $ref: '#/components/schemas/AllocationRequestSummary'
-          readOnly: true
-          title: ' request'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        cluster:
-          type: integer
-        request:
-          type: integer
-      required:
-      - _cluster
-      - _history
-      - _request
-      - cluster
-      - id
-      - request
-      - requested
-    AllocationInline:
-      type: object
-      description: Accepts cluster and requested service units for inline allocation
-        creation.
-      properties:
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          minimum: 0
-      required:
-      - cluster
-      - requested
     AllocationRequest:
       type: object
       description: |-
@@ -12032,7 +11965,7 @@ components:
         _allocations:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/ResourceAllocationSummary'
           readOnly: true
           title: ' allocations'
         _attachments:
@@ -12066,7 +11999,18 @@ components:
           format: date
           nullable: true
         status:
-          $ref: '#/components/schemas/RequestStatusChoices'
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
         submitter:
           type: integer
           nullable: true
@@ -12094,8 +12038,14 @@ components:
       - _publications
       - _submitter
       - _team
+      - active
+      - assignees
       - description
+      - expire
+      - grants
       - id
+      - publications
+      - status
       - submitted
       - submitter
       - team
@@ -12149,7 +12099,7 @@ components:
         _allocations:
           type: array
           items:
-            $ref: '#/components/schemas/AllocationSummary'
+            $ref: '#/components/schemas/ResourceAllocationSummary'
           readOnly: true
           title: ' allocations'
         _attachments:
@@ -12164,11 +12114,6 @@ components:
             $ref: '#/components/schemas/CommentSummary'
           readOnly: true
           title: ' comments'
-        allocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationInline'
-          writeOnly: true
         attachments:
           type: array
           items:
@@ -12194,7 +12139,18 @@ components:
           format: date
           nullable: true
         status:
-          $ref: '#/components/schemas/RequestStatusChoices'
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
         submitter:
           type: integer
           nullable: true
@@ -12225,6 +12181,135 @@ components:
       - description
       - id
       - submitted
+      - submitter
+      - team
+      - title
+    AllocationRequestCreateRequest:
+      type: object
+      description: |-
+        Object serializer for creating `AllocationRequest` instances.
+
+        Supports an optional `allocations` field, allowing callers to submit an
+        allocation request and its associated resource allocations in a single
+        POST request.
+      properties:
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceAllocationInlineRequest'
+          writeOnly: true
+        attachments:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 15
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        description:
+          type: string
+          minLength: 1
+          maxLength: 20000
+        active:
+          type: string
+          format: date
+          nullable: true
+        expire:
+          type: string
+          format: date
+          nullable: true
+        status:
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
+        submitter:
+          type: integer
+          nullable: true
+        team:
+          type: integer
+        assignees:
+          type: array
+          items:
+            type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
+          type: array
+          items:
+            type: integer
+      required:
+      - description
+      - submitter
+      - team
+      - title
+    AllocationRequestRequest:
+      type: object
+      description: |-
+        Object serializer for the `AllocationRequest` class.
+
+        Used for retrieve, list, update, and partial update operations.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        description:
+          type: string
+          minLength: 1
+          maxLength: 20000
+        active:
+          type: string
+          format: date
+          nullable: true
+        expire:
+          type: string
+          format: date
+          nullable: true
+        status:
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
+        submitter:
+          type: integer
+          nullable: true
+        team:
+          type: integer
+        assignees:
+          type: array
+          items:
+            type: integer
+        publications:
+          type: array
+          items:
+            type: integer
+        grants:
+          type: array
+          items:
+            type: integer
+      required:
+      - description
       - submitter
       - team
       - title
@@ -12313,6 +12398,11 @@ components:
         CR:
           type: string
           default: Changes Requested
+      required:
+      - AP
+      - CR
+      - DC
+      - PD
     AllocationRequestSummary:
       type: object
       description: Serializer for summarizing allocation requests in nested responses.
@@ -12324,7 +12414,18 @@ components:
           type: string
           maxLength: 250
         status:
-          $ref: '#/components/schemas/RequestStatusChoices'
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
         active:
           type: string
           format: date
@@ -12335,6 +12436,37 @@ components:
           nullable: true
       required:
       - id
+      - title
+    AllocationRequestSummaryRequest:
+      type: object
+      description: Serializer for summarizing allocation requests in nested responses.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        status:
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
+        active:
+          type: string
+          format: date
+          nullable: true
+        expire:
+          type: string
+          format: date
+          nullable: true
+      required:
       - title
     AllocationReview:
       type: object
@@ -12360,7 +12492,16 @@ components:
           readOnly: true
           title: ' history'
         status:
-          $ref: '#/components/schemas/ReviewStatusChoices'
+          enum:
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 32101d5410655ab2
         submitted:
           type: string
           format: date-time
@@ -12376,8 +12517,32 @@ components:
       - _reviewer
       - id
       - request
+      - reviewer
       - status
       - submitted
+    AllocationReviewRequest:
+      type: object
+      description: Object serializer for the `AllocationReview` class.
+      properties:
+        status:
+          enum:
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 32101d5410655ab2
+        request:
+          type: integer
+        reviewer:
+          type: integer
+          nullable: true
+      required:
+      - request
+      - status
     AllocationReviewStatusChoices:
       type: object
       properties:
@@ -12390,42 +12555,10 @@ components:
         CR:
           type: string
           default: Changes Requested
-    AllocationSummary:
-      type: object
-      description: Serializer for summarizing allocated service units in nested responses.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        _cluster:
-          allOf:
-          - $ref: '#/components/schemas/ClusterSummary'
-          readOnly: true
-          title: ' cluster'
       required:
-      - _cluster
-      - cluster
-      - id
-      - requested
+      - AP
+      - CR
+      - DC
     Attachment:
       type: object
       description: Object serializer for the `Attachment` class.
@@ -12459,8 +12592,24 @@ components:
       - _request
       - file
       - id
+      - name
       - request
       - uploaded
+    AttachmentRequest:
+      type: object
+      description: Object serializer for the `Attachment` class.
+      properties:
+        file:
+          type: string
+          format: binary
+        name:
+          type: string
+          minLength: 1
+        request:
+          type: integer
+      required:
+      - file
+      - request
     AttachmentSummary:
       type: object
       description: Serializer for summarizing file attachments in nested responses.
@@ -12469,6 +12618,19 @@ components:
           type: string
         name:
           type: string
+      required:
+      - file
+      - name
+    AttachmentSummaryRequest:
+      type: object
+      description: Serializer for summarizing file attachments in nested responses.
+      properties:
+        file:
+          type: string
+          format: binary
+        name:
+          type: string
+          minLength: 1
       required:
       - file
       - name
@@ -12521,9 +12683,15 @@ components:
       required:
       - _actor
       - action
+      - actor
+      - changes
+      - cid
       - id
       - record_id
       - record_name
+      - remote_addr
+      - remote_port
+      - timestamp
     AuditLogSummary:
       type: object
       description: Object serializer for the `AuditLog` class.
@@ -12553,6 +12721,19 @@ components:
       - _actor
       - action
       - id
+    AuditLogSummaryRequest:
+      type: object
+      description: Object serializer for the `AuditLog` class.
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        actor:
+          type: integer
+          nullable: true
+        changes:
+          nullable: true
+          title: Change message
     Cluster:
       type: object
       description: Object serializer for the `Cluster` class.
@@ -12576,14 +12757,58 @@ components:
         enabled:
           type: boolean
         access_mode:
-          $ref: '#/components/schemas/AccessModeEnum'
+          enum:
+          - WL
+          - BL
+          - OP
+          type: string
+          description: |-
+            * `WL` - Whitelist
+            * `BL` - Blacklist
+            * `OP` - Open
+          x-spec-enum-id: 2dede22a891e0d4a
         access_teams:
           type: array
           items:
             type: integer
       required:
       - _history
+      - access_mode
+      - access_teams
+      - description
+      - enabled
       - id
+      - name
+    ClusterRequest:
+      type: object
+      description: Object serializer for the `Cluster` class.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        description:
+          type: string
+          nullable: true
+          maxLength: 150
+        enabled:
+          type: boolean
+        access_mode:
+          enum:
+          - WL
+          - BL
+          - OP
+          type: string
+          description: |-
+            * `WL` - Whitelist
+            * `BL` - Blacklist
+            * `OP` - Open
+          x-spec-enum-id: 2dede22a891e0d4a
+        access_teams:
+          type: array
+          items:
+            type: integer
+      required:
       - name
     ClusterSummary:
       type: object
@@ -12599,6 +12824,18 @@ components:
           type: boolean
       required:
       - id
+      - name
+    ClusterSummaryRequest:
+      type: object
+      description: Serializer for summarizing cluster names in nested responses.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        enabled:
+          type: boolean
+      required:
       - name
     Comment:
       type: object
@@ -12643,6 +12880,25 @@ components:
       - content
       - created
       - id
+      - private
+      - request
+      - user
+    CommentRequest:
+      type: object
+      description: Object serializer for the `Comment` class.
+      properties:
+        user:
+          type: integer
+        content:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        private:
+          type: boolean
+        request:
+          type: integer
+      required:
+      - content
       - request
     CommentSummary:
       type: object
@@ -12742,8 +12998,49 @@ components:
       - _team
       - agency
       - amount
+      - description
+      - end_date
       - grant_number
       - id
+      - start_date
+      - team
+      - title
+    GrantRequest:
+      type: object
+      description: Object serializer for the `Grant` class.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        agency:
+          type: string
+          minLength: 1
+          maxLength: 100
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        grant_number:
+          type: string
+          minLength: 1
+          maxLength: 250
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        team:
+          type: integer
+      required:
+      - agency
+      - amount
+      - grant_number
       - start_date
       - team
       - title
@@ -12829,6 +13126,45 @@ components:
       - amount
       - grant_number
       - id
+      - start_date
+      - team
+      - title
+    GrantSummaryRequest:
+      type: object
+      description: Serializer for summarizing grant information in nested representations.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        agency:
+          type: string
+          minLength: 1
+          maxLength: 100
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        grant_number:
+          type: string
+          minLength: 1
+          maxLength: 250
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        team:
+          type: integer
+      required:
+      - agency
+      - amount
+      - grant_number
       - start_date
       - team
       - title
@@ -12932,20 +13268,40 @@ components:
       required:
       - _cluster
       - _team
+      - account
+      - allocnodes
+      - alloctres
+      - cluster
       - created_at
+      - derivedexitcode
+      - elapsed
+      - end
+      - group
       - id
       - jobid
+      - jobname
+      - nodelist
+      - partition
+      - priority
+      - qos
+      - start
+      - state
+      - submit
+      - team
       - updated_at
-    Login:
+      - username
+    LoginRequest:
       type: object
       description: Data serializer for validating user credentials.
       properties:
         username:
           type: string
           writeOnly: true
+          minLength: 1
         password:
           type: string
           writeOnly: true
+          minLength: 1
       required:
       - password
       - username
@@ -12973,7 +13329,16 @@ components:
           readOnly: true
           title: ' history'
         role:
-          $ref: '#/components/schemas/RoleEnum'
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
         user:
           type: integer
         team:
@@ -12983,6 +13348,29 @@ components:
       - _team
       - _user
       - id
+      - role
+      - team
+      - user
+    MembershipRequest:
+      type: object
+      description: Object serializer for the `Membership` model.
+      properties:
+        role:
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
+        user:
+          type: integer
+        team:
+          type: integer
+      required:
       - role
       - team
       - user
@@ -12998,6 +13386,10 @@ components:
         MB:
           type: string
           default: Member
+      required:
+      - AD
+      - MB
+      - OW
     Notification:
       type: object
       description: Object serializer for the `Notification` class.
@@ -13018,8 +13410,16 @@ components:
           type: string
           readOnly: true
         notification_type:
-          allOf:
-          - $ref: '#/components/schemas/NotificationTypeEnum'
+          enum:
+          - GM
+          - RE
+          - RD
+          type: string
+          description: |-
+            * `GM` - General Message
+            * `RE` - Upcoming Request Expiration
+            * `RD` - Request Past Expiration
+          x-spec-enum-id: 9e49c149530127de
           readOnly: true
         user:
           type: integer
@@ -13034,6 +13434,7 @@ components:
       - id
       - message_html
       - notification_type
+      - read
       - subject
       - time
       - user
@@ -13060,43 +13461,16 @@ components:
         RD:
           type: string
           default: Request Past Expiration
-    NotificationTypeEnum:
-      enum:
-      - GM
-      - RE
-      - RD
-      type: string
-      description: |-
-        * `GM` - General Message
-        * `RE` - Upcoming Request Expiration
-        * `RD` - Request Past Expiration
-    PaginatedAllocationList:
-      type: object
       required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=400&_limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?_offset=200&_limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Allocation'
+      - GM
+      - RD
+      - RE
     PaginatedAllocationRequestList:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13120,6 +13494,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13143,6 +13519,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13166,6 +13544,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13189,6 +13569,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13212,6 +13594,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13235,6 +13619,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13258,6 +13644,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13281,6 +13669,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13304,6 +13694,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13327,6 +13719,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13350,6 +13744,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13373,6 +13769,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13392,10 +13790,37 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RequestLog'
+    PaginatedResourceAllocationList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceAllocation'
     PaginatedRestrictedUserList:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13419,6 +13844,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13442,6 +13869,8 @@ components:
       type: object
       required:
       - count
+      - next
+      - previous
       - results
       properties:
         count:
@@ -13461,122 +13890,21 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
-    PatchedAllocation:
-      type: object
-      description: Object serializer for the `Allocation` class.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        _cluster:
-          allOf:
-          - $ref: '#/components/schemas/ClusterSummary'
-          readOnly: true
-          title: ' cluster'
-        _request:
-          allOf:
-          - $ref: '#/components/schemas/AllocationRequestSummary'
-          readOnly: true
-          title: ' request'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
-        requested:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        awarded:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        final:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-          nullable: true
-        cluster:
-          type: integer
-        request:
-          type: integer
-    PatchedAllocationRequest:
+    PatchedAllocationRequestRequest:
       type: object
       description: |-
         Object serializer for the `AllocationRequest` class.
 
         Used for retrieve, list, update, and partial update operations.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _submitter:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' submitter'
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        _assignees:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' assignees'
-        _publications:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicationSummary'
-          readOnly: true
-          title: ' publications'
-        _grants:
-          type: array
-          items:
-            $ref: '#/components/schemas/GrantSummary'
-          readOnly: true
-          title: ' grants'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
-        _allocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/AllocationSummary'
-          readOnly: true
-          title: ' allocations'
-        _attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttachmentSummary'
-          readOnly: true
-          title: ' attachments'
-        _comments:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommentSummary'
-          readOnly: true
-          title: ' comments'
         title:
           type: string
+          minLength: 1
           maxLength: 250
         description:
           type: string
+          minLength: 1
           maxLength: 20000
-        submitted:
-          type: string
-          format: date-time
-          readOnly: true
         active:
           type: string
           format: date
@@ -13586,7 +13914,18 @@ components:
           format: date
           nullable: true
         status:
-          $ref: '#/components/schemas/RequestStatusChoices'
+          enum:
+          - PD
+          - AP
+          - DC
+          - CR
+          type: string
+          description: |-
+            * `PD` - Pending
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 0f4bc72b4a7635f9
         submitter:
           type: integer
           nullable: true
@@ -13604,83 +13943,45 @@ components:
           type: array
           items:
             type: integer
-    PatchedAllocationReview:
+    PatchedAllocationReviewRequest:
       type: object
       description: Object serializer for the `AllocationReview` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _request:
-          allOf:
-          - $ref: '#/components/schemas/AllocationRequestSummary'
-          readOnly: true
-          title: ' request'
-        _reviewer:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' reviewer'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         status:
-          $ref: '#/components/schemas/ReviewStatusChoices'
-        submitted:
+          enum:
+          - AP
+          - DC
+          - CR
           type: string
-          format: date-time
-          readOnly: true
+          description: |-
+            * `AP` - Approved
+            * `DC` - Declined
+            * `CR` - Changes Requested
+          x-spec-enum-id: 32101d5410655ab2
         request:
           type: integer
         reviewer:
           type: integer
           nullable: true
-    PatchedAttachment:
+    PatchedAttachmentRequest:
       type: object
       description: Object serializer for the `Attachment` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
         file:
           type: string
+          format: binary
         name:
           type: string
-        _request:
-          allOf:
-          - $ref: '#/components/schemas/AllocationRequestSummary'
-          readOnly: true
-          title: ' request'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
-        uploaded:
-          type: string
-          format: date-time
-          readOnly: true
+          minLength: 1
         request:
           type: integer
-    PatchedCluster:
+    PatchedClusterRequest:
       type: object
       description: Object serializer for the `Cluster` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         name:
           type: string
+          minLength: 1
           maxLength: 50
         description:
           type: string
@@ -13689,70 +13990,45 @@ components:
         enabled:
           type: boolean
         access_mode:
-          $ref: '#/components/schemas/AccessModeEnum'
+          enum:
+          - WL
+          - BL
+          - OP
+          type: string
+          description: |-
+            * `WL` - Whitelist
+            * `BL` - Blacklist
+            * `OP` - Open
+          x-spec-enum-id: 2dede22a891e0d4a
         access_teams:
           type: array
           items:
             type: integer
-    PatchedComment:
+    PatchedCommentRequest:
       type: object
       description: Object serializer for the `Comment` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
         user:
           type: integer
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
-        _request:
-          allOf:
-          - $ref: '#/components/schemas/AllocationRequestSummary'
-          readOnly: true
-          title: ' request'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         content:
           type: string
+          minLength: 1
           maxLength: 2000
-        created:
-          type: string
-          format: date-time
-          readOnly: true
         private:
           type: boolean
         request:
           type: integer
-    PatchedGrant:
+    PatchedGrantRequest:
       type: object
       description: Object serializer for the `Grant` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         title:
           type: string
+          minLength: 1
           maxLength: 250
         agency:
           type: string
+          minLength: 1
           maxLength: 100
         amount:
           type: string
@@ -13760,6 +14036,7 @@ components:
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
         grant_number:
           type: string
+          minLength: 1
           maxLength: 250
         start_date:
           type: string
@@ -13773,103 +14050,47 @@ components:
           nullable: true
         team:
           type: integer
-    PatchedMembership:
+    PatchedMembershipRequest:
       type: object
       description: Object serializer for the `Membership` model.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         role:
-          $ref: '#/components/schemas/RoleEnum'
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
         user:
           type: integer
         team:
           type: integer
-    PatchedNotification:
+    PatchedNotificationRequest:
       type: object
       description: Object serializer for the `Notification` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        time:
-          type: string
-          format: date-time
-          readOnly: true
         read:
           type: boolean
-        subject:
-          type: string
-          readOnly: true
-        message_html:
-          type: string
-          readOnly: true
-        notification_type:
-          allOf:
-          - $ref: '#/components/schemas/NotificationTypeEnum'
-          readOnly: true
-        user:
-          type: integer
-          readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
-    PatchedPreference:
+    PatchedPreferenceRequest:
       type: object
       description: Object serializer for the `Preference` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _user:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' user'
         request_expiry_thresholds: {}
         notify_on_expiration:
           type: boolean
         user:
           type: integer
-    PatchedPublication:
+    PatchedPublicationRequest:
       type: object
       description: Object serializer for the `Publication` class.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         title:
           type: string
+          minLength: 1
           maxLength: 250
         abstract:
           type: string
@@ -13900,32 +14121,36 @@ components:
           maxLength: 20
         team:
           type: integer
-    PatchedRestrictedUser:
+    PatchedResourceAllocationRequest:
+      type: object
+      description: Object serializer for the `ResourceAllocation` class.
+      properties:
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        cluster:
+          type: integer
+        request:
+          type: integer
+    PatchedRestrictedUserRequest:
       type: object
       description: Object serializer for the `User` class with sensitive fields marked
         as read only.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        display_name:
-          type: string
-          readOnly: true
-        abbreviation:
-          type: string
-          readOnly: true
-        _membership:
-          type: array
-          items:
-            $ref: '#/components/schemas/TeamRole'
-          readOnly: true
-          title: ' membership'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         is_superuser:
           type: boolean
           title: Superuser status
@@ -13933,24 +14158,29 @@ components:
             assigning them.
         username:
           type: string
+          minLength: 1
           pattern: ^[\w.@+-]+$
           maxLength: 150
         password:
           type: string
           writeOnly: true
+          minLength: 1
           maxLength: 128
         first_name:
           type: string
           nullable: true
+          minLength: 1
           maxLength: 150
         last_name:
           type: string
           nullable: true
+          minLength: 1
           maxLength: 150
         email:
           type: string
           format: email
           nullable: true
+          minLength: 1
           maxLength: 254
         department:
           type: string
@@ -13960,31 +14190,6 @@ components:
           type: string
           nullable: true
           maxLength: 1000
-        profile_image:
-          type: string
-          format: uri
-          readOnly: true
-          nullable: true
-        is_active:
-          type: boolean
-          readOnly: true
-        is_staff:
-          type: boolean
-          readOnly: true
-          title: Staff status
-        is_ldap_user:
-          type: boolean
-          readOnly: true
-          title: LDAP User
-        date_joined:
-          type: string
-          format: date-time
-          readOnly: true
-        last_login:
-          type: string
-          format: date-time
-          readOnly: true
-          nullable: true
         groups:
           type: array
           items:
@@ -13996,39 +14201,16 @@ components:
           items:
             type: integer
           description: Specific permissions for this user.
-    PatchedTeam:
+    PatchedTeamRequest:
       type: object
       description: Object serializer for the `Team` model.
       properties:
-        id:
-          type: integer
-          readOnly: true
-        slug:
-          type: string
-          readOnly: true
-          pattern: ^[-a-zA-Z0-9_]+$
-        _membership:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserRole'
-          readOnly: true
-          title: ' membership'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
         name:
           type: string
+          minLength: 1
           maxLength: 255
         is_active:
           type: boolean
-        users:
-          type: array
-          items:
-            type: integer
-          readOnly: true
     Preference:
       type: object
       description: Object serializer for the `Preference` class.
@@ -14049,6 +14231,18 @@ components:
       required:
       - _user
       - id
+      - notify_on_expiration
+      - request_expiry_thresholds
+      - user
+    PreferenceRequest:
+      type: object
+      description: Object serializer for the `Preference` class.
+      properties:
+        request_expiry_thresholds: {}
+        notify_on_expiration:
+          type: boolean
+        user:
+          type: integer
     Publication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -14102,7 +14296,54 @@ components:
       required:
       - _history
       - _team
+      - abstract
+      - doi
       - id
+      - issue
+      - journal
+      - published
+      - submitted
+      - team
+      - title
+      - volume
+    PublicationRequest:
+      type: object
+      description: Object serializer for the `Publication` class.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        abstract:
+          type: string
+          nullable: true
+        published:
+          type: string
+          format: date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
+        journal:
+          type: string
+          nullable: true
+          maxLength: 100
+        doi:
+          type: string
+          nullable: true
+          maxLength: 50
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
+        team:
+          type: integer
+      required:
       - team
       - title
     PublicationStats:
@@ -14172,6 +14413,46 @@ components:
       - id
       - team
       - title
+    PublicationSummaryRequest:
+      type: object
+      description: Serializer for summarizing publication information in nested representations.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        abstract:
+          type: string
+          nullable: true
+        published:
+          type: string
+          format: date
+          nullable: true
+        submitted:
+          type: string
+          format: date
+          nullable: true
+        journal:
+          type: string
+          nullable: true
+          maxLength: 100
+        doi:
+          type: string
+          nullable: true
+          maxLength: 50
+        volume:
+          type: string
+          nullable: true
+          maxLength: 20
+        issue:
+          type: string
+          nullable: true
+          maxLength: 20
+        team:
+          type: integer
+      required:
+      - team
+      - title
     RequestLog:
       type: object
       description: Object serializer for the `RequestLog` class.
@@ -14212,23 +14493,185 @@ components:
           nullable: true
       required:
       - _user
+      - cid
       - endpoint
       - id
       - method
+      - remote_address
       - response_code
       - timestamp
-    RequestStatusChoices:
-      enum:
-      - PD
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `PD` - Pending
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
+      - user
+    ResourceAllocation:
+      type: object
+      description: Object serializer for the `ResourceAllocation` class.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+        _request:
+          allOf:
+          - $ref: '#/components/schemas/AllocationRequestSummary'
+          readOnly: true
+          title: ' request'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        cluster:
+          type: integer
+        request:
+          type: integer
+      required:
+      - _cluster
+      - _history
+      - _request
+      - awarded
+      - cluster
+      - final
+      - id
+      - request
+      - requested
+    ResourceAllocationInline:
+      type: object
+      description: Accepts cluster and requested service units for inline allocation
+        creation.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          minimum: 0
+      required:
+      - cluster
+      - requested
+    ResourceAllocationInlineRequest:
+      type: object
+      description: Accepts cluster and requested service units for inline allocation
+        creation.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          minimum: 0
+      required:
+      - cluster
+      - requested
+    ResourceAllocationRequest:
+      type: object
+      description: Object serializer for the `ResourceAllocation` class.
+      properties:
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        cluster:
+          type: integer
+        request:
+          type: integer
+      required:
+      - cluster
+      - request
+      - requested
+    ResourceAllocationSummary:
+      type: object
+      description: Serializer for summarizing allocated service units in nested responses.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        _cluster:
+          allOf:
+          - $ref: '#/components/schemas/ClusterSummary'
+          readOnly: true
+          title: ' cluster'
+      required:
+      - _cluster
+      - cluster
+      - id
+      - requested
+    ResourceAllocationSummaryRequest:
+      type: object
+      description: Serializer for summarizing allocated service units in nested responses.
+      properties:
+        cluster:
+          type: integer
+        requested:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        awarded:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        final:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+      required:
+      - cluster
+      - requested
     RestrictedUser:
       type: object
       description: Object serializer for the `User` class with sensitive fields marked
@@ -14264,10 +14707,6 @@ components:
           type: string
           pattern: ^[\w.@+-]+$
           maxLength: 150
-        password:
-          type: string
-          writeOnly: true
-          maxLength: 128
         first_name:
           type: string
           nullable: true
@@ -14330,35 +14769,80 @@ components:
       - _membership
       - abbreviation
       - date_joined
+      - department
       - display_name
+      - email
+      - first_name
+      - groups
       - id
       - is_active
       - is_ldap_user
       - is_staff
+      - is_superuser
       - last_login
-      - password
+      - last_name
       - profile_image
+      - role
+      - user_permissions
       - username
-    ReviewStatusChoices:
-      enum:
-      - AP
-      - DC
-      - CR
-      type: string
-      description: |-
-        * `AP` - Approved
-        * `DC` - Declined
-        * `CR` - Changes Requested
-    RoleEnum:
-      enum:
-      - OW
-      - AD
-      - MB
-      type: string
-      description: |-
-        * `OW` - Owner
-        * `AD` - Admin
-        * `MB` - Member
+    RestrictedUserRequest:
+      type: object
+      description: Object serializer for the `User` class with sensitive fields marked
+        as read only.
+      properties:
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        username:
+          type: string
+          minLength: 1
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+        first_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          minLength: 1
+          maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+      required:
+      - password
+      - username
     TaskResult:
       type: object
       description: Object serializer for the `TaskResult` class.
@@ -14452,10 +14936,18 @@ components:
       - content_type
       - date_created
       - date_done
+      - date_started
       - id
       - meta
+      - periodic_task_name
       - result
+      - status
+      - task_args
       - task_id
+      - task_kwargs
+      - task_name
+      - traceback
+      - worker
     Team:
       type: object
       description: Object serializer for the `Team` model.
@@ -14493,9 +14985,22 @@ components:
       - _history
       - _membership
       - id
+      - is_active
       - name
       - slug
       - users
+    TeamRequest:
+      type: object
+      description: Object serializer for the `Team` model.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        is_active:
+          type: boolean
+      required:
+      - name
     TeamRole:
       type: object
       description: Serializer for summarizing team names and roles in nested responses.
@@ -14506,7 +15011,16 @@ components:
         team:
           type: integer
         role:
-          $ref: '#/components/schemas/RoleEnum'
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
         _team:
           allOf:
           - $ref: '#/components/schemas/TeamSummary'
@@ -14515,6 +15029,26 @@ components:
       required:
       - _team
       - id
+      - role
+      - team
+    TeamRoleRequest:
+      type: object
+      description: Serializer for summarizing team names and roles in nested responses.
+      properties:
+        team:
+          type: integer
+        role:
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
+      required:
       - role
       - team
     TeamSummary:
@@ -14537,6 +15071,24 @@ components:
       - id
       - name
       - slug
+    TeamSummaryRequest:
+      type: object
+      description: Serializer for summarizing team records in nested responses.
+      properties:
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        is_active:
+          type: boolean
+      required:
+      - name
+      - slug
     UserRole:
       type: object
       description: Serializer for summarizing team member usernames and roles in nested
@@ -14548,7 +15100,16 @@ components:
         user:
           type: integer
         role:
-          $ref: '#/components/schemas/RoleEnum'
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
         _user:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
@@ -14557,6 +15118,27 @@ components:
       required:
       - _user
       - id
+      - role
+      - user
+    UserRoleRequest:
+      type: object
+      description: Serializer for summarizing team member usernames and roles in nested
+        responses.
+      properties:
+        user:
+          type: integer
+        role:
+          enum:
+          - OW
+          - AD
+          - MB
+          type: string
+          description: |-
+            * `OW` - Owner
+            * `AD` - Admin
+            * `MB` - Member
+          x-spec-enum-id: 56df4cdb9958fe19
+      required:
       - role
       - user
     UserSummary:
@@ -14601,6 +15183,41 @@ components:
       - abbreviation
       - display_name
       - id
+      - username
+    UserSummaryRequest:
+      type: object
+      description: Serializer for summarizing user records in nested responses.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          minLength: 1
+          maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
+      required:
       - username
   securitySchemes:
     cookieAuth:

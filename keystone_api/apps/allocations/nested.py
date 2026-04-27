@@ -14,11 +14,11 @@ from .models import *
 
 __all__ = [
     'AllocationRequestSummarySerializer',
-    'AllocationInlineSerializer',
-    'AllocationSummarySerializer',
     'AttachmentSummarySerializer',
     'ClusterSummarySerializer',
     'CommentSummarySerializer',
+    'ResourceAllocationInlineSerializer',
+    'ResourceAllocationSummarySerializer',
 ]
 
 
@@ -32,7 +32,7 @@ class ClusterSummarySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'enabled']
 
 
-class AllocationInlineSerializer(serializers.Serializer):
+class ResourceAllocationInlineSerializer(serializers.Serializer):
     """Accepts cluster and requested service units for inline allocation creation."""
 
     cluster = serializers.PrimaryKeyRelatedField(
@@ -51,13 +51,13 @@ class AllocationRequestSummarySerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'status', 'active', 'expire']
 
 
-class AllocationSummarySerializer(serializers.ModelSerializer):
+class ResourceAllocationSummarySerializer(serializers.ModelSerializer):
     """Serializer for summarizing allocated service units in nested responses."""
 
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
 
     class Meta:
-        model = Allocation
+        model = ResourceAllocation
         fields = ['id', 'cluster', 'requested', 'awarded', 'final', '_cluster']
 
 
