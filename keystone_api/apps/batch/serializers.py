@@ -10,6 +10,7 @@ from rest_framework import serializers
 
 __all__ = [
     'JobExecutionErrorSerializer',
+    'JobRequestSerializer',
     'JobResultSerializer',
     'JobSerializer',
     'JobStepResultSerializer',
@@ -81,6 +82,12 @@ class JobSerializer(serializers.Serializer):
             raise serializers.ValidationError('Reference aliases must be unique within a job.')
 
         return value
+
+
+class JobRequestSerializer(serializers.Serializer):
+    """Outer envelope serializer for batch job requests."""
+
+    job = JobSerializer()
 
 
 class ReferenceResolutionErrorSerializer(serializers.Serializer):
