@@ -77,7 +77,6 @@ class AllocationRequestStatusChoicesView(GenericAPIView):
     create=extend_schema(
         tags=["Allocations - Requests"],
         summary="Create an allocation request.",
-        request=AllocationRequestCreateSerializer,
         description=(
             "Creates a new allocation request. "
             "Write access is granted to staff users and team owners/admins."
@@ -128,19 +127,6 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         'submitter',
         'team',
     )
-
-    def get_serializer_class(self):
-        """Return the appropriate data serializer based on the requested action."""
-
-        # Note: When generating OpenAPI specifications, schema decorators (including `extend_schema_view`)
-        # will not resolve dynamic serializer classes and will default to the VIewSet's`serializer_class`
-        # attribute. The decorators must be manually configured to identify the correct Serializer for
-        # each request type.
-
-        if self.action == 'create':
-            return AllocationRequestCreateSerializer
-
-        return AllocationRequestSerializer
 
 
 @extend_schema_view(
