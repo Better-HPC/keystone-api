@@ -13,21 +13,21 @@ from .models import *
 
 settings.JAZZMIN_SETTINGS['icons'].update({
     'allocations.Cluster': 'fa fa-server',
-    'allocations.Allocation': 'fas fa-coins',
+    'allocations.ResourceAllocation': 'fas fa-coins',
     'allocations.AllocationRequest': 'fa fa-file-alt',
 })
 
 settings.JAZZMIN_SETTINGS['order_with_respect_to'].extend([
     'allocations.Cluster',
     'allocations.AllocationRequest',
-    'allocations.Allocation'
+    'allocations.ResourceAllocation'
 ])
 
 
-class AllocationInline(admin.TabularInline):
-    """Inline admin interface for the `Allocation` model."""
+class ResourceAllocationInline(admin.TabularInline):
+    """Inline admin interface for the `ResourceAllocation` model."""
 
-    model = Allocation
+    model = ResourceAllocation
     show_change_link = True
     autocomplete_fields = ['cluster']
     extra = 1
@@ -88,9 +88,9 @@ class CommentInline(admin.StackedInline):
         return qs.select_related('user', 'request')
 
 
-@admin.register(Allocation)
-class AllocationAdmin(admin.ModelAdmin):
-    """Admin interface for the `Allocation` model."""
+@admin.register(ResourceAllocation)
+class ResourceAllocationAdmin(admin.ModelAdmin):
+    """Admin interface for the `ResourceAllocation` model."""
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         """Define the base database query used for fetching displayed records."""
@@ -100,28 +100,28 @@ class AllocationAdmin(admin.ModelAdmin):
 
     @staticmethod
     @admin.display(ordering='request__team__name')
-    def team(obj: Allocation) -> str:
+    def team(obj: ResourceAllocation) -> str:
         """Return the name of the user team the allocation is assigned to."""
 
         return obj.request.team.name
 
     @staticmethod
     @admin.display(ordering='request__title')
-    def request(obj: Allocation) -> str:
+    def request(obj: ResourceAllocation) -> str:
         """Return the title of the allocation's corresponding request."""
 
         return obj.request.title
 
     @staticmethod
     @admin.display(ordering='cluster__name')
-    def cluster(obj: Allocation) -> str:
+    def cluster(obj: ResourceAllocation) -> str:
         """Return the name of the cluster the allocation is assigned to."""
 
         return obj.cluster.name
 
     @staticmethod
     @admin.display(ordering='request__status')
-    def status(obj: Allocation) -> str:
+    def status(obj: ResourceAllocation) -> str:
         """Return the status of the corresponding allocation request."""
 
         return obj.request.StatusChoices(obj.request.status).label
@@ -155,7 +155,7 @@ class AllocationRequestAdmin(admin.ModelAdmin):
 
     @staticmethod
     @admin.display(ordering='team__name')
-    def team(obj: Allocation) -> str:
+    def team(obj: ResourceAllocation) -> str:
         """Return the name of the user team the allocation is assigned to."""
 
         return obj.team.name
@@ -181,7 +181,7 @@ class AllocationRequestAdmin(admin.ModelAdmin):
         ('status', admin.ChoicesFieldListFilter),
         ('assignees', admin.RelatedOnlyFieldListFilter)
     ]
-    inlines = [AllocationInline, AllocationReviewInline, AttachmentInline, CommentInline]
+    inlines = [ResourceAllocationInline, AllocationReviewInline, AttachmentInline, CommentInline]
 
 
 @admin.register(Cluster)

@@ -16,11 +16,11 @@ from apps.users.models import Team
 if TYPE_CHECKING:  # pragma: nocover
     from apps.allocations.models import Cluster
 
-__all__ = ['AllocationManager']
+__all__ = ['ResourceAllocationManager']
 
 
-class AllocationManager(Manager):
-    """Custom manager for the `Allocation` model.
+class ResourceAllocationManager(Manager):
+    """Custom manager for the `ResourceAllocation` model.
 
     Provides query methods for fetching approved, active, and expired allocations,
     as well as calculating service units and historical usage.
@@ -34,7 +34,7 @@ class AllocationManager(Manager):
             cluster: The cluster to retrieve allocations for.
 
         Returns:
-            A queryset of approved Allocation objects.
+            A queryset of approved ResourceAllocation objects.
         """
 
         return self.filter(request__team=account, cluster=cluster, request__status='AP')
@@ -49,7 +49,7 @@ class AllocationManager(Manager):
             cluster: The cluster to retrieve allocations for.
 
         Returns:
-            A queryset of active Allocation objects.
+            A queryset of active ResourceAllocation objects.
         """
 
         return self.approved_allocations(account, cluster).filter(
@@ -69,7 +69,7 @@ class AllocationManager(Manager):
             cluster: The cluster to retrieve allocations for.
 
         Returns:
-            A queryset of expired Allocation objects ordered by expiration date.
+            A queryset of expired ResourceAllocation objects ordered by expiration date.
         """
 
         return self.approved_allocations(account, cluster).filter(

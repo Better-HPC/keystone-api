@@ -1,8 +1,8 @@
-"""Unit tests for the `Allocation` class."""
+"""Unit tests for the `ResourceAllocation` class."""
 
 from django.test import TestCase
 
-from apps.allocations.factories import AllocationFactory, AllocationRequestFactory
+from apps.allocations.factories import ResourceAllocationFactory, AllocationRequestFactory
 from apps.users.factories import TeamFactory
 
 
@@ -13,7 +13,7 @@ class GetTeamMethod(TestCase):
         """Create mock user records"""
 
         self.team = TeamFactory()
-        self.allocation = AllocationFactory(
+        self.allocation = ResourceAllocationFactory(
             request=AllocationRequestFactory(team=self.team)
         )
 
