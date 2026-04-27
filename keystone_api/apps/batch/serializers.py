@@ -10,8 +10,8 @@ from rest_framework import serializers
 
 __all__ = [
     'JobExecutionErrorSerializer',
-    'JobResponseSerializer',
-    'JobRequestSerializer',
+    'JobResultSerializer',
+    'JobSerializer',
     'JobStepResultSerializer',
     'JobStepSerializer',
     'ReferenceResolutionErrorSerializer',
@@ -19,7 +19,7 @@ __all__ = [
 
 
 class JobExecutionErrorSerializer(serializers.Serializer):
-    """Object serializer for a batch job failure caused by a `JobExecutionError`."""
+    """Job result serializer for job's that fail with a `JobExecutionError`."""
 
     detail = serializers.CharField()
     step = serializers.IntegerField()
@@ -28,7 +28,7 @@ class JobExecutionErrorSerializer(serializers.Serializer):
 
 
 class JobStepResultSerializer(serializers.Serializer):
-    """Object serializer for the outcome of a single executed batch step."""
+    """Object serializer for the outcome of a single job step."""
 
     ref = serializers.CharField(allow_null=True)
     index = serializers.IntegerField()
@@ -38,14 +38,14 @@ class JobStepResultSerializer(serializers.Serializer):
     body = serializers.DictField()
 
 
-class JobResponseSerializer(serializers.Serializer):
-    """Object serializer for a successful batch job."""
+class JobResultSerializer(serializers.Serializer):
+    """Object serializer for the outcome of a batch job."""
 
     results = JobStepResultSerializer(many=True)
 
 
 class JobStepSerializer(serializers.Serializer):
-    """Object serializer for a single step within a batch job."""
+    """Object serializer for a single step within a user submitted job."""
 
     ref = serializers.CharField(required=False, default='', allow_blank=True)
     method = serializers.ChoiceField(choices=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
@@ -67,8 +67,8 @@ class JobStepSerializer(serializers.Serializer):
         return value
 
 
-class JobRequestSerializer(serializers.Serializer):
-    """Object serializer for a batch job comprising multiple steps."""
+class JobSerializer(serializers.Serializer):
+    """Object serializer for user submitted jobs comprising one or more steps."""
 
     dry_run = serializers.BooleanField(required=False, default=False)
     actions = JobStepSerializer(many=True, allow_empty=False)
@@ -84,7 +84,7 @@ class JobRequestSerializer(serializers.Serializer):
 
 
 class ReferenceResolutionErrorSerializer(serializers.Serializer):
-    """Object serializer for a batch job failure caused by a `ReferenceResolutionError`."""
+    """Job result serializer for job's that fail with a `ReferenceResolutionError`."""
 
     detail = serializers.CharField()
     token = serializers.CharField()

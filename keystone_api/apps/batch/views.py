@@ -32,16 +32,16 @@ class JobApiView(APIView):
             'Steps may reference the response body of previous steps using @ref{alias.dotpath} tokens. '
             'When `dry_run` is true, all steps execute but no database changes are persisted.'
         ),
-        request=JobRequestSerializer,
+        request=JobSerializer,
         responses={
-            status.HTTP_200_OK: JobResponseSerializer,
+            status.HTTP_200_OK: JobResultSerializer,
             status.HTTP_422_UNPROCESSABLE_ENTITY: JobExecutionErrorSerializer,
         },
     )
     def post(self, request) -> JsonResponse:
         """Execute all submitted steps atomically in a single transaction."""
 
-        serializer = JobRequestSerializer(data=request.data)
+        serializer = JobSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
