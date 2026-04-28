@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 from django.test import TestCase
 
-from apps.batch.exceptions import JobExecutionError
+from apps.batch.exceptions import JobExecutionError, ReferenceResolutionError
 from apps.batch.shortcuts import execute_job
 
 
@@ -15,16 +15,26 @@ class ExecuteJobFunction(TestCase):
     def test_returns_results_for_successful_steps(self, mock_execute_step: Mock) -> None:
         """Verify execute_job returns one result dict per step on success."""
 
-        mock_execute_step.return_value = (201, {'id': 1})
-        steps = [{'method': 'POST', 'path': '/items/', 'payload': {'name': 'x'}}]
+        mock_execute_step.side_effect = [(201, {'id': 1}), (200, {'id': 2}), ]
+        steps = [
+            {'method': 'POST', 'path': '/endpoint1/', 'payload': {'foo': 'x'}},
+            {'method': 'GET', 'path': '/endpoint2/', 'payload': {'bar': 'x'}}
+        ]
 
         results = execute_job(steps)
 
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['status'], 201)
-        self.assertEqual(results[0]['method'], 'POST')
-        self.assertEqual(results[0]['path'], '/items/')
-        self.assertIsNone(results[0]['ref'], 'Steps without a ref alias should record None')
+        self.assertEqual(len(results), 2)
+        result0, result1 = results
+
+        self.assertEqual(result0['status'], 201)
+        self.assertEqual(result0['method'], 'POST')
+        self.assertEqual(result0['path'], '/endpoint1/')
+        self.assertIsNone(result0['ref'], 'Steps without a ref alias should return None')
+
+        self.assertEqual(result1['status'], 200)
+        self.assertEqual(result1['method'], 'GET')
+        self.assertEqual(result1['path'], '/endpoint2/')
+        self.assertIsNone(result1['ref'], 'Steps without a ref alias should return None')
 
     def test_records_ref_alias_in_result(self, mock_execute_step: Mock) -> None:
         """Verify a step's ref alias is recorded in the result dict."""
@@ -37,7 +47,7 @@ class ExecuteJobFunction(TestCase):
         self.assertEqual(results[0]['ref'], 'created')
 
     def test_resolves_path_reference_from_previous_step(self, mock_execute_step: Mock) -> None:
-        """Verify @ref tokens in a later step's path are resolved from an earlier step's body."""
+        """Verify `@ref` tokens in a later step's path are resolved from an earlier step's body."""
 
         mock_execute_step.side_effect = [
             (201, {'id': 42}),
@@ -48,12 +58,50 @@ class ExecuteJobFunction(TestCase):
             {'method': 'GET', 'path': '/items/@ref{created.id}/'},
         ]
 
-        results = execute_job(steps)
+        execute_job(steps)
 
-        # Assert the second call used the resolved path
-        _, second_call_kwargs = mock_execute_step.call_args_list[1]
         second_path = mock_execute_step.call_args_list[1][0][1]
         self.assertEqual(second_path, '/items/42/')
+
+    def test_resolves_payload_reference_from_previous_step(self, mock_execute_step: Mock) -> None:
+        """Verify `@ref `tokens in a later step's payload are resolved from an earlier step's body."""
+
+        mock_execute_step.side_effect = [
+            (201, {'id': 7}),
+            (201, {}),
+        ]
+        steps = [
+            {'ref': 'parent', 'method': 'POST', 'path': '/parents/', 'payload': {}},
+            {'method': 'POST', 'path': '/children/', 'payload': {'parent_id': '@ref{parent.id}'}},
+        ]
+
+        execute_job(steps)
+
+        # Assert the second call's payload had the token resolved to the raw int
+        second_payload = mock_execute_step.call_args_list[1][0][2]
+        self.assertEqual(second_payload, {'parent_id': 7}, 'Whole-value @ref token should preserve int type')
+
+    def test_resolves_file_token_in_payload(self, mock_execute_step: Mock) -> None:
+        """Verify `@file` tokens in payloads are resolved against the supplied files dict."""
+
+        mock_execute_step.return_value = (201, {})
+        upload = Mock()
+        steps = [{'method': 'POST', 'path': '/uploads/', 'payload': {'file': '@file{doc}'}}]
+
+        execute_job(steps, files={'doc': upload})
+
+        resolved_payload = mock_execute_step.call_args_list[0][0][2]
+        self.assertIs(resolved_payload['file'], upload, 'File token should resolve to uploaded object')
+
+    def test_propagates_reference_resolution_error(self, mock_execute_step: Mock) -> None:
+        """Verify an unresolvable `@ref` token raises `ReferenceResolutionError` to the caller."""
+
+        steps = [{'method': 'GET', 'path': '/items/@ref{ghost.id}/'}]
+
+        with self.assertRaises(ReferenceResolutionError):
+            execute_job(steps)
+
+        mock_execute_step.assert_not_called()
 
     def test_raises_job_execution_error_on_4xx(self, mock_execute_step: Mock) -> None:
         """Verify a step returning a 4xx status raises `JobExecutionError`."""
@@ -73,18 +121,20 @@ class ExecuteJobFunction(TestCase):
         with self.assertRaises(JobExecutionError):
             execute_job(steps)
 
-    def test_dry_run_returns_results_without_committing(self, mock_execute_step: Mock) -> None:
-        """Verify dry_run=True returns results but rolls back the transaction."""
+    def test_failure_stops_subsequent_steps(self, mock_execute_step: Mock) -> None:
+        """Verify a failing step prevents later steps from executing."""
 
-        mock_execute_step.return_value = (201, {'id': 1})
-        steps = [{'method': 'POST', 'path': '/items/'}]
+        # Setup — second step would succeed if reached
+        mock_execute_step.side_effect = [(400, {'detail': 'bad'}), (200, {})]
+        steps = [
+            {'method': 'POST', 'path': '/a/'},
+            {'method': 'GET', 'path': '/b/'},
+        ]
 
-        # We verify results are still returned; DB rollback is tested implicitly
-        # via the DryRunRollbackError being swallowed internally.
-        results = execute_job(steps, dry_run=True)
+        with self.assertRaises(JobExecutionError):
+            execute_job(steps)
 
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]['status'], 201)
+        self.assertEqual(mock_execute_step.call_count, 1, 'Steps after a failure must not execute')
 
     def test_empty_steps_list_returns_empty_results(self, mock_execute_step: Mock) -> None:
         """Verify an empty step list produces an empty result list."""
@@ -104,6 +154,18 @@ class ExecuteJobFunction(TestCase):
 
         self.assertEqual(results[0]['index'], 1)
         self.assertEqual(results[1]['index'], 2)
+
+    def test_method_is_uppercased_before_dispatch(self, mock_execute_step: Mock) -> None:
+        """Verify a lowercase HTTP method in a step is normalized to uppercase."""
+
+        mock_execute_step.return_value = (200, {})
+        steps = [{'method': 'get', 'path': '/items/'}]
+
+        results = execute_job(steps)
+
+        forwarded_method = mock_execute_step.call_args_list[0][0][0]
+        self.assertEqual(forwarded_method, 'GET')
+        self.assertEqual(results[0]['method'], 'GET')
 
     def test_passes_user_to_execute_step(self, mock_execute_step: Mock) -> None:
         """Verify the `user` argument is forwarded to `execute_step` on every call."""
@@ -127,3 +189,33 @@ class ExecuteJobFunction(TestCase):
 
         _, kwargs = mock_execute_step.call_args
         self.assertEqual(kwargs.get('server_name'), 'api.example.com')
+
+    def test_job_execution_error_carries_step_context(self, mock_execute_step: Mock) -> None:
+        """Verify the raised `JobExecutionError` includes the failing step's index, method, and path."""
+
+        # Setup
+        mock_execute_step.side_effect = [(200, {}), (422, {'detail': 'invalid'})]
+        steps = [
+            {'method': 'GET', 'path': '/a/'},
+            {'method': 'POST', 'path': '/b/'},
+        ]
+
+        # Action / Assertion
+        with self.assertRaises(JobExecutionError) as context:
+            execute_job(steps)
+
+        message = str(context.exception)
+        self.assertIn('/b/', message, 'Error message should reference the failing path')
+
+    def test_step_without_payload_defaults_to_empty_dict(self, mock_execute_step: Mock) -> None:
+        """Verify a step omitting `payload` and `query_params` still dispatches successfully."""
+
+        mock_execute_step.return_value = (200, {})
+        steps = [{'method': 'GET', 'path': '/items/'}]
+
+        execute_job(steps)
+
+        forwarded_payload = mock_execute_step.call_args_list[0][0][2]
+        forwarded_query = mock_execute_step.call_args_list[0][0][3]
+        self.assertEqual(forwarded_payload, {})
+        self.assertEqual(forwarded_query, {})

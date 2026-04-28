@@ -1,12 +1,15 @@
 """Unit tests for the `resolve_references` function."""
 
+from unittest.mock import Mock
+
 from django.test import TestCase
 
+from apps.batch.exceptions import ReferenceResolutionError
 from apps.batch.shortcuts import resolve_references
 
 
 class ResolveReferencesFunction(TestCase):
-    """Test the resolution of `@ref` tokens within a data structure"""
+    """Test the resolution of `@ref` and `@file` tokens within a data structure."""
 
     def test_resolves_dict_values_recursively(self) -> None:
         """Verify all token-containing string values in a dict are resolved."""
@@ -31,6 +34,23 @@ class ResolveReferencesFunction(TestCase):
         result = resolve_references(data, result_map)
         self.assertEqual(result['users'][0]['name'], 'Alice')
 
+    def test_resolves_file_token_in_dict(self) -> None:
+        """Verify a @file token inside a dict value resolves to the uploaded object."""
+
+        upload = Mock()
+        data = {'attachment': '@file{doc}', 'name': 'cover'}
+        result = resolve_references(data, {}, files={'doc': upload})
+
+        self.assertIs(result['attachment'], upload, 'File token should resolve to uploaded object')
+        self.assertEqual(result['name'], 'cover')
+
+    def test_preserves_non_string_scalars_in_containers(self) -> None:
+        """Verify ints, bools, and None nested inside containers pass through unchanged."""
+
+        data = {'count': 5, 'active': True, 'note': None, 'tags': [1, 2]}
+        result = resolve_references(data, {})
+        self.assertEqual(result, {'count': 5, 'active': True, 'note': None, 'tags': [1, 2]})
+
     def test_scalar_passthrough(self) -> None:
         """Verify scalar values with no token pass through unchanged."""
 
@@ -45,3 +65,10 @@ class ResolveReferencesFunction(TestCase):
         """Verify an empty list resolves to an empty list."""
 
         self.assertEqual(resolve_references([], {}), [])
+
+    def test_raises_on_unresolvable_token_in_nested_structure(self) -> None:
+        """Verify an unresolvable token deep in the structure raises `ReferenceResolutionError`."""
+
+        data = {'outer': {'inner': ['@ref{ghost.id}']}}
+        with self.assertRaises(ReferenceResolutionError):
+            resolve_references(data, {})
