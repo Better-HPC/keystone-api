@@ -12,7 +12,7 @@ from apps.users.tasks import ldap_update_users
 class Command(BaseCommand):
     """Synchronize user accounts against LDAP."""
 
-    help = __doc__
+    help = "Synchronize user accounts against LDAP."
 
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
