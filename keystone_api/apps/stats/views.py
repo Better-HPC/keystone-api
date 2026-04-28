@@ -39,11 +39,11 @@ class AbstractTeamStatsView(ABC):
     Filters querysets so non-staff users only see statistics for teams
     they belong to. Staff users see statistics across all teams.
 
-    Subclasses must implement ``_summarize()`` to compute view-specific
-    statistics. THis class should be combined with ``GenericAPIView`` (or a
+    Subclasses must implement `_summarize()` to compute view-specific
+    statistics. This class should be combined with `GenericAPIView` (or a
     subclass) using multiple inheritance. This class must appear before
-    ``GenericAPIView`` in the MRO so that ``get_queryset`` correctly
-    calls through to the DRF base implementation via ``super()``.
+    `GenericAPIView` in the MRO so that `get_queryset` correctly
+    calls through to the DRF base implementation via `super()`.
     """
 
     @abstractmethod
@@ -65,6 +65,7 @@ class AbstractTeamStatsView(ABC):
 
         stats = self._summarize()
         serializer = self.serializer_class(stats)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
 
@@ -261,6 +262,7 @@ class NotificationStatsView(GenericAPIView):
             "unread": qs.filter(read=False).count(),
         })
 
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
 
