@@ -6,8 +6,8 @@ from apps.batch.exceptions import ReferenceResolutionError
 from apps.batch.shortcuts import traverse_dotpath
 
 
-class TraverseDotpathFunction(TestCase):
-    """Test the traversal of nested data structures using a dot-separated path."""
+class SuccessfulTraversal(TestCase):
+    """Test the successful traversal of nested data structures via a dotpath."""
 
     def test_resolves_top_level_dict_key(self) -> None:
         """Verify a single-segment path returns the matching dict value."""
@@ -42,6 +42,10 @@ class TraverseDotpathFunction(TestCase):
         data = {'user': {'name': 'Alice', 'age': 30}}
         result = traverse_dotpath(data, 'user', '@ref{step.user}')
         self.assertEqual(result, {'name': 'Alice', 'age': 30})
+
+
+class TraversalErrors(TestCase):
+    """Test the errors raised when a dotpath segment cannot be resolved."""
 
     def test_raises_on_missing_dict_key(self) -> None:
         """Verify a missing dict key raises `ReferenceResolutionError`."""
