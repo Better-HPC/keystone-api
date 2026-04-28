@@ -39,7 +39,7 @@ def _get_response_schema_names(result: dict) -> set[str]:
         result: The full OpenAPI schema dict from drf-spectacular.
 
     Returns:
-        A set of schema component names referenced in GET response bodies.
+        A set of schema component names referenced in any GET response body.
     """
 
     names = set()
