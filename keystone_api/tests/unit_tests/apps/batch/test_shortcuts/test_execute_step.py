@@ -9,24 +9,8 @@ from apps.batch.shortcuts import execute_step
 
 
 @patch('apps.batch.shortcuts.resolve')
-class ExecuteStepFunction(TestCase):
-    """Test the execution of a single batch step against the URL resolver."""
-
-    def test_invokes_resolved_view_with_request(self, mock_resolve: Mock) -> None:
-        """Verify the resolved view is called with the constructed request."""
-
-        view = Mock()
-        response = Mock()
-        response.status_code = 200
-        response.data = {'id': 1}
-        view.return_value = response
-        mock_resolve.return_value = Mock(func=view, args=(), kwargs={})
-
-        status_code, body = execute_step('GET', '/items/1/', {}, {})
-
-        self.assertEqual(status_code, 200)
-        self.assertEqual(body, {'id': 1})
-        view.assert_called_once()
+class UrlResolution(TestCase):
+    """Test the URL resolution behaviour of `execute_step`."""
 
     def test_strips_query_string_before_resolving_url(self, mock_resolve: Mock) -> None:
         """Verify the query string is stripped from the path before URL resolution."""
@@ -50,6 +34,45 @@ class ExecuteStepFunction(TestCase):
 
         self.assertEqual(status_code, 404)
         self.assertIn('detail', body, '404 fallback should include a detail message')
+
+
+@patch('apps.batch.shortcuts.resolve')
+class ViewDispatch(TestCase):
+    """Test that the resolved view is invoked correctly with the constructed request."""
+
+    def test_invokes_resolved_view_with_request(self, mock_resolve: Mock) -> None:
+        """Verify the resolved view is called with the constructed request."""
+
+        view = Mock()
+        response = Mock()
+        response.status_code = 200
+        response.data = {'id': 1}
+        view.return_value = response
+        mock_resolve.return_value = Mock(func=view, args=(), kwargs={})
+
+        status_code, body = execute_step('GET', '/items/1/', {}, {})
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(body, {'id': 1})
+        view.assert_called_once()
+
+    def test_passes_url_kwargs_to_view(self, mock_resolve: Mock) -> None:
+        """Verify URL-captured kwargs are forwarded as keyword arguments to the view."""
+
+        view = Mock()
+        response = Mock(status_code=200, data={})
+        view.return_value = response
+        mock_resolve.return_value = Mock(func=view, args=(), kwargs={'pk': '7'})
+
+        execute_step('GET', '/items/7/', {}, {})
+
+        _, kwargs = view.call_args
+        self.assertEqual(kwargs.get('pk'), '7', 'URL-captured kwargs must reach the view')
+
+
+@patch('apps.batch.shortcuts.resolve')
+class ResponseHandling(TestCase):
+    """Test how `execute_step` handles the response returned by the resolved view."""
 
     def test_renders_response_when_render_method_present(self, mock_resolve: Mock) -> None:
         """Verify response.render() is invoked on renderable responses."""
@@ -76,16 +99,3 @@ class ExecuteStepFunction(TestCase):
 
         self.assertEqual(status_code, 204)
         self.assertIsNone(body)
-
-    def test_passes_url_kwargs_to_view(self, mock_resolve: Mock) -> None:
-        """Verify URL-captured kwargs are forwarded as keyword arguments to the view."""
-
-        view = Mock()
-        response = Mock(status_code=200, data={})
-        view.return_value = response
-        mock_resolve.return_value = Mock(func=view, args=(), kwargs={'pk': '7'})
-
-        execute_step('GET', '/items/7/', {}, {})
-
-        _, kwargs = view.call_args
-        self.assertEqual(kwargs.get('pk'), '7', 'URL-captured kwargs must reach the view')
