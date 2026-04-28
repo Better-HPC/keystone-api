@@ -74,8 +74,6 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
 class RestrictedUserSerializer(PrivilegedUserSerializer):
     """Object serializer for the `User` class with sensitive fields marked as read only."""
 
-    _membership = TeamRoleSerializer(source="membership", many=True, read_only=True)
-
     class Meta:
         """Serializer settings."""
 
