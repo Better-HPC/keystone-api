@@ -22,8 +22,7 @@ __all__ = [
     'build_request',
     'execute_job',
     'execute_step',
-    'lookup_alias',
-    'resolve_references',
+    'resolve_payload',
     'resolve_value',
     'traverse_dotpath',
 ]
@@ -79,30 +78,6 @@ def traverse_dotpath(data: Any, dotpath: str, token: str) -> Any:
     return current
 
 
-def lookup_alias(alias: str, dotpath: str, token: str, result_map: dict[str, dict]) -> Any:
-    """Resolve a single alias and dotpath against the result map.
-
-    Args:
-        alias: The step alias to look up.
-        dotpath: The dot-separated path into that step's response body.
-        token: The original token string, used for error messages.
-        result_map: A mapping of step aliases to their response bodies.
-
-    Returns:
-        The resolved value.
-
-    Raises:
-        ReferenceResolutionError: If the alias is unknown or the path cannot be traversed.
-    """
-
-    if alias not in result_map:
-        raise ReferenceResolutionError(
-            token, f'Alias "{alias}" has not been defined by a previous step'
-        )
-
-    return traverse_dotpath(result_map[alias], dotpath, token)
-
-
 def _resolve_token(match: re.Match, result_map: dict[str, dict], files: dict | None) -> Any:
     """Resolve a single matched `@file` or `@ref` token to its target value.
 
@@ -131,7 +106,12 @@ def _resolve_token(match: re.Match, result_map: dict[str, dict], files: dict | N
         return files[body]
 
     alias, dotpath = body.split('.', 1)
-    return lookup_alias(alias, dotpath, token, result_map)
+    if alias not in result_map:
+        raise ReferenceResolutionError(
+            token, f'Alias "{alias}" has not been defined by a previous step'
+        )
+
+    return traverse_dotpath(result_map[alias], dotpath, token)
 
 
 def resolve_value(value: str, result_map: dict[str, dict], files: dict | None = None) -> Any:
@@ -172,7 +152,7 @@ def resolve_value(value: str, result_map: dict[str, dict], files: dict | None = 
     return _TOKEN_PATTERN.sub(lambda m: str(_resolve_token(m, result_map, files)), value)
 
 
-def resolve_references(data: Any, result_map: dict[str, dict], files: dict | None = None) -> Any:
+def resolve_payload(data: Any, result_map: dict[str, dict], files: dict | None = None) -> Any:
     """Recursively resolve all `@ref` and `@file` tokens within a data structure.
 
     Walks dictionaries, lists, and scalar values. String values are
@@ -192,10 +172,10 @@ def resolve_references(data: Any, result_map: dict[str, dict], files: dict | Non
     """
 
     if isinstance(data, dict):
-        return {key: resolve_references(value, result_map, files) for key, value in data.items()}
+        return {key: resolve_payload(value, result_map, files) for key, value in data.items()}
 
     if isinstance(data, list):
-        return [resolve_references(item, result_map, files) for item in data]
+        return [resolve_payload(item, result_map, files) for item in data]
 
     if isinstance(data, str):
         return resolve_value(data, result_map, files)
@@ -386,8 +366,8 @@ def execute_job(
                 query_params = step.get('query_params', {})
 
                 # Resolve symbolic references in the path and payload
-                resolved_path = resolve_references(path, result_map, files)
-                resolved_payload = resolve_references(payload, result_map, files)
+                resolved_path = resolve_payload(path, result_map, files)
+                resolved_payload = resolve_payload(payload, result_map, files)
 
                 logger.info('Executing job step %s: %s %s', index, method, resolved_path)
                 status_code, body = execute_step(
