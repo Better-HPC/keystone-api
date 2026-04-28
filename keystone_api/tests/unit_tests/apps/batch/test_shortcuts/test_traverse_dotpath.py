@@ -13,35 +13,35 @@ class SuccessfulTraversal(TestCase):
         """Verify a single-segment path returns the matching dict value."""
 
         result = traverse_dotpath({'id': 42}, 'id', '@ref{step.id}')
-        self.assertEqual(result, 42)
+        self.assertEqual(42, result)
 
     def test_resolves_nested_dict_path(self) -> None:
         """Verify a multi-segment dotpath walks nested dicts correctly."""
 
         data = {'user': {'name': 'Alice'}}
         result = traverse_dotpath(data, 'user.name', '@ref{step.user.name}')
-        self.assertEqual(result, 'Alice')
+        self.assertEqual('Alice', result)
 
     def test_resolves_list_index(self) -> None:
         """Verify an integer segment indexes into a list."""
 
         data = {'results': [{'id': 1}, {'id': 2}]}
         result = traverse_dotpath(data, 'results.1.id', '@ref{step.results.1.id}')
-        self.assertEqual(result, 2)
+        self.assertEqual(2, result)
 
     def test_resolves_mixed_dict_and_list_path(self) -> None:
         """Verify a dotpath alternating between dicts and lists resolves correctly."""
 
         data = {'items': [{'tags': ['a', 'b', 'c']}]}
         result = traverse_dotpath(data, 'items.0.tags.2', '@ref{step.items.0.tags.2}')
-        self.assertEqual(result, 'c')
+        self.assertEqual('c', result)
 
     def test_resolves_to_nested_container(self) -> None:
         """Verify a dotpath ending at a nested container returns that container."""
 
         data = {'user': {'name': 'Alice', 'age': 30}}
         result = traverse_dotpath(data, 'user', '@ref{step.user}')
-        self.assertEqual(result, {'name': 'Alice', 'age': 30})
+        self.assertEqual({'name': 'Alice', 'age': 30}, result)
 
 
 class TraversalErrors(TestCase):

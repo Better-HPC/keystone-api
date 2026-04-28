@@ -17,7 +17,7 @@ class WholeValueRefTokenResolution(TestCase):
         result_map = {'step1': {'count': 3}}
         result = resolve_value('@ref{step1.count}', result_map)
 
-        self.assertEqual(result, 3)
+        self.assertEqual(3, result)
         self.assertIsInstance(result, int, 'Whole-value token should preserve the original type')
 
     def test_resolves_whole_value_token_to_list(self) -> None:
@@ -26,7 +26,7 @@ class WholeValueRefTokenResolution(TestCase):
         result_map = {'step1': {'tags': ['a', 'b']}}
         result = resolve_value('@ref{step1.tags}', result_map)
 
-        self.assertEqual(result, ['a', 'b'])
+        self.assertEqual(['a', 'b'], result)
         self.assertIsInstance(result, list, 'Whole-value token should preserve list type')
 
     def test_resolves_whole_value_bool_token(self) -> None:
@@ -45,14 +45,14 @@ class EmbeddedRefTokenSubstitution(TestCase):
 
         result_map = {'step1': {'id': 99}}
         result = resolve_value('/items/@ref{step1.id}/detail', result_map)
-        self.assertEqual(result, '/items/99/detail')
+        self.assertEqual('/items/99/detail', result)
 
     def test_resolves_multiple_embedded_tokens(self) -> None:
         """Verify multiple tokens within a single string are all substituted."""
 
         result_map = {'a': {'x': 'foo'}, 'b': {'y': 'bar'}}
         result = resolve_value('@ref{a.x}-@ref{b.y}', result_map)
-        self.assertEqual(result, 'foo-bar')
+        self.assertEqual('foo-bar', result)
 
 
 class FileTokenResolution(TestCase):
@@ -107,4 +107,4 @@ class PassthroughBehaviour(TestCase):
     def test_returns_string_without_token_unchanged(self) -> None:
         """Verify plain strings with no `@ref` token pass through unchanged."""
 
-        self.assertEqual(resolve_value('hello', {}), 'hello')
+        self.assertEqual('hello', resolve_value('hello', {}))

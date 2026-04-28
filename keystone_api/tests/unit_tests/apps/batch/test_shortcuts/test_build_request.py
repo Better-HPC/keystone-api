@@ -18,8 +18,8 @@ class ContentTypeSelection(TestCase):
 
         request = build_request('POST', '/items/', {'name': 'x'}, {})
 
-        self.assertEqual(request.META['CONTENT_TYPE'], 'application/json')
-        self.assertEqual(json.loads(request.body), {'name': 'x'})
+        self.assertEqual('application/json', request.META['CONTENT_TYPE'])
+        self.assertEqual({'name': 'x'}, json.loads(request.body))
 
     def test_multipart_payload_sets_multipart_content_type(self) -> None:
         """Verify a payload containing a file object is sent as multipart/form-data."""
@@ -28,21 +28,21 @@ class ContentTypeSelection(TestCase):
         upload.name = 'sample.txt'
         request = build_request('POST', '/items/', {'file': upload, 'name': 'x'}, {})
 
-        self.assertEqual(request.META['CONTENT_TYPE'], MULTIPART_CONTENT)
+        self.assertEqual(MULTIPART_CONTENT, request.META['CONTENT_TYPE'])
 
     def test_empty_payload_serialized_as_empty_object(self) -> None:
         """Verify an empty payload is serialized as an empty JSON object."""
 
         request = build_request('POST', '/items/', {}, {})
 
-        self.assertEqual(request.body, b'{}')
+        self.assertEqual(b'{}', request.body)
 
     def test_none_payload_serialized_as_empty_object(self) -> None:
         """Verify a `None` payload is serialized as an empty JSON object."""
 
         request = build_request('POST', '/items/', None, {})
 
-        self.assertEqual(request.body, b'{}')
+        self.assertEqual(b'{}', request.body)
 
 
 class QueryParamEncoding(TestCase):
@@ -61,7 +61,7 @@ class QueryParamEncoding(TestCase):
         request = build_request('GET', '/items/', {}, {'tag': ['a', 'b']})
 
         query_string = request.META['QUERY_STRING']
-        self.assertIn('tag=a,b', query_string)
+        self.assertIn('tag=a&tag=b', query_string)
 
 
 class AuthenticationAttachment(TestCase):
@@ -103,4 +103,4 @@ class ServerNameApplication(TestCase):
 
         request = build_request('GET', '/items/', {}, {}, server_name='api.example.com')
 
-        self.assertEqual(request.META['SERVER_NAME'], 'api.example.com')
+        self.assertEqual('api.example.com', request.META['SERVER_NAME'])

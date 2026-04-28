@@ -26,16 +26,16 @@ class ResultShape(TestCase):
 
         results = execute_job(steps)
 
-        self.assertEqual(len(results), 2)
+        self.assertEqual(2, len(results))
         result0, result1 = results
 
-        self.assertEqual(result0['status'], 201)
-        self.assertEqual(result0['method'], 'POST')
-        self.assertEqual(result0['path'], '/endpoint1/')
+        self.assertEqual(201, result0['status'])
+        self.assertEqual('POST', result0['method'])
+        self.assertEqual('/endpoint1/', result0['path'])
 
-        self.assertEqual(result1['status'], 200)
-        self.assertEqual(result1['method'], 'GET')
-        self.assertEqual(result1['path'], '/endpoint2/')
+        self.assertEqual(200, result1['status'])
+        self.assertEqual('GET', result1['method'])
+        self.assertEqual('/endpoint2/', result1['path'])
 
     def test_step_index_is_one_based(self, mock_execute_step: Mock) -> None:
         """Verify step result indices start at 1, not 0."""
@@ -45,8 +45,8 @@ class ResultShape(TestCase):
 
         results = execute_job(steps)
 
-        self.assertEqual(results[0]['index'], 1)
-        self.assertEqual(results[1]['index'], 2)
+        self.assertEqual(1, results[0]['index'])
+        self.assertEqual(2, results[1]['index'])
 
     def test_step_without_alias_returns_none(self, mock_execute_step: Mock) -> None:
         """Verify steps without a ref alias record None in the result dict."""
@@ -66,7 +66,7 @@ class ResultShape(TestCase):
 
         results = execute_job(steps)
 
-        self.assertEqual(results[0]['ref'], 'created')
+        self.assertEqual('created', results[0]['ref'])
 
     def test_empty_steps_list_returns_empty_results(self, mock_execute_step: Mock) -> None:
         """Verify an empty step list produces an empty result list."""
@@ -74,7 +74,7 @@ class ResultShape(TestCase):
         results = execute_job([])
 
         mock_execute_step.assert_not_called()
-        self.assertEqual(results, [])
+        self.assertEqual([], results)
 
 
 @patch('apps.batch.shortcuts.execute_step')
@@ -90,8 +90,8 @@ class InputNormalization(TestCase):
         results = execute_job(steps)
 
         method, *_ = mock_execute_step.call_args_list[0].args
-        self.assertEqual(method, 'GET')
-        self.assertEqual(results[0]['method'], 'GET')
+        self.assertEqual('GET', method)
+        self.assertEqual('GET', results[0]['method'])
 
     def test_step_without_payload_defaults_to_empty_dict(self, mock_execute_step: Mock) -> None:
         """Verify a step omitting `payload` and `query_params` still dispatches successfully."""
@@ -102,8 +102,8 @@ class InputNormalization(TestCase):
         execute_job(steps)
 
         _method, _path, payload, query_params = mock_execute_step.call_args_list[0].args
-        self.assertEqual(payload, {})
-        self.assertEqual(query_params, {})
+        self.assertEqual({}, payload)
+        self.assertEqual({}, query_params)
 
 
 @patch('apps.batch.shortcuts.execute_step')
@@ -120,7 +120,7 @@ class ArgumentForwarding(TestCase):
         execute_job(steps, user=mock_user)
 
         _, kwargs = mock_execute_step.call_args
-        self.assertEqual(kwargs.get('user'), mock_user)
+        self.assertEqual(mock_user, kwargs.get('user'))
 
     def test_passes_server_name_to_execute_step(self, mock_execute_step: Mock) -> None:
         """Verify the `server_name` argument is forwarded to `execute_step`."""
@@ -131,7 +131,7 @@ class ArgumentForwarding(TestCase):
         execute_job(steps, server_name='api.example.com')
 
         _, kwargs = mock_execute_step.call_args
-        self.assertEqual(kwargs.get('server_name'), 'api.example.com')
+        self.assertEqual('api.example.com', kwargs.get('server_name'))
 
 
 @patch('apps.batch.shortcuts.execute_step')
@@ -153,7 +153,7 @@ class RefTokenResolution(TestCase):
         execute_job(steps)
 
         _method, path, *_ = mock_execute_step.call_args_list[1].args
-        self.assertEqual(path, '/items/42/')
+        self.assertEqual('/items/42/', path)
 
     def test_resolves_payload_reference_from_previous_step(self, mock_execute_step: Mock) -> None:
         """Verify `@ref` tokens in a later step's payload are resolved from an earlier step's body."""
@@ -170,7 +170,7 @@ class RefTokenResolution(TestCase):
         execute_job(steps)
 
         _method, _path, payload, _query_params = mock_execute_step.call_args_list[1].args
-        self.assertEqual(payload, {'parent_id': 7}, 'Whole-value @ref token should preserve int type')
+        self.assertEqual({'parent_id': 7}, payload, 'Whole-value @ref token should preserve int type')
 
     def test_propagates_reference_resolution_error(self, mock_execute_step: Mock) -> None:
         """Verify an unresolvable `@ref` token raises `ReferenceResolutionError` to the caller."""
@@ -247,4 +247,4 @@ class ErrorHandling(TestCase):
         with self.assertRaises(JobExecutionError):
             execute_job(steps)
 
-        self.assertEqual(mock_execute_step.call_count, 1, 'Steps after a failure must not execute')
+        self.assertEqual(1, mock_execute_step.call_count, 'Steps after a failure must not execute')

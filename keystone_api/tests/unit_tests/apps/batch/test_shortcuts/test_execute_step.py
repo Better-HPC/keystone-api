@@ -23,7 +23,7 @@ class UrlResolution(TestCase):
         execute_step('GET', '/items/', {}, {'page': 2})
 
         resolved_path = mock_resolve.call_args[0][0]
-        self.assertEqual(resolved_path, '/items/', 'Query string must be stripped before resolve()')
+        self.assertEqual('/items/', resolved_path, 'Query string must be stripped before resolve()')
 
     def test_returns_404_for_unmatched_route(self, mock_resolve: Mock) -> None:
         """Verify an unmatched URL returns a 404 status with a detail body."""
@@ -32,7 +32,7 @@ class UrlResolution(TestCase):
 
         status_code, body = execute_step('GET', '/nonexistent/', {}, {})
 
-        self.assertEqual(status_code, 404)
+        self.assertEqual(404, status_code)
         self.assertIn('detail', body, '404 fallback should include a detail message')
 
 
@@ -52,8 +52,8 @@ class ViewDispatch(TestCase):
 
         status_code, body = execute_step('GET', '/items/1/', {}, {})
 
-        self.assertEqual(status_code, 200)
-        self.assertEqual(body, {'id': 1})
+        self.assertEqual(200, status_code)
+        self.assertEqual({'id': 1}, body)
         view.assert_called_once()
 
     def test_passes_url_kwargs_to_view(self, mock_resolve: Mock) -> None:
@@ -67,7 +67,7 @@ class ViewDispatch(TestCase):
         execute_step('GET', '/items/7/', {}, {})
 
         _, kwargs = view.call_args
-        self.assertEqual(kwargs.get('pk'), '7', 'URL-captured kwargs must reach the view')
+        self.assertEqual('7', kwargs.get('pk'), 'URL-captured kwargs must reach the view')
 
 
 @patch('apps.batch.shortcuts.resolve')
@@ -97,5 +97,5 @@ class ResponseHandling(TestCase):
 
         status_code, body = execute_step('DELETE', '/items/1/', {}, {})
 
-        self.assertEqual(status_code, 204)
+        self.assertEqual(204, status_code)
         self.assertIsNone(body)
