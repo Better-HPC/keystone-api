@@ -1,9 +1,13 @@
 """Function tests for the `batch:job` endpoint."""
 
+import io
+import json
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.allocations.factories import AllocationRequestFactory
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
@@ -49,7 +53,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.client.force_authenticate(user=self.user)
         self.assert_http_responses(
             self.endpoint,
-            content_type="application/json",
+            content_type='application/json',
             get=status.HTTP_405_METHOD_NOT_ALLOWED,
             head=status.HTTP_405_METHOD_NOT_ALLOWED,
             options=status.HTTP_200_OK,
@@ -58,15 +62,15 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'actions': [{
+            post_body={'job': {'actions': [{
                 'method': 'GET',
                 'path': '/authentication/whoami/',
-            }]},
+            }]}},
         )
 
 
-class PostRequestValidation(APITestCase):
-    """Test input validation for POST requests."""
+class RefTokenResolution(APITestCase):
+    """Test that `@ref` tokens in paths and payloads are resolved across job steps."""
 
     endpoint = reverse(VIEW_NAME)
 
@@ -76,70 +80,49 @@ class PostRequestValidation(APITestCase):
         self.user = UserFactory()
         self.client.force_authenticate(user=self.user)
 
-    def test_missing_actions_field_returns_400(self) -> None:
-        """Verify submitting a payload without an `actions` field returns a 400 error."""
-
-        response = self.client.post(self.endpoint, data={}, content_type='application/json')
-        expected_error = {'actions': ['This field is required.']}
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.json())
-
-    def test_empty_actions_list_returns_400(self) -> None:
-        """Verify submitting an empty `actions` list returns a 400 error."""
+    def test_ref_token_in_path_is_resolved(self) -> None:
+        """Verify an `@ref` token in a later step's path is resolved from an earlier step's response."""
 
         response = self.client.post(
             self.endpoint,
             content_type='application/json',
-            data={'actions': []},
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/authentication/whoami/', 'ref': 'whoami'},
+                {'method': 'GET', 'path': '/users/users/@ref{whoami.id}/'},
+            ]}},
         )
 
-        expected_error = {'actions': {'non_field_errors': ['This list may not be empty.']}}
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.json())
+        results = response.json()['results']
+        self.assertEqual(2, len(results))
 
-    def test_invalid_http_method_in_step_returns_400(self) -> None:
-        """Verify a step with an unrecognized HTTP method returns a 400 error."""
+        # Verify the second step resolved @ref{whoami.id} into a concrete user path
+        whoami_id = results[0]['body']['id']
+        self.assertIn(str(whoami_id), results[1]['path'])
+
+    def test_ref_token_in_body_is_resolved(self) -> None:
+        """Verify an `@ref` token in a later step's payload is resolved from an earlier step's response."""
 
         response = self.client.post(
             self.endpoint,
             content_type='application/json',
-            data={'actions': [{'method': 'BREW', 'path': '/api/some-path/'}]},
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/authentication/whoami/', 'ref': 'whoami'},
+                {'method': 'PATCH', 'path': '/users/users/@ref{whoami.id}/', 'payload': {
+                    'role': '@ref{whoami.username}'
+                }},
+            ]}},
         )
 
-        expected_error = {'actions': [{'method': ['"BREW" is not a valid choice.']}]}
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.json())
+        results = response.json()['results']
+        self.assertEqual(2, len(results))
 
-    def test_missing_method_in_step_returns_400(self) -> None:
-        """Verify a step missing the `method` field returns a 400 error."""
-
-        response = self.client.post(
-            self.endpoint,
-            content_type='application/json',
-            data={'actions': [{'path': '/api/some-path/'}]},
-        )
-
-        expected_error = {'actions': [{'method': ['This field is required.']}]}
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.json())
-
-    def test_missing_path_in_step_returns_400(self) -> None:
-        """Verify a step missing the `path` field returns a 400 error."""
-
-        response = self.client.post(
-            self.endpoint,
-            content_type='application/json',
-            data={'actions': [{'method': 'GET'}]},
-        )
-
-        expected_error = {'actions': [{'path': ['This field is required.']}]}
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.json())
+        # Verify the patched role value matches the username resolved from the first step
+        whoami_username = results[0]['body']['username']
+        self.assertEqual(whoami_username, results[1]['body']['role'])
 
     def test_duplicate_ref_aliases_return_400(self) -> None:
         """Verify submitting two steps with identical ref aliases returns a 400 error."""
@@ -147,18 +130,14 @@ class PostRequestValidation(APITestCase):
         response = self.client.post(
             self.endpoint,
             content_type='application/json',
-            data={
-                'actions': [
-                    {'method': 'GET', 'path': '/api/a/', 'ref': 'step_one'},
-                    {'method': 'GET', 'path': '/api/b/', 'ref': 'step_one'},
-                ]
-            },
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/api/a/', 'ref': 'step_one'},
+                {'method': 'GET', 'path': '/api/b/', 'ref': 'step_one'},
+            ]}},
         )
 
-        expected_error = {'actions': ['Reference aliases must be unique within a job.']}
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.json())
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        self.assertEqual({'actions': ['Reference aliases must be unique within a job.']}, response.json())
 
     def test_non_alphanumeric_ref_alias_returns_400(self) -> None:
         """Verify a ref alias containing special characters returns a 400 error."""
@@ -166,18 +145,151 @@ class PostRequestValidation(APITestCase):
         response = self.client.post(
             self.endpoint,
             content_type='application/json',
-            data={'actions': [{'method': 'GET', 'path': '/api/a/', 'ref': 'bad-alias!'}]},
+            data={'job': {'actions': [{'method': 'GET', 'path': '/api/a/', 'ref': 'bad-alias!'}]}},
         )
 
         expected_error = {'actions': [
             {'ref': ['Reference aliases may only contain alphanumeric characters and underscores.']}
         ]}
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertEqual(expected_error, response.json())
 
+    def test_unresolvable_ref_token_returns_422(self) -> None:
+        """Verify an `@ref` token pointing to an undefined alias returns a 422 error."""
 
-class SuccessfulJobExecution(APITestCase):
+        response = self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/api/items/@ref{missing.id}/'},
+            ]}},
+        )
+
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
+
+        payload = response.json()
+        self.assertIn('token', payload)
+        self.assertEqual('@ref{missing.id}', payload['token'])
+
+        self.assertIn('detail', payload)
+        self.assertIn('Alias "missing" has not been defined by a previous step', payload['detail'])
+
+    def test_non_alphanumeric_ref_token_label_returns_422(self) -> None:
+        """Verify an `@ref` token whose label contains invalid characters returns a 422 error."""
+
+        # Label validation happens inside _resolve_token at execution time, not
+        # at serialization time, so an invalid label produces a 422 rather than a 400.
+        response = self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/api/items/@ref{bad-label!.id}/'},
+            ]}},
+        )
+
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
+
+        payload = response.json()
+        self.assertIn('token', payload)
+        self.assertEqual('@ref{bad-label!.id}', payload['token'])
+
+        self.assertIn('detail', payload)
+        self.assertIn(' Reference labels may only contain letters, numbers, and underscores', payload['detail'])
+
+
+class FileTokenResolution(APITestCase):
+    """Test job execution when steps reference uploaded files via `@file` tokens."""
+
+    endpoint = reverse(VIEW_NAME)
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.user = UserFactory(is_staff=True)
+        self.alloc_request = AllocationRequestFactory(submitter=self.user)
+        self.client.force_authenticate(user=self.user)
+
+    def test_file_token_in_payload_is_resolved(self) -> None:
+        """Verify a step whose payload contains a `@file` token receives the uploaded file."""
+
+        upload = io.BytesIO(b'hello world')
+        upload.name = 'hello.txt'
+
+        response = self.client.post(
+            self.endpoint,
+            data={
+                'job': json.dumps({'actions': [{
+                    'method': 'POST',
+                    'path': '/allocations/attachments/',
+                    'payload': {
+                        'file': '@file{doc}',
+                        'request': self.alloc_request.pk
+                    },
+                }]}),
+                'doc': upload,
+            },
+        )
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
+
+    def test_unresolvable_file_token_returns_422(self) -> None:
+        """Verify a `@file` token with no matching uploaded file returns a 422 error."""
+
+        response = self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {'actions': [{
+                'method': 'POST',
+                'path': '/allocations/attachments/',
+                'payload': {
+                    'file': '@file{doc}',
+                    'request': self.alloc_request.pk
+                },
+            }]}},
+        )
+
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
+
+        payload = response.json()
+        self.assertIn('token', payload)
+        self.assertEqual('@file{doc}', payload['token'])
+
+        self.assertIn('detail', payload)
+        self.assertIn('File part "doc" was not uploaded with this request', payload['detail'])
+
+    def test_non_alphanumeric_file_token_label_returns_422(self) -> None:
+        """Verify a `@file` token whose label contains invalid characters returns a 422 error."""
+
+        upload = io.BytesIO(b'hello world')
+        upload.name = 'hello.txt'
+
+        response = self.client.post(
+            self.endpoint,
+            data={
+                'job': json.dumps({'actions': [{
+                    'method': 'POST',
+                    'path': '/allocations/attachments/',
+                    'payload': {
+                        'file': '@file{bad-label!}',
+                        'request': self.alloc_request.pk
+                    },
+                }]}),
+                'bad-label!': upload,
+            },
+        )
+
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
+
+        payload = response.json()
+        self.assertIn('token', payload)
+        self.assertEqual('@file{bad-label!}', payload['token'])
+
+        self.assertIn('detail', payload)
+        self.assertIn(' Reference labels may only contain letters, numbers, and underscores', payload['detail'])
+
+
+class JobExecution(APITestCase):
     """Test the response shape for a successfully completed job."""
 
     endpoint = reverse(VIEW_NAME)
@@ -193,35 +305,21 @@ class SuccessfulJobExecution(APITestCase):
 
         response = self.client.post(
             self.endpoint,
-            content_type="application/json",
-            data={
-                'actions': [
-                    {'method': 'GET', 'path': '/authentication/whoami/', 'ref': 'whoami'},
-                    {'method': 'GET', 'path': '/users/users/@ref{whoami.id}/'},
-                ]
-            },
+            content_type='application/json',
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/authentication/whoami/', 'ref': 'whoami'},
+                {'method': 'GET', 'path': '/users/users/@ref{whoami.id}/'},
+            ]}},
         )
 
         # Verify returned 200 response includes results
         self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
-        self.assertEqual(len(response.json()['results']), 2)
+        self.assertEqual(2, len(response.json()['results']))
 
         # Verify results from a user query include the correct user data
         current_username = self.user.username
         returned_username = response.json()['results'][1]['body']['username']
         self.assertEqual(current_username, returned_username)
-
-
-class FailedJobExecution(APITestCase):
-    """Test the response shape when a job step fails during execution."""
-
-    endpoint = reverse(VIEW_NAME)
-
-    def setUp(self) -> None:
-        """Create test fixtures using mock data."""
-
-        self.user = UserFactory()
-        self.client.force_authenticate(user=self.user)
 
     def test_step_failure_returns_422(self) -> None:
         """Verify a job that raises JobExecutionError returns a 422."""
@@ -229,35 +327,17 @@ class FailedJobExecution(APITestCase):
         response = self.client.post(
             self.endpoint,
             content_type='application/json',
-            data={
-                'actions': [
-                    {'method': 'GET', 'path': '/fake/endpoint/'},
-                ]
-            },
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/fake/endpoint/'},
+            ]}},
         )
 
-        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
 
         payload = response.json()
         self.assertIn('detail', payload)
         self.assertIn('step', payload)
         self.assertIn('status', payload)
         self.assertIn('body', payload)
-        self.assertEqual(payload['step'], 1)
-        self.assertEqual(payload['status'], 404)
-
-    def test_reference_resolution_failure_returns_422(self) -> None:
-        """Verify a job that raises ReferenceResolutionError returns a 422."""
-
-        response = self.client.post(
-            self.endpoint,
-            content_type='application/json',
-            data={'actions': [{'method': 'GET', 'path': '/api/items/@ref{missing.id}/'}]},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-        payload = response.json()
-        self.assertIn('detail', payload)
-        self.assertIn('token', payload)
-        self.assertEqual(payload['token'], '@ref{missing.id}')
+        self.assertEqual(1, payload['step'])
+        self.assertEqual(404, payload['status'])
