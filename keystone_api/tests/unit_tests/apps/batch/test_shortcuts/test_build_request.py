@@ -10,8 +10,8 @@ from django.test.client import MULTIPART_CONTENT
 from apps.batch.shortcuts import build_request
 
 
-class BuildRequestFunction(TestCase):
-    """Test the construction of DRF request objects from job step parameters."""
+class ContentTypeSelection(TestCase):
+    """Test the content-type chosen based on whether the payload contains file objects."""
 
     def test_json_payload_sets_json_content_type(self) -> None:
         """Verify a payload with no file objects is sent as application/json."""
@@ -30,21 +30,6 @@ class BuildRequestFunction(TestCase):
 
         self.assertEqual(request.META['CONTENT_TYPE'], MULTIPART_CONTENT)
 
-    def test_query_params_appended_to_path(self) -> None:
-        """Verify query params are URL-encoded and appended to the request path."""
-
-        request = build_request('GET', '/items/', {}, {'page': 2, 'size': 10})
-
-        self.assertEqual('page=2&size=10', request.META['QUERY_STRING'])
-
-    def test_query_params_support_list_values(self) -> None:
-        """Verify list-valued query params are encoded as a CSV."""
-
-        request = build_request('GET', '/items/', {}, {'tag': ['a', 'b']})
-
-        query_string = request.META['QUERY_STRING']
-        self.assertIn('tag=a,b', query_string)
-
     def test_empty_payload_serialized_as_empty_object(self) -> None:
         """Verify an empty payload is serialized as an empty JSON object."""
 
@@ -59,12 +44,37 @@ class BuildRequestFunction(TestCase):
 
         self.assertEqual(request.body, b'{}')
 
-    def test_server_name_is_applied(self) -> None:
-        """Verify the server_name argument sets the request HTTP_HOST/SERVER_NAME."""
 
-        request = build_request('GET', '/items/', {}, {}, server_name='api.example.com')
+class QueryParamEncoding(TestCase):
+    """Test the encoding of query parameters onto the request path."""
 
-        self.assertEqual(request.META['SERVER_NAME'], 'api.example.com')
+    def test_query_params_appended_to_path(self) -> None:
+        """Verify query params are URL-encoded and appended to the request path."""
+
+        request = build_request('GET', '/items/', {}, {'page': 2, 'size': 10})
+
+        self.assertEqual('page=2&size=10', request.META['QUERY_STRING'])
+
+    def test_query_list_formatting(self) -> None:
+        """Verify list-valued query params are encoded as a CSV."""
+
+        request = build_request('GET', '/items/', {}, {'tag': ['a', 'b']})
+
+        query_string = request.META['QUERY_STRING']
+        self.assertIn('tag=a,b', query_string)
+
+
+class AuthenticationAttachment(TestCase):
+    """Test the attachment of authenticated users to the constructed request."""
+
+    def test_authenticated_user_is_attached(self) -> None:
+        """Verify an authenticated user is associated with the request."""
+
+        user = Mock()
+        user.is_authenticated = True
+        request = build_request('GET', '/items/', {}, {}, user=user)
+
+        self.assertIs(request._force_auth_user, user)
 
     def test_unauthenticated_user_is_not_attached(self) -> None:
         """Verify unauthenticated users are not associated with the request."""
@@ -77,18 +87,20 @@ class BuildRequestFunction(TestCase):
         # The attribute's absence indicates no auth was forced
         self.assertFalse(hasattr(request, '_force_auth_user'))
 
-    def test_authenticated_user_is_attached(self) -> None:
-        """Verify an authenticated user is associated with the request."""
-
-        user = Mock()
-        user.is_authenticated = True
-        request = build_request('GET', '/items/', {}, {}, user=user)
-
-        self.assertIs(request._force_auth_user, user)
-
     def test_none_user_is_not_attached(self) -> None:
         """Verify a `None` user results in no user being associated with the request."""
 
         request = build_request('GET', '/items/', {}, {}, user=None)
 
         self.assertFalse(hasattr(request, '_force_auth_user'))
+
+
+class ServerNameApplication(TestCase):
+    """Test the application of the server_name argument to the constructed request."""
+
+    def test_server_name_is_applied(self) -> None:
+        """Verify the server_name argument sets the request HTTP_HOST/SERVER_NAME."""
+
+        request = build_request('GET', '/items/', {}, {}, server_name='api.example.com')
+
+        self.assertEqual(request.META['SERVER_NAME'], 'api.example.com')
