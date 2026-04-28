@@ -19,10 +19,13 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from .exceptions import *
 
 __all__ = [
+    'build_request',
     'execute_job',
+    'execute_step',
+    'lookup_alias',
     'resolve_references',
     'resolve_value',
-    'traverse_dotpath'
+    'traverse_dotpath',
 ]
 
 logger = logging.getLogger(__name__)
