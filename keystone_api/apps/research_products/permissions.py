@@ -21,7 +21,6 @@ class IsTeamMember(permissions.BasePermission):
 
     Permissions:
         - Grants read and write access to team members.
-        - Grants read and write access to staff.
     """
 
     @staticmethod
@@ -51,6 +50,4 @@ class IsTeamMember(permissions.BasePermission):
     def has_object_permission(self, request: Request, view: View, obj: Grant | Publication) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        is_staff = request.user.is_staff
-        is_team_member = request.user in obj.team.get_all_members()
-        return is_team_member or is_staff
+        return request.user in obj.team.get_all_members()
