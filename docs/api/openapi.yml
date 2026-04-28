@@ -3497,13 +3497,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AllocationRequestCreateRequest'
+              $ref: '#/components/schemas/AllocationRequestRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AllocationRequestCreateRequest'
+              $ref: '#/components/schemas/AllocationRequestRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AllocationRequestCreateRequest'
+              $ref: '#/components/schemas/AllocationRequestRequest'
         required: true
       security:
       - tokenAuth: []
@@ -3513,7 +3513,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllocationRequestCreate'
+                $ref: '#/components/schemas/AllocationRequest'
           description: ''
   /allocations/requests/{id}/:
     get:
@@ -4145,6 +4145,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestrictedUser'
           description: ''
+  /batch/:
+    post:
+      operationId: batch_create
+      description: Executes multiple HTTP operations atomically within a single atomic
+        transaction. If any step returns a 4xx or 5xx status, the job halts and all
+        changes are rolled back. Steps may reference the response body of previous
+        steps using @ref{alias.dotpath} tokens. File parts uploaded alongside the
+        job definition may be referenced in step payloads using @file{name} tokens,
+        where `name` is the multipart field name. When `dry_run` is true, all steps
+        execute but no database changes are persisted.
+      summary: Execute a batch job.
+      tags:
+      - Utils - Batch Processing
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobRequestRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobRequestRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResult'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobExecutionError'
+          description: ''
   /config/:
     get:
       operationId: config_retrieve
@@ -4153,7 +4191,7 @@ paths:
         settings.
       summary: Retrieve application configuration.
       tags:
-      - Configuration
+      - Utils - Configuration
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -12050,211 +12088,6 @@ components:
       - submitter
       - team
       - title
-    AllocationRequestCreate:
-      type: object
-      description: |-
-        Object serializer for creating `AllocationRequest` instances.
-
-        Supports an optional `allocations` field, allowing callers to submit an
-        allocation request and its associated resource allocations in a single
-        POST request.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        _submitter:
-          allOf:
-          - $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' submitter'
-        _team:
-          allOf:
-          - $ref: '#/components/schemas/TeamSummary'
-          readOnly: true
-          title: ' team'
-        _assignees:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserSummary'
-          readOnly: true
-          title: ' assignees'
-        _publications:
-          type: array
-          items:
-            $ref: '#/components/schemas/PublicationSummary'
-          readOnly: true
-          title: ' publications'
-        _grants:
-          type: array
-          items:
-            $ref: '#/components/schemas/GrantSummary'
-          readOnly: true
-          title: ' grants'
-        _history:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogSummary'
-          readOnly: true
-          title: ' history'
-        _allocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResourceAllocationSummary'
-          readOnly: true
-          title: ' allocations'
-        _attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/AttachmentSummary'
-          readOnly: true
-          title: ' attachments'
-        _comments:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommentSummary'
-          readOnly: true
-          title: ' comments'
-        attachments:
-          type: array
-          items:
-            type: string
-            format: uri
-          maxItems: 15
-        title:
-          type: string
-          maxLength: 250
-        description:
-          type: string
-          maxLength: 20000
-        submitted:
-          type: string
-          format: date-time
-          readOnly: true
-        active:
-          type: string
-          format: date
-          nullable: true
-        expire:
-          type: string
-          format: date
-          nullable: true
-        status:
-          enum:
-          - PD
-          - AP
-          - DC
-          - CR
-          type: string
-          description: |-
-            * `PD` - Pending
-            * `AP` - Approved
-            * `DC` - Declined
-            * `CR` - Changes Requested
-          x-spec-enum-id: 0f4bc72b4a7635f9
-        submitter:
-          type: integer
-          nullable: true
-        team:
-          type: integer
-        assignees:
-          type: array
-          items:
-            type: integer
-        publications:
-          type: array
-          items:
-            type: integer
-        grants:
-          type: array
-          items:
-            type: integer
-      required:
-      - _allocations
-      - _assignees
-      - _attachments
-      - _comments
-      - _grants
-      - _history
-      - _publications
-      - _submitter
-      - _team
-      - description
-      - id
-      - submitted
-      - submitter
-      - team
-      - title
-    AllocationRequestCreateRequest:
-      type: object
-      description: |-
-        Object serializer for creating `AllocationRequest` instances.
-
-        Supports an optional `allocations` field, allowing callers to submit an
-        allocation request and its associated resource allocations in a single
-        POST request.
-      properties:
-        allocations:
-          type: array
-          items:
-            $ref: '#/components/schemas/ResourceAllocationInlineRequest'
-          writeOnly: true
-        attachments:
-          type: array
-          items:
-            type: string
-            format: binary
-          maxItems: 15
-        title:
-          type: string
-          minLength: 1
-          maxLength: 250
-        description:
-          type: string
-          minLength: 1
-          maxLength: 20000
-        active:
-          type: string
-          format: date
-          nullable: true
-        expire:
-          type: string
-          format: date
-          nullable: true
-        status:
-          enum:
-          - PD
-          - AP
-          - DC
-          - CR
-          type: string
-          description: |-
-            * `PD` - Pending
-            * `AP` - Approved
-            * `DC` - Declined
-            * `CR` - Changes Requested
-          x-spec-enum-id: 0f4bc72b4a7635f9
-        submitter:
-          type: integer
-          nullable: true
-        team:
-          type: integer
-        assignees:
-          type: array
-          items:
-            type: integer
-        publications:
-          type: array
-          items:
-            type: integer
-        grants:
-          type: array
-          items:
-            type: integer
-      required:
-      - description
-      - submitter
-      - team
-      - title
     AllocationRequestRequest:
       type: object
       description: |-
@@ -13168,6 +13001,56 @@ components:
       - start_date
       - team
       - title
+    JobExecutionError:
+      type: object
+      description: Job result serializer for job's that fail with a `JobExecutionError`.
+      properties:
+        detail:
+          type: string
+        step:
+          type: integer
+        status:
+          type: integer
+        body:
+          type: object
+          additionalProperties: {}
+      required:
+      - body
+      - detail
+      - status
+      - step
+    JobRequest:
+      type: object
+      description: Object serializer for user submitted jobs comprising one or more
+        steps.
+      properties:
+        dry_run:
+          type: boolean
+          default: false
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStepRequest'
+      required:
+      - actions
+    JobRequestRequest:
+      type: object
+      description: Outer envelope serializer for batch job requests.
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRequest'
+      required:
+      - job
+    JobResult:
+      type: object
+      description: Object serializer for the outcome of a batch job.
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStepResult'
+      required:
+      - results
     JobStats:
       type: object
       description: Object serializer for the `JobStats` class.
@@ -13290,6 +13173,66 @@ components:
       - team
       - updated_at
       - username
+    JobStepRequest:
+      type: object
+      description: Object serializer for a single step within a user submitted job.
+      properties:
+        ref:
+          type: string
+          default: ''
+        method:
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          type: string
+          description: |-
+            * `GET` - GET
+            * `POST` - POST
+            * `PUT` - PUT
+            * `PATCH` - PATCH
+            * `DELETE` - DELETE
+          x-spec-enum-id: 867bf764d3b1eeaa
+        path:
+          type: string
+          minLength: 1
+          maxLength: 2048
+        payload:
+          type: object
+          additionalProperties: {}
+        query_params:
+          type: object
+          additionalProperties: {}
+      required:
+      - method
+      - path
+    JobStepResult:
+      type: object
+      description: Object serializer for the outcome of a single job step.
+      properties:
+        ref:
+          type: string
+          nullable: true
+        index:
+          type: integer
+        method:
+          type: string
+        path:
+          type: string
+        status:
+          type: integer
+        body:
+          type: object
+          additionalProperties: {}
+      required:
+      - body
+      - index
+      - method
+      - path
+      - ref
+      - status
     LoginRequest:
       type: object
       description: Data serializer for validating user credentials.
@@ -14554,32 +14497,6 @@ components:
       - final
       - id
       - request
-      - requested
-    ResourceAllocationInline:
-      type: object
-      description: Accepts cluster and requested service units for inline allocation
-        creation.
-      properties:
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          minimum: 0
-      required:
-      - cluster
-      - requested
-    ResourceAllocationInlineRequest:
-      type: object
-      description: Accepts cluster and requested service units for inline allocation
-        creation.
-      properties:
-        cluster:
-          type: integer
-        requested:
-          type: integer
-          minimum: 0
-      required:
-      - cluster
       - requested
     ResourceAllocationRequest:
       type: object

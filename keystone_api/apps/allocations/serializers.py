@@ -10,7 +10,6 @@ from mimetypes import guess_type
 
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
-from django.db import transaction
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
@@ -22,7 +21,6 @@ from .models import *
 from .nested import *
 
 __all__ = [
-    'AllocationRequestCreateSerializer',
     'AllocationRequestSerializer',
     'AllocationReviewSerializer',
     'ResourceAllocationSerializer',
@@ -71,56 +69,6 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
             qs = qs.filter(private=False)
 
         return CommentSummarySerializer(qs, many=True).data
-
-
-class AllocationRequestCreateSerializer(AllocationRequestSerializer):
-    """Object serializer for creating `AllocationRequest` instances.
-
-    Supports an optional `allocations` field, allowing callers to submit an
-    allocation request and its associated resource allocations in a single
-    POST request.
-    """
-
-    allocations = ResourceAllocationInlineSerializer(many=True, required=False, write_only=True)
-    attachments = serializers.ListField(
-        required=False,
-        max_length=settings.MAX_FILE_COUNT,
-        child=serializers.FileField(allow_empty_file=True)
-    )
-
-    @transaction.atomic
-    def create(self, validated_data: dict) -> AllocationRequest:
-        """Create an AllocationRequest and optionally its associated Allocations.
-
-        Allocation data is popped from the validated payload before the request
-        is created.  Allocations are then bulk-created and linked to the new
-        request inside the same database transaction.
-        """
-
-        allocations_data = validated_data.pop('allocations', [])
-        attachments_data = validated_data.pop('attachments', [])
-        allocation_request = super().create(validated_data)
-
-        if allocations_data:
-            ResourceAllocation.objects.bulk_create([
-                ResourceAllocation(
-                    request=allocation_request,
-                    cluster=alloc['cluster'],
-                    requested=alloc['requested'],
-                )
-                for alloc in allocations_data
-            ])
-
-        for file in attachments_data:
-            attachment_serializer = AttachmentSerializer(data={
-                'file': file,
-                'request': allocation_request.pk,
-            })
-
-            attachment_serializer.is_valid(raise_exception=True)
-            attachment_serializer.save()
-
-        return allocation_request
 
 
 class AllocationReviewSerializer(serializers.ModelSerializer):

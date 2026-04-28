@@ -20,7 +20,7 @@ __all__ = ['ConfigView']
 
 @extend_schema_view(
     get=extend_schema(
-        tags=["Configuration"],
+        tags=["Utils - Configuration"],
         summary="Retrieve application configuration.",
         description=(
             "Returns application settings relevant to the frontend client. "
