@@ -1,4 +1,4 @@
-"""Unit tests for the `traverse` function."""
+"""Unit tests for the `traverse_dotpath` function."""
 
 from django.test import TestCase
 
@@ -6,8 +6,8 @@ from apps.batch.exceptions import ReferenceResolutionError
 from apps.batch.shortcuts import traverse_dotpath
 
 
-class TraverseMethod(TestCase):
-    """Tes the traversal of nested data structures using a dot-separated path"""
+class TraverseDotpathFunction(TestCase):
+    """Test the traversal of nested data structures using a dot-separated path."""
 
     def test_resolves_top_level_dict_key(self) -> None:
         """Verify a single-segment path returns the matching dict value."""
@@ -28,6 +28,20 @@ class TraverseMethod(TestCase):
         data = {'results': [{'id': 1}, {'id': 2}]}
         result = traverse_dotpath(data, 'results.1.id', '@ref{step.results.1.id}')
         self.assertEqual(result, 2)
+
+    def test_resolves_mixed_dict_and_list_path(self) -> None:
+        """Verify a dotpath alternating between dicts and lists resolves correctly."""
+
+        data = {'items': [{'tags': ['a', 'b', 'c']}]}
+        result = traverse_dotpath(data, 'items.0.tags.2', '@ref{step.items.0.tags.2}')
+        self.assertEqual(result, 'c')
+
+    def test_resolves_to_nested_container(self) -> None:
+        """Verify a dotpath ending at a nested container returns that container."""
+
+        data = {'user': {'name': 'Alice', 'age': 30}}
+        result = traverse_dotpath(data, 'user', '@ref{step.user}')
+        self.assertEqual(result, {'name': 'Alice', 'age': 30})
 
     def test_raises_on_missing_dict_key(self) -> None:
         """Verify a missing dict key raises `ReferenceResolutionError`."""
@@ -52,3 +66,12 @@ class TraverseMethod(TestCase):
 
         with self.assertRaises(ReferenceResolutionError):
             traverse_dotpath({'val': 99}, 'val.nested', '@ref{step.val.nested}')
+
+    def test_error_message_includes_token(self) -> None:
+        """Verify the raised error preserves the original token for diagnostic context."""
+
+        token = '@ref{step.missing}'
+        with self.assertRaises(ReferenceResolutionError) as context:
+            traverse_dotpath({'a': 1}, 'missing', token)
+
+        self.assertIn(token, str(context.exception), 'Original token should appear in error message')
