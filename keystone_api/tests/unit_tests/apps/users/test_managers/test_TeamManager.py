@@ -2,7 +2,8 @@
 
 from django.test import TestCase
 
-from apps.users.models import Membership, Team, User
+from apps.users.factories import MembershipFactory
+from apps.users.models import Team, User
 
 
 class TeamsForUserMethod(TestCase):
@@ -14,19 +15,16 @@ class TeamsForUserMethod(TestCase):
         self.test_user = User.objects.create(username='test_user')
 
         # Team where the test user is an owner
-        self.team1 = Team.objects.create(name='Team 1')
-        self.team1.add_or_update_member(self.test_user, role=Membership.Role.OWNER)
+        self.team1 = MembershipFactory(user=self.test_user).team
 
         # Team where the test user is an admin
-        self.team2 = Team.objects.create(name='Team 2')
-        self.team2.add_or_update_member(self.test_user, role=Membership.Role.ADMIN)
+        self.team2 = MembershipFactory(user=self.test_user).team
 
         # Team where the test user is an unprivileged member
-        self.team3 = Team.objects.create(name='Team 3')
-        self.team3.add_or_update_member(self.test_user, role=Membership.Role.MEMBER)
+        self.team3 = MembershipFactory(user=self.test_user).team
 
         # Team where the test user has no role
-        self.team4 = Team.objects.create(name='Team 4')
+        self.team4 = Team.objects.create()
 
     def test_teams_for_user(self) -> None:
         """Verify all teams are returned for a test user."""

@@ -94,29 +94,6 @@ class Team(models.Model):
             Membership.Role.OWNER
         ])
 
-    def add_or_update_member(self, user: 'User', role: str = Membership.Role.MEMBER) -> Membership:
-        """Add a user to the team with the specified role.
-
-        If the user is already a member, their role will be updated.
-
-        Args:
-            user: The user to add to the team.
-            role: The role to assign to the user. Defaults to 'Member'.
-
-        Returns:
-            The team membership record
-        """
-
-        membership_query = Membership.objects.filter(user=user, team=self)
-        if membership_query.exists():
-            record = membership_query.first()
-            record.role = role
-            record.save()
-            return record
-
-        else:
-            return Membership.objects.create(user=user, team=self, role=role)
-
     def save(self, *args, **kwargs):
         """Persist the record to the database.
 
