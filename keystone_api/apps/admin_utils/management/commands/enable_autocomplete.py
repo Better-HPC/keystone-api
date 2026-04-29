@@ -1,4 +1,4 @@
-"""A Django management command that enables Bash autocompletion for the keystone-api command."""
+"""A Django management command that enables autocompletion for the `keystone-api` command."""
 
 import shutil
 from pathlib import Path
