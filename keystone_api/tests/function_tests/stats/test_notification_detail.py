@@ -48,6 +48,7 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
+        self.assertEqual(200, response.status_code, response.content)
         self.assertEqual(len(self.user_1_records), stats["total"])
 
     def test_staff_user_statistics(self) -> None:
@@ -57,6 +58,7 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
+        self.assertEqual(200, response.status_code, response.content)
         self.assertEqual(len(self.all_records), stats["total"])
 
     def test_user_filtered_statistics(self) -> None:
@@ -66,4 +68,5 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint, query_params={"user": self.user_1.id})
 
         stats = response.json()
+        self.assertEqual(200, response.status_code, response.content)
         self.assertEqual(len(self.user_1_records), stats["total"])

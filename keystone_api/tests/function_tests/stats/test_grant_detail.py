@@ -52,6 +52,7 @@ class TeamGrantFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
+        self.assertEqual(200, response.status_code, response.content)
         self.assertEqual(len(self.team_1_records), stats["grant_count"])
 
     def test_staff_user_statistics(self) -> None:
@@ -61,6 +62,7 @@ class TeamGrantFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
+        self.assertEqual(200, response.status_code, response.content)
         self.assertEqual(len(self.all_records), stats["grant_count"])
 
     def test_team_filtered_statistics(self) -> None:
@@ -70,4 +72,5 @@ class TeamGrantFiltering(APITestCase):
         response = self.client.get(self.endpoint, query_params={"team": self.team_1.id})
 
         stats = response.json()
+        self.assertEqual(200, response.status_code, response.content)
         self.assertEqual(len(self.team_1_records), stats["grant_count"])
