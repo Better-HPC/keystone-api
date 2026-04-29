@@ -210,7 +210,7 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     model = AllocationReview
     team_field = 'request__team'
 
-    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, AllocationReviewPermissions]
     search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
     serializer_class = AllocationReviewSerializer
     queryset = AllocationReview.objects.prefetch_related(
@@ -257,7 +257,7 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create a resource allocation.",
         description=(
             "Creates a new resource allocation. "
-            "Write access is restricted to staff users."
+            "Write access is granted to staff users and team administrators."
         ),
     ),
     update=extend_schema(
@@ -293,7 +293,7 @@ class ResourceAllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     serializer_class = ResourceAllocationSerializer
     search_fields = ['request__team__name', 'request__title', 'cluster__name']
-    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, RequestChildPermissions]
     queryset = ResourceAllocation.objects.prefetch_related(
         'history'
     ).select_related(
@@ -325,7 +325,7 @@ class ResourceAllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create a file attachment.",
         description=(
             "Creates a new file attachment on an allocation request. "
-            "Write access is restricted to staff users."
+            "Write access is granted to staff users and team administrators."
         ),
     ),
     update=extend_schema(
@@ -359,9 +359,8 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     model = Attachment
     team_field = 'request__team'
 
-    permission_classes = [IsAuthenticated, StaffWriteMemberRead]
+    permission_classes = [IsAuthenticated, RequestChildPermissions]
     search_fields = ['path', 'request__title', 'request__submitter']
-    serializer_class = AttachmentSerializer
     queryset = Attachment.objects.prefetch_related(
         'history'
     ).select_related(
@@ -580,7 +579,7 @@ class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
 
     model = JobStats
 
-    permission_classes = [IsAuthenticated, MemberReadOnly]
+    permission_classes = [IsAuthenticated, JobStatsPermissions]
     search_fields = ['account', 'username', 'group', 'team__name']
     serializer_class = JobStatsSerializer
     queryset = JobStats.objects.select_related(
