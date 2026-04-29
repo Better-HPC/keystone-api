@@ -55,7 +55,7 @@ class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
 
     Permissions:
         - Grants read access to all team members.
-        - Grants write access to team administrators.
+        - Grants create/update access to team administrators.
         - Grants full access to staff users.
     """
 
@@ -108,7 +108,8 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
     """Grant write permissions to users in the same team as the requested object.
 
     Permissions:
-        - Grants write access to team members and staff users.
+        - Grants write access staff users.
+        - Grants write access team members creating public comments.
     """
 
     def has_permission(self, request: Request, view: View) -> bool:
@@ -140,6 +141,7 @@ class MemberReadOnly(PermissionUtils, permissions.BasePermission):
 
     Permissions:
         - Grants read access to users in the same team as the requested object.
+        - Grants read access to staff users.
     """
 
     def has_permission(self, request: Request, view: View) -> bool:
