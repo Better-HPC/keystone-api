@@ -16,13 +16,15 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     """Test endpoint user permissions.
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
-    Permissions depend on whether the user is a member of the record's associated team.
+    Permissions depend on the user's role within the team owning the accessed record.
 
     | Authentication              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |-----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User        | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
     | Authenticated non-member    | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Team member                 | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team admin                  | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team owner                  | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
     | Staff User                  | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
@@ -33,6 +35,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.team = self.allocation.request.team
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
+        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
+        self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
@@ -51,7 +55,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_401_UNAUTHORIZED,
             patch=status.HTTP_401_UNAUTHORIZED,
             delete=status.HTTP_401_UNAUTHORIZED,
-            trace=status.HTTP_401_UNAUTHORIZED
+            trace=status.HTTP_401_UNAUTHORIZED,
         )
 
     def test_non_team_member_permissions(self) -> None:
@@ -71,7 +75,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
     def test_team_member_permissions(self) -> None:
-        """Verify team members have read-only permissions against their own group records."""
+        """Verify team members have read-only access."""
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
@@ -83,7 +87,39 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             put=status.HTTP_403_FORBIDDEN,
             patch=status.HTTP_403_FORBIDDEN,
             delete=status.HTTP_403_FORBIDDEN,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def test_team_admin_permissions(self) -> None:
+        """Verify team admins have read-only access."""
+
+        self.client.force_authenticate(user=self.team_admin)
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def test_team_owner_permissions(self) -> None:
+        """Verify team owners have read-only access."""
+
+        self.client.force_authenticate(user=self.team_owner)
+        self.assert_http_responses(
+            self.endpoint,
+            get=status.HTTP_200_OK,
+            head=status.HTTP_200_OK,
+            options=status.HTTP_200_OK,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
+            put=status.HTTP_403_FORBIDDEN,
+            patch=status.HTTP_403_FORBIDDEN,
+            delete=status.HTTP_403_FORBIDDEN,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -100,6 +136,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'cluster': 1, 'request': 1, 'requested': 1000},
-            patch_body={'awarded': 1000}
+            put_body={'cluster': self.allocation.cluster.pk, 'request': self.allocation.request.pk, 'requested': 1000},
+            patch_body={'awarded': 1000},
         )
