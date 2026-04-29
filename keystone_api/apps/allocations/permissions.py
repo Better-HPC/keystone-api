@@ -69,12 +69,11 @@ class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        # Staff have all permissions.
+        # Staff have all permissions. Read is always allowed
         if self.user_is_staff(request) or self.is_read_only(request):
             return True
 
         # For create: only allow if the requesting user is an admin of the target team.
-        # Deny creation if the target team cannot be resolved.
         if self.is_create(view):
             try:
                 team_id = request.data.get('team')
@@ -85,7 +84,8 @@ class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
 
             return self.user_is_team_admin(request, team)
 
-        return False
+        # Non-create write requests pass through so the router can issue a 405
+        return True
 
     def has_object_permission(self, request: Request, view: View, obj: AllocationRequest) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
@@ -204,15 +204,11 @@ class RequestChildPermissions(PermissionUtils, permissions.BasePermission):
     def has_permission(self, request: Request, view: View) -> bool:
         """Return whether the request has permissions to access the requested resource."""
 
-        # Staff have all permissions.
-        if self.user_is_staff(request):
-            return True
-
-        if self.is_read_only(request):
+        # Staff have all permissions. Read is always allowed.
+        if self.user_is_staff(request) or self.is_read_only(request):
             return True
 
         # For create: only allow if the requesting user is an admin of the target team.
-        # Deny creation if the parent AllocationRequest cannot be resolved.
         if self.is_create(view):
             try:
                 alloc_request_id = request.data.get('request')
@@ -224,7 +220,8 @@ class RequestChildPermissions(PermissionUtils, permissions.BasePermission):
 
             return self.user_is_team_admin(request, team)
 
-        return False
+        # Non-create write requests pass through so the router can issue a 405
+        return True
 
     def has_object_permission(self, request: Request, view: View, obj: TeamModelInterface) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
