@@ -19,7 +19,7 @@ __all__ = [
 
 
 class NotificationPermissions(BasePermission):
-    """Grant read-only access to users accessing their own notifications.
+    """Grant access to users accessing their own notifications.
 
     Permissions:
         - Grants read and patch access to users accessing their own notifications.

@@ -39,11 +39,11 @@ class AbstractTeamStatsView(ABC):
     Filters querysets so non-staff users only see statistics for teams
     they belong to. Staff users see statistics across all teams.
 
-    Subclasses must implement ``_summarize()`` to compute view-specific
-    statistics. THis class should be combined with ``GenericAPIView`` (or a
+    Subclasses must implement `_summarize()` to compute view-specific
+    statistics. This class should be combined with `GenericAPIView` (or a
     subclass) using multiple inheritance. This class must appear before
-    ``GenericAPIView`` in the MRO so that ``get_queryset`` correctly
-    calls through to the DRF base implementation via ``super()``.
+    `GenericAPIView` in the MRO so that `get_queryset` correctly
+    calls through to the DRF base implementation via `super()`.
     """
 
     @abstractmethod
@@ -64,7 +64,8 @@ class AbstractTeamStatsView(ABC):
         """Return statistics calculated from records matching user permissions and query params."""
 
         stats = self._summarize()
-        serializer = self.serializer_class(stats)
+        serializer = self.serializer_class(data=stats)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
 
@@ -146,15 +147,15 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
             "request_active_count": request_active_count,
             "request_expired_count": request_expired_count,
 
-            "su_pending_total": su_pending_total,
-            "su_declined_total": su_declined_total,
-            "su_approved_total": su_approved_total,
-            "su_upcoming_total": su_upcoming_total,
-            "su_active_total": su_active_total,
-            "su_expired_total": su_expired_total,
-            "su_requested_total": su_requested_total,
-            "su_awarded_total": su_awarded_total,
-            "su_finalized_total": su_finalized_total,
+            "su_pending_total": round(su_pending_total, 2),
+            "su_declined_total": round(su_declined_total, 2),
+            "su_approved_total": round(su_approved_total, 2),
+            "su_upcoming_total": round(su_upcoming_total, 2),
+            "su_active_total": round(su_active_total, 2),
+            "su_expired_total": round(su_expired_total, 2),
+            "su_requested_total": round(su_requested_total, 2),
+            "su_awarded_total": round(su_awarded_total, 2),
+            "su_finalized_total": round(su_finalized_total, 2),
 
             "days_pending_average": days_pending_average.days if days_pending_average else None,
             "days_active_average": days_active_average.days if days_active_average else None,
@@ -216,11 +217,11 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
             "active_count": active_count,
             "expired_count": expired_count,
             "agency_count": agency_count,
-            "funding_total": funding_total,
-            "funding_upcoming": funding_upcoming,
-            "funding_active": funding_active,
-            "funding_expired": funding_expired,
-            "funding_average": funding_average,
+            "funding_total": round(funding_total, 2),
+            "funding_upcoming": round(funding_upcoming, 2),
+            "funding_active": round(funding_active, 2),
+            "funding_expired": round(funding_expired, 2),
+            "funding_average": round(funding_average, 2),
         }
 
 
@@ -256,11 +257,12 @@ class NotificationStatsView(GenericAPIView):
         """Return statistics calculated from records matching user permissions and query params."""
 
         qs = self.filter_queryset(self.get_queryset())
-        serializer = self.serializer_class({
+        serializer = self.serializer_class(data={
             "total": qs.count(),
             "unread": qs.filter(read=False).count(),
         })
 
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
 

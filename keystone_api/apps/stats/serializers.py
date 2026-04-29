@@ -40,8 +40,8 @@ class AllocationRequestStatsSerializer(serializers.Serializer):
     su_finalized_total = serializers.FloatField()
 
     # Timing metrics
-    days_pending_average = serializers.FloatField()
-    days_active_average = serializers.FloatField()
+    days_pending_average = serializers.FloatField(allow_null=True)
+    days_active_average = serializers.FloatField(allow_null=True)
 
 
 class GrantStatsSerializer(serializers.Serializer):

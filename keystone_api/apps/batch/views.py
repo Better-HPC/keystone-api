@@ -10,7 +10,7 @@ import json
 
 from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema
-from rest_framework import parsers, status
+from rest_framework import parsers, permissions, status
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
@@ -24,6 +24,7 @@ __all__ = ['JobApiView']
 class JobApiView(APIView):
     """API endpoints for executing and inspecting batch jobs."""
 
+    permission_classes = [permissions.IsAuthenticated]
     parser_classes = [parsers.MultiPartParser, parsers.JSONParser]
 
     @extend_schema(

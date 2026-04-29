@@ -12,7 +12,7 @@ def main() -> None:  # pragma: nocover
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'keystone_api.main.settings')
 
-    # Override version value
+    # Override the CLI version number with the application version
     if '--version' in sys.argv:
         from django.conf import settings
         print(settings.VERSION)

@@ -12194,9 +12194,11 @@ components:
         days_pending_average:
           type: number
           format: double
+          nullable: true
         days_active_average:
           type: number
           format: double
+          nullable: true
       required:
       - days_active_average
       - days_pending_average

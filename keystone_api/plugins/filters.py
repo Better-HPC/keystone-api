@@ -36,11 +36,13 @@ class FilterDefinition:
     `title` produces the query parameter `title__contains` and
     filters using the ORM `__contains` lookup.
 
+    Setting the `suffix` value to `None` will generate a query parameter using
+    the bare field name with no suffix.
+
     Attributes:
         expr: The ORM lookup expression used by `django-filter` (e.g., "exact", "contains", "in").
         negate: Whether to generate a negated (exclude) filter instead of a standard one.
         suffix: The suffix used in the query parameter name (e.g., "not_in").
-            Set to `None` to use the bare field name with no suffix.
     """
 
     expr: str
@@ -87,7 +89,7 @@ class FilterDefinition:
         filt.exclude = self.negate
 
         # List-based lookups like "in" need to accept comma-separated values (e.g., ?id__in=1,2,3).
-        # Django-filter requires wrapping the base filter class with BaseInFilter to enable this behavior.
+        # Django-filter requires filter classes to inherit from `BaseInFilter` to enable this behavior.
         list_lookups = ("in",)
         if self.expr in list_lookups and filters.BaseInFilter not in type(filt).__mro__:
             wrapped_class = type(
@@ -108,14 +110,11 @@ class FilterDefinition:
 class AutoFilterBackend(filters.DjangoFilterBackend):
     """Automatic query parameter generation for model-backed ViewSets.
 
-     Given a ViewSet with no explicit `filterset_class`, this backend
-     inspects the underlying model and generates a full set of query
-     parameters based on each field's type. Numeric fields receive
+     Given a ViewSet with no explicit `filterset_class` attribute, this
+     backend inspects the underlying model and generates a full set of
+     query parameters based on each field's type. Numeric fields receive
      comparison operators (lt, gte, ...), text fields receive pattern
      matching (contains, startswith, ...), and so on.
-
-     The mapping from field types to filter definitions is stored in
-     `_field_expression_map` and can be extended by subclassing.
 
      When a ViewSet *does* define its own `filterset_class`, this
      backend defers to it entirely.
@@ -169,7 +168,7 @@ class AutoFilterBackend(filters.DjangoFilterBackend):
     ]
 
     # Maps database field types to the filter expressions supported by that field type.
-    # This drives the dynamic FilterSet generation in `get_filterset_class`.
+    # This drives the dynamic `FilterSet` generation in `get_filterset_class`.
     _field_expression_map: dict[type[models.Field], list[FilterDefinition]] = {
         models.AutoField: _numeric_filters,
         models.BigAutoField: _numeric_filters,
@@ -252,7 +251,6 @@ class AutoFilterBackend(filters.DjangoFilterBackend):
         filter_attrs = self._build_filter_attrs(queryset.model)
 
         # Create a `Meta` class with the model reference.
-        # `fields` is empty because filters are defined explicitly as attributes.
         filter_attrs['Meta'] = type('Meta', (), {'model': queryset.model, 'fields': []})
 
         # Dynamically construct a FilterSet subclass using the (class name, base classes, class attributes)
