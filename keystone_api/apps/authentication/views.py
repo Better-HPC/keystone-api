@@ -76,8 +76,8 @@ class LogoutView(GenericAPIView):
 class WhoAmIView(GenericAPIView):
     """Return user metadata for the currently authenticated user."""
 
-    serializer_class = RestrictedUserSerializer
     permission_classes = [IsAuthenticated]
+    serializer_class = RestrictedUserSerializer
 
     @extend_schema(
         tags=["Authentication"],
