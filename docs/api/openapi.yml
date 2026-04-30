@@ -294,8 +294,8 @@ paths:
           description: ''
     post:
       operationId: allocations_allocations_create
-      description: Creates a new resource allocation. Write access is restricted to
-        staff users.
+      description: Creates a new resource allocation. Write access is granted to staff
+        users and team administrators.
       summary: Create a resource allocation.
       tags:
       - Allocations - Allocated Resources
@@ -691,7 +691,7 @@ paths:
     post:
       operationId: allocations_attachments_create
       description: Creates a new file attachment on an allocation request. Write access
-        is restricted to staff users.
+        is granted to staff users and team administrators.
       summary: Create a file attachment.
       tags:
       - Allocations - Request Attachments
@@ -3489,7 +3489,7 @@ paths:
     post:
       operationId: allocations_requests_create
       description: Creates a new allocation request. Write access is granted to staff
-        users and team owners/admins.
+        users and team administrators.
       summary: Create an allocation request.
       tags:
       - Allocations - Requests
