@@ -197,3 +197,57 @@ class SlugHandling(APITestCase):
         # Rename second team so the name renames unique but the slug conflicts with the first team
         response1 = self.client.patch(team2_endpoint, {"name": team1.slug})
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response1.status_code)
+
+
+class InactiveTeamAccess(APITestCase):
+    """Test access to inactive team records."""
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.inactive_team = TeamFactory(is_active=False)
+        self.team_member = MembershipFactory(team=self.inactive_team, role=Membership.Role.MEMBER).user
+        self.staff_user = UserFactory(is_staff=True)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.inactive_team.id})
+
+    def test_staff_can_retrieve_inactive_team(self) -> None:
+        """Verify staff users can retrieve inactive team records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_modify_inactive_team(self) -> None:
+        """Verify staff users can modify inactive team records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(self.endpoint, {'name': 'Updated Name'})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_delete_inactive_team(self) -> None:
+        """Verify staff users can delete inactive team records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+
+    def test_non_staff_cannot_retrieve_inactive_team(self) -> None:
+        """Verify non-staff users cannot retrieve inactive team records."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_modify_inactive_team(self) -> None:
+        """Verify non-staff users cannot modify inactive team records."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.patch(self.endpoint, {'name': 'Updated Name'})
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_delete_inactive_team(self) -> None:
+        """Verify non-staff users cannot delete inactive team records."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)

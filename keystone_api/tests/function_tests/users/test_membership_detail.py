@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.users.factories import MembershipFactory, UserFactory
+from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
@@ -169,3 +169,59 @@ class EndpointPermissions(APITestCase, CustomAsserts):
                 'role': Membership.Role.MEMBER
             }
         )
+
+
+class InactiveTeamAccess(APITestCase):
+    """Test access to membership records belonging to inactive teams."""
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.inactive_team = TeamFactory(is_active=False)
+        membership = MembershipFactory(team=self.inactive_team, role=Membership.Role.MEMBER)
+
+        self.team_member = membership.user
+        self.staff_user = UserFactory(is_staff=True)
+        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': membership.id})
+
+    def test_staff_can_retrieve_membership_for_inactive_team(self) -> None:
+        """Verify staff users can retrieve membership records for inactive teams."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_modify_membership_for_inactive_team(self) -> None:
+        """Verify staff users can modify membership records for inactive teams."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(self.endpoint, {'role': Membership.Role.ADMIN})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_delete_membership_for_inactive_team(self) -> None:
+        """Verify staff users can delete membership records for inactive teams."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+
+    def test_non_staff_cannot_retrieve_membership_for_inactive_team(self) -> None:
+        """Verify non-staff users cannot retrieve membership records for inactive teams."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_modify_membership_for_inactive_team(self) -> None:
+        """Verify non-staff users cannot modify membership records for inactive teams."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.patch(self.endpoint, {'role': Membership.Role.ADMIN})
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_delete_membership_for_inactive_team(self) -> None:
+        """Verify non-staff users cannot delete membership records for inactive teams."""
+
+        self.client.force_authenticate(user=self.team_member)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)

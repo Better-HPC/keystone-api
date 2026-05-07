@@ -29,9 +29,9 @@ class TeamPermissions(permissions.BasePermission):
         is_staff = request.user.is_staff
         is_readonly = request.method in permissions.SAFE_METHODS
         is_team_admin = request.user in obj.get_privileged_members()
+        is_active = obj.is_active
 
-        return is_readonly or is_team_admin or is_staff
-
+        return is_staff or (is_active and (is_readonly or is_team_admin))
 
 class MembershipPermissions(TeamPermissions):
     """RBAC permissions model for `Membership` objects.
@@ -67,8 +67,9 @@ class MembershipPermissions(TeamPermissions):
         is_staff = request.user.is_staff
         is_readonly = request.method in permissions.SAFE_METHODS
         is_team_admin = request.user in obj.team.get_privileged_members()
+        is_active = obj.team.is_active
 
-        return is_readonly or is_team_admin or is_staff
+        return is_staff or (is_active and (is_readonly or is_team_admin))
 
 
 class UserPermissions(permissions.BasePermission):

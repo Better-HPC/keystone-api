@@ -136,3 +136,33 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
         # noinspection PyTypeChecker
         return self.factory()
+
+
+class InactiveTeamFiltering(APITestCase):
+    """Test filtering of inactive teams from list results."""
+
+    endpoint = reverse(VIEW_NAME)
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.active_team = TeamFactory(is_active=True)
+        self.inactive_team = TeamFactory(is_active=False)
+        self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory()
+
+    def test_inactive_teams_hidden_from_non_staff(self) -> None:
+        """Verify inactive teams are not returned to non-staff users."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.get(self.endpoint)
+        returned_ids = [t['id'] for t in response.data['results']]
+        self.assertNotIn(self.inactive_team.id, returned_ids)
+
+    def test_inactive_teams_visible_to_staff(self) -> None:
+        """Verify inactive teams are returned to staff users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        returned_ids = [t['id'] for t in response.data['results']]
+        self.assertIn(self.inactive_team.id, returned_ids)
