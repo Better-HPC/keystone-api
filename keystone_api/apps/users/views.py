@@ -6,6 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -108,6 +109,15 @@ class MembershipViewSet(viewsets.ModelViewSet):
         'team'
     )
 
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset, restricting memberships for inactive teams for non-staff users."""
+
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(team__is_active=True)
+
+        return queryset
+
 
 @extend_schema_view(
     list=extend_schema(
@@ -171,6 +181,15 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         'users',
         'history'
     )
+
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset, restricting inactive teams for non-staff users."""
+
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(is_active=True)
+
+        return queryset
 
 
 @extend_schema_view(

@@ -159,3 +159,35 @@ class EndpointPermissions(APITestCase, CustomAsserts):
                 'role': Membership.Role.MEMBER
             }
         )
+
+
+class InactiveTeamFiltering(APITestCase):
+    """Test filtering of memberships belonging to inactive teams from list results."""
+
+    endpoint = reverse(VIEW_NAME)
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        active_team = TeamFactory(is_active=True)
+        inactive_team = TeamFactory(is_active=False)
+        self.active_membership = MembershipFactory(team=active_team, role=Membership.Role.MEMBER)
+        self.inactive_membership = MembershipFactory(team=inactive_team, role=Membership.Role.MEMBER)
+        self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory()
+
+    def test_memberships_for_inactive_teams_hidden_from_non_staff(self) -> None:
+        """Verify memberships belonging to inactive teams are not returned to non-staff users."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.get(self.endpoint)
+        returned_ids = [m['id'] for m in response.data['results']]
+        self.assertNotIn(self.inactive_membership.id, returned_ids)
+
+    def test_memberships_for_inactive_teams_visible_to_staff(self) -> None:
+        """Verify memberships belonging to inactive teams are returned to staff users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        returned_ids = [m['id'] for m in response.data['results']]
+        self.assertIn(self.inactive_membership.id, returned_ids)
