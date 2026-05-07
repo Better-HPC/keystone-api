@@ -110,7 +110,14 @@ class TeamSerializer(serializers.ModelSerializer):
 
         if name := attrs.get("name"):
             slug = slugify(name)
-            if Team.objects.filter(slug=slug).exists():
+            queryset = Team.objects.filter(slug=slug)
+
+            # Exclude the current instance so a patch that leaves the name
+            # unchanged does not conflict with its own slug.
+            if self.instance is not None:
+                queryset = queryset.exclude(pk=self.instance.pk)
+
+            if queryset.exists():
                 raise serializers.ValidationError({"name": "A team with this name already exists."})
 
             attrs['slug'] = slug
