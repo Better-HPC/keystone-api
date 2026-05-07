@@ -11,7 +11,7 @@ User = get_user_model()
 
 
 class ValidateMethod(TestCase):
-    """Test record validation."""
+    """Test record validation via the `validate` method."""
 
     def setUp(self) -> None:
         """Define dummy user data."""
