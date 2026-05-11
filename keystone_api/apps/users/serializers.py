@@ -79,7 +79,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
 
         model = User
         fields = '__all__'
-        read_only_fields = ['is_active', 'is_staff', 'is_ldap_user', 'date_joined', 'last_login', 'profile_image', 'teams']
+        read_only_fields = ['is_active', 'is_staff', 'is_ldap_user', 'date_joined', 'last_login', 'profile_image']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data: dict) -> None:
