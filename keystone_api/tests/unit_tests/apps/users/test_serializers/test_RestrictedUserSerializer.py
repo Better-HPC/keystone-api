@@ -13,4 +13,4 @@ class CreateMethod(TestCase):
 
         serializer = RestrictedUserSerializer()
         with self.assertRaises(RuntimeError):
-            serializer.create({'username': 'testuser', 'password': 'Password123!'})
+            serializer.create({"username": "testuser", "password": "Password123!"})

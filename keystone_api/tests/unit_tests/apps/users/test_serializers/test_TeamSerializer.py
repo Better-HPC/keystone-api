@@ -27,10 +27,17 @@ class ValidateMethod(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("name", serializer.errors)
 
-    def test_error_on_create_with_equivalent_slug(self) -> None:
-        """Verify a name that slugifies identically to an existing name raises a validation error."""
+    def test_error_on_create_with_whitespace_variant_name(self) -> None:
+        """Verify a name differing only by whitespace from an existing team raises a validation error."""
 
         serializer = TeamSerializer(data={"name": "Team      1"})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("name", serializer.errors)
+
+    def test_error_on_create_with_case_variant_name(self) -> None:
+        """Verify a name differing only by letter case from an existing team raises a validation error."""
+
+        serializer = TeamSerializer(data={"name": "team 1"})
         self.assertFalse(serializer.is_valid())
         self.assertIn("name", serializer.errors)
 

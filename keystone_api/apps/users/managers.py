@@ -21,17 +21,22 @@ __all__ = ["TeamManager", "UserManager"]
 class TeamManager(models.Manager):
     """Object manager for the `Team` database model."""
 
-    def teams_for_user(self, user: "User") -> models.QuerySet:
+    def teams_for_user(self, user: "User", include_inactive: bool = True) -> models.QuerySet:
         """Get all teams the user is affiliated with.
 
         Args:
             user: The user to return affiliate teams for.
+            include_inactive: Whether to include teams marked as inactive.
 
         Returns:
             A filtered queryset.
         """
 
-        return self.filter(membership__user=user)
+        queryset = self.filter(membership__user=user)
+        if not include_inactive:
+            queryset = queryset.filter(is_active=True)
+
+        return queryset
 
 
 class UserManager(BaseUserManager):
