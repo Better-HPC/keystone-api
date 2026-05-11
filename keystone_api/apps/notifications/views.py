@@ -6,6 +6,7 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
+from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, status, viewsets
 from rest_framework.generics import GenericAPIView
@@ -143,7 +144,7 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, PreferencePermissions]
     search_fields = ['user__username']
     serializer_class = PreferenceSerializer
-    queryset = Preference.objects.select_related('user')
+    queryset = Preference.objects.all()
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `Preference` object.
@@ -160,3 +161,16 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_queryset(self) -> QuerySet:
+        """Return a queryset of publications.
+
+        Prefetching is applied dynamically based on the incoming request
+        to avoid N+1 queries.
+        """
+
+        queryset = super().get_queryset()
+        if self.action == 'list' or not self.request.user.is_staff:
+            queryset = queryset.select_related('user')
+
+        return queryset
