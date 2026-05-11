@@ -78,9 +78,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
     search_fields = ['title', 'agency', 'team__name']
     serializer_class = GrantSerializer
-    queryset = Grant.objects.prefetch_related(
-        'history'
-    ).select_related(
+    queryset = Grant.objects.select_related(
         'team'
     )
 
@@ -145,8 +143,6 @@ class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
     search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
     serializer_class = PublicationSerializer
-    queryset = Publication.objects.prefetch_related(
-        'history'
-    ).select_related(
+    queryset = Publication.objects.select_related(
         'team'
     )
