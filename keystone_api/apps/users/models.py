@@ -24,7 +24,7 @@ from PIL import Image
 
 from .managers import *
 
-__all__ = ['Membership', 'Team', 'User']
+__all__ = ["Membership", "Team", "User"]
 
 
 @auditlog.register()
@@ -35,14 +35,14 @@ class Membership(models.Model):
         """Database model settings."""
 
         constraints = [
-            UniqueConstraint(fields=['user', 'team'], name='unique_user_team')
+            UniqueConstraint(fields=["user", "team"], name="unique_user_team")
         ]
 
         indexes = [
-            models.Index(fields=['role']),
-            models.Index(fields=['user', 'role']),
-            models.Index(fields=['team', 'role']),
-            models.Index(fields=['team', 'user', 'role']),
+            models.Index(fields=["role"]),
+            models.Index(fields=["user", "role"]),
+            models.Index(fields=["team", "role"]),
+            models.Index(fields=["team", "user", "role"]),
         ]
 
     class Role(models.TextChoices):
@@ -51,15 +51,15 @@ class Membership(models.Model):
         Roles are used to define user permissions within a team.
         """
 
-        OWNER = 'OW', 'Owner'
-        ADMIN = 'AD', 'Admin'
-        MEMBER = 'MB', 'Member'
+        OWNER = "OW", "Owner"
+        ADMIN = "AD", "Admin"
+        MEMBER = "MB", "Member"
 
     role = models.CharField(max_length=2, choices=Role.choices)
     history = AuditlogHistoryField()
 
-    user = models.ForeignKey('User', related_name="membership", on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', related_name="membership", on_delete=models.CASCADE)
+    user = models.ForeignKey("User", related_name="membership", on_delete=models.CASCADE)
+    team = models.ForeignKey("Team", related_name="membership", on_delete=models.CASCADE)
 
 
 @auditlog.register()
@@ -70,13 +70,13 @@ class Team(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['is_active']),
-            models.Index(fields=['slug', 'is_active']),
+            models.Index(fields=["is_active"]),
+            models.Index(fields=["slug", "is_active"]),
         ]
 
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
-    users = models.ManyToManyField('User', through=Membership)
+    users = models.ManyToManyField("User", through=Membership)
     is_active = models.BooleanField(default=True)
     history = AuditlogHistoryField()
 
@@ -119,19 +119,19 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['username']),
-            models.Index(fields=['first_name']),
-            models.Index(fields=['last_name', 'first_name']),
-            models.Index(fields=['email']),
-            models.Index(fields=['is_staff']),
-            models.Index(fields=['is_ldap_user']),
-            models.Index(fields=['date_joined']),
-            models.Index(fields=['last_login']),
-            models.Index(fields=['is_active', 'is_staff']),
+            models.Index(fields=["username"]),
+            models.Index(fields=["first_name"]),
+            models.Index(fields=["last_name", "first_name"]),
+            models.Index(fields=["email"]),
+            models.Index(fields=["is_staff"]),
+            models.Index(fields=["is_ldap_user"]),
+            models.Index(fields=["date_joined"]),
+            models.Index(fields=["last_login"]),
+            models.Index(fields=["is_active", "is_staff"]),
         ]
 
     # These values should always be defined when extending AbstractBaseUser
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -143,13 +143,13 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     email = models.EmailField(null=True)
     department = models.CharField(max_length=1000, null=True, blank=True)
     role = models.CharField(max_length=1000, null=True, blank=True)  # User's role in their department
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
     history = AuditlogHistoryField()
 
     # Administrative values for user management/permissions
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField('staff status', default=False)
-    is_ldap_user = models.BooleanField('LDAP User', default=False)
+    is_staff = models.BooleanField("staff status", default=False)
+    is_ldap_user = models.BooleanField("LDAP User", default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     last_login = models.DateTimeField(null=True)
 
@@ -197,7 +197,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         random.seed(seed)
 
         rgb_white = (255, 255, 255)
-        image = Image.new('RGB', (grid_size[0] * square_size, grid_size[1] * square_size), rgb_white)
+        image = Image.new("RGB", (grid_size[0] * square_size, grid_size[1] * square_size), rgb_white)
 
         random_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         for i, j in itertools.product(range(grid_size[0]), range(grid_size[1])):
@@ -214,8 +214,8 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         if not self.profile_image:
             image = self._generate_default_image()
             image_io = BytesIO()
-            image.save(image_io, format='PNG')
-            self.profile_image.save(f'{self.username}.png', ContentFile(image_io.getvalue()), save=False)
+            image.save(image_io, format="PNG")
+            self.profile_image.save(f"{self.username}.png", ContentFile(image_io.getvalue()), save=False)
 
         super().save(*args, **kwargs)
 

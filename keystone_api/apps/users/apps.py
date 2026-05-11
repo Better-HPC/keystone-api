@@ -10,13 +10,13 @@ from django.core.checks import register
 
 from . import checks
 
-__all__ = ['UsersAppConfig']
+__all__ = ["UsersAppConfig"]
 
 
 class UsersAppConfig(AppConfig):
     """General application configuration and metadata."""
 
-    name = 'apps.users'
+    name = "apps.users"
 
     def ready(self) -> None:
         """Register application specific system checks."""

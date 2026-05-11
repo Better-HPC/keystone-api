@@ -12,7 +12,7 @@ from rest_framework.views import View
 
 from .models import *
 
-__all__ = ['MembershipPermissions', 'TeamPermissions', 'UserPermissions']
+__all__ = ["MembershipPermissions", "TeamPermissions", "UserPermissions"]
 
 
 class TeamPermissions(permissions.BasePermission):
@@ -51,7 +51,7 @@ class MembershipPermissions(TeamPermissions):
 
         # Write access to specific teams is based on the user's relation to the team
         try:
-            team = Team.objects.get(id=request.data.get('team'))
+            team = Team.objects.get(id=request.data.get("team"))
             return request.user in team.get_privileged_members()
 
         except Team.DoesNotExist:
@@ -85,7 +85,7 @@ class UserPermissions(permissions.BasePermission):
         """Return whether the request has permissions to access the requested resource."""
 
         # Only staff can create new records
-        if getattr(view, 'action', None) == 'create':
+        if getattr(view, "action", None) == "create":
             return request.user.is_staff
 
         # Defer to object based permissions for all other actions

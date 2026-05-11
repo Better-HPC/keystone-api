@@ -16,10 +16,10 @@ from .models import *
 from .nested import *
 
 __all__ = [
-    'MembershipSerializer',
-    'PrivilegedUserSerializer',
-    'RestrictedUserSerializer',
-    'TeamSerializer',
+    "MembershipSerializer",
+    "PrivilegedUserSerializer",
+    "RestrictedUserSerializer",
+    "TeamSerializer",
 ]
 
 
@@ -28,7 +28,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     _user = UserSummarySerializer(source="user", read_only=True)
     _team = TeamSummarySerializer(source="team", read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -43,15 +43,15 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
     display_name = serializers.CharField(read_only=True)
     abbreviation = serializers.CharField(read_only=True)
     _membership = TeamRoleSerializer(source="membership", many=True, read_only=True)
-    _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
+    _history = AuditLogSummarySerializer(source="history", read_only=True, many=True)
 
     class Meta:
         """Serializer settings."""
 
         model = User
-        fields = '__all__'
-        read_only_fields = ['date_joined', 'last_login']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = "__all__"
+        read_only_fields = ["date_joined", "last_login"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def validate(self, attrs: dict) -> dict:
         """Validate user attributes match the ORM data model.
@@ -64,9 +64,9 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         """
 
         # Hash the password value
-        if 'password' in attrs:  # pragma: no branch
-            password_validation.validate_password(attrs['password'])
-            attrs['password'] = make_password(attrs['password'])
+        if "password" in attrs:  # pragma: no branch
+            password_validation.validate_password(attrs["password"])
+            attrs["password"] = make_password(attrs["password"])
 
         return super().validate(attrs)
 
@@ -78,9 +78,9 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
         """Serializer settings."""
 
         model = User
-        fields = '__all__'
-        read_only_fields = ['is_active', 'is_staff', 'is_ldap_user', 'date_joined', 'last_login', 'profile_image']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = "__all__"
+        read_only_fields = ["is_active", "is_staff", "is_ldap_user", "date_joined", "last_login", "profile_image"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data: dict) -> None:
         """Prevents creation of new user records by raising an exception.
@@ -92,7 +92,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
             RuntimeError: Every time the function is called.
         """
 
-        raise RuntimeError('Attempted to create new user record using a serializer with restricted permissions.')
+        raise RuntimeError("Attempted to create new user record using a serializer with restricted permissions.")
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -100,7 +100,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     slug = serializers.SlugField(read_only=True)
     _membership = UserRoleSerializer(source="membership", many=True, read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -130,6 +130,6 @@ class TeamSerializer(serializers.ModelSerializer):
             if queryset.exists():
                 raise serializers.ValidationError({"name": "A team with this name already exists."})
 
-            attrs['slug'] = slug
+            attrs["slug"] = slug
 
         return super().validate(attrs)
