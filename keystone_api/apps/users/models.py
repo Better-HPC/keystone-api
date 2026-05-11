@@ -70,7 +70,8 @@ class Team(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['slug']),
+            models.Index(fields=['is_active']),
+            models.Index(fields=['slug', 'is_active']),
         ]
 
     name = models.CharField(max_length=255, unique=True)
