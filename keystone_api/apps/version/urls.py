@@ -4,8 +4,8 @@ from django.urls import path
 
 from .views import *
 
-app_name = 'version'
+app_name = "version"
 
 urlpatterns = [
-    path('', VersionView.as_view(), name='version'),
+    path("", VersionView.as_view(), name="version"),
 ]
