@@ -80,7 +80,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated, NotificationPermissions]
     http_method_names = ['get', 'head', 'options', 'patch']
-    search_fields = ['message', 'user__username']
+    search_fields = ['subject', 'message_text', 'user__username']
     serializer_class = NotificationSerializer
     queryset = Notification.objects.select_related('user')
 
