@@ -10394,7 +10394,8 @@ paths:
   /users/memberships/:
     get:
       operationId: users_memberships_list
-      description: Returns a list of all team memberships.
+      description: Returns a list of team memberships. Non-staff users are only returned
+        memberships for active teams. Staff users are returned all memberships.
       summary: List team memberships.
       parameters:
       - name: _limit
@@ -10626,7 +10627,8 @@ paths:
   /users/memberships/{id}/:
     get:
       operationId: users_memberships_retrieve
-      description: Returns a single team membership by ID.
+      description: Returns a single team membership by ID. Non-staff users can only
+        retrieve memberships for active teams.
       summary: Retrieve a team membership.
       parameters:
       - in: path
@@ -10741,8 +10743,8 @@ paths:
   /users/teams/:
     get:
       operationId: users_teams_list
-      description: Returns a list of teams. Non-staff users are only returned teams
-        they are a member of. Staff users are returned all teams.
+      description: Returns a list of teams. Non-staff users are only returned active
+        teams they are a member of. Staff users are returned all teams.
       summary: List teams.
       parameters:
       - name: _limit
@@ -10981,7 +10983,8 @@ paths:
   /users/teams/{id}/:
     get:
       operationId: users_teams_retrieve
-      description: Returns a single team by ID.
+      description: Returns a single team by ID. Non-staff users can only retrieve
+        active teams they are a member of.
       summary: Retrieve a team.
       parameters:
       - in: path
@@ -12148,7 +12151,7 @@ components:
       - title
     AllocationRequestStats:
       type: object
-      description: Aggregated statistics for allocation requests and awards.
+      description: Serializer for aggregated allocation requests statistics.
       properties:
         request_count:
           type: integer
