@@ -179,7 +179,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
 
         return abbrev.upper()
 
-    def _generate_default_image(self, grid_size: tuple[int, int] = (6, 6), square_size: int = 40) -> Image:
+    def _generate_default_image(self, grid_size: tuple[int, int] = (6, 6), square_size: int = 40) -> Image.Image:
         """Generate a unique user profile image
 
         Generated images are a random color grid of NxM blocks, where the dimensions
