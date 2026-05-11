@@ -11,7 +11,7 @@ authors = [{ name = "Better HPC LLC" }]
 keywords = ["Better", "HPC", "keystone", "api"]
 requires-python = ">=3.11,<4"
 dependencies = [
-    "django==5.2.13",
+    "django==5.2.14",
     "django-auditlog==3.4.1",
     "django-celery-beat==2.9.0",
     "django-celery-results==2.6.0",
