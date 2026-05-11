@@ -21,10 +21,10 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
-    'MembershipRoleChoicesView',
-    'MembershipViewSet',
-    'TeamViewSet',
-    'UserViewSet',
+    "MembershipRoleChoicesView",
+    "MembershipViewSet",
+    "TeamViewSet",
+    "UserViewSet",
 ]
 
 
@@ -101,12 +101,12 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated, MembershipPermissions]
     serializer_class = MembershipSerializer
-    search_fields = ['team__name', 'user__username']
+    search_fields = ["team__name", "user__username"]
     queryset = Membership.objects.prefetch_related(
-        'history'
+        "history"
     ).select_related(
-        'user',
-        'team'
+        "user",
+        "team"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -170,16 +170,16 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user teams."""
 
     # Filter returned records using TeamScopedListMixin
-    team_field = 'id'
+    team_field = "id"
 
     # General view configuration
     permission_classes = [IsAuthenticated, TeamPermissions]
     serializer_class = TeamSerializer
-    search_fields = ['name']
+    search_fields = ["name"]
     queryset = Team.objects.prefetch_related(
-        'membership__user',
-        'users',
-        'history'
+        "membership__user",
+        "users",
+        "history"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -246,10 +246,10 @@ class UserViewSet(viewsets.ModelViewSet):
     """API endpoints for managing user accounts."""
 
     permission_classes = [IsAuthenticated, UserPermissions]
-    search_fields = ['username', 'first_name', 'last_name', 'email', 'department', 'role']
+    search_fields = ["username", "first_name", "last_name", "email", "department", "role"]
     queryset = User.objects.prefetch_related(
-        'membership__team',
-        'history'
+        "membership__team",
+        "history"
     )
 
     def get_serializer_class(self) -> type[Serializer]:

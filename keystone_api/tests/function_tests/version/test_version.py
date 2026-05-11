@@ -15,10 +15,10 @@ class EndpointPermissions(APITransactionTestCase, CustomAsserts):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | User Status                | GET  | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|------|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
-    | Authenticated User         | 200 | 200   | 200     | 405  | 405 | 405   | 405    | 405   |
+    | User Status          | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authenticated User   | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = reverse(VIEW_NAME)

@@ -13,7 +13,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
-__all__ = ['VersionView']
+__all__ = ["VersionView"]
 
 
 class VersionView(GenericAPIView):
@@ -27,7 +27,7 @@ class VersionView(GenericAPIView):
         description="Returns the application version number as a plain text response.",
         tags=["Version"],
         responses={
-            (200, 'text/plain'): OpenApiTypes.STR
+            (200, "text/plain"): OpenApiTypes.STR
         }
     )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:
