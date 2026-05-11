@@ -85,6 +85,9 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
     def create(self, validated_data: dict) -> None:
         """Prevents creation of new user records by raising an exception.
 
+        Args:
+            validated_data: The data used to create a new user record.
+
         Raises:
             RuntimeError: Every time the function is called.
         """
@@ -106,7 +109,14 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs: dict) -> dict:
-        """Ensure the slug generated from the team name is unique."""
+        """Ensure the slug generated from the team name is unique.
+
+        Args:
+            attrs: The user attributes to validate.
+
+        Returns:
+            A dictionary containing the validated values.
+        """
 
         if name := attrs.get("name"):
             slug = slugify(name)
