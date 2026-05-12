@@ -6,21 +6,14 @@ Each model reflects a different database table and defines low-level defaults
 for how the associated table/fields/records are presented by parent interfaces.
 """
 
-import hashlib
-import itertools
-import random
-from io import BytesIO
-
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.utils import timezone
 from django.utils.text import slugify
-from PIL import Image
 
 from .managers import *
 
@@ -143,7 +136,6 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     email = models.EmailField(null=True)
     department = models.CharField(max_length=1000, null=True, blank=True)
     role = models.CharField(max_length=1000, null=True, blank=True)  # User's role in their department
-    profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
     history = AuditlogHistoryField()
 
     # Administrative values for user management/permissions
@@ -178,46 +170,6 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
             abbrev = self.username[:2]
 
         return abbrev.upper()
-
-    def _generate_default_image(self, grid_size: tuple[int, int] = (6, 6), square_size: int = 40) -> Image.Image:
-        """Generate a unique user profile image
-
-        Generated images are a random color grid of NxM blocks, where the dimensions
-        are determined by the `grid_size` argument.
-
-        Args:
-            grid_size: The size of the grid generated in the image
-            square_size: The size of each grid square in pixels
-
-        Returns:
-            An RGB image
-        """
-
-        seed = int(hashlib.sha256(self.username.encode()).hexdigest(), 16)
-        random.seed(seed)
-
-        rgb_white = (255, 255, 255)
-        image = Image.new("RGB", (grid_size[0] * square_size, grid_size[1] * square_size), rgb_white)
-
-        random_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-        for i, j in itertools.product(range(grid_size[0]), range(grid_size[1])):
-            if random.choice([True, False]):
-                for x, y in itertools.product(range(square_size), range(square_size)):
-                    image.putpixel((i * square_size + x, j * square_size + y), random_color)
-
-        return image
-
-    def save(self, *args, **kwargs) -> None:
-        """Persist the ORM instance to the database"""
-
-        # Generate a profile image if one does not exist
-        if not self.profile_image:
-            image = self._generate_default_image()
-            image_io = BytesIO()
-            image.save(image_io, format="PNG")
-            self.profile_image.save(f"{self.username}.png", ContentFile(image_io.getvalue()), save=False)
-
-        super().save(*args, **kwargs)
 
     def get_all_teams(self) -> models.QuerySet:
         """Return a queryset containing all teams the user belongs to."""
