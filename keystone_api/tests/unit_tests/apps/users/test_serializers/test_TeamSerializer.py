@@ -1,8 +1,8 @@
 """Unit tests for the `TeamSerializer` class."""
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
-from apps.users.factories import TeamFactory
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.serializers import TeamSerializer
 
 
@@ -12,7 +12,11 @@ class ValidateMethod(TestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
+        self.factory = RequestFactory()
+
         self.team = TeamFactory(name="Team 1")
+        self.generic_user = UserFactory()
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_valid_on_create_with_unique_name(self) -> None:
         """Verify a unique name passes validation on create."""
