@@ -50,9 +50,14 @@ class MembershipSerializer(serializers.ModelSerializer):
 
         request = self.context.get("request")
         team = attrs.get("team")
+
+        # Prevent non-staff from accessing inactive teams
         is_non_staff = request and not request.user.is_staff
-        if is_non_staff and team is not None and not team.is_active:
-            raise serializers.ValidationError({"team": "Cannot create a membership for an inactive team."})
+        is_inactive = team is not None and not team.is_active
+        if is_non_staff and is_inactive:
+            raise serializers.ValidationError(
+                {"team": "Non-staff cannot create a membership for an inactive team."}
+            )
 
         return super().validate(attrs)
 
@@ -142,9 +147,14 @@ class TeamSerializer(serializers.ModelSerializer):
         """
 
         request = self.context.get("request")
-        if request and not request.user.is_staff and "is_active" in self.initial_data:
+
+        # Prevent non-staff from accessing inactive teams
+        is_non_staff = request and not request.user.is_staff
+        is_active_initial = "is_active" in self.initial_data
+        if is_non_staff and is_active_initial:
             raise serializers.ValidationError({"is_active": "This field cannot be set."})
 
+        # Ensure team slugs are unique
         if name := attrs.get("name"):
             slug = slugify(name)
             queryset = Team.objects.filter(slug=slug)
