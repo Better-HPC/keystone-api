@@ -188,14 +188,17 @@ class InactiveTeamFiltering(APITestCase):
         """Verify non-staff users cannot create memberships for inactive teams."""
 
         inactive_team = TeamFactory(is_active=False)
-        self.client.force_authenticate(user=self.generic_user)
+        admin_user = MembershipFactory(team=inactive_team, role=Membership.Role.ADMIN).user
+        new_user = UserFactory()
+
+        self.client.force_authenticate(user=admin_user)
         response = self.client.post(self.endpoint, {
             'team': inactive_team.pk,
-            'user': self.generic_user.pk,
+            'user': new_user.pk,
             'role': Membership.Role.MEMBER,
         })
 
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
     def test_memberships_for_inactive_teams_visible_to_staff(self) -> None:
         """Verify memberships belonging to inactive teams are returned to staff users."""
@@ -210,6 +213,7 @@ class InactiveTeamFiltering(APITestCase):
 
         inactive_team = TeamFactory(is_active=False)
         new_user = UserFactory()
+
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.post(self.endpoint, {
             'team': inactive_team.pk,
