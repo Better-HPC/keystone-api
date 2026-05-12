@@ -51,7 +51,7 @@ class MembershipSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         team = attrs.get("team")
 
-        # Prevent non-staff from accessing inactive teams
+        # Prevent non-staff from creating memberships for inactive teams
         is_non_staff = request and not request.user.is_staff
         is_inactive = team is not None and not team.is_active
         if is_non_staff and is_inactive:
