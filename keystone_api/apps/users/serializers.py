@@ -36,6 +36,26 @@ class MembershipSerializer(serializers.ModelSerializer):
         model = Membership
         fields = "__all__"
 
+    def validate(self, attrs: dict) -> dict:
+        """Validate record data.
+
+        Blocks non-staff users from creating memberships for inactive teams.
+
+        Args:
+            attrs: The membership attributes to validate.
+
+        Returns:
+            A dictionary containing the validated values.
+        """
+
+        request = self.context.get("request")
+        team = attrs.get("team")
+        is_non_staff = request and not request.user.is_staff
+        if is_non_staff and team is not None and not team.is_active:
+            raise serializers.ValidationError({"team": "Cannot create a membership for an inactive team."})
+
+        return super().validate(attrs)
+
 
 class PrivilegedUserSerializer(serializers.ModelSerializer):
     """Object serializer for the `User` model including sensitive fields."""
@@ -109,7 +129,10 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs: dict) -> dict:
-        """Ensure the slug generated from the team name is unique.
+        """Validate record data.
+
+        Requires team names to generate unique slug values.
+        Blocks non-staff from creating inactive teams.
 
         Args:
             attrs: The user attributes to validate.

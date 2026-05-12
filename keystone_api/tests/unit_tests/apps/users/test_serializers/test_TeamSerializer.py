@@ -81,3 +81,22 @@ class ValidateMethod(TestCase):
         serializer = TeamSerializer(self.team, data={"description": "Updated."}, partial=True)
         serializer.is_valid(raise_exception=True)
         self.assertNotIn("slug", serializer.validated_data)
+
+    def test_error_on_create_with_is_active_as_non_staff(self) -> None:
+        """Verify non-staff users cannot set `is_active` on team creation."""
+
+        request = self.factory.post("/")
+        request.user = self.generic_user
+
+        serializer = TeamSerializer(data={"name": "New Team", "is_active": False}, context={"request": request})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("is_active", serializer.errors)
+
+    def test_valid_on_create_with_is_active_as_staff(self) -> None:
+        """Verify staff users can set `is_active` on team creation."""
+
+        request = self.factory.post("/")
+        request.user = self.staff_user
+
+        serializer = TeamSerializer(data={"name": "New Team", "is_active": False}, context={"request": request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)
