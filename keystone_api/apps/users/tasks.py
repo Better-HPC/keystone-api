@@ -21,12 +21,12 @@ try:
 except ImportError:  # pragma: nocover
     pass
 
-__all__ = ['ldap_update_users']
+__all__ = ["ldap_update_users"]
 
 logger = logging.getLogger(__name__)
 
 
-def get_ldap_connection() -> 'ldap.ldapobject.LDAPObject':
+def get_ldap_connection() -> "ldap.ldapobject.LDAPObject":
     """Establish a new LDAP connection."""
 
     conn = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
@@ -103,16 +103,16 @@ def parse_ldap_entry(dn: str, attrs: dict, attr_map: dict) -> dict | None:
     if not dn:
         return None
 
-    ldap_username_attr = attr_map.get('username', 'uid')
+    ldap_username_attr = attr_map.get("username", "uid")
     usernames = attrs.get(ldap_username_attr, [])
     if not usernames:
         return None
 
     username = usernames[0].decode() if isinstance(usernames[0], bytes) else usernames[0]
 
-    user_data = {'username': username, 'is_ldap_user': True, 'is_active': True}
+    user_data = {"username": username, "is_ldap_user": True, "is_active": True}
     for django_field, ldap_attr in attr_map.items():
-        if django_field == 'username':
+        if django_field == "username":
             continue
 
         values = attrs.get(ldap_attr, [])
@@ -143,7 +143,7 @@ def ldap_update_users() -> None:
         if not user_data:
             continue
 
-        username = user_data.pop('username')
+        username = user_data.pop("username")
         ldap_usernames.add(username)
 
         User.objects.update_or_create(
@@ -152,7 +152,7 @@ def ldap_update_users() -> None:
         )
 
     # Handle usernames that have been removed from LDAP
-    keystone_usernames = set(User.objects.filter(is_ldap_user=True).values_list('username', flat=True))
+    keystone_usernames = set(User.objects.filter(is_ldap_user=True).values_list("username", flat=True))
     removed_usernames = keystone_usernames - ldap_usernames
 
     if settings.AUTH_LDAP_PURGE_REMOVED:

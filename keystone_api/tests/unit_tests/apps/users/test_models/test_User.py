@@ -39,6 +39,7 @@ class AbbreviationProperty(TestCase):
 
     def test_has_first_and_last(self) -> None:
         """Verify the full name is abbreviated when first and last name are both defined."""
+
         user = UserFactory(username="user1", first_name="First", last_name="Last")
         self.assertEqual("FL", user.abbreviation)
 
@@ -77,14 +78,14 @@ class SaveMethod(TestCase):
     def setUp(self) -> None:
         """Set up a test user instance."""
 
-        self.username = 'testuser'
-        self.email = 'testuser@example.com'
+        self.username = "testuser"
+        self.email = "testuser@example.com"
         self.user = User(
             username=self.username,
             email=self.email,
-            password='password123',
-            first_name='Test',
-            last_name='User'
+            password="password123",
+            first_name="Test",
+            last_name="User"
         )
 
     def test_user_creation(self) -> None:
@@ -102,14 +103,14 @@ class SaveMethod(TestCase):
         self.user.save()  # Saving the user should trigger image generation
 
         self.assertTrue(self.user.profile_image)
-        self.assertTrue(self.user.profile_image.name.endswith('.png'))
-        self.assertTrue(self.user.profile_image.name.endswith('.png'))
+        self.assertTrue(self.user.profile_image.name.endswith(".png"))
+        self.assertTrue(self.user.profile_image.name.endswith(".png"))
 
     def test_image_is_unique(self) -> None:
         """Verify the generated profile image is unique for different users."""
 
-        user1 = User(username='user1')
-        user2 = User(username='user2')
+        user1 = User(username="user1")
+        user2 = User(username="user2")
 
         user1.save()
         user2.save()

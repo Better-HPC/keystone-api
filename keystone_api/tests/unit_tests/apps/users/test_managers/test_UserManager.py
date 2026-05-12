@@ -13,9 +13,9 @@ class CreateUserMethod(TestCase):
         """Verify generic user accounts are created with the correct attributes."""
 
         user = User.objects.create_user(
-            username='foobar',
-            first_name='foo',
-            last_name='bar',
+            username="foobar",
+            first_name="foo",
+            last_name="bar",
             email="foo@bar.com",
             password="foobar123")
 
@@ -30,20 +30,45 @@ class CreateUserMethod(TestCase):
     def test_create_user_no_email(self) -> None:
         """Verify user accounts can be created without an email."""
 
-        user = User.objects.create_user(username='foobar', password="foobar123")
+        user = User.objects.create_user(username="foobar", password="foobar123")
         self.assertEqual(user.email, None)
 
     def test_passwords_are_validated(self) -> None:
         """Verify passwords are validated against application security rules."""
 
-        with self.assertRaisesRegex(ValidationError, 'This password is too short'):
+        with self.assertRaisesRegex(ValidationError, "This password is too short"):
             User.objects.create_user(
-                username='foobar',
-                password='short',
-                first_name='foo',
-                last_name='bar',
+                username="foobar",
+                password="short",
+                first_name="foo",
+                last_name="bar",
                 email="foo@bar.com"
             )
+
+    def test_password_is_hashed(self) -> None:
+        """Verify passwords are stored as a hashed value."""
+
+        user = User.objects.create_user(username="foobar", password="foobar123")
+        self.assertNotEqual("foobar123", user.password)
+        self.assertTrue(user.check_password("foobar123"))
+
+    def test_email_is_normalized(self) -> None:
+        """Verify the email domain is normalized to lowercase on creation."""
+
+        user = User.objects.create_user(
+            username="foobar",
+            password="foobar123",
+            email="foo@BAR.COM")
+        self.assertEqual("foo@bar.com", user.email)
+
+    def test_extra_fields_are_applied(self) -> None:
+        """Verify additional keyword arguments are forwarded to the user model."""
+
+        user = User.objects.create_user(
+            username="foobar",
+            password="foobar123",
+            is_active=False)
+        self.assertFalse(user.is_active)
 
 
 class CreateSuperUserMethod(TestCase):
@@ -53,9 +78,9 @@ class CreateSuperUserMethod(TestCase):
         """Verify superuser accounts are created with the correct attributes."""
 
         admin_user = User.objects.create_superuser(
-            username='foobar',
-            first_name='foo',
-            last_name='bar',
+            username="foobar",
+            first_name="foo",
+            last_name="bar",
             email="foo@bar.com",
             password="foobar123")
 
@@ -70,11 +95,11 @@ class CreateSuperUserMethod(TestCase):
     def test_superusers_must_be_staff(self) -> None:
         """Verify superusers are required to be staff users."""
 
-        with self.assertRaisesRegex(ValueError, 'must set `is_staff=True`.'):
+        with self.assertRaisesRegex(ValueError, "must set `is_staff=True`."):
             User.objects.create_superuser(
-                username='foobar',
-                first_name='foo',
-                last_name='bar',
+                username="foobar",
+                first_name="foo",
+                last_name="bar",
                 email="foo@bar.com",
                 password="foobar123",
                 is_staff=False)
@@ -82,11 +107,18 @@ class CreateSuperUserMethod(TestCase):
     def test_superusers_must_be_superusers(self) -> None:
         """Verify superusers are required to have superuser permissions."""
 
-        with self.assertRaisesRegex(ValueError, 'must set `is_superuser=True`'):
+        with self.assertRaisesRegex(ValueError, "must set `is_superuser=True`"):
             User.objects.create_superuser(
-                username='foobar',
-                first_name='foo',
-                last_name='bar',
+                username="foobar",
+                first_name="foo",
+                last_name="bar",
                 email="foo@bar.com",
                 password="foobar123",
                 is_superuser=False)
+
+    def test_password_is_hashed(self) -> None:
+        """Verify superuser passwords are stored as a hashed value."""
+
+        admin_user = User.objects.create_superuser(username="foobar", password="foobar123")
+        self.assertNotEqual("foobar123", admin_user.password)
+        self.assertTrue(admin_user.check_password("foobar123"))

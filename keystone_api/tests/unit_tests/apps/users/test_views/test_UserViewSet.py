@@ -20,7 +20,7 @@ class GetSerializerClassMethod(TestCase):
     def test_get_serializer_class_for_staff_user(self) -> None:
         """Verify the `PrivilegeUserSerializer` serializer is returned for a staff user."""
 
-        request = Request(RequestFactory().get('/users/'))
+        request = Request(RequestFactory().get("/users/"))
         request.user = self.staff_user
         view = UserViewSet(request=request)
 
@@ -30,7 +30,7 @@ class GetSerializerClassMethod(TestCase):
     def test_get_serializer_class_for_regular_user(self) -> None:
         """Verify the `RestrictedUserSerializer` serializer is returned for a generic user."""
 
-        request = Request(RequestFactory().get('/users/'))
+        request = Request(RequestFactory().get("/users/"))
         request.user = self.regular_user
         view = UserViewSet(request=request)
 

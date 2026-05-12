@@ -11,10 +11,10 @@ from rest_framework import serializers
 from .models import *
 
 __all__ = [
-    'TeamRoleSerializer',
-    'TeamSummarySerializer',
-    'UserRoleSerializer',
-    'UserSummarySerializer',
+    "TeamRoleSerializer",
+    "TeamSummarySerializer",
+    "UserRoleSerializer",
+    "UserSummarySerializer",
 ]
 
 
