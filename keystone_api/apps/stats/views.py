@@ -51,7 +51,11 @@ class AbstractTeamStatsView(ABC):
         """Compute and return summary statistics as a dictionary."""
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership for list actions."""
+        """Return the base queryset filtered by user team membership.
+
+        non-staff users are only returned records from their own teams.
+        Staff users are returned all records.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
@@ -157,8 +161,8 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
             "su_awarded_total": round(su_awarded_total, 2),
             "su_finalized_total": round(su_finalized_total, 2),
 
-            "days_pending_average": days_pending_average.days if days_pending_average else None,
-            "days_active_average": days_active_average.days if days_active_average else None,
+            "days_pending_average": days_pending_average.days if days_pending_average is not None else None,
+            "days_active_average": days_active_average.days if days_active_average is not None else None,
         }
 
 
@@ -245,7 +249,11 @@ class NotificationStatsView(GenericAPIView):
     schema = FilterGetAutoSchema()
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership for list actions."""
+        """Return the base queryset filtered by notification owner.
+
+        non-staff users are only returned their own notifications.
+        Staff users are returned all records.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
@@ -291,7 +299,7 @@ class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):
         Non-staff users are limited to teams where they are a member.
         """
 
-        # Base querys for all records and records by lifecycle stage
+        # Base queries for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
         draft_qs = qs.filter(submitted__isnull=True, published__isnull=True)
         submitted_qs = qs.filter(submitted__isnull=False, published__isnull=True)

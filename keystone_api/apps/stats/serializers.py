@@ -17,7 +17,7 @@ __all__ = [
 
 
 class AllocationRequestStatsSerializer(serializers.Serializer):
-    """Aggregated statistics for allocation requests and awards."""
+    """Serializer for aggregated allocation requests statistics."""
 
     # Request lifecycle metrics
     request_count = serializers.IntegerField()
