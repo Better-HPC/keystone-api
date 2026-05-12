@@ -118,6 +118,10 @@ class TeamSerializer(serializers.ModelSerializer):
             A dictionary containing the validated values.
         """
 
+        request = self.context.get("request")
+        if request and not request.user.is_staff and "is_active" in self.initial_data:
+            raise serializers.ValidationError({"is_active": "This field cannot be set."})
+
         if name := attrs.get("name"):
             slug = slugify(name)
             queryset = Team.objects.filter(slug=slug)

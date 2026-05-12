@@ -33,6 +33,7 @@ class TeamPermissions(permissions.BasePermission):
 
         return is_staff or (is_active and (is_readonly or is_team_admin))
 
+
 class MembershipPermissions(TeamPermissions):
     """RBAC permissions model for `Membership` objects.
 
