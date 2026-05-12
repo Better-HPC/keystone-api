@@ -12151,7 +12151,7 @@ components:
       - title
     AllocationRequestStats:
       type: object
-      description: Serializer for aggregated allocation requests statistics.
+      description: Aggregated statistics for allocation requests and awards.
       properties:
         request_count:
           type: integer
@@ -14153,12 +14153,13 @@ components:
       type: object
       description: Object serializer for the `Team` model.
       properties:
+        is_active:
+          type: boolean
+          default: true
         name:
           type: string
           minLength: 1
           maxLength: 255
-        is_active:
-          type: boolean
     Preference:
       type: object
       description: Object serializer for the `Preference` class.
@@ -14650,11 +14651,6 @@ components:
           type: string
           nullable: true
           maxLength: 1000
-        profile_image:
-          type: string
-          format: uri
-          readOnly: true
-          nullable: true
         is_active:
           type: boolean
           readOnly: true
@@ -14703,7 +14699,6 @@ components:
       - is_superuser
       - last_login
       - last_name
-      - profile_image
       - role
       - user_permissions
       - username
@@ -14881,6 +14876,9 @@ components:
           type: string
           readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+          default: true
         _membership:
           type: array
           items:
@@ -14896,8 +14894,6 @@ components:
         name:
           type: string
           maxLength: 255
-        is_active:
-          type: boolean
         users:
           type: array
           items:
@@ -14915,12 +14911,13 @@ components:
       type: object
       description: Object serializer for the `Team` model.
       properties:
+        is_active:
+          type: boolean
+          default: true
         name:
           type: string
           minLength: 1
           maxLength: 255
-        is_active:
-          type: boolean
       required:
       - name
     TeamRole:
