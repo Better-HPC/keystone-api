@@ -62,5 +62,4 @@ class TeamsForUserMethod(TestCase):
 
         result = Team.objects.teams_for_user(self.test_user, include_inactive=False).all()
         self.assertNotIn(inactive_team, result)
-        # Active memberships from setUp should still be returned
         self.assertCountEqual(result, [self.team1, self.team2, self.team3])
