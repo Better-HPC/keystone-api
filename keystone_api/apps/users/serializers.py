@@ -64,7 +64,7 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         """
 
         # Hash the password value
-        if "password" in attrs:  # pragma: no branch
+        if "password" in attrs:
             password_validation.validate_password(attrs["password"])
             attrs["password"] = make_password(attrs["password"])
 
