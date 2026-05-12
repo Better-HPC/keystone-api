@@ -124,6 +124,7 @@ class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     slug = serializers.SlugField(read_only=True)
+    is_active = serializers.BooleanField(default=True)
     _membership = UserRoleSerializer(source="membership", many=True, read_only=True)
     _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
@@ -148,11 +149,14 @@ class TeamSerializer(serializers.ModelSerializer):
 
         request = self.context.get("request")
 
-        # Prevent non-staff from accessing inactive teams
-        is_non_staff = request and not request.user.is_staff
-        is_active_initial = "is_active" in self.initial_data
-        if is_non_staff and is_active_initial:
-            raise serializers.ValidationError({"is_active": "This field cannot be set."})
+        # Prevent non-staff from creating inactive teams
+        is_create = self.instance is None
+        user_non_staff = request and not request.user.is_staff
+        setting_inactive = not attrs.get("is_active", True)
+        if is_create and user_non_staff and setting_inactive:
+            raise serializers.ValidationError({
+                "is_active": "This field cannot be set to False on new records by non-staff users."
+            })
 
         # Ensure team slugs are unique
         if name := attrs.get("name"):
