@@ -12151,7 +12151,7 @@ components:
       - title
     AllocationRequestStats:
       type: object
-      description: Aggregated statistics for allocation requests and awards.
+      description: Serializer for aggregated allocation requests statistics.
       properties:
         request_count:
           type: integer
