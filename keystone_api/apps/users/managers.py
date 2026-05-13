@@ -15,29 +15,34 @@ from django.db import models
 if TYPE_CHECKING:  # pragma: nocover
     from apps.users.models import User
 
-__all__ = ['TeamManager', 'UserManager']
+__all__ = ["TeamManager", "UserManager"]
 
 
 class TeamManager(models.Manager):
     """Object manager for the `Team` database model."""
 
-    def teams_for_user(self, user: 'User') -> models.QuerySet:
+    def teams_for_user(self, user: "User", include_inactive: bool = True) -> models.QuerySet:
         """Get all teams the user is affiliated with.
 
         Args:
             user: The user to return affiliate teams for.
+            include_inactive: Whether to include teams marked as inactive.
 
         Returns:
             A filtered queryset.
         """
 
-        return self.filter(membership__user=user)
+        queryset = self.filter(membership__user=user)
+        if not include_inactive:
+            queryset = queryset.filter(is_active=True)
+
+        return queryset
 
 
 class UserManager(BaseUserManager):
     """Object manager for the `User` database model."""
 
-    def create_user(self, username: str, password: str, **extra_fields) -> 'User':
+    def create_user(self, username: str, password: str, **extra_fields) -> "User":
         """Create a new user account.
 
         Args:
@@ -49,8 +54,8 @@ class UserManager(BaseUserManager):
             The saved user account.
         """
 
-        if 'email' in extra_fields:
-            extra_fields['email'] = self.normalize_email(extra_fields['email'])
+        if "email" in extra_fields:
+            extra_fields["email"] = self.normalize_email(extra_fields["email"])
 
         password_validation.validate_password(password)
 
@@ -60,7 +65,7 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, username: str, password: str, **extra_fields) -> 'User':
+    def create_superuser(self, username: str, password: str, **extra_fields) -> "User":
         """Create a new user account with superuser privileges.
 
         Args:
@@ -72,14 +77,14 @@ class UserManager(BaseUserManager):
             The saved user account.
         """
 
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
 
-        if not extra_fields['is_staff']:
-            raise ValueError('When creating a superuser you must set `is_staff=True`.')
+        if not extra_fields["is_staff"]:
+            raise ValueError("When creating a superuser you must set `is_staff=True`.")
 
-        if not extra_fields['is_superuser']:
-            raise ValueError('When creating a superuser you must set `is_superuser=True`.')
+        if not extra_fields["is_superuser"]:
+            raise ValueError("When creating a superuser you must set `is_superuser=True`.")
 
         return self.create_user(username, password, **extra_fields)

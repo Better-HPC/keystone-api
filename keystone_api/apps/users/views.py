@@ -28,7 +28,7 @@ __all__ = [
 ]
 
 
-@extend_schema_view(  # pragma: nocover
+@extend_schema_view(
     get=extend_schema(
         tags=["Users - Team Membership"],
         summary="Retrieve valid team role options.",
@@ -55,12 +55,19 @@ class MembershipRoleChoicesView(APIView):
     list=extend_schema(
         tags=["Users - Team Membership"],
         summary="List team memberships.",
-        description="Returns a list of all team memberships.",
+        description=(
+            "Returns a list of team memberships. "
+            "Non-staff users are only returned memberships for active teams. "
+            "Staff users are returned all memberships."
+        ),
     ),
     retrieve=extend_schema(
         tags=["Users - Team Membership"],
         summary="Retrieve a team membership.",
-        description="Returns a single team membership by ID.",
+        description=(
+            "Returns a single team membership by ID. "
+            "Non-staff users can only retrieve memberships for active teams."
+        ),
     ),
     create=extend_schema(
         tags=["Users - Team Membership"],
@@ -105,8 +112,8 @@ class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.prefetch_related(
         "history"
     ).select_related(
+        "team",
         "user",
-        "team"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -125,13 +132,17 @@ class MembershipViewSet(viewsets.ModelViewSet):
         summary="List teams.",
         description=(
             "Returns a list of teams. "
-            "Non-staff users are only returned teams they are a member of. Staff users are returned all teams."
+            "Non-staff users are only returned active teams they are a member of. "
+            "Staff users are returned all teams."
         ),
     ),
     retrieve=extend_schema(
         tags=["Users - Teams"],
         summary="Retrieve a team.",
-        description="Returns a single team by ID.",
+        description=(
+            "Returns a single team by ID. "
+            "Non-staff users can only retrieve active teams they are a member of."
+        ),
     ),
     create=extend_schema(
         tags=["Users - Teams"],
@@ -177,9 +188,9 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     search_fields = ["name"]
     queryset = Team.objects.prefetch_related(
+        "history",
         "membership__user",
         "users",
-        "history"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -248,8 +259,10 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, UserPermissions]
     search_fields = ["username", "first_name", "last_name", "email", "department", "role"]
     queryset = User.objects.prefetch_related(
+        "groups",
+        "history",
         "membership__team",
-        "history"
+        "user_permissions",
     )
 
     def get_serializer_class(self) -> type[Serializer]:

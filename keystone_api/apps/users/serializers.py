@@ -16,10 +16,10 @@ from .models import *
 from .nested import *
 
 __all__ = [
-    'MembershipSerializer',
-    'PrivilegedUserSerializer',
-    'RestrictedUserSerializer',
-    'TeamSerializer',
+    "MembershipSerializer",
+    "PrivilegedUserSerializer",
+    "RestrictedUserSerializer",
+    "TeamSerializer",
 ]
 
 
@@ -28,13 +28,38 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     _user = UserSummarySerializer(source="user", read_only=True)
     _team = TeamSummarySerializer(source="team", read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Membership
         fields = "__all__"
+
+    def validate(self, attrs: dict) -> dict:
+        """Validate record data.
+
+        Blocks non-staff users from creating memberships for inactive teams.
+
+        Args:
+            attrs: The membership attributes to validate.
+
+        Returns:
+            A dictionary containing the validated values.
+        """
+
+        request = self.context.get("request")
+        team = attrs.get("team")
+
+        # Prevent non-staff from creating memberships for inactive teams
+        is_non_staff = request and not request.user.is_staff
+        is_inactive = team is not None and not team.is_active
+        if is_non_staff and is_inactive:
+            raise serializers.ValidationError(
+                {"team": "Non-staff cannot create a membership for an inactive team."}
+            )
+
+        return super().validate(attrs)
 
 
 class PrivilegedUserSerializer(serializers.ModelSerializer):
@@ -43,15 +68,15 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
     display_name = serializers.CharField(read_only=True)
     abbreviation = serializers.CharField(read_only=True)
     _membership = TeamRoleSerializer(source="membership", many=True, read_only=True)
-    _history = AuditLogSummarySerializer(source='history', read_only=True, many=True)
+    _history = AuditLogSummarySerializer(source="history", read_only=True, many=True)
 
     class Meta:
         """Serializer settings."""
 
         model = User
-        fields = '__all__'
-        read_only_fields = ['date_joined', 'last_login']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = "__all__"
+        read_only_fields = ["date_joined", "last_login"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def validate(self, attrs: dict) -> dict:
         """Validate user attributes match the ORM data model.
@@ -64,9 +89,9 @@ class PrivilegedUserSerializer(serializers.ModelSerializer):
         """
 
         # Hash the password value
-        if 'password' in attrs:  # pragma: no branch
-            password_validation.validate_password(attrs['password'])
-            attrs['password'] = make_password(attrs['password'])
+        if "password" in attrs:
+            password_validation.validate_password(attrs["password"])
+            attrs["password"] = make_password(attrs["password"])
 
         return super().validate(attrs)
 
@@ -78,26 +103,30 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
         """Serializer settings."""
 
         model = User
-        fields = '__all__'
-        read_only_fields = ['is_active', 'is_staff', 'is_ldap_user', 'date_joined', 'last_login', 'profile_image', 'teams']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = "__all__"
+        read_only_fields = ["is_active", "is_staff", "is_ldap_user", "date_joined", "last_login", "profile_image"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data: dict) -> None:
         """Prevents creation of new user records by raising an exception.
+
+        Args:
+            validated_data: The data used to create a new user record.
 
         Raises:
             RuntimeError: Every time the function is called.
         """
 
-        raise RuntimeError('Attempted to create new user record using a serializer with restricted permissions.')
+        raise RuntimeError("Attempted to create new user record using a serializer with restricted permissions.")
 
 
 class TeamSerializer(serializers.ModelSerializer):
     """Object serializer for the `Team` model."""
 
     slug = serializers.SlugField(read_only=True)
+    is_active = serializers.BooleanField(default=True)
     _membership = UserRoleSerializer(source="membership", many=True, read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
@@ -106,8 +135,30 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs: dict) -> dict:
-        """Ensure the slug generated from the team name is unique."""
+        """Validate record data.
 
+        Requires team names to generate unique slug values.
+        Blocks non-staff from creating inactive teams.
+
+        Args:
+            attrs: The user attributes to validate.
+
+        Returns:
+            A dictionary containing the validated values.
+        """
+
+        request = self.context.get("request")
+
+        # Prevent non-staff from creating inactive teams
+        is_create = self.instance is None
+        user_non_staff = request and not request.user.is_staff
+        setting_inactive = not attrs.get("is_active", True)
+        if is_create and user_non_staff and setting_inactive:
+            raise serializers.ValidationError({
+                "is_active": "This field cannot be set to False on new records by non-staff users."
+            })
+
+        # Ensure team slugs are unique
         if name := attrs.get("name"):
             slug = slugify(name)
             queryset = Team.objects.filter(slug=slug)
@@ -120,6 +171,6 @@ class TeamSerializer(serializers.ModelSerializer):
             if queryset.exists():
                 raise serializers.ValidationError({"name": "A team with this name already exists."})
 
-            attrs['slug'] = slug
+            attrs["slug"] = slug
 
         return super().validate(attrs)

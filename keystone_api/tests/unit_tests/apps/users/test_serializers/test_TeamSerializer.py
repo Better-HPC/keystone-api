@@ -1,8 +1,8 @@
 """Unit tests for the `TeamSerializer` class."""
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
-from apps.users.factories import TeamFactory
+from apps.users.factories import TeamFactory, UserFactory
 from apps.users.serializers import TeamSerializer
 
 
@@ -12,7 +12,11 @@ class ValidateMethod(TestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
+        self.factory = RequestFactory()
+
         self.team = TeamFactory(name="Team 1")
+        self.generic_user = UserFactory()
+        self.staff_user = UserFactory(is_staff=True)
 
     def test_valid_on_create_with_unique_name(self) -> None:
         """Verify a unique name passes validation on create."""
@@ -27,10 +31,17 @@ class ValidateMethod(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("name", serializer.errors)
 
-    def test_error_on_create_with_equivalent_slug(self) -> None:
-        """Verify a name that slugifies identically to an existing name raises a validation error."""
+    def test_error_on_create_with_whitespace_variant_name(self) -> None:
+        """Verify a name differing only by whitespace from an existing team raises a validation error."""
 
         serializer = TeamSerializer(data={"name": "Team      1"})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("name", serializer.errors)
+
+    def test_error_on_create_with_case_variant_name(self) -> None:
+        """Verify a name differing only by letter case from an existing team raises a validation error."""
+
+        serializer = TeamSerializer(data={"name": "team 1"})
         self.assertFalse(serializer.is_valid())
         self.assertIn("name", serializer.errors)
 
@@ -74,3 +85,22 @@ class ValidateMethod(TestCase):
         serializer = TeamSerializer(self.team, data={"description": "Updated."}, partial=True)
         serializer.is_valid(raise_exception=True)
         self.assertNotIn("slug", serializer.validated_data)
+
+    def test_error_on_create_inactive_as_non_staff(self) -> None:
+        """Verify non-staff users cannot set `is_active=False` on team creation."""
+
+        request = self.factory.post("/")
+        request.user = self.generic_user
+
+        serializer = TeamSerializer(data={"name": "New Team", "is_active": False}, context={"request": request})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("is_active", serializer.errors)
+
+    def test_valid_on_create_inactive_as_staff(self) -> None:
+        """Verify staff users can set `is_active=False` on team creation."""
+
+        request = self.factory.post("/")
+        request.user = self.staff_user
+
+        serializer = TeamSerializer(data={"name": "New Team", "is_active": False}, context={"request": request})
+        self.assertTrue(serializer.is_valid(), serializer.errors)

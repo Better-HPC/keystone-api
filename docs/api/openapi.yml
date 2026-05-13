@@ -10394,7 +10394,8 @@ paths:
   /users/memberships/:
     get:
       operationId: users_memberships_list
-      description: Returns a list of all team memberships.
+      description: Returns a list of team memberships. Non-staff users are only returned
+        memberships for active teams. Staff users are returned all memberships.
       summary: List team memberships.
       parameters:
       - name: _limit
@@ -10626,7 +10627,8 @@ paths:
   /users/memberships/{id}/:
     get:
       operationId: users_memberships_retrieve
-      description: Returns a single team membership by ID.
+      description: Returns a single team membership by ID. Non-staff users can only
+        retrieve memberships for active teams.
       summary: Retrieve a team membership.
       parameters:
       - in: path
@@ -10741,8 +10743,8 @@ paths:
   /users/teams/:
     get:
       operationId: users_teams_list
-      description: Returns a list of teams. Non-staff users are only returned teams
-        they are a member of. Staff users are returned all teams.
+      description: Returns a list of teams. Non-staff users are only returned active
+        teams they are a member of. Staff users are returned all teams.
       summary: List teams.
       parameters:
       - name: _limit
@@ -10981,7 +10983,8 @@ paths:
   /users/teams/{id}/:
     get:
       operationId: users_teams_retrieve
-      description: Returns a single team by ID.
+      description: Returns a single team by ID. Non-staff users can only retrieve
+        active teams they are a member of.
       summary: Retrieve a team.
       parameters:
       - in: path
@@ -14150,12 +14153,13 @@ components:
       type: object
       description: Object serializer for the `Team` model.
       properties:
+        is_active:
+          type: boolean
+          default: true
         name:
           type: string
           minLength: 1
           maxLength: 255
-        is_active:
-          type: boolean
     Preference:
       type: object
       description: Object serializer for the `Preference` class.
@@ -14647,11 +14651,6 @@ components:
           type: string
           nullable: true
           maxLength: 1000
-        profile_image:
-          type: string
-          format: uri
-          readOnly: true
-          nullable: true
         is_active:
           type: boolean
           readOnly: true
@@ -14700,7 +14699,6 @@ components:
       - is_superuser
       - last_login
       - last_name
-      - profile_image
       - role
       - user_permissions
       - username
@@ -14878,6 +14876,9 @@ components:
           type: string
           readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+          default: true
         _membership:
           type: array
           items:
@@ -14893,8 +14894,6 @@ components:
         name:
           type: string
           maxLength: 255
-        is_active:
-          type: boolean
         users:
           type: array
           items:
@@ -14912,12 +14911,13 @@ components:
       type: object
       description: Object serializer for the `Team` model.
       properties:
+        is_active:
+          type: boolean
+          default: true
         name:
           type: string
           minLength: 1
           maxLength: 255
-        is_active:
-          type: boolean
       required:
       - name
     TeamRole:

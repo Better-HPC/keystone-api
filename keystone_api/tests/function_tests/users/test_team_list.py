@@ -159,6 +159,13 @@ class InactiveTeamFiltering(APITestCase):
         returned_ids = [t['id'] for t in response.data['results']]
         self.assertNotIn(self.inactive_team.id, returned_ids)
 
+    def test_non_staff_cannot_create_inactive_team(self) -> None:
+        """Verify non-staff users cannot create teams with `is_active=False`."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.post(self.endpoint, {'name': 'New Team', 'is_active': False})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
     def test_inactive_teams_visible_to_staff(self) -> None:
         """Verify inactive teams are returned to staff users."""
 
@@ -166,3 +173,13 @@ class InactiveTeamFiltering(APITestCase):
         response = self.client.get(self.endpoint)
         returned_ids = [t['id'] for t in response.data['results']]
         self.assertIn(self.inactive_team.id, returned_ids)
+
+    def test_staff_can_create_inactive_team(self) -> None:
+        """Verify staff users can create teams with `is_active=False`."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, {'name': 'New Team', 'is_active': False})
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        created_team = Team.objects.get(pk=response.data['id'])
+        self.assertFalse(created_team.is_active)

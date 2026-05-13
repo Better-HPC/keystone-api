@@ -8,7 +8,7 @@ tasks, including database migration and server launch.
 from django.conf import settings
 from django.core.checks import Error
 
-__all__ = ['ldap_dependency_check']
+__all__ = ["ldap_dependency_check"]
 
 
 def ldap_dependency_check(*args, **kwargs) -> list[Error]:
