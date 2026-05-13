@@ -26,12 +26,18 @@ class TeamPermissions(permissions.BasePermission):
     def has_object_permission(self, request: Request, view: View, obj: Team) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        is_staff = request.user.is_staff
-        is_readonly = request.method in permissions.SAFE_METHODS
-        is_team_admin = request.user in obj.get_privileged_members()
-        is_active = obj.is_active
+        # Staff have all permissions
+        if request.user.is_staff:
+            return True
 
-        return is_staff or (is_active and (is_readonly or is_team_admin))
+        # non-staff cannot access inactive teams
+        if not obj.is_active:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.get_privileged_members().filter(pk=request.user.pk).exists()
 
 
 class MembershipPermissions(TeamPermissions):
@@ -50,13 +56,19 @@ class MembershipPermissions(TeamPermissions):
         if request.user.is_staff:
             return True
 
+        # Defer to object-level checks when no team is specified in the request body
+        team_id = request.data.get("team")
+        if team_id is None:
+            return True
+
         # Write access to specific teams is based on the user's relation to the team
         try:
-            team = Team.objects.get(id=request.data.get("team"))
-            return request.user in team.get_privileged_members()
+            team = Team.objects.get(id=team_id)
 
         except Team.DoesNotExist:
-            return True
+            return True  # Defer to object-level checks
+
+        return team.get_privileged_members().filter(pk=request.user.pk).exists()
 
     def has_object_permission(self, request: Request, view: View, obj: Membership) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
@@ -65,12 +77,18 @@ class MembershipPermissions(TeamPermissions):
         if request.method == "DELETE" and obj.user == request.user:
             return True
 
-        is_staff = request.user.is_staff
-        is_readonly = request.method in permissions.SAFE_METHODS
-        is_team_admin = request.user in obj.team.get_privileged_members()
-        is_active = obj.team.is_active
+        # Staff have all permissions
+        if request.user.is_staff:
+            return True
 
-        return is_staff or (is_active and (is_readonly or is_team_admin))
+        # non-staff cannot access inactive teams
+        if not obj.team.is_active:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.team.get_privileged_members().filter(pk=request.user.pk).exists()
 
 
 class UserPermissions(permissions.BasePermission):

@@ -112,8 +112,8 @@ class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.prefetch_related(
         "history"
     ).select_related(
+        "team",
         "user",
-        "team"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -188,9 +188,9 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     search_fields = ["name"]
     queryset = Team.objects.prefetch_related(
+        "history",
         "membership__user",
         "users",
-        "history"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -259,8 +259,10 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, UserPermissions]
     search_fields = ["username", "first_name", "last_name", "email", "department", "role"]
     queryset = User.objects.prefetch_related(
+        "groups",
+        "history",
         "membership__team",
-        "history"
+        "user_permissions",
     )
 
     def get_serializer_class(self) -> type[Serializer]:
