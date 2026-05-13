@@ -7,7 +7,7 @@ from apps.notifications.factories import NotificationFactory
 from apps.users.factories import UserFactory
 from .common import StatisticEndpointPermissionsTestMixin
 
-VIEW_NAME = 'stats:notification-detail'
+VIEW_NAME = "stats:notification-stats"
 
 
 class EndpointPermissions(StatisticEndpointPermissionsTestMixin, APITestCase):

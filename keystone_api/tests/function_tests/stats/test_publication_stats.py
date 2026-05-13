@@ -1,14 +1,14 @@
-"""Function tests for the `stats:request-list` endpoint."""
+"""Function tests for the `stats:publication-list` endpoint."""
 
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import AllocationRequestFactory
+from apps.research_products.factories import PublicationFactory
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from .common import StatisticEndpointPermissionsTestMixin
 
-VIEW_NAME = 'stats:request-detail'
+VIEW_NAME = "stats:publication-stats"
 
 
 class EndpointPermissions(StatisticEndpointPermissionsTestMixin, APITestCase):
@@ -32,14 +32,14 @@ class TeamRecordFiltering(APITestCase):
         self.team_1 = membership_1.team
         self.team_1_user = membership_1.user
         self.team_1_records = [
-            AllocationRequestFactory(team=self.team_1) for _ in range(2)
+            PublicationFactory(team=self.team_1) for _ in range(2)
         ]
 
         membership_2 = MembershipFactory(role=Membership.Role.MEMBER)
         self.user_2 = membership_2.user
         self.team_2 = membership_2.team
         self.team_2_records = [
-            AllocationRequestFactory(team=self.team_2) for _ in range(3)
+            PublicationFactory(team=self.team_2) for _ in range(3)
         ]
 
         self.staff_user = UserFactory(is_staff=True)
@@ -53,7 +53,7 @@ class TeamRecordFiltering(APITestCase):
 
         stats = response.json()
         self.assertEqual(200, response.status_code, response.content)
-        self.assertEqual(len(self.team_1_records), stats["request_count"])
+        self.assertEqual(len(self.team_1_records), stats["publications_count"])
 
     def test_staff_user_statistics(self) -> None:
         """Verify staff users are returned aggregated statistics across all teams."""
@@ -63,7 +63,7 @@ class TeamRecordFiltering(APITestCase):
 
         stats = response.json()
         self.assertEqual(200, response.status_code, response.content)
-        self.assertEqual(len(self.all_records), stats["request_count"])
+        self.assertEqual(len(self.all_records), stats["publications_count"])
 
     def test_team_filtered_statistics(self) -> None:
         """Verify query values can be used to filter returned statistics by team."""
@@ -73,4 +73,4 @@ class TeamRecordFiltering(APITestCase):
 
         stats = response.json()
         self.assertEqual(200, response.status_code, response.content)
-        self.assertEqual(len(self.team_1_records), stats["request_count"])
+        self.assertEqual(len(self.team_1_records), stats["publications_count"])
