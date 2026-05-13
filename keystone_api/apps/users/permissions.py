@@ -37,7 +37,7 @@ class TeamPermissions(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.user in obj.get_privileged_members()
+        return obj.get_privileged_members().filter(pk=request.user.pk).exists()
 
 
 class MembershipPermissions(TeamPermissions):
@@ -82,7 +82,7 @@ class MembershipPermissions(TeamPermissions):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.user in obj.team.get_privileged_members()
+        return obj.team.get_privileged_members().filter(pk=request.user.pk).exists()
 
 
 class UserPermissions(permissions.BasePermission):
