@@ -9,10 +9,10 @@ creation.
 from rest_framework import serializers
 
 __all__ = [
-    'AllocationRequestStatsSerializer',
-    'GrantStatsSerializer',
-    'NotificationStatsSerializer',
-    'PublicationStatsSerializer',
+    "AllocationRequestStatsSerializer",
+    "GrantStatsSerializer",
+    "NotificationStatsSerializer",
+    "PublicationStatsSerializer",
 ]
 
 

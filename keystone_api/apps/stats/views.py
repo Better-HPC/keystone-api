@@ -26,10 +26,10 @@ from plugins.schemas import FilterGetAutoSchema
 from .serializers import *
 
 __all__ = [
-    'AllocationRequestStatsView',
-    'GrantStatsView',
-    'NotificationStatsView',
-    'PublicationStatsView'
+    "AllocationRequestStatsView",
+    "GrantStatsView",
+    "NotificationStatsView",
+    "PublicationStatsView"
 ]
 
 
@@ -118,29 +118,29 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
         request_expired_count = qs_expired.count()
 
         # Award totals across all related allocations
-        su_pending_total = qs_pending.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_declined_total = qs_declined.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_approved_total = qs_approved.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_upcoming_total = qs_upcoming.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_active_total = qs_active.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_expired_total = qs_expired.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
+        su_pending_total = qs_pending.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
+        su_declined_total = qs_declined.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
+        su_approved_total = qs_approved.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
+        su_upcoming_total = qs_upcoming.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
+        su_active_total = qs_active.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
+        su_expired_total = qs_expired.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
 
-        su_requested_total = qs.aggregate(total=Sum('allocation_set__requested'))['total'] or 0
-        su_awarded_total = qs.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_finalized_total = qs.aggregate(total=Sum('allocation_set__final'))['total'] or 0
+        su_requested_total = qs.aggregate(total=Sum("allocation_set__requested"))["total"] or 0
+        su_awarded_total = qs.aggregate(total=Sum("allocation_set__awarded"))["total"] or 0
+        su_finalized_total = qs.aggregate(total=Sum("allocation_set__final"))["total"] or 0
 
         # Timing metrics
         qs_annotated = qs.annotate(
             days_pending=ExpressionWrapper(
-                F('active') - F('submitted'), output_field=DurationField()
+                F("active") - F("submitted"), output_field=DurationField()
             ),
             days_active=ExpressionWrapper(
-                F('expire') - F('active'), output_field=DurationField()
+                F("expire") - F("active"), output_field=DurationField()
             )
         )
 
-        days_pending_average = qs_annotated.aggregate(Avg('days_pending'))['days_pending__avg']
-        days_active_average = qs_annotated.aggregate(Avg('days_active'))['days_active__avg']
+        days_pending_average = qs_annotated.aggregate(Avg("days_pending"))["days_pending__avg"]
+        days_active_average = qs_annotated.aggregate(Avg("days_active"))["days_active__avg"]
 
         return {
             "request_count": request_count,
@@ -192,8 +192,8 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
         """
 
         # Common DB aggregates (wrapped in Coalesce for 0-defaults)
-        amount_sum = Coalesce(Sum("amount"), Decimal('0.00'))
-        amount_avg = Coalesce(Avg("amount"), Decimal('0.00'))
+        amount_sum = Coalesce(Sum("amount"), Decimal("0.00"))
+        amount_avg = Coalesce(Avg("amount"), Decimal("0.00"))
 
         # Base querysets for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
