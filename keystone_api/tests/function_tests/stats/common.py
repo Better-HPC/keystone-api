@@ -14,14 +14,14 @@ class StatisticEndpointPermissionsTestMixin(CustomAsserts, ABC):
     Endpoint permissions are tested against the following matrix of HTTP responses.
     Permissions depend on the user's role within the team owning the accessed record.
 
-    | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
-    | Team Member                | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Team Admin                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Team Owner                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | User Status              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |--------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User     | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated non-member | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
+    | Team Member              | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Team Admin               | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Team Owner               | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Staff User               | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
     @property

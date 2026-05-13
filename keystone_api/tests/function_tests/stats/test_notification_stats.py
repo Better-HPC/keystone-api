@@ -1,6 +1,7 @@
 """Function tests for the `stats:notification-detail` endpoint."""
 
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.notifications.factories import NotificationFactory
@@ -30,7 +31,7 @@ class UserRecordFiltering(APITestCase):
         self.user_1 = UserFactory()
         self.user_1_records = [
             NotificationFactory(user=self.user_1),
-            NotificationFactory(user=self.user_1, read=False)
+            NotificationFactory(user=self.user_1, read=False),
         ]
 
         self.user_2 = UserFactory()
@@ -48,7 +49,7 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.user_1_records), stats["total"])
 
     def test_staff_user_statistics(self) -> None:
@@ -58,7 +59,7 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.all_records), stats["total"])
 
     def test_user_filtered_statistics(self) -> None:
@@ -68,5 +69,5 @@ class UserRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint, query_params={"user": self.user_1.id})
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.user_1_records), stats["total"])
