@@ -56,13 +56,19 @@ class MembershipPermissions(TeamPermissions):
         if request.user.is_staff:
             return True
 
+        # Defer to object-level checks when no team is specified in the request body
+        team_id = request.data.get("team")
+        if team_id is None:
+            return True
+
         # Write access to specific teams is based on the user's relation to the team
         try:
-            team = Team.objects.get(id=request.data.get("team"))
-            return request.user in team.get_privileged_members()
+            team = Team.objects.get(id=team_id)
 
         except Team.DoesNotExist:
-            return True
+            return True  # Defer to object-level checks
+
+        return team.get_privileged_members().filter(pk=request.user.pk).exists()
 
     def has_object_permission(self, request: Request, view: View, obj: Membership) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
