@@ -5,8 +5,8 @@ models or services, and generating the appropriate HTTP response(s). Views
 serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
-
-from django.db.models import QuerySet
+from auditlog.models import LogEntry
+from django.db.models import Prefetch, QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import serializers, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -260,7 +260,9 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ["username", "first_name", "last_name", "email", "department", "role"]
     queryset = User.objects.prefetch_related(
         "membership__team",
-        "history"
+        "groups",
+        "user_permissions",
+        "history",
     )
 
     def get_serializer_class(self) -> type[Serializer]:
