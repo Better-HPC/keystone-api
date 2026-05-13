@@ -32,7 +32,6 @@ class Membership(models.Model):
         ]
 
         indexes = [
-            models.Index(fields=["role"]),
             models.Index(fields=["user", "role"]),
             models.Index(fields=["team", "role"]),
             models.Index(fields=["team", "user", "role"]),
