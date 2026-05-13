@@ -26,12 +26,18 @@ class TeamPermissions(permissions.BasePermission):
     def has_object_permission(self, request: Request, view: View, obj: Team) -> bool:
         """Return whether the incoming HTTP request has permission to access a database record."""
 
-        is_staff = request.user.is_staff
-        is_readonly = request.method in permissions.SAFE_METHODS
-        is_team_admin = request.user in obj.get_privileged_members()
-        is_active = obj.is_active
+        # Staff have all permissions
+        if request.user.is_staff:
+            return True
 
-        return is_staff or (is_active and (is_readonly or is_team_admin))
+        # non-staff cannot access inactive teams
+        if not obj.is_active:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return request.user in obj.get_privileged_members()
 
 
 class MembershipPermissions(TeamPermissions):
@@ -65,12 +71,18 @@ class MembershipPermissions(TeamPermissions):
         if request.method == "DELETE" and obj.user == request.user:
             return True
 
-        is_staff = request.user.is_staff
-        is_readonly = request.method in permissions.SAFE_METHODS
-        is_team_admin = request.user in obj.team.get_privileged_members()
-        is_active = obj.team.is_active
+        # Staff have all permissions
+        if request.user.is_staff:
+            return True
 
-        return is_staff or (is_active and (is_readonly or is_team_admin))
+        # non-staff cannot access inactive teams
+        if not obj.team.is_active:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return request.user in obj.team.get_privileged_members()
 
 
 class UserPermissions(permissions.BasePermission):
