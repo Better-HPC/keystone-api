@@ -6,7 +6,6 @@ serve as the controller layer in Django's MVC-inspired architecture, bridging
 URLs to business logic.
 """
 
-from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -16,7 +15,7 @@ from .models import *
 from .permissions import *
 from .serializers import *
 
-__all__ = ['GrantViewSet', 'PublicationViewSet']
+__all__ = ["GrantViewSet", "PublicationViewSet"]
 
 
 @extend_schema_view(
@@ -74,25 +73,15 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing funding awards and grant information."""
 
     model = Grant
-    team_field = 'team'
+    team_field = "team"
 
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
-    search_fields = ['title', 'agency', 'team__name']
+    search_fields = ["title", "agency", "team__name"]
     serializer_class = GrantSerializer
-    queryset = Grant.objects.all()
-
-    def get_queryset(self) -> QuerySet:
-        """Return a queryset of publications.
-
-        Prefetching is applied dynamically based on the incoming request
-        to avoid N+1 queries.
-        """
-
-        queryset = super().get_queryset()
-        if self.action == 'list' or not self.request.user.is_staff:
-            queryset = queryset.select_related('team')
-
-        return queryset
+    queryset = Grant.objects.prefetch_related(
+        "history",
+        "team",
+    ).all()
 
 
 @extend_schema_view(
@@ -150,22 +139,12 @@ class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing research publications."""
 
     model = Publication
-    team_field = 'team'
+    team_field = "team"
 
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
-    search_fields = ['title', 'abstract', 'journal', 'doi', 'team__name']
+    search_fields = ["title", "abstract", "journal", "doi", "team__name"]
     serializer_class = PublicationSerializer
-    queryset = Publication.objects.all()
-
-    def get_queryset(self) -> QuerySet:
-        """Return a queryset of publications.
-
-        Prefetching is applied dynamically based on the incoming request
-        to avoid N+1 queries.
-        """
-
-        queryset = super().get_queryset()
-        if self.action == 'list' or not self.request.user.is_staff:
-            queryset = queryset.select_related('team')
-
-        return queryset
+    queryset = Publication.objects.prefetch_related(
+        "history",
+        "team",
+    ).all()
