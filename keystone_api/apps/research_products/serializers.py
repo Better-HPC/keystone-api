@@ -12,32 +12,32 @@ from apps.logging.nested import AuditLogSummarySerializer
 from apps.users.nested import TeamSummarySerializer
 from .models import *
 
-__all__ = ['GrantSerializer', 'PublicationSerializer']
+__all__ = ["GrantSerializer", "PublicationSerializer"]
 
 
 class GrantSerializer(serializers.ModelSerializer):
     """Object serializer for the `Grant` class."""
 
-    _team = TeamSummarySerializer(source='team', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _team = TeamSummarySerializer(source="team", read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Grant
-        fields = '__all__'
-        read_only = ['team']
+        fields = "__all__"
+        read_only = ["team"]
 
 
 class PublicationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Publication` class."""
 
-    _team = TeamSummarySerializer(source='team', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _team = TeamSummarySerializer(source="team", read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Publication
-        fields = '__all__'
-        read_only = ['team']
+        fields = "__all__"
+        read_only = ["team"]

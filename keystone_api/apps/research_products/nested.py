@@ -10,7 +10,7 @@ from rest_framework import serializers
 
 from .models import *
 
-__all__ = ['GrantSummarySerializer', 'PublicationSummarySerializer']
+__all__ = ["GrantSummarySerializer", "PublicationSummarySerializer"]
 
 
 class GrantSummarySerializer(serializers.ModelSerializer):
@@ -20,8 +20,8 @@ class GrantSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Grant
-        fields = '__all__'
-        read_only = ['team']
+        fields = "__all__"
+        read_only = ["team"]
 
 
 class PublicationSummarySerializer(serializers.ModelSerializer):
@@ -31,5 +31,5 @@ class PublicationSummarySerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = Publication
-        fields = '__all__'
-        read_only = ['team']
+        fields = "__all__"
+        read_only = ["team"]

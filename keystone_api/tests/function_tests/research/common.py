@@ -17,14 +17,14 @@ class ResearchListEndpointPermissionsTestMixin(CustomAsserts, ABC):
     Endpoint permissions are tested against the following matrix of HTTP responses.
     Permissions depend on the user's role within the team owning the accessed record.
 
-    | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
-    | Team Member                | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Team Admin                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Team Owner                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | User Status              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |--------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User     | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated non-member | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
+    | Team Member              | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Team Admin               | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Team Owner               | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Staff User               | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
     """
 
     @property
@@ -191,9 +191,10 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
         self.staff_user = UserFactory(is_staff=True)
 
         record = self.factory(team=self.team)
-        self.endpoint = reverse(self.view_name, kwargs={'pk': record.id})
+        self.endpoint = reverse(self.view_name, kwargs={"pk": record.id})
         self.valid_record_data = self.build_valid_record_data()
 
+    @abstractmethod
     def build_valid_record_data(self) -> dict:
         """Override to return valid record data for the tested resource.
 

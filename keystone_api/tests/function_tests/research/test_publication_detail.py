@@ -23,9 +23,9 @@ class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCas
         """Return a dictionary containing valid Publication data."""
 
         return {
-            'title': 'foo',
-            'abstract': 'bar',
-            'journal': 'baz',
-            'date': date(1990, 1, 1),
-            'team': self.team.id
+            "title": "foo",
+            "abstract": "bar",
+            "journal": "baz",
+            "date": date(1990, 1, 1),
+            "team": self.team.id
         }
