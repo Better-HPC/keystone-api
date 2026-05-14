@@ -9,7 +9,7 @@ from apps.notifications.models import Notification
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, GetResponseContentTests
 
-VIEW_NAME = 'notifications:notification-type-choices'
+VIEW_NAME = "notifications:notification-type-choices"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):

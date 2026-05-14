@@ -8,7 +8,7 @@ from apps.notifications.factories import PreferenceFactory
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, UserListFilteringTestMixin
 
-VIEW_NAME = 'notifications:preference-list'
+VIEW_NAME = "notifications:preference-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -98,35 +98,35 @@ class UserFieldAssignment(APITestCase):
         response = self.client.post(self.endpoint)
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(self.user1.id, response.data['user'])
+        self.assertEqual(self.user1.id, response.data["user"])
 
     def test_user_provided(self) -> None:
         """Verify the user field is set correctly when provided."""
 
         self.client.force_authenticate(user=self.user1)
-        response = self.client.post(self.endpoint, {'user': self.user1.id})
+        response = self.client.post(self.endpoint, {"user": self.user1.id})
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(self.user1.id, response.data['user'])
+        self.assertEqual(self.user1.id, response.data["user"])
 
     def test_error_when_not_matching_submitter(self) -> None:
         """Verify an error is raised when the user field does not match the request submitter."""
 
         self.client.force_authenticate(user=self.user1)
-        response = self.client.post(self.endpoint, {'user': self.user2.id})
+        response = self.client.post(self.endpoint, {"user": self.user2.id})
 
-        expected_error = 'user field cannot be set to a different user than the request submitter.'
+        expected_error = "user field cannot be set to a different user than the request submitter."
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(expected_error, response.data['user'][0].lower())
+        self.assertEqual(expected_error, response.data["user"][0].lower())
 
     def test_staff_can_override_field(self) -> None:
         """Verify staff users can create records on behalf of other users."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.post(self.endpoint, {'user': self.user2.id})
+        response = self.client.post(self.endpoint, {"user": self.user2.id})
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(self.user2.id, response.data['user'])
+        self.assertEqual(self.user2.id, response.data["user"])
 
 
 class UserRecordFiltering(UserListFilteringTestMixin, APITestCase):

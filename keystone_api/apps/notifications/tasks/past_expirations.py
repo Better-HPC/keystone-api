@@ -12,8 +12,8 @@ from ..models import Notification, Preference
 from ..shortcuts import send_notification_template
 
 __all__ = [
-    'notify_past_expirations',
-    'send_past_expiration_notice',
+    "notify_past_expirations",
+    "send_past_expiration_notice",
 ]
 
 
@@ -97,41 +97,41 @@ def send_past_expiration_notice(user_id: int, req_id: int) -> None:
         ) \
         .only("id", "title", "submitted", "active", "expire", "status")
 
-    metadata = {'request_id': req_id}
+    metadata = {"request_id": req_id}
     context = {
-        'user_name': user.username,
-        'user_first': user.first_name,
-        'user_last': user.last_name,
-        'req_id': request.id,
-        'req_title': request.title,
-        'req_team': request.team.name,
-        'req_submitted': request.submitted,
-        'req_active': request.active,
-        'req_expire': request.expire,
-        'allocations': tuple(
+        "user_name": user.username,
+        "user_first": user.first_name,
+        "user_last": user.last_name,
+        "req_id": request.id,
+        "req_title": request.title,
+        "req_team": request.team.name,
+        "req_submitted": request.submitted,
+        "req_active": request.active,
+        "req_expire": request.expire,
+        "allocations": tuple(
             {
-                'alloc_cluster': alloc.cluster.name,
-                'alloc_requested': alloc.requested or 0,
-                'alloc_awarded': alloc.awarded or 0,
-                'alloc_final': alloc.final or 0,
+                "alloc_cluster": alloc.cluster.name,
+                "alloc_requested": alloc.requested or 0,
+                "alloc_awarded": alloc.awarded or 0,
+                "alloc_final": alloc.final or 0,
             } for alloc in request.allocation_set.all()
         ),
-        'upcoming_requests': tuple(
+        "upcoming_requests": tuple(
             {
-                'id': req.id,
-                'title': req.title,
-                'submitted': req.submitted,
-                'active': req.active,
-                'expire': req.expire,
-                'status': AllocationRequest.StatusChoices(req.status).label,
+                "id": req.id,
+                "title": req.title,
+                "submitted": req.submitted,
+                "active": req.active,
+                "expire": req.expire,
+                "status": AllocationRequest.StatusChoices(req.status).label,
             } for req in upcoming_requests.all()
         ),
     }
 
     send_notification_template(
         user=user,
-        subject=f'Your HPC allocation #{req_id} has expired',
-        template='past_expiration.html',
+        subject=f"Your HPC allocation #{req_id} has expired",
+        template="past_expiration.html",
         context=context,
         notification_type=Notification.NotificationType.request_expired,
         notification_metadata=metadata,

@@ -19,9 +19,9 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
-    'NotificationTypeChoicesView',
-    'NotificationViewSet',
-    'PreferenceViewSet',
+    "NotificationTypeChoicesView",
+    "NotificationViewSet",
+    "PreferenceViewSet",
 ]
 
 
@@ -79,10 +79,10 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for retrieving user notifications."""
 
     permission_classes = [IsAuthenticated, NotificationPermissions]
-    http_method_names = ['get', 'head', 'options', 'patch']
-    search_fields = ['message', 'user__username']
+    http_method_names = ["get", "head", "options", "patch"]
+    search_fields = ["message", "user__username"]
     serializer_class = NotificationSerializer
-    queryset = Notification.objects.select_related('user')
+    queryset = Notification.objects.select_related("user")
 
 
 @extend_schema_view(
@@ -141,9 +141,9 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user notification preferences."""
 
     permission_classes = [IsAuthenticated, PreferencePermissions]
-    search_fields = ['user__username']
+    search_fields = ["user__username"]
     serializer_class = PreferenceSerializer
-    queryset = Preference.objects.select_related('user')
+    queryset = Preference.objects.select_related("user")
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `Preference` object.
@@ -152,7 +152,7 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
         """
 
         data = request.data.copy()
-        data.setdefault('user', request.user.pk)
+        data.setdefault("user", request.user.pk)
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)

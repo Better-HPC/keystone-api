@@ -8,7 +8,7 @@ from apps.notifications.factories import PreferenceFactory
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'notifications:preference-detail'
+VIEW_NAME = "notifications:preference-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -32,7 +32,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = UserFactory(is_staff=True)
 
         self.preference = PreferenceFactory(user=self.preference_user)
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.preference.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.preference.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""

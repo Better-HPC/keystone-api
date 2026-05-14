@@ -9,7 +9,7 @@ for how the associated table/fields/records are presented by parent interfaces.
 from django.conf import settings
 from django.db import models
 
-__all__ = ['Notification', 'Preference', 'default_expiry_thresholds']
+__all__ = ["Notification", "Preference", "default_expiry_thresholds"]
 
 
 def default_expiry_thresholds() -> list[int]:  # pragma: nocover
@@ -28,26 +28,26 @@ class Notification(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['time']),
-            models.Index(fields=['notification_type']),
-            models.Index(fields=['user']),
-            models.Index(fields=['user', 'read', 'notification_type']),
-            models.Index(fields=['user', 'time', 'notification_type']),
+            models.Index(fields=["time"]),
+            models.Index(fields=["notification_type"]),
+            models.Index(fields=["user"]),
+            models.Index(fields=["user", "read", "notification_type"]),
+            models.Index(fields=["user", "time", "notification_type"]),
         ]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'notification_type', 'metadata'],
-                name='unique_user_type_metadata'
+                fields=["user", "notification_type", "metadata"],
+                name="unique_user_type_metadata"
             )
         ]
 
     class NotificationType(models.TextChoices):
         """Enumerated choices for the `notification_type` field."""
 
-        general_message = 'GM', 'General Message'
-        request_expiring = 'RE', 'Upcoming Request Expiration'
-        request_expired = 'RD', 'Request Past Expiration'
+        general_message = "GM", "General Message"
+        request_expiring = "RE", "Upcoming Request Expiration"
+        request_expired = "RD", "Request Past Expiration"
 
     time = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
@@ -67,7 +67,7 @@ class Preference(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['user']),
+            models.Index(fields=["user"]),
         ]
 
     request_expiry_thresholds = models.JSONField(default=default_expiry_thresholds)
@@ -76,7 +76,7 @@ class Preference(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     @classmethod
-    def get_user_preference(cls, user: settings.AUTH_USER_MODEL) -> 'Preference':
+    def get_user_preference(cls, user: settings.AUTH_USER_MODEL) -> "Preference":
         """Retrieve user preferences or create them if they don't exist."""
 
         preference, _ = cls.objects.get_or_create(user=user)
