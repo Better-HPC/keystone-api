@@ -49,7 +49,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
         return False
 
     # Do not notify if the allocation request went active after the notification threshold
-    if request.active >= date.today() - timedelta(days=next_threshold):
+    if request.active is None or request.active >= date.today() - timedelta(days=next_threshold):
         return False
 
     # Do not notify if the user has already been notified for this threshold

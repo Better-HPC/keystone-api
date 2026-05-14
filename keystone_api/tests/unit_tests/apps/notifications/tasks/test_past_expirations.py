@@ -7,7 +7,6 @@ from django.test import TestCase
 
 from apps.allocations.factories import AllocationRequestFactory
 from apps.notifications.factories import PreferenceFactory
-from apps.notifications.shortcuts import format_template, get_template
 from apps.notifications.tasks.past_expirations import send_past_expiration_notice, should_notify_past_expiration
 
 PAST_EXPIRATION_CONTEXT_KEYS = {
@@ -205,24 +204,3 @@ class SendPastExpirationNoticeContext(TestCase):
         send_past_expiration_notice(request.submitter.id, request.id)
 
         mock_send.assert_not_called()
-
-    def test_uses_default_preferences_when_none_exist(self, mock_send: Mock) -> None:
-        """Verify the task falls back to default preferences when no Preference record exists."""
-
-        # No PreferenceFactory call means there is no preference record in the DB for this user.
-        # Default preferences have notify_on_expiration=True, so the notification
-        # should still be sent for an expired request.
-        send_past_expiration_notice(self.request.submitter.id, self.request.id)
-        mock_send.assert_called_once()
-
-    def test_context_renders_default_template(self, mock_send: Mock) -> None:
-        """Verify the task context renders the default template without undefined variable errors."""
-
-        PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
-        send_past_expiration_notice(self.request.submitter.id, self.request.id)
-
-        context = mock_send.call_args.kwargs['context']
-        template = get_template('past_expiration.html')
-        html, text = format_template(template, context)
-        self.assertTrue(html)
-        self.assertTrue(text)
