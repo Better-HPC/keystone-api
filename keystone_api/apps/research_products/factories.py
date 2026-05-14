@@ -44,8 +44,7 @@ class GrantFactory(DjangoModelFactory):
     def end_date(self: Grant) -> date:
         """Generate the grant end date.
 
-        Returns:
-            A date within 1 to 3 years from the grant start.
+        Returns a date within 1 to 3 years from the grant start.
         """
 
         duration_years = randgen.randint(1, 3)
