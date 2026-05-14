@@ -1,6 +1,7 @@
 """Function tests for the `stats:request-list` endpoint."""
 
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationRequestFactory
@@ -8,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from .common import StatisticEndpointPermissionsTestMixin
 
-VIEW_NAME = 'stats:request-detail'
+VIEW_NAME = "stats:request-stats"
 
 
 class EndpointPermissions(StatisticEndpointPermissionsTestMixin, APITestCase):
@@ -52,7 +53,7 @@ class TeamRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.team_1_records), stats["request_count"])
 
     def test_staff_user_statistics(self) -> None:
@@ -62,7 +63,7 @@ class TeamRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.all_records), stats["request_count"])
 
     def test_team_filtered_statistics(self) -> None:
@@ -72,5 +73,59 @@ class TeamRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint, query_params={"team": self.team_1.id})
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.team_1_records), stats["request_count"])
+
+
+class EmptyState(APITestCase):
+    """Test endpoint behavior when no records are accessible."""
+
+    endpoint = reverse(VIEW_NAME)
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.user = UserFactory()
+
+    def test_empty_counts_default_to_zero(self) -> None:
+        """Verify all numeric stats default to zero when no records are accessible."""
+
+        self.client.force_authenticate(self.user)
+
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
+
+        stats = response.json()
+        field = [
+            "request_count",
+            "request_pending_count",
+            "request_approved_count",
+            "request_declined_count",
+            "request_upcoming_count",
+            "request_active_count",
+            "request_expired_count",
+            "su_pending_total",
+            "su_declined_total",
+            "su_approved_total",
+            "su_upcoming_total",
+            "su_active_total",
+            "su_expired_total",
+            "su_requested_total",
+            "su_awarded_total",
+            "su_finalized_total",
+        ]
+
+        for field in field:
+            self.assertEqual(0, stats[field], f"Expected {field} to default to 0")
+
+    def test_empty_timing_averages_are_null(self) -> None:
+        """Verify duration averages are null when no records are accessible."""
+
+        self.client.force_authenticate(self.user)
+
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
+
+        stats = response.json()
+        self.assertIsNone(stats["days_pending_average"], "days_pending_average should be null on empty queryset")
+        self.assertIsNone(stats["days_active_average"], "days_active_average should be null on empty queryset")

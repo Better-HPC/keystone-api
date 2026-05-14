@@ -9,15 +9,15 @@ creation.
 from rest_framework import serializers
 
 __all__ = [
-    'AllocationRequestStatsSerializer',
-    'GrantStatsSerializer',
-    'NotificationStatsSerializer',
-    'PublicationStatsSerializer',
+    "AllocationRequestStatsSerializer",
+    "GrantStatsSerializer",
+    "NotificationStatsSerializer",
+    "PublicationStatsSerializer",
 ]
 
 
 class AllocationRequestStatsSerializer(serializers.Serializer):
-    """Aggregated statistics for allocation requests and awards."""
+    """Serializer for aggregated allocation requests statistics."""
 
     # Request lifecycle metrics
     request_count = serializers.IntegerField()

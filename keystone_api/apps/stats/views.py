@@ -9,7 +9,7 @@ URLs to business logic.
 from abc import ABC, abstractmethod
 from decimal import Decimal
 
-from django.db.models import Avg, Case, DurationField, ExpressionWrapper, F, QuerySet, Sum, When
+from django.db.models import Avg, Count, DurationField, F, IntegerField, Q, QuerySet, Sum
 from django.db.models.functions import Coalesce
 from django.utils.timezone import now
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -18,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.allocations.models import AllocationRequest
+from apps.allocations.models import AllocationRequest, ResourceAllocation
 from apps.notifications.models import Notification
 from apps.research_products.models import Grant, Publication
 from apps.users.models import Team
@@ -26,10 +26,10 @@ from plugins.schemas import FilterGetAutoSchema
 from .serializers import *
 
 __all__ = [
-    'AllocationRequestStatsView',
-    'GrantStatsView',
-    'NotificationStatsView',
-    'PublicationStatsView'
+    "AllocationRequestStatsView",
+    "GrantStatsView",
+    "NotificationStatsView",
+    "PublicationStatsView",
 ]
 
 
@@ -51,7 +51,11 @@ class AbstractTeamStatsView(ABC):
         """Compute and return summary statistics as a dictionary."""
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership for list actions."""
+        """Return the base queryset filtered by user team membership.
+
+        Non-staff users are only returned records from their own teams.
+        Staff users are returned all records.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
@@ -88,77 +92,101 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
     permission_classes = [IsAuthenticated]
     schema = FilterGetAutoSchema()
 
-    def _summarize(self) -> dict:
-        """Compute allocation request and award statistics."""
+    @staticmethod
+    def _sum_awarded(filter_q: Q) -> Coalesce:
+        """Build a filtered `Sum` over `awarded` with an explicit integer output field.
 
-        # Base query with useful annotations
+        Args:
+            filter_q: A `Q` expression restricting which rows contribute to the sum.
+
+        Returns:
+            A `Coalesce` expression that returns 0 when the filtered set is empty.
+        """
+
+        return Coalesce(
+            Sum("awarded", filter=filter_q, output_field=IntegerField()),
+            0, output_field=IntegerField(),
+        )
+
+    def _summarize(self) -> dict:
+        """Compute allocation request and award statistics.
+
+        Counts, timing metrics, and award totals are each collapsed into a
+        single aggregate query to avoid issuing one query per metric.
+        """
+
+        # Cache `now()` so all lifecycle buckets share a single reference point
         now_ts = now()
         qs = self.filter_queryset(self.get_queryset())
 
-        # Subqueries based on request lifecycle
-        qs_pending = qs.filter(status=AllocationRequest.StatusChoices.PENDING)
-        qs_declined = qs.filter(status=AllocationRequest.StatusChoices.DECLINED)
-        qs_approved = qs.filter(status=AllocationRequest.StatusChoices.APPROVED)
+        # Query filters for request records by lifecycle stage
+        is_pending = Q(status=AllocationRequest.StatusChoices.PENDING)
+        is_declined = Q(status=AllocationRequest.StatusChoices.DECLINED)
+        is_approved = Q(status=AllocationRequest.StatusChoices.APPROVED)
+        is_upcoming = is_approved & Q(active__gt=now_ts)
+        is_active = is_approved & Q(active__lte=now_ts, expire__gte=now_ts)
+        is_expired = is_approved & Q(expire__lt=now_ts)
 
-        qs_upcoming = qs_approved.filter(active__gt=now_ts)
-        qs_active = qs_approved.filter(active__lte=now_ts, expire__gte=now_ts)
-        qs_expired = qs_approved.filter(expire__lt=now_ts)
-
-        # Request lifecycle counts
-        request_count = qs.count()
-        request_pending_count = qs_pending.count()
-        request_declined_count = qs_declined.count()
-        request_approved_count = qs_approved.count()
-        request_upcoming_count = qs_upcoming.count()
-        request_active_count = qs_active.count()
-        request_expired_count = qs_expired.count()
-
-        # Award totals across all related allocations
-        su_pending_total = qs_pending.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_declined_total = qs_declined.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_approved_total = qs_approved.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_upcoming_total = qs_upcoming.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_active_total = qs_active.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_expired_total = qs_expired.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-
-        su_requested_total = qs.aggregate(total=Sum('allocation_set__requested'))['total'] or 0
-        su_awarded_total = qs.aggregate(total=Sum('allocation_set__awarded'))['total'] or 0
-        su_finalized_total = qs.aggregate(total=Sum('allocation_set__final'))['total'] or 0
-
-        # Timing metrics
-        qs_annotated = qs.annotate(
-            days_pending=ExpressionWrapper(
-                F('active') - F('submitted'), output_field=DurationField()
-            ),
-            days_active=ExpressionWrapper(
-                F('expire') - F('active'), output_field=DurationField()
-            )
+        # Single query for request-level counts and timing averages
+        request_stats = qs.aggregate(
+            request_count=Count("id"),
+            request_pending_count=Count("id", filter=is_pending),
+            request_declined_count=Count("id", filter=is_declined),
+            request_approved_count=Count("id", filter=is_approved),
+            request_upcoming_count=Count("id", filter=is_upcoming),
+            request_active_count=Count("id", filter=is_active),
+            request_expired_count=Count("id", filter=is_expired),
+            days_pending_average=Avg(F("active") - F("submitted"), output_field=DurationField()),
+            days_active_average=Avg(F("expire") - F("active"), output_field=DurationField()),
         )
 
-        days_pending_average = qs_annotated.aggregate(Avg('days_pending'))['days_pending__avg']
-        days_active_average = qs_annotated.aggregate(Avg('days_active'))['days_active__avg']
+        # Reverse-FK lifecycle filters for allocations joined back to requests
+        award_pending = Q(request__status=AllocationRequest.StatusChoices.PENDING)
+        award_declined = Q(request__status=AllocationRequest.StatusChoices.DECLINED)
+        award_approved = Q(request__status=AllocationRequest.StatusChoices.APPROVED)
+        award_upcoming = award_approved & Q(request__active__gt=now_ts)
+        award_active = award_approved & Q(request__active__lte=now_ts, request__expire__gte=now_ts)
+        award_expired = award_approved & Q(request__expire__lt=now_ts)
+
+        # Award totals query the allocations table directly to avoid join
+        # row duplication and to collapse nine sums into a single query
+        allocations = ResourceAllocation.objects.filter(request__in=qs)
+        award_stats = allocations.aggregate(
+            su_pending_total=self._sum_awarded(award_pending),
+            su_declined_total=self._sum_awarded(award_declined),
+            su_approved_total=self._sum_awarded(award_approved),
+            su_upcoming_total=self._sum_awarded(award_upcoming),
+            su_active_total=self._sum_awarded(award_active),
+            su_expired_total=self._sum_awarded(award_expired),
+            su_requested_total=Coalesce(Sum("requested"), 0, output_field=IntegerField()),
+            su_awarded_total=Coalesce(Sum("awarded"), 0, output_field=IntegerField()),
+            su_finalized_total=Coalesce(Sum("final"), 0, output_field=IntegerField()),
+        )
+
+        days_pending_average = request_stats["days_pending_average"]
+        days_active_average = request_stats["days_active_average"]
 
         return {
-            "request_count": request_count,
-            "request_pending_count": request_pending_count,
-            "request_approved_count": request_approved_count,
-            "request_declined_count": request_declined_count,
-            "request_upcoming_count": request_upcoming_count,
-            "request_active_count": request_active_count,
-            "request_expired_count": request_expired_count,
+            "request_count": request_stats["request_count"],
+            "request_pending_count": request_stats["request_pending_count"],
+            "request_approved_count": request_stats["request_approved_count"],
+            "request_declined_count": request_stats["request_declined_count"],
+            "request_upcoming_count": request_stats["request_upcoming_count"],
+            "request_active_count": request_stats["request_active_count"],
+            "request_expired_count": request_stats["request_expired_count"],
 
-            "su_pending_total": round(su_pending_total, 2),
-            "su_declined_total": round(su_declined_total, 2),
-            "su_approved_total": round(su_approved_total, 2),
-            "su_upcoming_total": round(su_upcoming_total, 2),
-            "su_active_total": round(su_active_total, 2),
-            "su_expired_total": round(su_expired_total, 2),
-            "su_requested_total": round(su_requested_total, 2),
-            "su_awarded_total": round(su_awarded_total, 2),
-            "su_finalized_total": round(su_finalized_total, 2),
+            "su_pending_total": round(award_stats["su_pending_total"], 2),
+            "su_declined_total": round(award_stats["su_declined_total"], 2),
+            "su_approved_total": round(award_stats["su_approved_total"], 2),
+            "su_upcoming_total": round(award_stats["su_upcoming_total"], 2),
+            "su_active_total": round(award_stats["su_active_total"], 2),
+            "su_expired_total": round(award_stats["su_expired_total"], 2),
+            "su_requested_total": round(award_stats["su_requested_total"], 2),
+            "su_awarded_total": round(award_stats["su_awarded_total"], 2),
+            "su_finalized_total": round(award_stats["su_finalized_total"], 2),
 
-            "days_pending_average": days_pending_average.days if days_pending_average else None,
-            "days_active_average": days_active_average.days if days_active_average else None,
+            "days_pending_average": days_pending_average.days if days_pending_average is not None else None,
+            "days_active_average": days_active_average.days if days_active_average is not None else None,
         }
 
 
@@ -184,44 +212,45 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
     def _summarize(self) -> dict:
         """Calculate summary statistics for team grants.
 
-        Non-staff users are limited to teams where they are a member.
+        Non-staff users are limited to teams where they are a member. All
+        counts and funding aggregates are collapsed into a single query.
         """
 
-        # Common DB aggregates (wrapped in Coalesce for 0-defaults)
-        amount_sum = Coalesce(Sum("amount"), Decimal('0.00'))
-        amount_avg = Coalesce(Avg("amount"), Decimal('0.00'))
+        # Cache `now()` so lifecycle buckets share a single reference point
+        current = now()
+        zero = Decimal("0.00")
 
-        # Base querysets for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
-        upcoming_qs = qs.filter(start_date__gt=now())
-        active_qs = qs.filter(start_date__lte=now(), end_date__gt=now())
-        expired_qs = qs.filter(end_date__lte=now())
 
-        # Record counts
-        grant_count = qs.count()
-        upcoming_count = upcoming_qs.count()
-        active_count = active_qs.count()
-        expired_count = expired_qs.count()
-        agency_count = qs.values("agency").distinct().count()
+        # Query filters for grant records by lifecycle stage
+        is_upcoming = Q(start_date__gt=current)
+        is_active = Q(start_date__lte=current, end_date__gt=current)
+        is_expired = Q(end_date__lte=current)
 
-        # Funding values
-        funding_total = qs.aggregate(funding_total=amount_sum)["funding_total"]
-        funding_upcoming = upcoming_qs.aggregate(funding_upcoming=amount_sum)["funding_upcoming"]
-        funding_active = active_qs.aggregate(funding_active=amount_sum)["funding_active"]
-        funding_expired = expired_qs.aggregate(funding_expired=amount_sum)["funding_expired"]
-        funding_average = qs.aggregate(funding_average=amount_avg)["funding_average"]
+        stats = qs.aggregate(
+            grant_count=Count("id"),
+            upcoming_count=Count("id", filter=is_upcoming),
+            active_count=Count("id", filter=is_active),
+            expired_count=Count("id", filter=is_expired),
+            agency_count=Count("agency", distinct=True),
+            funding_total=Coalesce(Sum("amount"), zero),
+            funding_upcoming=Coalesce(Sum("amount", filter=is_upcoming), zero),
+            funding_active=Coalesce(Sum("amount", filter=is_active), zero),
+            funding_expired=Coalesce(Sum("amount", filter=is_expired), zero),
+            funding_average=Coalesce(Avg("amount"), zero),
+        )
 
         return {
-            "grant_count": grant_count,
-            "upcoming_count": upcoming_count,
-            "active_count": active_count,
-            "expired_count": expired_count,
-            "agency_count": agency_count,
-            "funding_total": round(funding_total, 2),
-            "funding_upcoming": round(funding_upcoming, 2),
-            "funding_active": round(funding_active, 2),
-            "funding_expired": round(funding_expired, 2),
-            "funding_average": round(funding_average, 2),
+            "grant_count": stats["grant_count"],
+            "upcoming_count": stats["upcoming_count"],
+            "active_count": stats["active_count"],
+            "expired_count": stats["expired_count"],
+            "agency_count": stats["agency_count"],
+            "funding_total": round(stats["funding_total"], 2),
+            "funding_upcoming": round(stats["funding_upcoming"], 2),
+            "funding_active": round(stats["funding_active"], 2),
+            "funding_expired": round(stats["funding_expired"], 2),
+            "funding_average": round(stats["funding_average"], 2),
         }
 
 
@@ -245,7 +274,11 @@ class NotificationStatsView(GenericAPIView):
     schema = FilterGetAutoSchema()
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership for list actions."""
+        """Return the base queryset filtered by notification owner.
+
+        Non-staff users are only returned their own notifications.
+        Staff users are returned all records.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
@@ -257,11 +290,12 @@ class NotificationStatsView(GenericAPIView):
         """Return statistics calculated from records matching user permissions and query params."""
 
         qs = self.filter_queryset(self.get_queryset())
-        serializer = self.serializer_class(data={
-            "total": qs.count(),
-            "unread": qs.filter(read=False).count(),
-        })
+        stats = qs.aggregate(
+            total=Count("id"),
+            unread=Count("id", filter=Q(read=False)),
+        )
 
+        serializer = self.serializer_class(data=stats)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
@@ -288,45 +322,36 @@ class PublicationStatsView(AbstractTeamStatsView, GenericAPIView):
     def _summarize(self) -> dict:
         """Calculate summary statistics for team publications.
 
-        Non-staff users are limited to teams where they are a member.
+        Non-staff users are limited to teams where they are a member. All
+        counts and the review-time average are collapsed into a single query.
         """
 
-        # Base querys for all records and records by lifecycle stage
         qs = self.filter_queryset(self.get_queryset())
-        draft_qs = qs.filter(submitted__isnull=True, published__isnull=True)
-        submitted_qs = qs.filter(submitted__isnull=False, published__isnull=True)
-        accepted_qs = qs.filter(published__isnull=False)
 
-        # Record counts
-        publications_count = qs.count()
-        draft_count = draft_qs.count()
-        submitted_count = submitted_qs.count()
-        accepted_count = accepted_qs.count()
-        journals_count = qs.values("journal").distinct().count()
+        # Query filters for publication records by lifecycle stage
+        is_draft = Q(submitted__isnull=True, published__isnull=True)
+        is_submitted = Q(submitted__isnull=False, published__isnull=True)
+        is_accepted = Q(published__isnull=False)
+        has_review_window = Q(submitted__isnull=False, published__isnull=False)
 
-        # Average time spent under review by the journal
-        review_avg = qs.annotate(
-            review_time=ExpressionWrapper(
+        stats = qs.aggregate(
+            publications_count=Count("id"),
+            draft_count=Count("id", filter=is_draft),
+            submitted_count=Count("id", filter=is_submitted),
+            accepted_count=Count("id", filter=is_accepted),
+            journals_count=Count("journal", distinct=True),
+            review_average=Avg(
                 F("published") - F("submitted"),
-                output_field=DurationField()
-            )
-        ).aggregate(
-            review_time_avg=Avg(
-                Case(
-                    When(
-                        submitted__isnull=False,
-                        published__isnull=False,
-                        then=F("review_time")
-                    ),
-                    default=None
-                ))
-        )["review_time_avg"]
+                filter=has_review_window,
+                output_field=DurationField(),
+            ),
+        )
 
         return {
-            "publications_count": publications_count,
-            "draft_count": draft_count,
-            "submitted_count": submitted_count,
-            "accepted_count": accepted_count,
-            "journals_count": journals_count,
-            "review_average": review_avg,
+            "publications_count": stats["publications_count"],
+            "draft_count": stats["draft_count"],
+            "submitted_count": stats["submitted_count"],
+            "accepted_count": stats["accepted_count"],
+            "journals_count": stats["journals_count"],
+            "review_average": stats["review_average"],
         }

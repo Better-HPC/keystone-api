@@ -1,6 +1,7 @@
 """Function tests for the `stats:publication-list` endpoint."""
 
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.research_products.factories import PublicationFactory
@@ -8,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from .common import StatisticEndpointPermissionsTestMixin
 
-VIEW_NAME = 'stats:publication-detail'
+VIEW_NAME = "stats:publication-stats"
 
 
 class EndpointPermissions(StatisticEndpointPermissionsTestMixin, APITestCase):
@@ -52,7 +53,7 @@ class TeamRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.team_1_records), stats["publications_count"])
 
     def test_staff_user_statistics(self) -> None:
@@ -62,7 +63,7 @@ class TeamRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint)
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.all_records), stats["publications_count"])
 
     def test_team_filtered_statistics(self) -> None:
@@ -72,5 +73,5 @@ class TeamRecordFiltering(APITestCase):
         response = self.client.get(self.endpoint, query_params={"team": self.team_1.id})
 
         stats = response.json()
-        self.assertEqual(200, response.status_code, response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         self.assertEqual(len(self.team_1_records), stats["publications_count"])
