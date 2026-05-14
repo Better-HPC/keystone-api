@@ -7,21 +7,8 @@ from django.test import TestCase
 
 from apps.allocations.factories import AllocationRequestFactory
 from apps.notifications.factories import PreferenceFactory
+from apps.notifications.shortcuts import format_template, get_template
 from apps.notifications.tasks.past_expirations import send_past_expiration_notice, should_notify_past_expiration
-
-PAST_EXPIRATION_CONTEXT_KEYS = {
-    'user_name',
-    'user_first',
-    'user_last',
-    'req_id',
-    'req_title',
-    'req_team',
-    'req_submitted',
-    'req_active',
-    'req_expire',
-    'allocations',
-    'upcoming_requests',
-}
 
 
 class ShouldNotifyPastExpirationMethod(TestCase):
@@ -103,15 +90,17 @@ class SendPastExpirationNoticeContext(TestCase):
             expire=date.today()
         )
 
-    def test_context_contains_all_required_keys(self, mock_send: Mock) -> None:
-        """Verify the context dictionary includes all keys expected by the template."""
+    def test_renders_default_template(self, mock_send: Mock) -> None:
+        """Verify the task renders the template without undefined variable errors."""
 
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        mock_send.assert_called_once()
         context = mock_send.call_args.kwargs['context']
-        self.assertEqual(PAST_EXPIRATION_CONTEXT_KEYS, set(context.keys()))
+        template = get_template('past_expiration.html')
+        html, text = format_template(template, context)
+        self.assertTrue(html)
+        self.assertTrue(text)
 
     def test_context_user_fields_match_user(self, mock_send: Mock) -> None:
         """Verify user-related context values match the notified user."""
@@ -186,21 +175,13 @@ class SendPastExpirationNoticeContext(TestCase):
         subject = mock_send.call_args.kwargs['subject']
         self.assertIn(str(self.request.id), subject)
 
-    def test_not_called_when_should_notify_is_false(self, mock_send: Mock) -> None:
+    @patch('apps.notifications.tasks.past_expirations.should_notify_past_expiration')
+    def test_not_sent_when_should_notify_is_false(self, mock_should_notify: Mock, mock_send: Mock) -> None:
         """Verify the notification is not sent when the user should not be notified."""
 
-        # Request has not expired and user has enabled notifications
+        mock_should_notify.return_value = False
+
         request = AllocationRequestFactory(expire=date.today() + timedelta(days=5))
-        PreferenceFactory(user=request.submitter, notify_on_expiration=True)
-        send_past_expiration_notice(request.submitter.id, request.id)
-
-        mock_send.assert_not_called()
-
-    def test_not_called_when_no_expiry_date(self, mock_send: Mock) -> None:
-        """Verify the notification is not sent when the request has no expiration date."""
-
-        request = AllocationRequestFactory(expire=None)
-        PreferenceFactory(user=request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(request.submitter.id, request.id)
 
         mock_send.assert_not_called()
