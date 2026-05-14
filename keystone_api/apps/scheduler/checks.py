@@ -12,7 +12,7 @@ from django.core.checks import Error
 
 from .celery import celery_app
 
-__all__ = ['check_celery_beat_configuration']
+__all__ = ["check_celery_beat_configuration"]
 
 
 def check_celery_beat_configuration(*args, **kwargs) -> list[Error]:
@@ -22,7 +22,7 @@ def check_celery_beat_configuration(*args, **kwargs) -> list[Error]:
     beat_schedule = celery_app.conf.beat_schedule
 
     for task_name, task_info in beat_schedule.items():
-        module_spec, obj_spec = task_info['task'].rsplit('.', maxsplit=1)
+        module_spec, obj_spec = task_info["task"].rsplit(".", maxsplit=1)
 
         try:
             module = importlib.import_module(module_spec)

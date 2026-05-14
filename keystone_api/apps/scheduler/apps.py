@@ -10,13 +10,13 @@ from django.core.checks import register
 
 from .checks import *
 
-__all__ = ['SchedulerAppConfig']
+__all__ = ["SchedulerAppConfig"]
 
 
 class SchedulerAppConfig(AppConfig):
     """Django configuration for the `scheduler` app."""
 
-    name = 'apps.scheduler'
+    name = "apps.scheduler"
 
     def ready(self) -> None:
         """Setup tasks executed after loading the application configuration and models."""
