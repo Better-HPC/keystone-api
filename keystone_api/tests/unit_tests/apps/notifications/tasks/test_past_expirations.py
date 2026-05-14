@@ -81,13 +81,23 @@ class ShouldNotifyPastExpirationMethod(TestCase):
             should_notify_past_expiration(request.submitter, request)
         )
 
+    def test_false_if_no_expiry_date(self) -> None:
+        """Verify returns `False` when the request has no expiration date."""
+
+        request = AllocationRequestFactory(expire=None)
+        PreferenceFactory(user=request.submitter, notify_on_expiration=True)
+
+        self.assertFalse(
+            should_notify_past_expiration(request.submitter, request)
+        )
+
 
 @patch('apps.notifications.tasks.past_expirations.send_notification_template')
 class SendPastExpirationNoticeContext(TestCase):
     """Test the template context passed by the past expiration notification task."""
 
     def setUp(self) -> None:
-        """Create a mock allocation request that expires today."""
+        """Create test fixtures using mock data."""
 
         self.request = AllocationRequestFactory(
             active=date.today() - timedelta(days=5),
@@ -186,6 +196,24 @@ class SendPastExpirationNoticeContext(TestCase):
         send_past_expiration_notice(request.submitter.id, request.id)
 
         mock_send.assert_not_called()
+
+    def test_not_called_when_no_expiry_date(self, mock_send: Mock) -> None:
+        """Verify the notification is not sent when the request has no expiration date."""
+
+        request = AllocationRequestFactory(expire=None)
+        PreferenceFactory(user=request.submitter, notify_on_expiration=True)
+        send_past_expiration_notice(request.submitter.id, request.id)
+
+        mock_send.assert_not_called()
+
+    def test_uses_default_preferences_when_none_exist(self, mock_send: Mock) -> None:
+        """Verify the task falls back to default preferences when no Preference record exists."""
+
+        # No PreferenceFactory call means there is no preference record in the DB for this user.
+        # Default preferences have notify_on_expiration=True, so the notification
+        # should still be sent for an expired request.
+        send_past_expiration_notice(self.request.submitter.id, self.request.id)
+        mock_send.assert_called_once()
 
     def test_context_renders_default_template(self, mock_send: Mock) -> None:
         """Verify the task context renders the default template without undefined variable errors."""
