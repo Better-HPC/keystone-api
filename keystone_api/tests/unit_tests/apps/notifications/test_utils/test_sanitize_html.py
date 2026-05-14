@@ -112,10 +112,17 @@ class SanitizeHtmlCssRemovalTest(TestCase):
         result = sanitize_html(html)
         self.assertNotIn('evil.com', result)
 
-    def test_preserves_data_uri_in_style(self) -> None:
-        """Verify data: URIs in styles are preserved."""
+    def test_preserves_data_uri_in_inline_style(self) -> None:
+        """Verify `data:` URIs in inline styles are preserved."""
 
         html = '<div style="background: url(data:image/png;base64,abc123)">Content</div>'
+        result = sanitize_html(html)
+        self.assertIn('data:image/png;base64,abc123', result)
+
+    def test_preserves_data_uri_inside_style_tag(self) -> None:
+        """Verify `data:` URIs inside a style tag are preserved."""
+
+        html = '<style>.logo { background: url(data:image/png;base64,abc123); }</style>'
         result = sanitize_html(html)
         self.assertIn('data:image/png;base64,abc123', result)
 
@@ -158,6 +165,25 @@ class SanitizeHtmlCssRemovalTest(TestCase):
         self.assertIn('color: red', result)
         self.assertIn('font-size: 14px', result)
         self.assertIn('margin: 10px', result)
+
+    def test_style_tag_preserves_safe_rules_alongside_unsafe_ones(self) -> None:
+        """Verify safe CSS rules inside a style tag are kept when mixed with unsafe rules."""
+
+        html = (
+            '<style>'
+            '@import "https://evil.com/styles.css"; '
+            '.safe { color: red; font-size: 14px; } '
+            '.also-safe { margin: 0; } '
+            '.tracking { background: url(https://evil.com/track.gif); }'
+            '</style>'
+        )
+        result = sanitize_html(html)
+
+        self.assertNotIn('@import', result)
+        self.assertNotIn('evil.com', result)
+        self.assertIn('color: red', result)
+        self.assertIn('font-size: 14px', result)
+        self.assertIn('margin: 0', result)
 
 
 class SanitizeHtmlTagWhitelistTest(TestCase):

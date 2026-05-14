@@ -32,26 +32,26 @@ class Command(BaseCommand):
             parser: The argument parser instance.
         """
 
-        parser.add_argument('--out',
+        parser.add_argument("--out",
             type=Path,
             default=Path.cwd(),
-            help='The output directory where rendered templates are written.')
+            help="The output directory where rendered templates are written.")
 
-        parser.add_argument('--templates',
+        parser.add_argument("--templates",
             type=Path,
             default=settings.EMAIL_TEMPLATE_DIR,
-            help='An optional directory of custom HTML templates to render.')
+            help="An optional directory of custom HTML templates to render.")
 
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
-        input_dir = options['templates']
-        output_dir = options['out']
+        input_dir = options["templates"]
+        output_dir = options["out"]
 
         # Ensure in/out directories exist
         for path in (input_dir, output_dir):
             if not path.exists():
-                self.stderr.write(f'No such file or directory: {path.resolve()}')
+                self.stderr.write(f"No such file or directory: {path.resolve()}")
                 exit(1)
 
         # Write example notifications to disk
@@ -60,7 +60,7 @@ class Command(BaseCommand):
             self._render_notification(Notification.NotificationType.request_expired, output_dir, "past_expiration.eml")
             self._render_notification(Notification.NotificationType.general_message, output_dir, "general_message.eml")
 
-        self.stdout.write(self.style.SUCCESS(f'Templates written to {output_dir.resolve()}'))
+        self.stdout.write(self.style.SUCCESS(f"Templates written to {output_dir.resolve()}"))
 
     @staticmethod
     def _render_notification(notification_type: Notification.NotificationType, output_dir: Path, filename: str) -> None:

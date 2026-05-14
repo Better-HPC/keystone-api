@@ -26,6 +26,24 @@ class HtmlOutputTest(TestCase):
         self.assertIn("&lt;code&gt;", html)
         self.assertIn("&amp;", html)
 
+    def test_strips_leading_and_trailing_whitespace(self) -> None:
+        """Verify leading and trailing whitespace is stripped from HTML output."""
+
+        template = Template("  <p>hello</p>  ")
+        html, _ = format_template(template, {})
+
+        self.assertEqual("<p>hello</p>", html)
+
+    def test_sanitizes_dangerous_html(self) -> None:
+        """Verify dangerous HTML rendered by the template is stripped from the output."""
+
+        template = Template("<p>Safe content</p><script>alert('xss')</script>")
+        html, _ = format_template(template, {})
+
+        self.assertNotIn("<script>", html)
+        self.assertNotIn("alert", html)
+        self.assertIn("<p>Safe content</p>", html)
+
 
 class PlainTextOutput(TestCase):
     """Tests for plain text output from format_template."""

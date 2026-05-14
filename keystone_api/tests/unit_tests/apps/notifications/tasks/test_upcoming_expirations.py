@@ -53,7 +53,7 @@ class ShouldNotifyUpcomingExpirationMethod(TestCase):
         )
 
     def test_false_if_request_does_not_expire(self) -> None:
-        """Verify returns `False` if the request does not expire."""
+        """Verify returns `False` if the request has no expiration date."""
 
         user = UserFactory(date_joined=timezone.now() - timedelta(days=365))
         request = AllocationRequestFactory(
@@ -138,7 +138,7 @@ class SendUpcomingExpirationNoticeContext(TestCase):
     """Test the template context passed by the upcoming expiration notification task."""
 
     def setUp(self) -> None:
-        """Create a mock allocation request that expires in 5 days."""
+        """Create test fixtures using mock data."""
 
         self.user = UserFactory(date_joined=timezone.now() - timedelta(days=365))
         self.request = AllocationRequestFactory(
@@ -148,8 +148,8 @@ class SendUpcomingExpirationNoticeContext(TestCase):
             expire=date.today() + timedelta(days=5),
         )
 
-    def test_context_renders_default_template(self, mock_send: Mock) -> None:
-        """Verify the task context renders the default template without undefined variable errors."""
+    def test_renders_default_template(self, mock_send: Mock) -> None:
+        """Verify the task renders the default template without undefined variable errors."""
 
         PreferenceFactory(user=self.user, request_expiry_thresholds=[5])
         send_upcoming_expiration_notice(self.user.id, self.request.id)
@@ -255,13 +255,14 @@ class SendUpcomingExpirationNoticeContext(TestCase):
         subject = mock_send.call_args.kwargs['subject']
         self.assertIn(str(self.request.id), subject)
 
-    def test_not_called_when_should_notify_is_false(self, mock_send: None) -> None:
+    @patch('apps.notifications.tasks.past_expirations.should_notify_past_expiration')
+    def test_not_sent_when_should_notify_is_false(self, mock_should_notify: Mock, mock_send: Mock) -> None:
         """Verify the notification is not sent when the user should not be notified."""
 
-        # Create an allocation request that does not expire within the notification threshold
-        user = UserFactory(date_joined=timezone.now() - timedelta(days=365))
-        PreferenceFactory(user=user, request_expiry_thresholds=[5])
+        mock_should_notify.return_value = False
 
+        user = UserFactory(date_joined=timezone.now() - timedelta(days=365))
+        preference = PreferenceFactory(user=user, request_expiry_thresholds=[5])
         request = AllocationRequestFactory(
             submitter=user,
             submitted=timezone.now() - timedelta(days=30),

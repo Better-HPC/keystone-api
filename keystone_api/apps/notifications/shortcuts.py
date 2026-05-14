@@ -19,10 +19,10 @@ from .models import Notification
 from .utils import sanitize_html
 
 __all__ = [
-    'get_template',
-    'format_template',
-    'send_notification',
-    'send_notification_template'
+    "get_template",
+    "format_template",
+    "send_notification",
+    "send_notification_template"
 ]
 
 

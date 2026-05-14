@@ -8,7 +8,7 @@ from apps.notifications.factories import NotificationFactory
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, UserListFilteringTestMixin
 
-VIEW_NAME = 'notifications:notification-list'
+VIEW_NAME = "notifications:notification-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):

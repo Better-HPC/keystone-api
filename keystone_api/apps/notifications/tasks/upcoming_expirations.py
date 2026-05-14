@@ -11,8 +11,8 @@ from ..models import Notification, Preference
 from ..shortcuts import send_notification_template
 
 __all__ = [
-    'notify_upcoming_expirations',
-    'send_upcoming_expiration_notice',
+    "notify_upcoming_expirations",
+    "send_upcoming_expiration_notice",
 ]
 
 
@@ -49,7 +49,7 @@ def should_notify_upcoming_expiration(user: User, request: AllocationRequest) ->
         return False
 
     # Do not notify if the allocation request went active after the notification threshold
-    if request.active >= date.today() - timedelta(days=next_threshold):
+    if request.active is None or request.active >= date.today() - timedelta(days=next_threshold):
         return False
 
     # Do not notify if the user has already been notified for this threshold
@@ -121,45 +121,45 @@ def send_upcoming_expiration_notice(user_id: int, req_id: int) -> None:
     # Metadata used to track the uniqueness of the notification
     days_until_expire = (expiring_request.expire - date.today()).days if expiring_request.expire else None
     metadata = {
-        'request_id': req_id,
-        'days_to_expire': days_until_expire
+        "request_id": req_id,
+        "days_to_expire": days_until_expire
     }
 
     # Values injected into the HTML template
     context = {
-        'user_name': user.username,
-        'user_first': user.first_name,
-        'user_last': user.last_name,
-        'req_id': expiring_request.id,
-        'req_title': expiring_request.title,
-        'req_team': expiring_request.team.name,
-        'req_submitted': expiring_request.submitted,
-        'req_active': expiring_request.active,
-        'req_expire': expiring_request.expire,
-        'req_days_left': days_until_expire,
-        'allocations': tuple(
+        "user_name": user.username,
+        "user_first": user.first_name,
+        "user_last": user.last_name,
+        "req_id": expiring_request.id,
+        "req_title": expiring_request.title,
+        "req_team": expiring_request.team.name,
+        "req_submitted": expiring_request.submitted,
+        "req_active": expiring_request.active,
+        "req_expire": expiring_request.expire,
+        "req_days_left": days_until_expire,
+        "allocations": tuple(
             {
-                'alloc_cluster': alloc.cluster.name,
-                'alloc_requested': alloc.requested or 0,
-                'alloc_awarded': alloc.awarded or 0,
+                "alloc_cluster": alloc.cluster.name,
+                "alloc_requested": alloc.requested or 0,
+                "alloc_awarded": alloc.awarded or 0,
             } for alloc in expiring_request.allocation_set.all()
         ),
-        'upcoming_requests': tuple(
+        "upcoming_requests": tuple(
             {
-                'id': req.id,
-                'title': req.title,
-                'submitted': req.submitted,
-                'active': req.active,
-                'expire': req.expire,
-                'status': AllocationRequest.StatusChoices(req.status).label,
+                "id": req.id,
+                "title": req.title,
+                "submitted": req.submitted,
+                "active": req.active,
+                "expire": req.expire,
+                "status": AllocationRequest.StatusChoices(req.status).label,
             } for req in upcoming_requests.all()
         ),
     }
 
     send_notification_template(
         user=user,
-        subject=f'Your HPC allocation #{req_id} is expiring soon',
-        template='upcoming_expiration.html',
+        subject=f"Your HPC allocation #{req_id} is expiring soon",
+        template="upcoming_expiration.html",
         context=context,
         notification_type=Notification.NotificationType.request_expiring,
         notification_metadata=metadata,

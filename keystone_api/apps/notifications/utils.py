@@ -11,28 +11,28 @@ def _sanitize_css(css: str) -> str:
     """Remove external resources and JavaScript from CSS."""
 
     # Remove @import rules
-    css = re.sub(r'@import\s+[^;]+;', '', css, flags=re.IGNORECASE)
+    css = re.sub(r'@import\s+[^;]+;', "", css, flags=re.IGNORECASE)
 
     # Remove @font-face blocks (external font loading)
-    css = re.sub(r'@font-face\s*\{[^}]*\}', '', css, flags=re.IGNORECASE | re.DOTALL)
+    css = re.sub(r'@font-face\s*\{[^}]*\}', "", css, flags=re.IGNORECASE | re.DOTALL)
 
     # Remove url() with external URLs (http, https, //)
     # Keeps data: URIs and relative paths
     css = re.sub(
         r'url\s*\(\s*["\']?\s*(https?://|//)[^)]*\)',
-        'url()',
+        "url()",
         css,
         flags=re.IGNORECASE
     )
 
     # Remove expression() - IE JS execution
-    css = re.sub(r'expression\s*\([^)]*\)', '', css, flags=re.IGNORECASE)
+    css = re.sub(r'expression\s*\([^)]*\)', "", css, flags=re.IGNORECASE)
 
     # Remove behavior: property - IE JS execution
-    css = re.sub(r'behavior\s*:\s*[^;]+;?', '', css, flags=re.IGNORECASE)
+    css = re.sub(r'behavior\s*:\s*[^;]+;?', "", css, flags=re.IGNORECASE)
 
     # Remove -moz-binding: property - Firefox XBL
-    css = re.sub(r'-moz-binding\s*:\s*[^;]+;?', '', css, flags=re.IGNORECASE)
+    css = re.sub(r'-moz-binding\s*:\s*[^;]+;?', "", css, flags=re.IGNORECASE)
 
     return css
 
@@ -70,18 +70,18 @@ def _sanitize_html_tags(html: str) -> str:
     clean = nh3.clean(
         html=html,
         tags={
-            'a', 'abbr', 'acronym', 'area', 'article', 'aside', 'b', 'bdi',
-            'bdo', 'blockquote', 'br', 'caption', 'center', 'cite', 'code',
-            'col', 'colgroup', 'data', 'dd', 'del', 'details', 'dfn', 'div',
-            'dl', 'dt', 'em', 'figcaption', 'figure', 'font', 'footer', 'h1',
-            'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'i',
-            'img', 'ins', 'kbd', 'li', 'map', 'mark', 'nav', 'ol', 'p', 'pre',
-            'q', 'rp', 'rt', 'rtc', 'ruby', 's', 'samp', 'small', 'span',
-            'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table',
-            'tbody', 'td', 'th', 'thead', 'time', 'title', 'tr', 'tt', 'u',
-            'ul', 'var', 'wbr'
+            "a", "abbr", "acronym", "area", "article", "aside", "b", "bdi",
+            "bdo", "blockquote", "br", "caption", "center", "cite", "code",
+            "col", "colgroup", "data", "dd", "del", "details", "dfn", "div",
+            "dl", "dt", "em", "figcaption", "figure", "font", "footer", "h1",
+            "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "i",
+            "img", "ins", "kbd", "li", "map", "mark", "nav", "ol", "p", "pre",
+            "q", "rp", "rt", "rtc", "ruby", "s", "samp", "small", "span",
+            "strike", "strong", "style", "sub", "summary", "sup", "table",
+            "tbody", "td", "th", "thead", "time", "title", "tr", "tt", "u",
+            "ul", "var", "wbr"
         },
-        clean_content_tags={'script'},
+        clean_content_tags={"script"},
         strip_comments=True,
         link_rel="noopener noreferrer",
         url_schemes={"http", "https", "mailto"},

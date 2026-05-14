@@ -13,40 +13,40 @@ from apps.users.nested import UserSummarySerializer
 from .models import *
 
 __all__ = [
-    'NotificationSerializer',
-    'PreferenceSerializer',
+    "NotificationSerializer",
+    "PreferenceSerializer",
 ]
 
 
 class NotificationSerializer(serializers.ModelSerializer):
     """Object serializer for the `Notification` class."""
 
-    _user = UserSummarySerializer(source='user', read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Notification
-        fields = ['id', 'time', 'read', 'subject', 'message_html', 'notification_type', 'user', '_user']
-        read_only_fields = [f for f in fields if f != 'read']
+        fields = ["id", "time", "read", "subject", "message_html", "notification_type", "user", "_user"]
+        read_only_fields = [f for f in fields if f != "read"]
 
 
 class PreferenceSerializer(serializers.ModelSerializer):
     """Object serializer for the `Preference` class."""
 
-    _user = UserSummarySerializer(source='user', read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Preference
-        fields = '__all__'
-        extra_kwargs = {'user': {'required': False}}  # Default value set by the view class
+        fields = "__all__"
+        extra_kwargs = {"user": {"required": False}}  # Default value set by the view class
 
     def validate_user(self, value: User) -> User:
         """Validate the reviewer matches the user submitting the request."""
 
-        request_submitter = self.context['request'].user
+        request_submitter = self.context["request"].user
         if not (request_submitter.is_staff or value == request_submitter):
             raise serializers.ValidationError("User field cannot be set to a different user than the request submitter.")
 
