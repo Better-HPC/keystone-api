@@ -16,7 +16,7 @@ from factory.random import randgen
 from apps.users.factories import TeamFactory
 from .models import *
 
-__all__ = ['GrantFactory', 'PublicationFactory']
+__all__ = ["GrantFactory", "PublicationFactory"]
 
 
 class GrantFactory(DjangoModelFactory):
@@ -31,11 +31,11 @@ class GrantFactory(DjangoModelFactory):
 
         model = Grant
 
-    title = factory.Faker('sentence', nb_words=6)
-    agency = factory.Faker('company')
-    amount = factory.Faker('pydecimal', left_digits=6, right_digits=2, positive=True)
+    title = factory.Faker("sentence", nb_words=6)
+    agency = factory.Faker("company")
+    amount = factory.Faker("pydecimal", left_digits=6, right_digits=2, positive=True)
     grant_number = factory.Sequence(lambda n: f"GRANT-{n + 1:05d}")
-    start_date = factory.Faker('date_this_decade')
+    start_date = factory.Faker("date_this_decade")
     description = factory.Faker("paragraph", nb_sentences=10)
 
     team = factory.SubFactory(TeamFactory)
@@ -44,8 +44,7 @@ class GrantFactory(DjangoModelFactory):
     def end_date(self: Grant) -> date:
         """Generate the grant end date.
 
-        Returns:
-            A date within 1 to 3 years from the grant start.
+        Returns a date within 1 to 3 years from the grant start.
         """
 
         duration_years = randgen.randint(1, 3)
@@ -71,7 +70,7 @@ class PublicationFactory(DjangoModelFactory):
     title = factory.Faker("sentence", nb_words=6)
     abstract = factory.Faker("paragraph", nb_sentences=10)
     journal = factory.Faker("catch_phrase")
-    doi = factory.Faker('doi')
+    doi = factory.Faker("doi")
 
     team = factory.SubFactory(TeamFactory)
 
@@ -111,7 +110,7 @@ class PublicationFactory(DjangoModelFactory):
         """
 
         if self.published:
-            return f'{randgen.randint(1, 20):02}'
+            return f"{randgen.randint(1, 20):02}"
 
     @factory.lazy_attribute
     def issue(self: Publication) -> str | None:
@@ -121,4 +120,4 @@ class PublicationFactory(DjangoModelFactory):
         """
 
         if self.published:
-            return f'{randgen.randint(1, 9)}'
+            return f"{randgen.randint(1, 9)}"

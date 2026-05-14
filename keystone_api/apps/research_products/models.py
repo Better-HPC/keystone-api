@@ -13,7 +13,7 @@ from django.template.defaultfilters import truncatechars
 
 from apps.users.models import Team
 
-__all__ = ['Grant', 'Publication']
+__all__ = ["Grant", "Publication"]
 
 
 @auditlog.register()
@@ -24,15 +24,15 @@ class Grant(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['title']),
-            models.Index(fields=['agency']),
-            models.Index(fields=['grant_number']),
-            models.Index(fields=['start_date']),
-            models.Index(fields=['end_date']),
-            models.Index(fields=['team']),
-            models.Index(fields=['team', 'start_date', 'end_date']),
-            models.Index(fields=['agency', 'start_date', 'end_date']),
-            models.Index(fields=['team', 'agency', 'start_date', 'end_date']),
+            models.Index(fields=["title"]),
+            models.Index(fields=["agency"]),
+            models.Index(fields=["grant_number"]),
+            models.Index(fields=["start_date"]),
+            models.Index(fields=["end_date"]),
+            models.Index(fields=["team"]),
+            models.Index(fields=["team", "start_date", "end_date"]),
+            models.Index(fields=["agency", "start_date", "end_date"]),
+            models.Index(fields=["team", "agency", "start_date", "end_date"]),
         ]
 
     title = models.CharField(max_length=250)
@@ -60,15 +60,15 @@ class Publication(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['title']),
-            models.Index(fields=['published']),
-            models.Index(fields=['submitted']),
-            models.Index(fields=['journal']),
-            models.Index(fields=['doi']),
-            models.Index(fields=['team']),
-            models.Index(fields=['team', 'journal']),
-            models.Index(fields=['team', 'published']),
-            models.Index(fields=['team', 'submitted']),
+            models.Index(fields=["title"]),
+            models.Index(fields=["published"]),
+            models.Index(fields=["submitted"]),
+            models.Index(fields=["journal"]),
+            models.Index(fields=["doi"]),
+            models.Index(fields=["team"]),
+            models.Index(fields=["team", "journal"]),
+            models.Index(fields=["team", "published"]),
+            models.Index(fields=["team", "submitted"]),
         ]
 
     title = models.CharField(max_length=250)

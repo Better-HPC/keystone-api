@@ -23,11 +23,11 @@ class EndpointPermissions(ResearchDetailEndpointPermissionsTestMixin, APITestCas
         """Return a dictionary containing valid Grant data."""
 
         return {
-            'title': "Grant (Team 2)",
-            'agency': "Agency Name",
-            'amount': 1000,
-            'start_date': date(2000, 1, 1),
-            'end_date': date(2000, 1, 31),
-            'grant_number': 'abc-123',
-            'team': self.team.id
+            "title": "Grant (Team 2)",
+            "agency": "Agency Name",
+            "amount": 1000,
+            "start_date": date(2000, 1, 1),
+            "end_date": date(2000, 1, 31),
+            "grant_number": "abc-123",
+            "team": self.team.id
         }

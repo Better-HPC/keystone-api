@@ -13,7 +13,7 @@ from rest_framework.views import View
 from apps.users.models import Team
 from .models import *
 
-__all__ = ['IsTeamMember']
+__all__ = ["IsTeamMember"]
 
 
 class IsTeamMember(permissions.BasePermission):
@@ -35,7 +35,7 @@ class IsTeamMember(permissions.BasePermission):
         """
 
         try:
-            team_id = request.data.get('team', None)
+            team_id = request.data.get("team", None)
             return Team.objects.get(pk=team_id)
 
         except Team.DoesNotExist:
