@@ -7,8 +7,8 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-LOGIN_VIEW_NAME = 'authentication:login'
-WHOAMI_VIEW_NAME = 'authentication:whoami'
+LOGIN_VIEW_NAME = "authentication:login"
+WHOAMI_VIEW_NAME = "authentication:whoami"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -27,8 +27,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user = UserFactory(username='user')
-        self.user.set_password('foobar123')
+        self.user = UserFactory(username="user")
+        self.user.set_password("foobar123")
         self.user.save()
 
     def test_unauthenticated_user_permissions(self) -> None:
@@ -44,7 +44,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'username': 'user', 'password': 'foobar123'},
+            post_body={"username": "user", "password": "foobar123"},
         )
 
     def test_authenticated_user_permissions(self) -> None:
@@ -61,7 +61,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'username': 'user', 'password': 'foobar123'},
+            post_body={"username": "user", "password": "foobar123"},
         )
 
 
@@ -74,14 +74,14 @@ class UserAuthentication(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.password = 'foobar123'
-        self.user = UserFactory(username='user', password=self.password)
+        self.password = "foobar123"
+        self.user = UserFactory(username="user", password=self.password)
 
     def test_invalid_credentials(self) -> None:
         """Verify user authentication fails with invalid credentials."""
 
         # Verify the auth request returns a failure status
-        auth_response = self.client.post(self.login_endpoint, {'username': self.user.username, 'password': 'wrong'})
+        auth_response = self.client.post(self.login_endpoint, {"username": self.user.username, "password": "wrong"})
         self.assertEqual(status.HTTP_400_BAD_REQUEST, auth_response.status_code)
 
         # Verify the API reports an unauthenticated user session
@@ -92,7 +92,7 @@ class UserAuthentication(APITestCase):
         """Verify user authentication succeeds with valid credentials."""
 
         # Verify the auth request returns a successful status
-        auth_response = self.client.post(self.login_endpoint, {'username': self.user.username, 'password': self.password})
+        auth_response = self.client.post(self.login_endpoint, {"username": self.user.username, "password": self.password})
         self.assertEqual(status.HTTP_200_OK, auth_response.status_code)
 
         # Verify the API reports an authenticated user session

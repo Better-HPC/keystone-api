@@ -9,7 +9,7 @@ from rest_framework.test import APITransactionTestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'config:config'
+VIEW_NAME = "config:config"
 
 
 class EndpointPermissions(APITransactionTestCase, CustomAsserts):

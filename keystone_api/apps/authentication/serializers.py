@@ -9,7 +9,7 @@ creation.
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-__all__ = ['LoginSerializer', 'LogoutSerializer']
+__all__ = ["LoginSerializer", "LogoutSerializer"]
 
 
 class LoginSerializer(serializers.Serializer):
@@ -28,15 +28,16 @@ class LoginSerializer(serializers.Serializer):
             A dictionary containing the validated user instance.
         """
 
-        request = self.context.get('request')
-        username = attrs.get('username')
-        password = attrs.get('password')
+        request = self.context.get("request")
+        username = attrs.get("username")
+        password = attrs.get("password")
 
+        # Verify user credentials (does not initialize an authenticated session)
         user = authenticate(request=request, username=username, password=password)
         if not user:
             raise serializers.ValidationError("Invalid username or password.")
 
-        return {'user': user}
+        return {"user": user}
 
 
 class LogoutSerializer(serializers.Serializer):

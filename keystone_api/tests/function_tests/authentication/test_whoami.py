@@ -7,7 +7,7 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'authentication:whoami'
+VIEW_NAME = "authentication:whoami"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -72,16 +72,16 @@ class UserData(APITestCase):
         response = self.client.get(self.endpoint)
         data = response.json()
 
-        self.assertEqual(self.user.username, data['username'])
-        self.assertEqual(self.user.email, data['email'])
-        self.assertEqual(self.user.first_name, data['first_name'])
-        self.assertEqual(self.user.last_name, data['last_name'])
-        self.assertEqual(self.user.is_staff, data['is_staff'])
-        self.assertEqual(self.user.is_active, data['is_active'])
+        self.assertEqual(self.user.username, data["username"])
+        self.assertEqual(self.user.email, data["email"])
+        self.assertEqual(self.user.first_name, data["first_name"])
+        self.assertEqual(self.user.last_name, data["last_name"])
+        self.assertEqual(self.user.is_staff, data["is_staff"])
+        self.assertEqual(self.user.is_active, data["is_active"])
 
     def test_password_is_not_returned(self) -> None:
         """Verify the password field is excluded from the returned data."""
 
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.endpoint)
-        self.assertNotIn('password', response.json())
+        self.assertNotIn("password", response.json())

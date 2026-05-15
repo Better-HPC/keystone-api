@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from apps.users.serializers import RestrictedUserSerializer
 from .serializers import *
 
-__all__ = ['LoginView', 'LogoutView', 'WhoAmIView']
+__all__ = ["LoginView", "LogoutView", "WhoAmIView"]
 
 
 class LoginView(GenericAPIView):
@@ -45,7 +45,7 @@ class LoginView(GenericAPIView):
         # Parse and validate the provided credentials
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
+        user = serializer.validated_data["user"]
 
         login(cast(HttpRequest, request), user)
         return Response(RestrictedUserSerializer(user).data)
