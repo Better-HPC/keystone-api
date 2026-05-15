@@ -10,7 +10,7 @@ class GetTeamMethod(TestCase):
     """Test the retrieval of an allocation's parent team via the `get_team` method."""
 
     def setUp(self) -> None:
-        """Create mock user records"""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.allocation = ResourceAllocationFactory(

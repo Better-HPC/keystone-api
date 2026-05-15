@@ -12,25 +12,25 @@ class GetCommentsMethod(TestCase):
     """Test the filtering of returned allocation request comments."""
 
     def setUp(self) -> None:
-        """Setup mock data."""
+        """Create test fixtures using mock data."""
 
         self.allocation_request = AllocationRequestFactory()
 
         self.public_comment = CommentFactory(
-            request=self.allocation_request, private=False, content='Public comment'
+            request=self.allocation_request, private=False, content="Public comment"
         )
 
         self.private_comment = CommentFactory(
-            request=self.allocation_request, private=True, content='Private comment'
+            request=self.allocation_request, private=True, content="Private comment"
         )
 
     @staticmethod
     def _create_context(user: User) -> dict:
         """Create serializer context with a request containing the given user."""
 
-        request = RequestFactory().get('/fake-url/')
+        request = RequestFactory().get("/fake-url/")
         request.user = user
-        return {'request': request}
+        return {"request": request}
 
     def test_filters_private_comments_for_non_staff_user(self) -> None:
         """Verify non-staff users are only returned public comments."""
@@ -42,7 +42,7 @@ class GetCommentsMethod(TestCase):
         result = serializer.get__comments(self.allocation_request)
 
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]['content'], 'Public comment')
+        self.assertEqual(result[0]["content"], "Public comment")
 
     def test_returns_all_comments_for_staff_user(self) -> None:
         """Verify staff users are returned public and private comments."""

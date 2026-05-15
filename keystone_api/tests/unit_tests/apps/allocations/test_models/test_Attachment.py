@@ -14,7 +14,7 @@ class GetTeamMethod(TestCase):
     """Test the retrieval of an attachment's parent team via the `get_team` method."""
 
     def setUp(self) -> None:
-        """Create mock user records."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.allocation_request = AllocationRequestFactory(team=self.team)
@@ -30,7 +30,7 @@ class SaveMethod(TestCase):
     """Test the `save` method behavior in the `Attachment` model."""
 
     def setUp(self) -> None:
-        """Create mock user and related records."""
+        """Create test fixtures using mock data."""
 
         self.user = UserFactory()
         self.team = TeamFactory()
@@ -39,12 +39,12 @@ class SaveMethod(TestCase):
     def test_sets_default_name_file(self) -> None:
         """Verify the attachment name defaults to the upload path basename."""
 
-        path = 'directory/upload.txt'
+        path = "directory/upload.txt"
         basename = os.path.basename(path)
 
         attachment = Attachment(
             request=self.allocation_request,
-            file=SimpleUploadedFile(str(path), b'dummy content'),
+            file=SimpleUploadedFile(str(path), b"dummy content"),
         )
 
         attachment.save()
@@ -53,12 +53,12 @@ class SaveMethod(TestCase):
     def test_custom_name_is_set(self) -> None:
         """Verify a custom name is preserved when explicitly provided."""
 
-        path = 'directory/upload.txt'
-        custom_name = 'newname.txt'
+        path = "directory/upload.txt"
+        custom_name = "newname.txt"
 
         attachment = Attachment(
             request=self.allocation_request,
-            file=SimpleUploadedFile(str(path), b'dummy content'),
+            file=SimpleUploadedFile(str(path), b"dummy content"),
             name=custom_name,
         )
 

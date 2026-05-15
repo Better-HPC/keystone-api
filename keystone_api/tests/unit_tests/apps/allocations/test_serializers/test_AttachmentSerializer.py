@@ -10,7 +10,7 @@ from apps.allocations.serializers import AttachmentSerializer
 KB = 1024  # One KB in bytes
 
 
-@override_settings(MAX_FILE_SIZE=KB, ALLOWED_FILE_TYPES=['text/plain'])
+@override_settings(MAX_FILE_SIZE=KB, ALLOWED_FILE_TYPES=["text/plain"])
 class ValidateFileMethod(TestCase):
     """Test the validation of file upload data."""
 

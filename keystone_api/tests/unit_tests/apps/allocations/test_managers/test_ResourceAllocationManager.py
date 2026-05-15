@@ -14,7 +14,7 @@ class ApprovedAllocationsMethod(TestCase):
     """Test the fetching of approved allocations."""
 
     def setUp(self) -> None:
-        """Instantiate common test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.cluster = ClusterFactory()
@@ -131,7 +131,7 @@ class ActiveAllocationsMethod(TestCase):
     """Test the fetching of active allocations."""
 
     def setUp(self) -> None:
-        """Instantiate common test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.cluster = ClusterFactory()
@@ -264,7 +264,7 @@ class ExpiringAllocationsMethod(TestCase):
     """Test the fetching of expiring allocations."""
 
     def setUp(self) -> None:
-        """Instantiate common test fixtures."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.cluster = ClusterFactory()
@@ -383,7 +383,7 @@ class ActiveServiceUnitsMethod(TestCase):
     """Test the calculation of active service units."""
 
     def setUp(self) -> None:
-        """Instantiate test fixtures covering multiple edge cases."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.cluster = ClusterFactory()
@@ -466,7 +466,7 @@ class ExpiringServiceUnitsMethod(TestCase):
     """Test the calculation of expiring service units."""
 
     def setUp(self) -> None:
-        """Instantiate test fixtures covering multiple edge cases."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.cluster = ClusterFactory()
@@ -551,7 +551,7 @@ class HistoricalUsageMethod(TestCase):
     """Test the calculation of historical service units."""
 
     def setUp(self) -> None:
-        """Instantiate test fixtures covering multiple edge cases."""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.cluster = ClusterFactory()
