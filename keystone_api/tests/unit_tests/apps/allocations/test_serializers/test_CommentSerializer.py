@@ -64,7 +64,7 @@ class ValidateMethod(TestCase):
         serializer = CommentSerializer(data=data, context={'request': request})
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
-    def test_non_staff_update_to_private(self) -> None:
+    def test_non_staff_promote_to_private(self) -> None:
         """Verify non-staff users cannot update the `private` field from `False` to `True`."""
 
         # Initialize a public comment
@@ -87,30 +87,7 @@ class ValidateMethod(TestCase):
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
 
-    def test_non_staff_update_to_public(self) -> None:
-        """Verify non-staff users cannot update the `private` field from `True` to `False`."""
-
-        # Initialize a private comment
-        comment = Comment.objects.create(
-            request=self.alloc_request,
-            user=self.normal_user,
-            private=True,
-            content='Staff private'
-        )
-
-        # Update a comment to public
-        data = {'private': False}
-        serializer = CommentSerializer(
-            instance=comment,
-            data=data,
-            partial=True,
-            context={'request': self._user_post_request(self.normal_user)}
-        )
-
-        with self.assertRaises(ValidationError):
-            serializer.is_valid(raise_exception=True)
-
-    def test_staff_update_to_private(self) -> None:
+    def test_staff_promote_to_private(self) -> None:
         """Verify staff users can update the `private` field from `False` to `True`."""
 
         # Initialize a public comment
@@ -132,10 +109,9 @@ class ValidateMethod(TestCase):
 
         self.assertTrue(serializer.is_valid(raise_exception=True))
 
-    def test_staff_update_set_public(self) -> None:
-        """Verify staff users can update the `private` field from `True` to `False`."""
+    def test_non_staff_promote_to_public(self) -> None:
+        """Verify non-staff users cannot update the `private` field from `True` to `False`."""
 
-        # Initialize a private comment
         comment = Comment.objects.create(
             request=self.alloc_request,
             user=self.staff_user,
@@ -143,7 +119,27 @@ class ValidateMethod(TestCase):
             content='Staff private'
         )
 
-        # Update a comment to public
+        data = {'private': False}
+        serializer = CommentSerializer(
+            instance=comment,
+            data=data,
+            partial=True,
+            context={'request': self._user_post_request(self.normal_user)}
+        )
+
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_staff_promote_to_public(self) -> None:
+        """Verify staff users can update the `private` field from `True` to `False`."""
+
+        comment = Comment.objects.create(
+            request=self.alloc_request,
+            user=self.staff_user,
+            private=True,
+            content='Staff private'
+        )
+
         data = {'private': False}
         serializer = CommentSerializer(
             instance=comment,
