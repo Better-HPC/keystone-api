@@ -10,7 +10,7 @@ from apps.allocations.serializers import AttachmentSerializer
 KB = 1024  # One KB in bytes
 
 
-@override_settings(MAX_FILE_SIZE=KB)
+@override_settings(MAX_FILE_SIZE=KB, ALLOWED_FILE_TYPES=["text/plain"])
 class ValidateFileMethod(TestCase):
     """Test the validation of file upload data."""
 
@@ -18,7 +18,7 @@ class ValidateFileMethod(TestCase):
         """Verify files below the size limit pass validation."""
 
         max_size = settings.MAX_FILE_SIZE
-        file = SimpleUploadedFile("file.txt", b"x" * (max_size - 1))  # 1 KB
+        file = SimpleUploadedFile("file.txt", b"x" * (max_size - 1))
 
         result = AttachmentSerializer.validate_file(file)
         self.assertEqual(result, file)
@@ -27,7 +27,7 @@ class ValidateFileMethod(TestCase):
         """Verify files equal to the size limit pass validation."""
 
         max_size = settings.MAX_FILE_SIZE
-        file = SimpleUploadedFile("large.txt", b"x" * max_size)
+        file = SimpleUploadedFile("file.txt", b"x" * max_size)
 
         result = AttachmentSerializer.validate_file(file)
         self.assertEqual(result, file)
@@ -36,7 +36,7 @@ class ValidateFileMethod(TestCase):
         """Verify files above the size limit fail validation."""
 
         max_size = settings.MAX_FILE_SIZE
-        file = SimpleUploadedFile("large.txt", b"x" * (max_size + 1))
+        file = SimpleUploadedFile("file.txt", b"x" * (max_size + 1))
 
         with self.assertRaisesRegex(ValidationError, "File size should not exceed"):
             AttachmentSerializer.validate_file(file)
@@ -51,6 +51,6 @@ class ValidateFileMethod(TestCase):
     def test_disallowed_mime_type(self) -> None:
         """Verify a file with a disallowed MIME type fails validation."""
 
-        file = SimpleUploadedFile("text.exe", b"GIF87a...")
+        file = SimpleUploadedFile("document.pdf", b"dummy content")
         with self.assertRaisesRegex(ValidationError, "File type .* is not allowed"):
             AttachmentSerializer.validate_file(file)

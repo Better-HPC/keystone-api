@@ -9,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'allocations:comment-detail'
+VIEW_NAME = "allocations:comment-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -49,20 +49,20 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         # Create a public comment
         self.public_comment = CommentFactory(request=self.request)
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.public_comment.id})
+        self.public_comment_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.public_comment.id})
 
-        # Create a public comment
+        # Create a private comment
         self.private_comment = CommentFactory(private=True, request=self.request)
-        self.private_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.private_comment.id})
+        self.private_comment_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.private_comment.id})
 
         # Valid record data used to test write operations
-        self.record_data = {'content': 'foobar', 'request': self.request.pk}
+        self.record_data = {"content": "foobar", "request": self.request.pk}
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
 
         self.assert_http_responses(
-            self.endpoint,
+            self.public_comment_endpoint,
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -78,7 +78,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.non_member)
         self.assert_http_responses(
-            self.endpoint,
+            self.public_comment_endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
@@ -94,7 +94,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
-            self.endpoint,
+            self.public_comment_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -112,7 +112,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_admin)
         self.assert_http_responses(
-            self.endpoint,
+            self.public_comment_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -130,7 +130,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_owner)
         self.assert_http_responses(
-            self.endpoint,
+            self.public_comment_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -147,9 +147,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Verify staff users have full read and write permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
-
         self.assert_http_responses(
-            self.endpoint,
+            self.public_comment_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -167,7 +166,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.team_member)
         self.assert_http_responses(
-            self.private_endpoint,
+            self.private_comment_endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
@@ -181,9 +180,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def test_team_owner_private_permissions(self) -> None:
         """Verify team owners cannot access private comments."""
 
-        self.client.force_authenticate(user=self.team_member)
+        self.client.force_authenticate(user=self.team_owner)
         self.assert_http_responses(
-            self.private_endpoint,
+            self.private_comment_endpoint,
             get=status.HTTP_403_FORBIDDEN,
             head=status.HTTP_403_FORBIDDEN,
             options=status.HTTP_200_OK,
@@ -199,7 +198,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
-            self.endpoint,
+            self.private_comment_endpoint,
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,

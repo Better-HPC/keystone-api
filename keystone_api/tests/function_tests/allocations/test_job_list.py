@@ -85,4 +85,4 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
     endpoint = reverse(VIEW_NAME)
     factory = JobStatsFactory
-    team_field = 'team'
+    team_field = "team"

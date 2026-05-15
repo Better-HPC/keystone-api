@@ -8,7 +8,7 @@ from apps.allocations.models import AllocationReview
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, GetResponseContentTests
 
-VIEW_NAME = 'allocations:review-status-choices'
+VIEW_NAME = "allocations:review-status-choices"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):

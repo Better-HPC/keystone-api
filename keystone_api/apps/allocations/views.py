@@ -21,15 +21,15 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
-    'AllocationRequestStatusChoicesView',
-    'AllocationRequestViewSet',
-    'AllocationReviewStatusChoicesView',
-    'AllocationReviewViewSet',
-    'ResourceAllocationViewSet',
-    'AttachmentViewSet',
-    'ClusterViewSet',
-    'CommentViewSet',
-    'JobStatsViewSet',
+    "AllocationRequestStatusChoicesView",
+    "AllocationRequestViewSet",
+    "AllocationReviewStatusChoicesView",
+    "AllocationReviewViewSet",
+    "ResourceAllocationViewSet",
+    "AttachmentViewSet",
+    "ClusterViewSet",
+    "CommentViewSet",
+    "JobStatsViewSet",
 ]
 
 
@@ -111,21 +111,21 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing allocation requests."""
 
     model = AllocationRequest
-    team_field = 'team'
+    team_field = "team"
 
     permission_classes = [IsAuthenticated, AllocationRequestPermissions]
-    search_fields = ['title', 'description', 'team__name']
+    search_fields = ["title", "description", "team__name"]
     serializer_class = AllocationRequestSerializer
     queryset = AllocationRequest.objects.prefetch_related(
-        'history',
-        'assignees',
-        Prefetch('publications', queryset=Publication.objects.select_related('team').order_by('title')),
-        Prefetch('grants', queryset=Grant.objects.select_related('team').order_by('title')),
-        Prefetch('allocation_set', queryset=ResourceAllocation.objects.select_related('cluster').order_by('cluster__name')),
-        Prefetch('comments', queryset=Comment.objects.select_related('user').order_by('created')),
+        "history",
+        "assignees",
+        Prefetch("publications", queryset=Publication.objects.select_related("team").order_by("title")),
+        Prefetch("grants", queryset=Grant.objects.select_related("team").order_by("title")),
+        Prefetch("allocation_set", queryset=ResourceAllocation.objects.select_related("cluster").order_by("cluster__name")),
+        Prefetch("comments", queryset=Comment.objects.select_related("user").order_by("created")),
     ).select_related(
-        'submitter',
-        'team',
+        "submitter",
+        "team",
     )
 
 
@@ -208,23 +208,23 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing administrator reviews of allocation requests."""
 
     model = AllocationReview
-    team_field = 'request__team'
+    team_field = "request__team"
 
     permission_classes = [IsAuthenticated, AllocationReviewPermissions]
-    search_fields = ['public_comments', 'private_comments', 'request__team__name', 'request__title']
+    search_fields = ["public_comments", "private_comments", "request__team__name", "request__title"]
     serializer_class = AllocationReviewSerializer
     queryset = AllocationReview.objects.prefetch_related(
-        'history'
+        "history"
     ).select_related(
-        'request',
-        'reviewer',
+        "request",
+        "reviewer",
     )
 
     def create(self, request: Request, *args, **kwargs) -> Response:
         """Create a new `AllocationReview` object."""
 
         data = request.data.copy()
-        data.setdefault('reviewer', request.user.pk)
+        data.setdefault("reviewer", request.user.pk)
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -289,16 +289,16 @@ class ResourceAllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing HPC resource allocations."""
 
     model = ResourceAllocation
-    team_field = 'request__team'
+    team_field = "request__team"
 
     serializer_class = ResourceAllocationSerializer
-    search_fields = ['request__team__name', 'request__title', 'cluster__name']
+    search_fields = ["request__team__name", "request__title", "cluster__name"]
     permission_classes = [IsAuthenticated, RequestChildPermissions]
     queryset = ResourceAllocation.objects.prefetch_related(
-        'history'
+        "history"
     ).select_related(
-        'request',
-        'cluster',
+        "request",
+        "cluster",
     )
 
 
@@ -357,15 +357,15 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing file attachments to allocation requests"""
 
     model = Attachment
-    team_field = 'request__team'
+    team_field = "request__team"
 
     permission_classes = [IsAuthenticated, RequestChildPermissions]
-    search_fields = ['path', 'request__title', 'request__submitter']
+    search_fields = ["path", "request__title", "request__submitter"]
     serializer_class = AttachmentSerializer
     queryset = Attachment.objects.prefetch_related(
-        'history'
+        "history"
     ).select_related(
-        'request',
+        "request",
     )
 
 
@@ -425,14 +425,14 @@ class ClusterViewSet(viewsets.ModelViewSet):
     """API endpoints for managing Slurm clusters."""
 
     permission_classes = [IsAuthenticated, ClusterPermissions]
-    search_fields = ['name', 'description']
+    search_fields = ["name", "description"]
     serializer_class = ClusterSerializer
     queryset = Cluster.objects.all()
 
     def get_queryset(self) -> QuerySet[Cluster]:
         """Return a queryset of clusters visible to the requesting user.
 
-        For the 'list' action, clusters are filtered by the cluster's access
+        For the list action, clusters are filtered by the cluster's access
         mode and the requesting user's team memberships.
 
         - OPEN clusters are always included.
@@ -449,8 +449,8 @@ class ClusterViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
 
         # Only filter for list operations
-        if self.action == 'list' and not self.request.user.is_staff:
-            user_teams = self.request.user.get_all_teams().values_list('id', flat=True)
+        if self.action == "list" and not self.request.user.is_staff:
+            user_teams = self.request.user.get_all_teams().values_list("id", flat=True)
 
             # Clusters open to all
             open_clusters = qs.filter(access_mode=Cluster.AccessChoices.OPEN)
@@ -532,16 +532,16 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing comments on allocation requests."""
 
     model = Comment
-    team_field = 'request__team'
+    team_field = "request__team"
 
     permission_classes = [IsAuthenticated, CommentPermissions]
-    search_fields = ['content', 'request__title', 'user__username']
+    search_fields = ["content", "request__title", "user__username"]
     serializer_class = CommentSerializer
     queryset = Comment.objects.prefetch_related(
-        'history'
+        "history"
     ).select_related(
-        'request',
-        'user'
+        "request",
+        "user"
     )
 
     def get_queryset(self) -> QuerySet:
@@ -550,7 +550,7 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         queryset = super().get_queryset()
 
         # Only include private comments for admin users
-        if self.action == 'list' and not self.request.user.is_staff:
+        if self.action == "list" and not self.request.user.is_staff:
             return queryset.filter(private=False)
 
         return queryset
@@ -581,9 +581,9 @@ class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
     model = JobStats
 
     permission_classes = [IsAuthenticated, JobStatsPermissions]
-    search_fields = ['account', 'username', 'group', 'team__name']
+    search_fields = ["account", "username", "group", "team__name"]
     serializer_class = JobStatsSerializer
     queryset = JobStats.objects.select_related(
-        'cluster',
-        'team',
+        "cluster",
+        "team",
     )

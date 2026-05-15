@@ -13149,6 +13149,7 @@ components:
           readOnly: true
         team:
           type: integer
+          readOnly: true
           nullable: true
         cluster:
           type: integer

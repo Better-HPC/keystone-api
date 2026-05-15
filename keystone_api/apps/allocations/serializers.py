@@ -21,13 +21,13 @@ from .models import *
 from .nested import *
 
 __all__ = [
-    'AllocationRequestSerializer',
-    'AllocationReviewSerializer',
-    'ResourceAllocationSerializer',
-    'AttachmentSerializer',
-    'ClusterSerializer',
-    'CommentSerializer',
-    'JobStatsSerializer',
+    "AllocationRequestSerializer",
+    "AllocationReviewSerializer",
+    "ResourceAllocationSerializer",
+    "AttachmentSerializer",
+    "ClusterSerializer",
+    "CommentSerializer",
+    "JobStatsSerializer",
 ]
 
 
@@ -37,32 +37,32 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
     Used for retrieve, list, update, and partial update operations.
     """
 
-    _submitter = UserSummarySerializer(source='submitter', read_only=True)
-    _team = TeamSummarySerializer(source='team', read_only=True)
-    _assignees = UserSummarySerializer(source='assignees', many=True, read_only=True)
-    _publications = PublicationSummarySerializer(source='publications', many=True, read_only=True)
-    _grants = GrantSummarySerializer(source='grants', many=True, read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
-    _allocations = ResourceAllocationSummarySerializer(source='allocation_set', many=True, read_only=True)
-    _attachments = AttachmentSummarySerializer(source='attachment_set', many=True, read_only=True)
+    _submitter = UserSummarySerializer(source="submitter", read_only=True)
+    _team = TeamSummarySerializer(source="team", read_only=True)
+    _assignees = UserSummarySerializer(source="assignees", many=True, read_only=True)
+    _publications = PublicationSummarySerializer(source="publications", many=True, read_only=True)
+    _grants = GrantSummarySerializer(source="grants", many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
+    _allocations = ResourceAllocationSummarySerializer(source="allocation_set", many=True, read_only=True)
+    _attachments = AttachmentSummarySerializer(source="attachment_set", many=True, read_only=True)
     _comments = serializers.SerializerMethodField()
 
     class Meta:
         """Serializer settings."""
 
         model = AllocationRequest
-        fields = '__all__'
+        fields = "__all__"
         extra_kwargs = {
-            'submitter': {'required': True},
-            'submitted': {'read_only': True},
+            "submitter": {"required": True},
+            "submitted": {"read_only": True},
         }
 
     @extend_schema_field(CommentSummarySerializer(many=True))
     def get__comments(self, obj: AllocationRequest) -> list:
         """Filter returned comments based on the requesting user's staff status."""
 
-        request = self.context.get('request')
-        user = getattr(request, 'user', None)
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
 
         qs = obj.comments.all()
         if not (user and user.is_staff):
@@ -74,24 +74,24 @@ class AllocationRequestSerializer(serializers.ModelSerializer):
 class AllocationReviewSerializer(serializers.ModelSerializer):
     """Object serializer for the `AllocationReview` class."""
 
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _reviewer = UserSummarySerializer(source='reviewer', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _request = AllocationRequestSummarySerializer(source="request", read_only=True)
+    _reviewer = UserSummarySerializer(source="reviewer", read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = AllocationReview
-        fields = '__all__'
+        fields = "__all__"
         extra_kwargs = {
-            'reviewer': {'required': False},  # Default reviewer value is set by the view class
-            'submitted': {'read_only': True},
+            "reviewer": {"required": False},  # Default reviewer value is set by the view class
+            "submitted": {"read_only": True},
         }
 
     def validate_reviewer(self, value: User) -> User:
         """Validate the reviewer matches the user submitting the request."""
 
-        if value != self.context['request'].user:
+        if value != self.context["request"].user:
             raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
 
         return value
@@ -100,15 +100,15 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
 class ResourceAllocationSerializer(serializers.ModelSerializer):
     """Object serializer for the `ResourceAllocation` class."""
 
-    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _cluster = ClusterSummarySerializer(source="cluster", read_only=True)
+    _request = AllocationRequestSummarySerializer(source="request", read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = ResourceAllocation
-        fields = '__all__'
+        fields = "__all__"
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -116,14 +116,14 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
     file = serializers.FileField(use_url=False)
     name = serializers.CharField(required=False)
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _request = AllocationRequestSummarySerializer(source="request", read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Attachment
-        fields = '__all__'
+        fields = "__all__"
 
     @staticmethod
     def validate_file(value: UploadedFile) -> UploadedFile:
@@ -144,7 +144,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         allowed_types = settings.ALLOWED_FILE_TYPES
         mime_type, _ = guess_type(value.name)
         if mime_type not in allowed_types:
-            raise serializers.ValidationError(f"File type '{mime_type}' is not allowed.")
+            raise serializers.ValidationError(f'File type "{mime_type}" is not allowed.')
 
         return value
 
@@ -152,13 +152,13 @@ class AttachmentSerializer(serializers.ModelSerializer):
 class ClusterSerializer(serializers.ModelSerializer):
     """Object serializer for the `Cluster` class."""
 
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Cluster
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -168,15 +168,15 @@ class CommentSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
         default=serializers.CurrentUserDefault()
     )
-    _user = UserSummarySerializer(source='user', read_only=True)
-    _request = AllocationRequestSummarySerializer(source='request', read_only=True)
-    _history = AuditLogSummarySerializer(source='history', many=True, read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True)
+    _request = AllocationRequestSummarySerializer(source="request", read_only=True)
+    _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = Comment
-        fields = '__all__'
+        fields = "__all__"
 
     def validate(self, attrs: dict) -> dict:
         """Limit modification of the `private` field to staff users.
@@ -188,32 +188,32 @@ class CommentSerializer(serializers.ModelSerializer):
             The validated attributes.
         """
 
-        request = self.context.get('request')
-        user = getattr(request, 'user', None)
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
 
         # Determine if the comment is or will be private
-        private_value = attrs.get('private', False)
+        private_value = attrs.get("private", False)
         if self.instance:
             private_value = self.instance.private or private_value
 
         # Reject if private is true and user is not staff
         if private_value and (not user or not user.is_staff):
             raise serializers.ValidationError({
-                'private': 'Only staff users can write comments marked as private.'
+                "private": "Only staff users can write comments marked as private."
             })
 
-        return attrs
+        return super().validate(attrs)
 
 
 class JobStatsSerializer(serializers.ModelSerializer):
     """Object serializer for the `JobStats` class."""
 
-    _team = TeamSummarySerializer(source='team', read_only=True)
-    _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
+    _team = TeamSummarySerializer(source="team", read_only=True)
+    _cluster = ClusterSummarySerializer(source="cluster", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = JobStats
-        fields = '__all__'
-        read_only = ['team']
+        fields = "__all__"
+        read_only_fields = ["team"]

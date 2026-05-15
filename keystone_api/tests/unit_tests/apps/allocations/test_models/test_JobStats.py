@@ -10,7 +10,7 @@ class GetTeamMethod(TestCase):
     """Test the retrieval of a comment's parent team via the `get_team` method."""
 
     def setUp(self) -> None:
-        """Create mock database records"""
+        """Create test fixtures using mock data."""
 
         self.team = TeamFactory()
         self.jobstat = JobStatsFactory(team=self.team)

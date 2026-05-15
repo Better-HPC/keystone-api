@@ -21,13 +21,13 @@ from apps.users.models import User
 from .models import *
 
 __all__ = [
-    'AllocationRequestFactory',
-    'AllocationReviewFactory',
-    'AttachmentFactory',
-    'ClusterFactory',
-    'CommentFactory',
-    'JobStatsFactory',
-    'ResourceAllocationFactory',
+    "AllocationRequestFactory",
+    "AllocationReviewFactory",
+    "AttachmentFactory",
+    "ClusterFactory",
+    "CommentFactory",
+    "JobStatsFactory",
+    "ResourceAllocationFactory",
 ]
 
 
@@ -40,7 +40,7 @@ class ClusterFactory(DjangoModelFactory):
         model = Cluster
 
     name = factory.Sequence(lambda n: f"Cluster {n + 1}")
-    description = factory.Faker('sentence')
+    description = factory.Faker("sentence")
     access_mode = Cluster.AccessChoices.OPEN
     enabled = True
 
@@ -56,9 +56,9 @@ class AllocationRequestFactory(DjangoModelFactory):
 
         model = AllocationRequest
 
-    title = factory.Faker('sentence', nb_words=4)
-    description = factory.Faker('text', max_nb_chars=2000)
-    submitted = factory.Faker('date_time_between', start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
+    title = factory.Faker("sentence", nb_words=4)
+    description = factory.Faker("text", max_nb_chars=2000)
+    submitted = factory.Faker("date_time_between", start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     submitter = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
@@ -152,7 +152,7 @@ class ResourceAllocationFactory(DjangoModelFactory):
 
         model = ResourceAllocation
 
-    requested = factory.Faker('pyint', min_value=1000, max_value=100000)
+    requested = factory.Faker("pyint", min_value=1000, max_value=100000)
 
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
@@ -200,8 +200,8 @@ class AllocationReviewFactory(DjangoModelFactory):
     reviewer = factory.SubFactory(UserFactory, is_staff=True)
 
     @factory.lazy_attribute
-    def submitted(self) -> date:
-        """Generates a submission date between the request's submitted and active dates.
+    def submitted(self: AllocationReview) -> date:
+        """Generate a submission date between the request's submitted and active dates.
 
         If the request has no active date, the upper bound is today.
         The result is always on or after the request's submitted date, and never in the future.
@@ -242,7 +242,7 @@ class CommentFactory(DjangoModelFactory):
         model = Comment
 
     private = False
-    content = factory.Faker('sentence', nb_words=10)
+    content = factory.Faker("sentence", nb_words=10)
 
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
@@ -257,11 +257,29 @@ class JobStatsFactory(DjangoModelFactory):
         model = JobStats
 
     jobid = factory.Sequence(lambda n: f"{n + 1}")
-    jobname = factory.Faker('word')
+    jobname = factory.Faker("word")
     state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
-    submit = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
-    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(hours=randgen.randint(1, 60)))
-    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(25, 300)))
+    submit = factory.Faker("date_time_between", start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)
+
+    @factory.lazy_attribute
+    def start(self: JobStats) -> object:
+        """Generate a job start time between one and sixty hours after submission.
+
+        Returns:
+            A datetime between one and sixty hours after `submit`.
+        """
+
+        return self.submit + timedelta(hours=randgen.randint(1, 60))
+
+    @factory.lazy_attribute
+    def end(self: JobStats) -> object:
+        """Generate a job end time between twenty-five and three hundred minutes after start.
+
+        Returns:
+            A datetime between twenty-five and three hundred minutes after `start`.
+        """
+
+        return self.start + timedelta(minutes=randgen.randint(25, 300))

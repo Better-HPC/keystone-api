@@ -7,12 +7,12 @@ from apps.users.models import Team
 from plugins.slurm import get_cluster_jobs
 
 __all__ = [
-    'slurm_update_job_stats',
-    'slurm_update_job_stats_for_cluster',
+    "slurm_update_job_stats",
+    "slurm_update_job_stats_for_cluster",
 ]
 
 
-@shared_task
+@shared_task()
 def slurm_update_job_stats() -> None:
     """Fetch job statistics for all clusters and update the DB.
 
@@ -20,12 +20,12 @@ def slurm_update_job_stats() -> None:
     cluster in the application database.
     """
 
-    clusters = Cluster.objects.filter(enabled=True).values_list('name', flat=True)
+    clusters = Cluster.objects.filter(enabled=True).values_list("name", flat=True)
     for cluster_name in clusters:
         slurm_update_job_stats_for_cluster.delay(cluster_name)
 
 
-@shared_task
+@shared_task()
 def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
     """Fetch job statistics for a single cluster and update the DB.
 
@@ -38,18 +38,18 @@ def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
     cluster_jobs = get_cluster_jobs(cluster.name)
 
     # Prefetch team objects
-    account_names = set(job['account'] for job in cluster_jobs)
+    account_names = set(job["account"] for job in cluster_jobs)
     teams = Team.objects.filter(name__in=account_names)
     team_map = {team.name: team for team in teams}
 
     # Prepare JobStats objects
     objs = []
     for job in cluster_jobs:
-        job['cluster'] = cluster
-        job['username'] = job.pop('user', None)
-        job['team'] = team_map.get(job['account'], None)
+        job["cluster"] = cluster
+        job["username"] = job.pop("user", None)
+        job["team"] = team_map.get(job["account"], None)
         objs.append(JobStats(**job))
 
     # Bulk insert/update
     update_fields = [field.name for field in JobStats._meta.get_fields() if not field.unique]
-    JobStats.objects.bulk_create(objs, update_conflicts=True, unique_fields=['jobid'], update_fields=update_fields)
+    JobStats.objects.bulk_create(objs, update_conflicts=True, unique_fields=["jobid"], update_fields=update_fields)

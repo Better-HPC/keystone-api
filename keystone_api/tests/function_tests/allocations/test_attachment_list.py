@@ -10,7 +10,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
-VIEW_NAME = 'allocations:attachment-list'
+VIEW_NAME = "allocations:attachment-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -74,7 +74,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'file': test_file, 'request': self.attachment.request.pk},
+            post_body={"file": test_file, "request": self.attachment.request.pk},
         )
 
     def test_team_member_permissions(self) -> None:
@@ -92,7 +92,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'file': test_file, 'request': self.attachment.request.pk},
+            post_body={"file": test_file, "request": self.attachment.request.pk},
         )
 
     def test_team_admin_permissions(self) -> None:
@@ -110,7 +110,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'file': test_file, 'request': self.attachment.request.pk},
+            post_body={"file": test_file, "request": self.attachment.request.pk},
         )
 
     def test_team_owner_permissions(self) -> None:
@@ -128,7 +128,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'file': test_file, 'request': self.attachment.request.pk},
+            post_body={"file": test_file, "request": self.attachment.request.pk},
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -146,7 +146,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'file': test_file, 'request': self.attachment.request.pk},
+            post_body={"file": test_file, "request": self.attachment.request.pk},
         )
 
 
@@ -155,4 +155,4 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
     endpoint = reverse(VIEW_NAME)
     factory = AttachmentFactory
-    team_field = 'request__team'
+    team_field = "request__team"

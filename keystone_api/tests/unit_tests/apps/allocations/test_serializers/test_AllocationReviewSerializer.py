@@ -14,7 +14,7 @@ class ValidateReviewerMethod(TestCase):
     """Test validation of the `reviewer` field."""
 
     def setUp(self) -> None:
-        """Create dummy user accounts and test data."""
+        """Create test fixtures using mock data."""
 
         self.user = UserFactory()
         self.different_user = UserFactory()
@@ -31,20 +31,20 @@ class ValidateReviewerMethod(TestCase):
             data: The request data to be serialized.
         """
 
-        request = RequestFactory().post('/reviews/')
+        request = RequestFactory().post("/reviews/")
         request.user = requesting_user
         request.data = data
 
-        return AllocationReviewSerializer(data=data, context={'request': request})
+        return AllocationReviewSerializer(data=data, context={"request": request})
 
     def test_reviewer_matches_submitter(self) -> None:
         """Verify validation passes when the reviewer is the user submitting the HTTP request."""
 
         # Create a POST where the submitter matches the reviewer
         post_data = {
-            'request': self.request.id,
-            'reviewer': self.user.id,
-            'status': AllocationReview.StatusChoices.APPROVED
+            "request": self.request.id,
+            "reviewer": self.user.id,
+            "status": AllocationReview.StatusChoices.APPROVED
         }
 
         serializer = self._create_serializer_with_post(self.user, post_data)
@@ -55,9 +55,9 @@ class ValidateReviewerMethod(TestCase):
 
         # Create a POST where the submitter is different from the reviewer
         post_data = {
-            'request': self.request.id,
-            'reviewer': self.user.id,
-            'status': AllocationReview.StatusChoices.APPROVED
+            "request": self.request.id,
+            "reviewer": self.user.id,
+            "status": AllocationReview.StatusChoices.APPROVED
         }
 
         serializer = self._create_serializer_with_post(self.different_user, post_data)
@@ -68,8 +68,8 @@ class ValidateReviewerMethod(TestCase):
         """Verify the reviewer field is optional."""
 
         post_data = {
-            'request': self.request.id,
-            'status': AllocationReview.StatusChoices.APPROVED
+            "request": self.request.id,
+            "status": AllocationReview.StatusChoices.APPROVED
         }
 
         serializer = self._create_serializer_with_post(self.user, post_data)

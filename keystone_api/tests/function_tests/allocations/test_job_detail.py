@@ -36,7 +36,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.jobstat.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.jobstat.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
