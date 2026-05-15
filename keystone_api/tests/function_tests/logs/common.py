@@ -14,11 +14,11 @@ class LogListEndpointPermissionTestMixin(CustomAsserts, ABC):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | Authentication             | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authentication       | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User   | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
+    | Staff User           | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     @property
@@ -85,11 +85,11 @@ class LogDetailEndpointPermissionTestMixin(CustomAsserts, ABC):
 
     Endpoint permissions are tested against the following matrix of HTTP responses.
 
-    | Authentication             | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
+    | Authentication       | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |----------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated User   | 403 | 403  | 403     | 405  | 405 | 405   | 405    | 405   |
+    | Staff User           | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     @property

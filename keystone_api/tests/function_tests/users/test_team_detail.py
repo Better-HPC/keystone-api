@@ -17,14 +17,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     Endpoint permissions are tested against the following matrix of HTTP responses.
     Permissions depend on the user's role within the team owning the accessed record.
 
-    | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated user       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team member                | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team admin                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Team owner                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Staff user                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | User Status              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |--------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated user     | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated non-member | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team member              | 200 | 200  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team admin               | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Team owner               | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Staff user               | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
     def setUp(self) -> None:
