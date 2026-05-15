@@ -94,6 +94,38 @@ class ApprovedAllocationsMethod(TestCase):
         results = ResourceAllocation.objects.approved_allocations(self.team, self.cluster)
         self.assertQuerySetEqual([], results, ordered=False)
 
+    def test_excludes_other_team_allocations(self) -> None:
+        """Verify allocations belonging to a different team are not included in the returned queryset."""
+
+        other_team = TeamFactory()
+        ResourceAllocationFactory(
+            cluster=self.cluster,
+            request=AllocationRequestFactory(
+                team=other_team, status="AP",
+                active=timezone.now().date(),
+                expire=timezone.now().date() + timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.approved_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
+    def test_excludes_other_cluster_allocations(self) -> None:
+        """Verify allocations belonging to a different cluster are not included in the returned queryset."""
+
+        other_cluster = ClusterFactory()
+        ResourceAllocationFactory(
+            cluster=other_cluster,
+            request=AllocationRequestFactory(
+                team=self.team, status="AP",
+                active=timezone.now().date(),
+                expire=timezone.now().date() + timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.approved_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
 
 class ActiveAllocationsMethod(TestCase):
     """Test the fetching of active allocations."""
@@ -127,7 +159,22 @@ class ActiveAllocationsMethod(TestCase):
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
                 active=timezone.now().date() - timedelta(days=60),
-                expire=timezone.now().date() - timedelta(days=30),  # expired
+                expire=timezone.now().date() - timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.active_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
+    def test_excludes_allocation_expiring_today(self) -> None:
+        """Verify allocations expiring exactly today are not included in the returned queryset."""
+
+        ResourceAllocationFactory(
+            cluster=self.cluster,
+            request=AllocationRequestFactory(
+                team=self.team, status="AP",
+                active=timezone.now().date() - timedelta(days=30),
+                expire=timezone.now().date(),
             )
         )
 
@@ -141,7 +188,7 @@ class ActiveAllocationsMethod(TestCase):
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
-                active=timezone.now().date() + timedelta(days=30),  # future start
+                active=timezone.now().date() + timedelta(days=30),
                 expire=timezone.now().date() + timedelta(days=60),
             )
         )
@@ -172,6 +219,38 @@ class ActiveAllocationsMethod(TestCase):
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="PD",
+                active=timezone.now().date() - timedelta(days=30),
+                expire=timezone.now().date() + timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.active_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
+    def test_excludes_other_team_allocations(self) -> None:
+        """Verify allocations belonging to a different team are not included in the returned queryset."""
+
+        other_team = TeamFactory()
+        ResourceAllocationFactory(
+            cluster=self.cluster,
+            request=AllocationRequestFactory(
+                team=other_team, status="AP",
+                active=timezone.now().date() - timedelta(days=30),
+                expire=timezone.now().date() + timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.active_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
+    def test_excludes_other_cluster_allocations(self) -> None:
+        """Verify allocations belonging to a different cluster are not included in the returned queryset."""
+
+        other_cluster = ClusterFactory()
+        ResourceAllocationFactory(
+            cluster=other_cluster,
+            request=AllocationRequestFactory(
+                team=self.team, status="AP",
                 active=timezone.now().date() - timedelta(days=30),
                 expire=timezone.now().date() + timedelta(days=30),
             )
@@ -258,7 +337,39 @@ class ExpiringAllocationsMethod(TestCase):
         ResourceAllocationFactory(
             cluster=self.cluster,
             request=AllocationRequestFactory(
-                team=self.team, status="PD",  # not approved
+                team=self.team, status="PD",
+                active=timezone.now().date() - timedelta(days=60),
+                expire=timezone.now().date() - timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.expiring_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
+    def test_excludes_other_team_allocations(self) -> None:
+        """Verify allocations belonging to a different team are not included in the returned queryset."""
+
+        other_team = TeamFactory()
+        ResourceAllocationFactory(
+            cluster=self.cluster, final=None,
+            request=AllocationRequestFactory(
+                team=other_team, status="AP",
+                active=timezone.now().date() - timedelta(days=60),
+                expire=timezone.now().date() - timedelta(days=30),
+            )
+        )
+
+        results = ResourceAllocation.objects.expiring_allocations(self.team, self.cluster)
+        self.assertQuerySetEqual([], results, ordered=False)
+
+    def test_excludes_other_cluster_allocations(self) -> None:
+        """Verify allocations belonging to a different cluster are not included in the returned queryset."""
+
+        other_cluster = ClusterFactory()
+        ResourceAllocationFactory(
+            cluster=other_cluster, final=None,
+            request=AllocationRequestFactory(
+                team=self.team, status="AP",
                 active=timezone.now().date() - timedelta(days=60),
                 expire=timezone.now().date() - timedelta(days=30),
             )
@@ -343,6 +454,13 @@ class ActiveServiceUnitsMethod(TestCase):
         returned_su = ResourceAllocation.objects.active_service_units(self.team, self.cluster)
         self.assertEqual(expected_su, returned_su)
 
+    def test_returns_zero_when_no_active_allocations(self) -> None:
+        """Verify zero is returned when no active allocations exist for the given team and cluster."""
+
+        empty_team = TeamFactory()
+        result = ResourceAllocation.objects.active_service_units(empty_team, self.cluster)
+        self.assertEqual(0, result)
+
 
 class ExpiringServiceUnitsMethod(TestCase):
     """Test the calculation of expiring service units."""
@@ -415,11 +533,18 @@ class ExpiringServiceUnitsMethod(TestCase):
     def test_service_unit_calculation(self) -> None:
         """Verify expiring service units only sum from expiring, approved allocations."""
 
-        included_allocations = [self.expiring_allocation, ]
+        included_allocations = [self.expiring_allocation]
 
         expected_su = sum(a.awarded for a in included_allocations)
         returned_su = ResourceAllocation.objects.expiring_service_units(self.team, self.cluster)
         self.assertEqual(expected_su, returned_su)
+
+    def test_returns_zero_when_no_expiring_allocations(self) -> None:
+        """Verify zero is returned when no expiring allocations exist for the given team and cluster."""
+
+        empty_team = TeamFactory()
+        result = ResourceAllocation.objects.expiring_service_units(empty_team, self.cluster)
+        self.assertEqual(0, result)
 
 
 class HistoricalUsageMethod(TestCase):
@@ -436,7 +561,7 @@ class HistoricalUsageMethod(TestCase):
         # Expired allocation with final usage (included)
         self.expired_with_final = ResourceAllocationFactory(
             final=60,
-            awarded=70,  # awarded doesn't matter here
+            awarded=70,
             cluster=self.cluster,
             request=AllocationRequestFactory(
                 team=self.team, status="AP",
@@ -508,8 +633,15 @@ class HistoricalUsageMethod(TestCase):
     def test_service_unit_calculation(self) -> None:
         """Verify historical usage only sums the final values of expired allocations."""
 
-        included_allocations = [self.expired_with_final, ]
+        included_allocations = [self.expired_with_final]
 
         expected_usage = sum(a.final for a in included_allocations)
         returned_usage = ResourceAllocation.objects.historical_usage(self.team, self.cluster)
         self.assertEqual(expected_usage, returned_usage)
+
+    def test_returns_zero_when_no_historical_allocations(self) -> None:
+        """Verify zero is returned when no expired allocations with final usage exist."""
+
+        empty_team = TeamFactory()
+        result = ResourceAllocation.objects.historical_usage(empty_team, self.cluster)
+        self.assertEqual(0, result)
