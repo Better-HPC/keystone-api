@@ -20,21 +20,21 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from .exceptions import *
 
 __all__ = [
-    'build_request',
-    'execute_job',
-    'execute_step',
-    'resolve_payload',
-    'resolve_value',
-    'traverse_dotpath',
+    "build_request",
+    "execute_job",
+    "execute_step",
+    "resolve_payload",
+    "resolve_value",
+    "traverse_dotpath",
 ]
 
 logger = logging.getLogger(__name__)
 factory = APIRequestFactory()
 
-_TOKEN_PATTERN = re.compile(r'@(file|ref)\{([^}]*)\}')
+_TOKEN_PATTERN = re.compile(r"@(file|ref)\{([^}]*)\}")
 _LABEL_PATTERNS = {
-    'file': re.compile(r'^[a-zA-Z0-9_]+$'),
-    'ref': re.compile(r'^[a-zA-Z0-9_]+\.[a-zA-Z0-9_.]+$')
+    "file": re.compile(r"^[a-zA-Z0-9_]+$"),
+    "ref": re.compile(r"^[a-zA-Z0-9_]+\.[a-zA-Z0-9_.]+$")
 }
 
 
@@ -56,11 +56,11 @@ def traverse_dotpath(data: Any, dotpath: str, token: str) -> Any:
     """
 
     current = data
-    for segment in dotpath.split('.'):
+    for segment in dotpath.split("."):
 
         if isinstance(current, dict):
             if segment not in current:
-                raise ReferenceResolutionError(token, f'Key "{segment}" not found in response')
+                raise ReferenceResolutionError(token, f"Key \"{segment}\" not found in response")
 
             current = current[segment]
 
@@ -69,11 +69,11 @@ def traverse_dotpath(data: Any, dotpath: str, token: str) -> Any:
                 current = current[int(segment)]
 
             except (ValueError, IndexError):
-                raise ReferenceResolutionError(token, f'Invalid list index "{segment}"')
+                raise ReferenceResolutionError(token, f"Invalid list index \"{segment}\"")
 
         else:
             raise ReferenceResolutionError(
-                token, f'Cannot traverse into {type(current).__name__} with "{segment}"'
+                token, f"Cannot traverse into {type(current).__name__} with \"{segment}\""
             )
 
     return current
@@ -98,18 +98,18 @@ def _resolve_token(match: re.Match, result_map: dict[str, dict], files: dict | N
 
     pattern = _LABEL_PATTERNS[kind]
     if not pattern.match(body):
-        raise ReferenceResolutionError(token, 'Reference labels may only contain letters, numbers, and underscores')
+        raise ReferenceResolutionError(token, "Reference labels may only contain letters, numbers, and underscores")
 
-    if kind == 'file':
+    if kind == "file":
         if not files or body not in files:
-            raise ReferenceResolutionError(token, f'File part "{body}" was not uploaded with this request')
+            raise ReferenceResolutionError(token, f"File part \"{body}\" was not uploaded with this request")
 
         return files[body]
 
-    alias, dotpath = body.split('.', 1)
+    alias, dotpath = body.split(".", 1)
     if alias not in result_map:
         raise ReferenceResolutionError(
-            token, f'Alias "{alias}" has not been defined by a previous step'
+            token, f"Alias \"{alias}\" has not been defined by a previous step"
         )
 
     return traverse_dotpath(result_map[alias], dotpath, token)
@@ -200,7 +200,7 @@ def _payload_has_files(payload: Any) -> bool:
     if isinstance(payload, list):
         return any(_payload_has_files(item) for item in payload)
 
-    return hasattr(payload, 'read')
+    return hasattr(payload, "read")
 
 
 def build_request(
@@ -209,7 +209,7 @@ def build_request(
     payload: dict,
     query_params: dict,
     user: AbstractBaseUser | None = None,
-    server_name: str = 'localhost',
+    server_name: str = "localhost",
 ) -> DRFRequest:
     """Construct a DRF request object from step parameters.
 
@@ -232,7 +232,7 @@ def build_request(
     """
 
     if query_params:
-        path = f'{path}?{urlencode(query_params, doseq=True)}'
+        path = f"{path}?{urlencode(query_params, doseq=True)}"
 
     if _payload_has_files(payload):
         data = encode_multipart(BOUNDARY, payload)
@@ -240,7 +240,7 @@ def build_request(
 
     else:
         data = json.dumps(payload or {})
-        content_type = 'application/json'
+        content_type = "application/json"
 
     request = factory.generic(method, path, data=data, content_type=content_type, SERVER_NAME=server_name)
 
@@ -265,21 +265,21 @@ def _invoke_view(request, path: str) -> tuple[int, dict | None]:
         match = resolve(path)
 
     except Resolver404:
-        return 404, {'detail': f'No route matched: {path}'}
+        return 404, {"detail": f"No route matched: {path}"}
 
     view = match.func
 
     # Initialise the view if it's a class-based view (ViewSet / APIView)
-    if hasattr(view, 'initkwargs'):
+    if hasattr(view, "initkwargs"):
         view.cls.kwargs = match.kwargs
 
     response = view(request, *match.args, **match.kwargs)
 
     # Force rendering so response.data is populated
-    if hasattr(response, 'render'):
+    if hasattr(response, "render"):
         response.render()
 
-    if hasattr(response, 'data'):
+    if hasattr(response, "data"):
         return response.status_code, response.data
 
     return response.status_code, None
@@ -291,7 +291,7 @@ def execute_step(
     payload: dict,
     query_params: dict,
     user: AbstractBaseUser | None = None,
-    server_name: str = 'localhost',
+    server_name: str = "localhost",
 ) -> tuple[int, dict]:
     """Execute a single step and return its result.
 
@@ -308,14 +308,14 @@ def execute_step(
     """
 
     request = build_request(method, path, payload, query_params, user=user, server_name=server_name)
-    clean_path = path.split('?')[0]
+    clean_path = path.split("?")[0]
     return _invoke_view(request, clean_path)
 
 
 def execute_job(
     steps: list[dict],
     user: AbstractBaseUser | None = None,
-    server_name: str = 'localhost',
+    server_name: str = "localhost",
     dry_run: bool = False,
     files: dict | None = None,
 ) -> list[dict]:
@@ -360,29 +360,29 @@ def execute_job(
     try:
         with transaction.atomic():
             for index, step in enumerate(steps, start=1):
-                ref = step.get('ref')
-                method = step['method'].upper()
-                path = step['path']
-                payload = step.get('payload', {})
-                query_params = step.get('query_params', {})
+                ref = step.get("ref")
+                method = step["method"].upper()
+                path = step["path"]
+                payload = step.get("payload", {})
+                query_params = step.get("query_params", {})
 
                 # Resolve symbolic references in the path and payload
                 resolved_path = resolve_payload(path, result_map, files)
                 resolved_payload = resolve_payload(payload, result_map, files)
 
-                logger.info('Executing job step %s: %s %s', index, method, resolved_path)
+                logger.info("Executing job step %s: %s %s", index, method, resolved_path)
                 status_code, body = execute_step(
                     method, resolved_path, resolved_payload, query_params,
                     user=user, server_name=server_name,
                 )
 
                 results.append({
-                    'ref': ref,
-                    'index': index,
-                    'method': method,
-                    'path': resolved_path,
-                    'status': status_code,
-                    'body': body,
+                    "ref": ref,
+                    "index": index,
+                    "method": method,
+                    "path": resolved_path,
+                    "status": status_code,
+                    "body": body,
                 })
 
                 # Register in result map if the step has a ref alias

@@ -22,7 +22,7 @@ class JobExecutionError(Exception):
         self.path = path
         self.status_code = status_code
         self.body = body
-        super().__init__(f'Step #{index} ({method} {path}) failed with status {status_code}')
+        super().__init__(f"Step #{index} ({method} {path}) failed with status {status_code}")
 
 
 class ReferenceResolutionError(Exception):
