@@ -27,32 +27,21 @@ class CustomAsserts:
 
         http_methods = ['get', 'head', 'options', 'post', 'put', 'patch', 'delete', 'trace']
         for method in http_methods:
-            expected_status = kwargs.get(method, None)
-            if expected_status is not None:
-                self._assert_http_response(method, endpoint, expected_status, format, kwargs)
+            if (expected_status := kwargs.get(method)) is None:
+                continue
 
-    def _assert_http_response(self, method: str, endpoint: str, expected_status: int, format: str, kwargs: dict):
-        """Assert the HTTP response for a specific method matches the expected status.
+            request_args = self._build_request_args(method, format, kwargs)
+            http_callable = getattr(self.client, method)
 
-        Args:
-            method: The HTTP method to use (get, post, etc.).
-            endpoint: The partial URL endpoint to perform requests against.
-            expected_status: The integer status code expected by the given request type.
-            format: The serialization format to use for the request.
-            kwargs: Additional keyword arguments for building the request.
-        """
+            with transaction.atomic():
+                response = http_callable(endpoint, **request_args)
+                failure_msg = (
+                    f'{method.upper()} request received {response.status_code} '
+                    f'instead of {expected_status} with content "{response.content}"'
+                )
 
-        http_callable = getattr(self.client, method)
-        http_args = self._build_request_args(method, format, kwargs)
-
-        # Preserve database state
-        with transaction.atomic():
-            request = http_callable(endpoint, **http_args)
-            self.assertEqual(
-                request.status_code, expected_status,
-                f'{method.upper()} request received {request.status_code} instead of {expected_status} with content "{request.content}"')
-
-            transaction.set_rollback(True)
+                self.assertEqual(response.status_code, expected_status, failure_msg)
+                transaction.set_rollback(True)
 
     @staticmethod
     def _build_request_args(method: str, format: str, kwargs: dict) -> dict:
