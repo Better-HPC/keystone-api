@@ -14,15 +14,11 @@ class GetTeamMethod(TestCase):
     """Test the retrieval of an attachment's parent team via the `get_team` method."""
 
     def setUp(self) -> None:
-        """Create mock user records"""
+        """Create mock user records."""
 
         self.team = TeamFactory()
         self.allocation_request = AllocationRequestFactory(team=self.team)
-
-        # Create an attachment linked to a request submitted by `self.team`
-        self.attachment = AttachmentFactory(
-            request=self.allocation_request,
-        )
+        self.attachment = AttachmentFactory(request=self.allocation_request)
 
     def test_get_team(self) -> None:
         """Verify the `get_team` method returns the correct `Team` instance."""
@@ -41,7 +37,7 @@ class SaveMethod(TestCase):
         self.allocation_request = AllocationRequestFactory(team=self.team)
 
     def test_sets_default_name_file(self) -> None:
-        """Verify the attachment name is defaults to the upload path basename."""
+        """Verify the attachment name defaults to the upload path basename."""
 
         path = 'directory/upload.txt'
         basename = os.path.basename(path)
