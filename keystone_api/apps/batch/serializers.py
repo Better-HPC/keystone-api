@@ -20,7 +20,7 @@ __all__ = [
 
 
 class JobExecutionErrorSerializer(serializers.Serializer):
-    """Job result serializer for job's that fail with a `JobExecutionError`."""
+    """Job result serializer for jobs that fail with a `JobExecutionError`."""
 
     detail = serializers.CharField()
     step = serializers.IntegerField()
@@ -58,6 +58,12 @@ class JobStepSerializer(serializers.Serializer):
         """Ensure the ref alias contains only alphanumeric characters and underscores.
 
         The alias is used as the identifier inside `@ref{alias.dotpath}` tokens.
+
+        Args:
+            value: The ref alias string to validate.
+
+        Returns:
+            The original value if valid, otherwise raises a ValidationError.
         """
 
         if value and not value.replace('_', '').isalnum():
@@ -91,7 +97,7 @@ class JobRequestSerializer(serializers.Serializer):
 
 
 class ReferenceResolutionErrorSerializer(serializers.Serializer):
-    """Job result serializer for job's that fail with a `ReferenceResolutionError`."""
+    """Job result serializer for jobs that fail with a `ReferenceResolutionError`."""
 
     detail = serializers.CharField()
     token = serializers.CharField()

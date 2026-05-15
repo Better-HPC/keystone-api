@@ -12,9 +12,9 @@ class JobExecutionError(Exception):
         Args:
             index: The execution index of the step.
             method: The HTTP method executed by the step.
-            path: The API endpoint executed by step.
+            path: The API endpoint executed by the step.
             status_code: The HTTP status code resulting from execution.
-            body: The HTTP requesst body executed by the step.
+            body: The HTTP response body returned by the step.
         """
 
         self.index = index
@@ -33,7 +33,7 @@ class ReferenceResolutionError(Exception):
 
         Args:
             token: The token that failed to resolve.
-            reason: The reason for execution failure.
+            reason: The reason the reference could not be resolved.
         """
 
         self.token = token

@@ -22,7 +22,7 @@ __all__ = ['JobApiView']
 
 
 class JobApiView(APIView):
-    """API endpoints for executing and inspecting batch jobs."""
+    """API endpoint for executing batch jobs."""
 
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [parsers.MultiPartParser, parsers.JSONParser]

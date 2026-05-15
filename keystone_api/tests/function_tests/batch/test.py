@@ -8,7 +8,9 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.allocations.factories import AllocationRequestFactory
-from apps.users.factories import UserFactory
+from apps.allocations.models import AllocationRequest
+from apps.users.factories import MembershipFactory, UserFactory
+from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
 VIEW_NAME = 'batch:batch'
@@ -124,6 +126,27 @@ class RefTokenResolution(APITestCase):
         whoami_username = results[0]['body']['username']
         self.assertEqual(whoami_username, results[1]['body']['role'])
 
+    def test_ref_token_missing_key_in_response_returns_422(self) -> None:
+        """Verify an `@ref` token referencing a key absent from the step response returns a 422 error."""
+
+        response = self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {'actions': [
+                {'method': 'GET', 'path': '/authentication/whoami/', 'ref': 'whoami'},
+                {'method': 'GET', 'path': '/users/users/@ref{whoami.nonexistent_field}/'},
+            ]}},
+        )
+
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
+
+        payload = response.json()
+        self.assertIn('token', payload)
+        self.assertEqual('@ref{whoami.nonexistent_field}', payload['token'])
+
+        self.assertIn('detail', payload)
+        self.assertIn('nonexistent_field', payload['detail'])
+
     def test_duplicate_ref_aliases_return_400(self) -> None:
         """Verify submitting two steps with identical ref aliases returns a 400 error."""
 
@@ -195,7 +218,7 @@ class RefTokenResolution(APITestCase):
         self.assertEqual('@ref{bad-label!.id}', payload['token'])
 
         self.assertIn('detail', payload)
-        self.assertIn(' Reference labels may only contain letters, numbers, and underscores', payload['detail'])
+        self.assertIn('Reference labels may only contain letters, numbers, and underscores', payload['detail'])
 
 
 class FileTokenResolution(APITestCase):
@@ -286,19 +309,28 @@ class FileTokenResolution(APITestCase):
         self.assertEqual('@file{bad-label!}', payload['token'])
 
         self.assertIn('detail', payload)
-        self.assertIn(' Reference labels may only contain letters, numbers, and underscores', payload['detail'])
+        self.assertIn('Reference labels may only contain letters, numbers, and underscores', payload['detail'])
 
 
 class JobExecution(APITestCase):
-    """Test the response shape for a successfully completed job."""
+    """Test the response shape and transactional behaviour of batch job execution."""
 
     endpoint = reverse(VIEW_NAME)
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.user = UserFactory()
+        membership = MembershipFactory(role=Membership.Role.ADMIN)
+        self.user = membership.user
+        self.team = membership.team
         self.client.force_authenticate(user=self.user)
+
+        self.valid_request_data = {
+            'title': 'Test Request',
+            'description': 'A test allocation request.',
+            'team': self.team.pk,
+            'submitter': self.user.pk,
+        }
 
     def test_successful_job_returns_200(self) -> None:
         """Verify a job whose steps all succeed returns a 200 with results."""
@@ -322,7 +354,7 @@ class JobExecution(APITestCase):
         self.assertEqual(current_username, returned_username)
 
     def test_step_failure_returns_422(self) -> None:
-        """Verify a job that raises JobExecutionError returns a 422."""
+        """Verify a job that raises `JobExecutionError` returns a 422."""
 
         response = self.client.post(
             self.endpoint,
@@ -341,3 +373,86 @@ class JobExecution(APITestCase):
         self.assertIn('body', payload)
         self.assertEqual(1, payload['step'])
         self.assertEqual(404, payload['status'])
+
+    def test_step_failure_rolls_back_earlier_steps(self) -> None:
+        """Verify database changes from earlier steps are rolled back when a later step fails."""
+
+        record_count_before = AllocationRequest.objects.count()
+
+        # Step 1 succeeds and creates a record; step 2 fails against a nonexistent endpoint
+        response = self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {'actions': [
+                {
+                    'method': 'POST',
+                    'path': '/allocations/requests/',
+                    'payload': self.valid_request_data,
+                },
+                {
+                    'method': 'GET',
+                    'path': '/fake/endpoint/',
+                },
+            ]}},
+        )
+
+        # Job fails on step 2
+        self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
+        self.assertEqual(2, response.json()['step'])
+
+        # Step 1's write must have been rolled back
+        self.assertEqual(
+            record_count_before,
+            AllocationRequest.objects.count(),
+            'Database changes from step 1 were not rolled back after step 2 failed',
+        )
+
+    def test_dry_run_returns_200_with_results(self) -> None:
+        """Verify a dry-run job returns a 200 response containing step results."""
+
+        response = self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {
+                'dry_run': True,
+                'actions': [
+                    {
+                        'method': 'POST',
+                        'path': '/allocations/requests/',
+                        'payload': self.valid_request_data,
+                    },
+                ],
+            }},
+        )
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
+
+        results = response.json()['results']
+        self.assertEqual(1, len(results))
+        self.assertEqual(201, results[0]['status'])
+
+    def test_dry_run_does_not_persist_database_changes(self) -> None:
+        """Verify a dry-run job does not commit any database changes."""
+
+        record_count_before = AllocationRequest.objects.count()
+
+        self.client.post(
+            self.endpoint,
+            content_type='application/json',
+            data={'job': {
+                'dry_run': True,
+                'actions': [
+                    {
+                        'method': 'POST',
+                        'path': '/allocations/requests/',
+                        'payload': self.valid_request_data,
+                    },
+                ],
+            }},
+        )
+
+        self.assertEqual(
+            record_count_before,
+            AllocationRequest.objects.count(),
+            'Dry-run job must not persist database changes',
+        )

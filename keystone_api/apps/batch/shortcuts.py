@@ -14,6 +14,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import transaction
 from django.test.client import BOUNDARY, encode_multipart, MULTIPART_CONTENT
 from django.urls import resolve, Resolver404
+from rest_framework.request import Request as DRFRequest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from .exceptions import *
@@ -209,7 +210,7 @@ def build_request(
     query_params: dict,
     user: AbstractBaseUser | None = None,
     server_name: str = 'localhost',
-):
+) -> DRFRequest:
     """Construct a DRF request object from step parameters.
 
     When the resolved payload contains file objects the request is built as
