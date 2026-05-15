@@ -156,3 +156,4 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
     endpoint = reverse(VIEW_NAME)
     factory = AllocationRequestFactory
+    team_field = 'team'
