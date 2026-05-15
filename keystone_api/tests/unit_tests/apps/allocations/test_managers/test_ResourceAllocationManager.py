@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from apps.allocations.factories import ResourceAllocationFactory, AllocationRequestFactory, ClusterFactory
+from apps.allocations.factories import AllocationRequestFactory, ClusterFactory, ResourceAllocationFactory
 from apps.allocations.models import ResourceAllocation
 from apps.users.factories import TeamFactory
 
