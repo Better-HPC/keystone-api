@@ -8,7 +8,7 @@ from apps.allocations.models import *
 from apps.users.models import *
 from plugins import slurm
 
-__all__ = ['update_limits', 'update_limit_for_account', 'update_limits_for_cluster']
+__all__ = ["update_limits", "update_limit_for_account", "update_limits_for_cluster"]
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ def update_limits_for_cluster(cluster_name: str) -> None:
     }
 
     for account_name in slurm_accounts:
-        if account_name == 'root':
+        if account_name == "root":
             continue
 
         try:
@@ -113,7 +113,7 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
         allocation.final = min(current_usage, allocation.awarded)
         current_usage -= allocation.final
 
-    ResourceAllocation.objects.bulk_update(expired_allocations, ['final'])
+    ResourceAllocation.objects.bulk_update(expired_allocations, ["final"])
 
     # Sanity check: usage beyond the sum of active allocations may indicate a bug or abuse
     if current_usage > active_sus:

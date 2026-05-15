@@ -21,14 +21,14 @@ from apps.research_products.models import Grant, Publication
 from apps.users.models import Team, User
 
 __all__ = [
-    'AllocationRequest',
-    'AllocationReview',
-    'Attachment',
-    'Cluster',
-    'Comment',
-    'JobStats',
-    'ResourceAllocation',
-    'TeamModelInterface',
+    "AllocationRequest",
+    "AllocationReview",
+    "Attachment",
+    "Cluster",
+    "Comment",
+    "JobStats",
+    "ResourceAllocation",
+    "TeamModelInterface",
 ]
 
 
@@ -52,8 +52,8 @@ class ResourceAllocation(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['request']),
-            models.Index(fields=['cluster', 'request']),
+            models.Index(fields=["request"]),
+            models.Index(fields=["cluster", "request"]),
         ]
 
     requested = models.PositiveIntegerField()
@@ -61,8 +61,8 @@ class ResourceAllocation(TeamModelInterface, models.Model):
     final = models.PositiveIntegerField(null=True, blank=True)
     history = AuditlogHistoryField()
 
-    cluster = models.ForeignKey('Cluster', on_delete=models.CASCADE, related_name='allocation_set')
-    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='allocation_set')
+    cluster = models.ForeignKey("Cluster", on_delete=models.CASCADE, related_name="allocation_set")
+    request = models.ForeignKey("AllocationRequest", on_delete=models.CASCADE, related_name="allocation_set")
 
     objects = ResourceAllocationManager()
 
@@ -74,7 +74,7 @@ class ResourceAllocation(TeamModelInterface, models.Model):
     def __str__(self) -> str:  # pragma: nocover
         """Return a human-readable summary of the allocation."""
 
-        return f'{self.cluster} allocation for {self.request.team}'
+        return f"{self.cluster} allocation for {self.request.team}"
 
 
 @auditlog.register()
@@ -85,25 +85,25 @@ class AllocationRequest(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['status']),
-            models.Index(fields=['submitted']),
-            models.Index(fields=['active']),
-            models.Index(fields=['expire']),
-            models.Index(fields=['submitter']),
-            models.Index(fields=['team', 'status']),
-            models.Index(fields=['team', 'submitter', 'status']),
-            models.Index(fields=['team', 'active', 'expire']),
-            models.Index(fields=['team', 'expire']),
-            models.Index(fields=['submitter', 'status']),
+            models.Index(fields=["status"]),
+            models.Index(fields=["submitted"]),
+            models.Index(fields=["active"]),
+            models.Index(fields=["expire"]),
+            models.Index(fields=["submitter"]),
+            models.Index(fields=["team", "status"]),
+            models.Index(fields=["team", "submitter", "status"]),
+            models.Index(fields=["team", "active", "expire"]),
+            models.Index(fields=["team", "expire"]),
+            models.Index(fields=["submitter", "status"]),
         ]
 
     class StatusChoices(models.TextChoices):
         """Enumerated choices for the `status` field."""
 
-        PENDING = 'PD', 'Pending'
-        APPROVED = 'AP', 'Approved'
-        DECLINED = 'DC', 'Declined'
-        CHANGES = 'CR', 'Changes Requested'
+        PENDING = "PD", "Pending"
+        APPROVED = "AP", "Approved"
+        DECLINED = "DC", "Declined"
+        CHANGES = "CR", "Changes Requested"
 
     title = models.CharField(max_length=250)
     description = models.TextField(max_length=20_000)
@@ -113,10 +113,10 @@ class AllocationRequest(TeamModelInterface, models.Model):
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
     history = AuditlogHistoryField()
 
-    submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name='submitted_allocationrequest_set')
+    submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name="submitted_allocationrequest_set")
     team: Team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
-    assignees = models.ManyToManyField(User, blank=True, related_name='assigned_allocationrequest_set')
+    assignees = models.ManyToManyField(User, blank=True, related_name="assigned_allocationrequest_set")
     publications = models.ManyToManyField(Publication, blank=True)
     grants = models.ManyToManyField(Grant, blank=True)
 
@@ -128,7 +128,7 @@ class AllocationRequest(TeamModelInterface, models.Model):
         """
 
         if self.active and self.expire and self.active >= self.expire:
-            raise ValidationError('The expiration date must come after the activation date.')
+            raise ValidationError("The expiration date must come after the activation date.")
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -149,18 +149,18 @@ class AllocationReview(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['status']),
-            models.Index(fields=['submitted']),
-            models.Index(fields=['request']),
-            models.Index(fields=['reviewer']),
+            models.Index(fields=["status"]),
+            models.Index(fields=["submitted"]),
+            models.Index(fields=["request"]),
+            models.Index(fields=["reviewer"]),
         ]
 
     class StatusChoices(models.TextChoices):
         """Enumerated choices for the `status` field."""
 
-        APPROVED = 'AP', 'Approved'
-        DECLINED = 'DC', 'Declined'
-        CHANGES = 'CR', 'Changes Requested'
+        APPROVED = "AP", "Approved"
+        DECLINED = "DC", "Declined"
+        CHANGES = "CR", "Changes Requested"
 
     status = models.CharField(max_length=2, choices=StatusChoices.choices)
     submitted = models.DateTimeField(default=timezone.now)
@@ -177,7 +177,7 @@ class AllocationReview(TeamModelInterface, models.Model):
     def __str__(self) -> str:  # pragma: nocover
         """Return a human-readable identifier for the allocation review."""
 
-        return f'{self.reviewer} review for \"{self.request.title}\"'
+        return f"{self.reviewer} review for '{self.request.title}'"
 
 
 @auditlog.register()
@@ -188,16 +188,16 @@ class Attachment(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['uploaded']),
-            models.Index(fields=['request']),
+            models.Index(fields=["uploaded"]),
+            models.Index(fields=["request"]),
         ]
 
-    file = models.FileField(upload_to='allocations')
+    file = models.FileField(upload_to="allocations")
     name = models.CharField(max_length=250, blank=True)
     uploaded = models.DateTimeField(auto_now=True)
     history = AuditlogHistoryField()
 
-    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE)
+    request = models.ForeignKey("AllocationRequest", on_delete=models.CASCADE)
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -225,15 +225,15 @@ class Cluster(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['name']),
+            models.Index(fields=["name"]),
         ]
 
     class AccessChoices(models.TextChoices):
         """Enumerated choices for the `access` field."""
 
-        WHITELIST = 'WL', 'Whitelist'
-        BLACKLIST = 'BL', 'Blacklist'
-        OPEN = 'OP', 'Open'
+        WHITELIST = "WL", "Whitelist"
+        BLACKLIST = "BL", "Blacklist"
+        OPEN = "OP", "Open"
 
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)
@@ -259,9 +259,9 @@ class Comment(TeamModelInterface, models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['created']),
-            models.Index(fields=['request']),
-            models.Index(fields=['user', 'request', 'created']),
+            models.Index(fields=["created"]),
+            models.Index(fields=["request"]),
+            models.Index(fields=["user", "request", "created"]),
         ]
 
     content = models.TextField(max_length=2_000)
@@ -270,7 +270,7 @@ class Comment(TeamModelInterface, models.Model):
     history = AuditlogHistoryField()
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    request = models.ForeignKey('AllocationRequest', on_delete=models.CASCADE, related_name='comments')
+    request = models.ForeignKey("AllocationRequest", on_delete=models.CASCADE, related_name="comments")
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -280,7 +280,7 @@ class Comment(TeamModelInterface, models.Model):
     def __str__(self) -> str:  # pragma: nocover
         """Return a string representation of the comment."""
 
-        return f'Comment by {self.user} made on request "{self.request.title[:50]}"'
+        return f"Comment by {self.user} made on request '{self.request.title[:50]}'"
 
 
 class JobStats(TeamModelInterface, models.Model):

@@ -21,13 +21,13 @@ from apps.users.models import User
 from .models import *
 
 __all__ = [
-    'AllocationRequestFactory',
-    'AllocationReviewFactory',
-    'AttachmentFactory',
-    'ClusterFactory',
-    'CommentFactory',
-    'JobStatsFactory',
-    'ResourceAllocationFactory',
+    "AllocationRequestFactory",
+    "AllocationReviewFactory",
+    "AttachmentFactory",
+    "ClusterFactory",
+    "CommentFactory",
+    "JobStatsFactory",
+    "ResourceAllocationFactory",
 ]
 
 
@@ -40,7 +40,7 @@ class ClusterFactory(DjangoModelFactory):
         model = Cluster
 
     name = factory.Sequence(lambda n: f"Cluster {n + 1}")
-    description = factory.Faker('sentence')
+    description = factory.Faker("sentence")
     access_mode = Cluster.AccessChoices.OPEN
     enabled = True
 
@@ -56,9 +56,9 @@ class AllocationRequestFactory(DjangoModelFactory):
 
         model = AllocationRequest
 
-    title = factory.Faker('sentence', nb_words=4)
-    description = factory.Faker('text', max_nb_chars=2000)
-    submitted = factory.Faker('date_time_between', start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
+    title = factory.Faker("sentence", nb_words=4)
+    description = factory.Faker("text", max_nb_chars=2000)
+    submitted = factory.Faker("date_time_between", start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     submitter = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
@@ -152,7 +152,7 @@ class ResourceAllocationFactory(DjangoModelFactory):
 
         model = ResourceAllocation
 
-    requested = factory.Faker('pyint', min_value=1000, max_value=100000)
+    requested = factory.Faker("pyint", min_value=1000, max_value=100000)
 
     cluster = factory.SubFactory(ClusterFactory)
     request = factory.SubFactory(AllocationRequestFactory)
@@ -242,7 +242,7 @@ class CommentFactory(DjangoModelFactory):
         model = Comment
 
     private = False
-    content = factory.Faker('sentence', nb_words=10)
+    content = factory.Faker("sentence", nb_words=10)
 
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
@@ -257,9 +257,9 @@ class JobStatsFactory(DjangoModelFactory):
         model = JobStats
 
     jobid = factory.Sequence(lambda n: f"{n + 1}")
-    jobname = factory.Faker('word')
+    jobname = factory.Faker("word")
     state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
-    submit = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
+    submit = factory.Faker("date_time_between", start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)

@@ -14,12 +14,12 @@ from apps.users.models import Team
 from .models import *
 
 __all__ = [
-    'AllocationRequestPermissions',
-    'AllocationReviewPermissions',
-    'ClusterPermissions',
-    'CommentPermissions',
-    'JobStatsPermissions',
-    'RequestChildPermissions',
+    "AllocationRequestPermissions",
+    "AllocationReviewPermissions",
+    "ClusterPermissions",
+    "CommentPermissions",
+    "JobStatsPermissions",
+    "RequestChildPermissions",
 ]
 
 
@@ -30,7 +30,7 @@ class PermissionUtils:
     def is_create(view: View) -> bool:
         """Return whether the requested operation creates a new record."""
 
-        return getattr(view, 'action', None) == 'create'
+        return getattr(view, "action", None) == "create"
 
     @staticmethod
     def is_read_only(request: Request) -> bool:
@@ -76,7 +76,7 @@ class AllocationRequestPermissions(PermissionUtils, permissions.BasePermission):
         # For create: only allow if the requesting user is an admin of the target team.
         if self.is_create(view):
             try:
-                team_id = request.data.get('team')
+                team_id = request.data.get("team")
                 team = Team.objects.get(pk=team_id)
 
             except (Team.DoesNotExist, Exception):
@@ -155,7 +155,7 @@ class CommentPermissions(PermissionUtils, permissions.BasePermission):
         # For create/update: only allow if user is in the target allocation's team.
         # Deny creation if allocation request can't be resolved.
         try:
-            alloc_request_id = request.data.get('request')
+            alloc_request_id = request.data.get("request")
             alloc_request = AllocationRequest.objects.get(pk=alloc_request_id)
             team = alloc_request.team
 
@@ -211,8 +211,8 @@ class RequestChildPermissions(PermissionUtils, permissions.BasePermission):
         # For create: only allow if the requesting user is an admin of the target team.
         if self.is_create(view):
             try:
-                alloc_request_id = request.data.get('request')
-                alloc_request = AllocationRequest.objects.select_related('team').get(pk=alloc_request_id)
+                alloc_request_id = request.data.get("request")
+                alloc_request = AllocationRequest.objects.select_related("team").get(pk=alloc_request_id)
                 team = alloc_request.team
 
             except (AllocationRequest.DoesNotExist, Exception):
