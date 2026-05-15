@@ -7,9 +7,9 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-LOGIN_VIEW_NAME = 'authentication:login'
-LOGOUT_VIEW_NAME = 'authentication:logout'
-WHOAMI_VIEW_NAME = 'authentication:whoami'
+LOGIN_VIEW_NAME = "authentication:login"
+LOGOUT_VIEW_NAME = "authentication:logout"
+WHOAMI_VIEW_NAME = "authentication:whoami"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -67,8 +67,8 @@ class UserAuthentication(APITestCase):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.password = 'foobar123'
-        self.user = UserFactory(username='user', password=self.password)
+        self.password = "foobar123"
+        self.user = UserFactory(username="user", password=self.password)
 
     def assert_authentication(self, auth_status: bool) -> None:
         """Assert whether the current client session is authenticated.
@@ -92,7 +92,7 @@ class UserAuthentication(APITestCase):
     def test_authenticated_session(self) -> None:
         """Verify currently authenticated users are successfully logged out."""
 
-        self.client.post(self.login_endpoint, {'username': self.user.username, 'password': self.password})
+        self.client.post(self.login_endpoint, {"username": self.user.username, "password": self.password})
         self.assert_authentication(True)
 
         self.client.post(self.logout_endpoint)

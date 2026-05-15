@@ -17,24 +17,24 @@ class ValidationMethod(TestCase):
     def setUp(self) -> None:
         """Create a user account to test authentication with."""
 
-        self.password = 'securepass'
+        self.password = "securepass"
         self.user = UserFactory(password=self.password)
-        self.request = Request(RequestFactory().post('/login/'))
+        self.request = Request(RequestFactory().post("/login/"))
 
     def test_valid_credentials(self) -> None:
         """Verify valid user credentials pass validation."""
 
-        data = {'username': self.user.username, 'password': self.password}
-        serializer = LoginSerializer(data=data, context={'request': self.request})
+        data = {"username": self.user.username, "password": self.password}
+        serializer = LoginSerializer(data=data, context={"request": self.request})
         self.assertTrue(serializer.is_valid())
-        self.assertEqual(serializer.validated_data['user'], self.user)
+        self.assertEqual(serializer.validated_data["user"], self.user)
 
     def test_invalid_credentials(self) -> None:
         """Verify invalid user credentials fail validation."""
 
-        data = {'username': self.user.username, 'password': 'wrongpass'}
-        serializer = LoginSerializer(data=data, context={'request': self.request})
-        with self.assertRaisesRegex(ValidationError, 'Invalid username or password.'):
+        data = {"username": self.user.username, "password": "wrongpass"}
+        serializer = LoginSerializer(data=data, context={"request": self.request})
+        with self.assertRaisesRegex(ValidationError, "Invalid username or password."):
             serializer.is_valid(raise_exception=True)
 
     def test_inactive_user(self) -> None:
@@ -43,28 +43,28 @@ class ValidationMethod(TestCase):
         self.user.is_active = False
         self.user.save()
 
-        data = {'username': self.user.username, 'password': self.password}
-        serializer = LoginSerializer(data=data, context={'request': self.request})
-        with self.assertRaisesRegex(ValidationError, 'Invalid username or password.'):
+        data = {"username": self.user.username, "password": self.password}
+        serializer = LoginSerializer(data=data, context={"request": self.request})
+        with self.assertRaisesRegex(ValidationError, "Invalid username or password."):
             serializer.is_valid(raise_exception=True)
 
     def test_password_whitespace_preserved(self) -> None:
         """Ensure passwords with whitespace are not stripped during validation."""
 
         # Create a user with whitespace in the password
-        password_with_spaces = '  spacedpass  '
-        user_with_spaces = UserFactory(username='whitespaceuser', password=password_with_spaces)
+        password_with_spaces = "  spacedpass  "
+        user_with_spaces = UserFactory(username="whitespaceuser", password=password_with_spaces)
 
         # Attempt login with exact password (should succeed)
-        data = {'username': user_with_spaces.username, 'password': password_with_spaces}
-        serializer = LoginSerializer(data=data, context={'request': self.request})
+        data = {"username": user_with_spaces.username, "password": password_with_spaces}
+        serializer = LoginSerializer(data=data, context={"request": self.request})
         serializer.is_valid()
 
-        self.assertEqual(serializer.validated_data['user'], user_with_spaces)
+        self.assertEqual(serializer.validated_data["user"], user_with_spaces)
         self.assertTrue(serializer.is_valid())
 
         # Attempt login with stripped password (should fail)
-        data_stripped = {'username': user_with_spaces.username, 'password': password_with_spaces.strip()}
-        serializer = LoginSerializer(data=data_stripped, context={'request': self.request})
-        with self.assertRaisesRegex(ValidationError, 'Invalid username or password.'):
+        data_stripped = {"username": user_with_spaces.username, "password": password_with_spaces.strip()}
+        serializer = LoginSerializer(data=data_stripped, context={"request": self.request})
+        with self.assertRaisesRegex(ValidationError, "Invalid username or password."):
             serializer.is_valid(raise_exception=True)

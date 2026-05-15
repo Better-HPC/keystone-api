@@ -8,7 +8,7 @@ creation.
 
 from rest_framework import serializers
 
-__all__ = ['ConfigSerializer']
+__all__ = ["ConfigSerializer"]
 
 
 class ConfigSerializer(serializers.Serializer):

@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 from .serializers import *
 
-__all__ = ['ConfigView']
+__all__ = ["ConfigView"]
 
 
 @extend_schema_view(

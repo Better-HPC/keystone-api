@@ -25,7 +25,7 @@ from rest_framework.request import Request
 
 from apps.health.checks import LDAPHealthCheck
 
-__all__ = ['HealthCheckView', 'HealthCheckJsonView', 'HealthCheckPrometheusView']
+__all__ = ["HealthCheckView", "HealthCheckJsonView", "HealthCheckPrometheusView"]
 
 # Cache duration for health check results in seconds
 CACHE_TIMEOUT = 60
@@ -40,7 +40,7 @@ CHECKS: dict[str, HealthCheck] = {
 }
 
 # Register the LDAP health check only when an LDAP server is configured
-if getattr(settings, 'AUTH_LDAP_SERVER_URI', None):
+if getattr(settings, "AUTH_LDAP_SERVER_URI", None):
     CHECKS["LDAP"] = LDAPHealthCheck()
 
 
@@ -84,7 +84,7 @@ class BaseHealthCheckView(GenericAPIView):
     def get_cached_results() -> list[dict]:
         """Return cached health check results, running checks if the cache is cold."""
 
-        cache_key = 'healthcheck_results'
+        cache_key = "healthcheck_results"
         results = cache.get(cache_key)
         if results is None:
             results = async_to_sync(BaseHealthCheckView.run_checks)(CHECKS)
@@ -124,8 +124,8 @@ class BaseHealthCheckView(GenericAPIView):
             "Health checks are performed on demand and cached for 60 seconds. "
         ),
         responses={
-            '200': inline_serializer('health_ok', fields=dict()),
-            '500': inline_serializer('health_error', fields=dict()),
+            "200": inline_serializer("health_ok", fields=dict()),
+            "500": inline_serializer("health_error", fields=dict()),
         }
     )
 )
@@ -142,7 +142,7 @@ class HealthCheckView(BaseHealthCheckView):
             An empty HTTP response with a `200` or 500` status code.
         """
 
-        has_errors = not all(result['healthy'] for result in results)
+        has_errors = not all(result["healthy"] for result in results)
         return HttpResponse(status=500 if has_errors else 200)
 
 
@@ -157,14 +157,14 @@ class HealthCheckView(BaseHealthCheckView):
             "A `200` status code is returned regardless of whether individual health checks are passing. "
         ),
         responses={
-            '200': OpenApiResponse(
+            "200": OpenApiResponse(
                 response=OpenApiTypes.OBJECT,
-                description='Health check results.',
+                description="Health check results.",
                 examples=[
                     OpenApiExample(
-                        'JSON response',
+                        "JSON response",
                         response_only=True,
-                        value={'data': [
+                        value={"data": [
                             {"check": "Storage", "healthy": True, "error": None, "time_taken": 0.012},
                             {"check": "Celery", "healthy": False, "error": "Celery workers unavailable", "time_taken": 1.001},
                         ]},
@@ -187,7 +187,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
             An HTTP response with health check results in JSON format.
         """
 
-        return JsonResponse({'data': results}, content_type="application/json", status=200)
+        return JsonResponse({"data": results}, content_type="application/json", status=200)
 
 
 @extend_schema_view(
@@ -201,12 +201,12 @@ class HealthCheckJsonView(BaseHealthCheckView):
             "A `200` status code is returned regardless of whether individual health checks are passing. "
         ),
         responses={
-            '200': OpenApiResponse(
+            "200": OpenApiResponse(
                 response=OpenApiTypes.STR,
-                description='Prometheus plain-text metrics.',
+                description="Prometheus plain-text metrics.",
                 examples=[
                     OpenApiExample(
-                        'Prometheus response',
+                        "Prometheus response",
                         response_only=True,
                         value=(
                                 "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)\n"
