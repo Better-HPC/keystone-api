@@ -44,7 +44,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching audit logs."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ["resource", "action", "user_username"]
+    search_fields = ["record_name", "action", "actor_username"]
     serializer_class = AuditLogSerializer
     queryset = AuditLog.objects.select_related("actor", "content_type")
 
@@ -73,7 +73,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching HTTP request logs."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ["endpoint", "method", "response_code", "body_request", "body_response", "remote_address"]
+    search_fields = ["endpoint", "method", "response_code", "remote_address"]
     serializer_class = RequestLogSerializer
     queryset = RequestLog.objects.select_related("user")
 

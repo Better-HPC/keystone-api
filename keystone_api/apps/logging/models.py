@@ -24,7 +24,6 @@ class RequestLog(models.Model):
         indexes = [
             models.Index(fields=["timestamp"]),
             models.Index(fields=["method"]),
-
             models.Index(fields=["cid", "timestamp"]),
             models.Index(fields=["user", "timestamp"]),
             models.Index(fields=["endpoint", "timestamp"]),
