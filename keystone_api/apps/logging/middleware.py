@@ -14,7 +14,7 @@ from django.http import HttpRequest
 
 from .models import RequestLog
 
-__all__ = ['LogRequestMiddleware']
+__all__ = ["LogRequestMiddleware"]
 
 
 class LogRequestMiddleware:
@@ -71,8 +71,8 @@ class LogRequestMiddleware:
             The validated or newly generated CID string.
         """
 
-        # Convert a custom header name (e.g., "X-CID") into the format used by Django's request.META
-        header_name = 'HTTP_' + settings.AUDITLOG_CID_HEADER.upper().replace('-', '_')
+        # Convert a custom header name (e.g., "X-CID") into the format used by Django"s request.META
+        header_name = "HTTP_" + settings.AUDITLOG_CID_HEADER.upper().replace("-", "_")
         cid = request.META.get(header_name)
 
         try:
@@ -95,7 +95,7 @@ class LogRequestMiddleware:
             The requesting IP address.
         """
 
-        if x_forwarded_for := request.META.get('HTTP_X_FORWARDED_FOR'):
-            return x_forwarded_for.split(',')[0]
+        if x_forwarded_for := request.META.get("HTTP_X_FORWARDED_FOR"):
+            return x_forwarded_for.split(",")[0]
 
-        return request.META.get('REMOTE_ADDR')
+        return request.META.get("REMOTE_ADDR")

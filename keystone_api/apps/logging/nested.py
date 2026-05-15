@@ -12,20 +12,20 @@ from rest_framework import serializers
 from apps.logging.models import *
 from apps.users.nested import UserSummarySerializer
 
-__all__ = ['AuditLogSummarySerializer']
+__all__ = ["AuditLogSummarySerializer"]
 
 
 class AuditLogSummarySerializer(serializers.ModelSerializer):
-    """Object serializer for the `AuditLog` class."""
+    """Serializer for summarizing auditlog information in nested representations."""
 
-    _actor = UserSummarySerializer(source='actor', read_only=True)
+    _actor = UserSummarySerializer(source="actor", read_only=True)
     action = serializers.SerializerMethodField()
 
     class Meta:
         """Serializer settings."""
 
         model = AuditLog
-        fields = ['id', 'timestamp', 'action', 'actor', '_actor', 'changes']
+        fields = ["id", "timestamp", "action", "actor", "_actor", "changes"]
 
     @extend_schema_field(str)
     def get_action(self, obj: AuditLog) -> str:

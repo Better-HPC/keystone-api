@@ -17,7 +17,7 @@ class GetActionMethod(TestCase):
     def test_returns_create_string_for_create_action(self) -> None:
         """Verify the action string for CREATE action."""
 
-        mock_obj = type('MockAuditLog', (), {'action': AuditLog.Action.CREATE})()
+        mock_obj = type("MockAuditLog", (), {"action": AuditLog.Action.CREATE})()
 
         result = self.serializer.get_action(mock_obj)
 
@@ -26,7 +26,7 @@ class GetActionMethod(TestCase):
     def test_returns_update_string_for_update_action(self) -> None:
         """Verify the action string for UPDATE action."""
 
-        mock_obj = type('MockAuditLog', (), {'action': AuditLog.Action.UPDATE})()
+        mock_obj = type("MockAuditLog", (), {"action": AuditLog.Action.UPDATE})()
 
         result = self.serializer.get_action(mock_obj)
 
@@ -35,7 +35,7 @@ class GetActionMethod(TestCase):
     def test_returns_delete_string_for_delete_action(self) -> None:
         """Verify the action string for DELETE action."""
 
-        mock_obj = type('MockAuditLog', (), {'action': AuditLog.Action.DELETE})()
+        mock_obj = type("MockAuditLog", (), {"action": AuditLog.Action.DELETE})()
 
         result = self.serializer.get_action(mock_obj)
 

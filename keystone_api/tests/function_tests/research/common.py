@@ -162,12 +162,12 @@ class ResearchDetailEndpointPermissionsTestMixin(CustomAsserts, ABC):
     Endpoint permissions are tested against the following matrix of HTTP responses.
     Permissions depend on the user's role within the team owning the accessed record.
 
-    | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
-    |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
-    | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated non-member   | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
-    | Team Member                | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | User Status              | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
+    |--------------------------|-----|------|---------|------|-----|-------|--------|-------|
+    | Unauthenticated User     | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
+    | Authenticated non-member | 403 | 403  | 200     | 405  | 403 | 403   | 403    | 405   |
+    | Team Member              | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
+    | Staff User               | 200 | 200  | 200     | 405  | 200 | 200   | 204    | 405   |
     """
 
     @property

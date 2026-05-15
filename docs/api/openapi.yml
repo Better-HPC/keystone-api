@@ -12532,7 +12532,7 @@ components:
       - timestamp
     AuditLogSummary:
       type: object
-      description: Object serializer for the `AuditLog` class.
+      description: Serializer for summarizing auditlog information in nested representations.
       properties:
         id:
           type: integer
@@ -12561,7 +12561,7 @@ components:
       - id
     AuditLogSummaryRequest:
       type: object
-      description: Object serializer for the `AuditLog` class.
+      description: Serializer for summarizing auditlog information in nested representations.
       properties:
         timestamp:
           type: string
