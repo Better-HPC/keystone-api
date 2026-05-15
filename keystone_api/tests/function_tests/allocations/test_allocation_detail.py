@@ -41,7 +41,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.allocation.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.allocation.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -136,6 +136,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'cluster': self.allocation.cluster.pk, 'request': self.allocation.request.pk, 'requested': 1000},
-            patch_body={'awarded': 1000},
+            put_body={"cluster": self.allocation.cluster.pk, "request": self.allocation.request.pk, "requested": 1000},
+            patch_body={"awarded": 1000},
         )

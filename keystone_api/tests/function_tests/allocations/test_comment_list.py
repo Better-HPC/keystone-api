@@ -9,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
-VIEW_NAME = 'allocations:comment-list'
+VIEW_NAME = "allocations:comment-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -43,7 +43,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.valid_record_data = {'content': 'foo', 'request': self.request.pk}
+        self.valid_record_data = {"content": "foo", "request": self.request.pk}
 
     def test_anonymous_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -169,8 +169,8 @@ class PrivateRecordFiltering(APITestCase):
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get(self.endpoint)
 
-        results = response.json()['results']
-        returned_ids = [r['id'] for r in results]
+        results = response.json()["results"]
+        returned_ids = [r["id"] for r in results]
 
         expected_ids = [self.public_comment.id, self.private_comment.id]
         self.assertCountEqual(expected_ids, returned_ids)
@@ -181,8 +181,8 @@ class PrivateRecordFiltering(APITestCase):
         self.client.force_authenticate(user=self.team_member)
         response = self.client.get(self.endpoint)
 
-        results = response.json()['results']
-        returned_ids = [r['id'] for r in results]
+        results = response.json()["results"]
+        returned_ids = [r["id"] for r in results]
 
         expected_ids = [self.public_comment.id, ]
         self.assertCountEqual(expected_ids, returned_ids)
@@ -193,4 +193,4 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
     endpoint = reverse(VIEW_NAME)
     factory = CommentFactory
-    team_field = 'request__team'
+    team_field = "request__team"

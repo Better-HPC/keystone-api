@@ -44,10 +44,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = UserFactory(is_staff=True)
 
         self.valid_record_data = {
-            'title': 'foo',
-            'description': 'bar',
-            'team': self.team.pk,
-            'submitter': self.non_member.id
+            "title": "foo",
+            "description": "bar",
+            "team": self.team.pk,
+            "submitter": self.non_member.id
         }
 
     def test_anonymous_user_permissions(self) -> None:
@@ -156,4 +156,4 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
     endpoint = reverse(VIEW_NAME)
     factory = AllocationRequestFactory
-    team_field = 'team'
+    team_field = "team"

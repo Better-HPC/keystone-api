@@ -9,7 +9,7 @@ from apps.allocations.models import Cluster
 from apps.users.factories import MembershipFactory, UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'allocations:cluster-list'
+VIEW_NAME = "allocations:cluster-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -78,7 +78,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={'name': 'foo', 'api_url': 'localhost:6820', 'api_user': 'slurm', 'api_token': 'foobar'}
+            post_body={"name": "foo", "api_url": "localhost:6820", "api_user": "slurm", "api_token": "foobar"}
         )
 
 
@@ -109,7 +109,7 @@ class ClusterAccessLists(APITestCase):
         self.client.force_authenticate(user=self.generic_user)
 
         response = self.client.get(self.endpoint)
-        returned_ids = set(record['id'] for record in response.data['results'])
+        returned_ids = set(record["id"] for record in response.data["results"])
 
         expected_ids = {self.open_cluster.id, self.whitelist_cluster.id}
 

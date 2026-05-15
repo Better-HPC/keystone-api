@@ -10,7 +10,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'allocations:attachment-detail'
+VIEW_NAME = "allocations:attachment-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -42,7 +42,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.attachment.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.attachment.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -138,6 +138,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'request': self.attachment.request.pk, 'file': test_file},
-            patch_body={'request': self.attachment.request.pk},
+            put_body={"request": self.attachment.request.pk, "file": test_file},
+            patch_body={"request": self.attachment.request.pk},
         )

@@ -9,7 +9,7 @@ from apps.allocations.models import Cluster
 from apps.users.factories import MembershipFactory, UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'allocations:cluster-detail'
+VIEW_NAME = "allocations:cluster-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -28,7 +28,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         """Create test fixtures using mock data."""
 
         self.cluster = ClusterFactory()
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.cluster.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.cluster.id})
 
         self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
@@ -78,8 +78,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'foo', 'api_url': 'localhost:6820', 'api_user': 'slurm', 'api_token': 'foobar'},
-            patch_body={'name': 'foo'}
+            put_body={"name": "foo", "api_url": "localhost:6820", "api_user": "slurm", "api_token": "foobar"},
+            patch_body={"name": "foo"}
         )
 
 
@@ -102,8 +102,8 @@ class ClusterAccessListPermissionIsolationTests(APITestCase):
         self.blacklisted.access_teams.add(self.team)
 
         # Endpoint for each cluster
-        self.whitelisted_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.whitelisted.id})
-        self.blacklisted_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.blacklisted.id})
+        self.whitelisted_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.whitelisted.id})
+        self.blacklisted_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.blacklisted.id})
 
     def test_user_can_access_whitelist_cluster(self) -> None:
         """Verify users can access clusters their team is whitelisted on."""

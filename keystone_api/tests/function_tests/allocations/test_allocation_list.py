@@ -9,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts, TeamListFilteringTestMixin
 
-VIEW_NAME = 'allocations:allocation-list'
+VIEW_NAME = "allocations:allocation-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -44,9 +44,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.staff_user = UserFactory(is_staff=True)
 
         self.valid_record_data = {
-            'requested': 1000,
-            'cluster': self.allocation.cluster.pk,
-            'request': self.allocation.request.pk,
+            "requested": 1000,
+            "cluster": self.allocation.cluster.pk,
+            "request": self.allocation.request.pk,
         }
 
     def test_unauthenticated_user_permissions(self) -> None:
@@ -155,4 +155,4 @@ class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):
 
     endpoint = reverse(VIEW_NAME)
     factory = ResourceAllocationFactory
-    team_field = 'request__team'
+    team_field = "request__team"

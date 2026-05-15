@@ -41,7 +41,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.request.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.request.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -127,10 +127,10 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.client.force_authenticate(user=self.staff_user)
         record_data = {
-            'title': 'foo',
-            'description': 'bar',
-            'team': self.team.pk,
-            'submitter': self.staff_user.id
+            "title": "foo",
+            "description": "bar",
+            "team": self.team.pk,
+            "submitter": self.staff_user.id
         }
 
         self.assert_http_responses(

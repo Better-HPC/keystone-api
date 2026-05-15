@@ -9,7 +9,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'allocations:comment-detail'
+VIEW_NAME = "allocations:comment-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -49,14 +49,14 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         # Create a public comment
         self.public_comment = CommentFactory(request=self.request)
-        self.public_comment_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.public_comment.id})
+        self.public_comment_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.public_comment.id})
 
         # Create a private comment
         self.private_comment = CommentFactory(private=True, request=self.request)
-        self.private_comment_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.private_comment.id})
+        self.private_comment_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.private_comment.id})
 
         # Valid record data used to test write operations
-        self.record_data = {'content': 'foobar', 'request': self.request.pk}
+        self.record_data = {"content": "foobar", "request": self.request.pk}
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
