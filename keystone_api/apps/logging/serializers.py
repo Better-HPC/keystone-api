@@ -14,9 +14,9 @@ from .models import *
 from .nested import AuditLogSummarySerializer
 
 __all__ = [
-    'AuditLogSerializer',
-    'RequestLogSerializer',
-    'TaskResultSerializer',
+    "AuditLogSerializer",
+    "RequestLogSerializer",
+    "TaskResultSerializer",
 ]
 
 
@@ -24,25 +24,25 @@ class AuditLogSerializer(AuditLogSummarySerializer):
     """Object serializer for the `AuditLog` class."""
 
     record_name = serializers.SerializerMethodField()
-    record_id = serializers.IntegerField(source='object_pk')
-    _actor = UserSummarySerializer(source='actor', read_only=True)
+    record_id = serializers.IntegerField(source="object_pk")
+    _actor = UserSummarySerializer(source="actor", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = AuditLog
         fields = [
-            'id',
-            'record_name',
-            'record_id',
-            'action',
-            'changes',
-            'cid',
-            'remote_addr',
-            'remote_port',
-            'timestamp',
-            'actor',
-            '_actor'
+            "id",
+            "record_name",
+            "record_id",
+            "action",
+            "changes",
+            "cid",
+            "remote_addr",
+            "remote_port",
+            "timestamp",
+            "actor",
+            "_actor"
         ]
 
     @extend_schema_field(str)
@@ -55,13 +55,13 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 class RequestLogSerializer(serializers.ModelSerializer):
     """Object serializer for the `RequestLog` class."""
 
-    _user = UserSummarySerializer(source='user', read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True)
 
     class Meta:
         """Serializer settings."""
 
         model = RequestLog
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TaskResultSerializer(serializers.ModelSerializer):
@@ -71,4 +71,4 @@ class TaskResultSerializer(serializers.ModelSerializer):
         """Serializer settings."""
 
         model = TaskResult
-        fields = '__all__'
+        fields = "__all__"

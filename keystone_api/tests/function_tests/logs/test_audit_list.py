@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from .common import LogEndpointPermissionTestMixin
 
-VIEW_NAME = 'logging:audit-list'
+VIEW_NAME = "logging:audit-list"
 
 
 class EndpointPermissions(LogEndpointPermissionTestMixin, APITestCase):

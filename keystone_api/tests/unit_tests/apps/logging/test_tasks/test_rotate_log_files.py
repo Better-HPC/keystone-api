@@ -11,7 +11,7 @@ from apps.logging.models import AuditLog, RequestLog
 from apps.logging.tasks import clear_log_records
 
 
-@patch('django.utils.timezone.now')
+@patch("django.utils.timezone.now")
 class ClearLogRecordsMethod(TestCase):
     """Test the deletion of log records."""
 
@@ -47,7 +47,7 @@ class ClearLogRecordsMethod(TestCase):
         for ts in timestamps:
             mock_now.return_value = ts
             RequestLog.objects.create(
-                endpoint='/api',
+                endpoint="/api",
                 response_code=200,
                 timestamp=ts
             )

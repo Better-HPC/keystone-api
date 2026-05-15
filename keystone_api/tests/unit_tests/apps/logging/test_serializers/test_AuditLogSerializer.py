@@ -14,9 +14,9 @@ class GetRecordNameMethod(TestCase):
     def test_record_name_format(self):
         """Verify record names include the app label and class name in the expected format."""
 
-        mock_model_class = Mock(__name__='TestModel')
+        mock_model_class = Mock(__name__="TestModel")
         mock_content_type = Mock()
-        mock_content_type.app_label = 'test_app'
+        mock_content_type.app_label = "test_app"
         mock_content_type.model_class.return_value = mock_model_class
 
         mock_audit_log = Mock(spec=AuditLog)
@@ -25,4 +25,4 @@ class GetRecordNameMethod(TestCase):
         serializer = AuditLogSerializer()
         record_name = serializer.get_record_name(mock_audit_log)
 
-        self.assertEqual('test_app | TestModel', record_name)
+        self.assertEqual("test_app | TestModel", record_name)

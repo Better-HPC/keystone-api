@@ -14,9 +14,9 @@ from .permissions import *
 from .serializers import *
 
 __all__ = [
-    'AuditLogViewSet',
-    'RequestLogViewSet',
-    'TaskResultViewSet',
+    "AuditLogViewSet",
+    "RequestLogViewSet",
+    "TaskResultViewSet",
 ]
 
 
@@ -44,9 +44,9 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching audit logs."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ['resource', 'action', 'user_username']
+    search_fields = ["resource", "action", "user_username"]
     serializer_class = AuditLogSerializer
-    queryset = AuditLog.objects.select_related('actor', 'content_type')
+    queryset = AuditLog.objects.select_related("actor", "content_type")
 
 
 @extend_schema_view(
@@ -73,9 +73,9 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching HTTP request logs."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ['endpoint', 'method', 'response_code', 'body_request', 'body_response', 'remote_address']
+    search_fields = ["endpoint", "method", "response_code", "body_request", "body_response", "remote_address"]
     serializer_class = RequestLogSerializer
-    queryset = RequestLog.objects.select_related('user')
+    queryset = RequestLog.objects.select_related("user")
 
 
 @extend_schema_view(
@@ -102,6 +102,6 @@ class TaskResultViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching background task results."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ['periodic_task_name', 'task_name', 'status', 'worker', 'result', 'traceback']
+    search_fields = ["periodic_task_name", "task_name", "status", "worker", "result", "traceback"]
     serializer_class = TaskResultSerializer
     queryset = TaskResult.objects.all()

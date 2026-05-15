@@ -12,7 +12,7 @@ from django.db import models
 
 from apps.users.models import User
 
-__all__ = ['AuditLog', 'RequestLog', 'TaskResult']
+__all__ = ["AuditLog", "RequestLog", "TaskResult"]
 
 
 class RequestLog(models.Model):
@@ -22,14 +22,14 @@ class RequestLog(models.Model):
         """Database model settings."""
 
         indexes = [
-            models.Index(fields=['timestamp']),
-            models.Index(fields=['method']),
+            models.Index(fields=["timestamp"]),
+            models.Index(fields=["method"]),
 
-            models.Index(fields=['cid', 'timestamp']),
-            models.Index(fields=['user', 'timestamp']),
-            models.Index(fields=['endpoint', 'timestamp']),
-            models.Index(fields=['remote_address', 'timestamp']),
-            models.Index(fields=['response_code', 'timestamp']),
+            models.Index(fields=["cid", "timestamp"]),
+            models.Index(fields=["user", "timestamp"]),
+            models.Index(fields=["endpoint", "timestamp"]),
+            models.Index(fields=["remote_address", "timestamp"]),
+            models.Index(fields=["response_code", "timestamp"]),
         ]
 
     method = models.CharField(max_length=10)
