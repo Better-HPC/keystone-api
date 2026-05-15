@@ -71,7 +71,7 @@ class LogRequestMiddleware:
             The validated or newly generated CID string.
         """
 
-        # Convert a custom header name (e.g., "X-CID") into the format used by Django"s request.META
+        # Convert a custom header name (e.g., "X-CID") into the format used by Django's request.META
         header_name = "HTTP_" + settings.AUDITLOG_CID_HEADER.upper().replace("-", "_")
         cid = request.META.get(header_name)
 

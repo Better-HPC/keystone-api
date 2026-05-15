@@ -4,7 +4,6 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.models import AllocationRequest
 from apps.notifications.models import Notification
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts, GetResponseContentTests

@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from apps.allocations.factories import ResourceAllocationFactory, AllocationRequestFactory
+from apps.allocations.factories import AllocationRequestFactory, ResourceAllocationFactory
 from apps.users.factories import TeamFactory
 
 
