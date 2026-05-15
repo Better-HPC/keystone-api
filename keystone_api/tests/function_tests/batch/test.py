@@ -55,7 +55,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.client.force_authenticate(user=self.user)
         self.assert_http_responses(
             self.endpoint,
-            content_type='application/json',
             get=status.HTTP_405_METHOD_NOT_ALLOWED,
             head=status.HTTP_405_METHOD_NOT_ALLOWED,
             options=status.HTTP_200_OK,
