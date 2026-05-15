@@ -80,6 +80,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = GrantSerializer
     queryset = Grant.objects.prefetch_related(
         "history",
+    ).select_related(
         "team",
     ).all()
 
@@ -146,5 +147,6 @@ class PublicationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     serializer_class = PublicationSerializer
     queryset = Publication.objects.prefetch_related(
         "history",
+    ).select_related(
         "team",
     ).all()
