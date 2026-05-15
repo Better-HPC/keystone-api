@@ -200,8 +200,8 @@ class AllocationReviewFactory(DjangoModelFactory):
     reviewer = factory.SubFactory(UserFactory, is_staff=True)
 
     @factory.lazy_attribute
-    def submitted(self) -> date:
-        """Generates a submission date between the request's submitted and active dates.
+    def submitted(self: AllocationReview) -> date:
+        """Generate a submission date between the request's submitted and active dates.
 
         If the request has no active date, the upper bound is today.
         The result is always on or after the request's submitted date, and never in the future.
@@ -260,8 +260,26 @@ class JobStatsFactory(DjangoModelFactory):
     jobname = factory.Faker('word')
     state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
     submit = factory.Faker('date_time_between', start_date='-5y', end_date='now', tzinfo=timezone.get_default_timezone())
-    start = factory.LazyAttribute(lambda obj: obj.submit + timedelta(hours=randgen.randint(1, 60)))
-    end = factory.LazyAttribute(lambda obj: obj.start + timedelta(minutes=randgen.randint(25, 300)))
 
     team = factory.SubFactory(TeamFactory)
     cluster = factory.SubFactory(ClusterFactory)
+
+    @factory.lazy_attribute
+    def start(self: JobStats) -> object:
+        """Generate a job start time between one and sixty hours after submission.
+
+        Returns:
+            A datetime between one and sixty hours after `submit`.
+        """
+
+        return self.submit + timedelta(hours=randgen.randint(1, 60))
+
+    @factory.lazy_attribute
+    def end(self: JobStats) -> object:
+        """Generate a job end time between twenty-five and three hundred minutes after start.
+
+        Returns:
+            A datetime between twenty-five and three hundred minutes after `start`.
+        """
+
+        return self.start + timedelta(minutes=randgen.randint(25, 300))

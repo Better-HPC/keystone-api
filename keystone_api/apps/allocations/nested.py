@@ -57,6 +57,8 @@ class ResourceAllocationSummarySerializer(serializers.ModelSerializer):
     _cluster = ClusterSummarySerializer(source='cluster', read_only=True)
 
     class Meta:
+        """Serializer settings."""
+
         model = ResourceAllocation
         fields = ['id', 'cluster', 'requested', 'awarded', 'final', '_cluster']
 

@@ -202,7 +202,7 @@ class CommentSerializer(serializers.ModelSerializer):
                 'private': 'Only staff users can write comments marked as private.'
             })
 
-        return attrs
+        return super().validate(attrs)
 
 
 class JobStatsSerializer(serializers.ModelSerializer):
@@ -216,4 +216,4 @@ class JobStatsSerializer(serializers.ModelSerializer):
 
         model = JobStats
         fields = '__all__'
-        read_only = ['team']
+        read_only_fields = ['team']

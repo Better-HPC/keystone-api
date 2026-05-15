@@ -205,7 +205,10 @@ class Attachment(TeamModelInterface, models.Model):
         return self.request.team
 
     def save(self, *args, **kwargs) -> None:
-        """Persist the ORM instance to the database"""
+        """Persist the ORM instance to the database.
+
+        Defaults the `name` field to the uploaded file's base name.
+        """
 
         # Set the default name to match the file path
         if not self.name:
@@ -250,7 +253,7 @@ class Cluster(models.Model):
 
 @auditlog.register()
 class Comment(TeamModelInterface, models.Model):
-    """Comment associated with an allocation review."""
+    """Comment associated with an allocation request."""
 
     class Meta:
         """Database model settings."""
@@ -283,6 +286,16 @@ class Comment(TeamModelInterface, models.Model):
 class JobStats(TeamModelInterface, models.Model):
     """Slurm Job status and statistics."""
 
+    class Meta:
+        """Database model settings."""
+
+        ordering = ["-submit"]
+        indexes = [
+            models.Index(fields=["jobid"]),
+            models.Index(fields=["team", "state"]),
+            models.Index(fields=["state"]),
+        ]
+
     jobid = models.CharField(max_length=64, unique=True)  # Slurm ID, not database ID
     account = models.CharField(max_length=128, null=True, blank=True)
     allocnodes = models.CharField(max_length=128, null=True, blank=True)
@@ -306,16 +319,6 @@ class JobStats(TeamModelInterface, models.Model):
 
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
     cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        """Database model settings."""
-
-        ordering = ["-submit"]
-        indexes = [
-            models.Index(fields=["jobid"]),
-            models.Index(fields=["team", "state"]),
-            models.Index(fields=["state"]),
-        ]
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""

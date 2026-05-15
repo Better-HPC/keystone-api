@@ -12,7 +12,7 @@ __all__ = [
 ]
 
 
-@shared_task
+@shared_task()
 def slurm_update_job_stats() -> None:
     """Fetch job statistics for all clusters and update the DB.
 
@@ -25,7 +25,7 @@ def slurm_update_job_stats() -> None:
         slurm_update_job_stats_for_cluster.delay(cluster_name)
 
 
-@shared_task
+@shared_task()
 def slurm_update_job_stats_for_cluster(cluster_name: str) -> None:
     """Fetch job statistics for a single cluster and update the DB.
 
