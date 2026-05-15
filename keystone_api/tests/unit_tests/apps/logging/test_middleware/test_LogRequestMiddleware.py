@@ -44,6 +44,21 @@ class CidLogging(TestCase):
         log = RequestLog.objects.first()
         self.assertTrue(uuid.UUID(log.cid))
 
+    @override_settings(AUDITLOG_CID_HEADER="X-CUSTOM-CID")
+    def test_malformed_cid_header_is_replaced(self) -> None:
+        """Verify a fresh UUID is generated when the CID header contains a non-UUID value."""
+
+        request = RequestFactory().get("/example/")
+        request.META["HTTP_X_CUSTOM_CID"] = "not-a-valid-uuid"
+        request.user = AnonymousUser()
+
+        self.middleware(request)
+        log = RequestLog.objects.first()
+
+        # The malformed value must have been discarded and replaced with a valid UUID
+        self.assertNotEqual("not-a-valid-uuid", log.cid)
+        uuid.UUID(log.cid)  # Raises ValueError if not a valid UUID
+
 
 class ClientIPLogging(TestCase):
     """Test the extraction and logging of client IP values from request headers."""
