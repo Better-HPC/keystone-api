@@ -29,7 +29,7 @@ def should_notify_past_expiration(user: User, request: AllocationRequest) -> boo
     """
 
     # Do not notify if the request is not expired
-    if request.expire is None or request.expire > timezone.now().date() :
+    if request.expire is None or request.expire > timezone.now().date():
         return False
 
     if Notification.objects.filter(

@@ -29,9 +29,7 @@ class AuditLogFactory(DjangoModelFactory):
 
         model = AuditLog
 
-    content_type = factory.LazyFunction(
-        lambda: ContentType.objects.get_for_model(AuditLog)
-    )
+    content_type = factory.LazyFunction(lambda: ContentType.objects.get_for_model(AuditLog))
     object_pk = factory.Sequence(lambda n: str(n + 1))
     object_repr = factory.Faker('sentence', nb_words=4)
     action = AuditLog.Action.UPDATE

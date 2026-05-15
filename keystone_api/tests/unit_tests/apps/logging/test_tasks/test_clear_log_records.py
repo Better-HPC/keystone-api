@@ -17,13 +17,7 @@ class ClearLogRecordsMethod(TestCase):
 
     now = datetime(2025, 1, 1, tzinfo=timezone.utc)
 
-    def assert_log_counts(
-        self,
-        *,
-        request: int = None,
-        audit: int = None,
-        task: int = None,
-    ) -> None:
+    def assert_log_counts(self, *, request: int = None, audit: int = None, task: int = None) -> None:
         """Assert the given number of log records exist.
 
         Args:
