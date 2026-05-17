@@ -134,7 +134,7 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     last_name = models.CharField(max_length=150, null=True)
     email = models.EmailField(null=True)
     department = models.CharField(max_length=1000, null=True, blank=True)
-    role = models.CharField(max_length=1000, null=True, blank=True)  # User's role in their department
+    role = models.CharField(max_length=1000, null=True, blank=True)
     history = AuditlogHistoryField()
 
     # Administrative values for user management/permissions

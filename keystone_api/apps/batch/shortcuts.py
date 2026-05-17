@@ -161,7 +161,7 @@ def resolve_payload(data: Any, result_map: dict[str, dict], files: dict | None =
     values pass through unchanged.
 
     Args:
-        data: The payload structure to resolve. May be a dict, list, or scalar.
+        data: The payload structure to resolve. Can be a dict, list, or scalar.
         result_map: A mapping of step aliases to their response bodies.
         files: An optional mapping of part names to uploaded file objects.
 

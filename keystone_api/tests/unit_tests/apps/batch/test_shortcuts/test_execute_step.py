@@ -8,7 +8,7 @@ from django.urls import Resolver404
 from apps.batch.shortcuts import execute_step
 
 
-@patch('apps.batch.shortcuts.resolve')
+@patch("apps.batch.shortcuts.resolve")
 class UrlResolution(TestCase):
     """Test the URL resolution behaviour of `execute_step`."""
 
@@ -20,23 +20,23 @@ class UrlResolution(TestCase):
         view.return_value = response
         mock_resolve.return_value = Mock(func=view, args=(), kwargs={})
 
-        execute_step('GET', '/items/', {}, {'page': 2})
+        execute_step("GET", "/items/", {}, {"page": 2})
 
         resolved_path = mock_resolve.call_args[0][0]
-        self.assertEqual('/items/', resolved_path, 'Query string must be stripped before resolve()')
+        self.assertEqual("/items/", resolved_path, "Query string must be stripped before resolve()")
 
     def test_returns_404_for_unmatched_route(self, mock_resolve: Mock) -> None:
         """Verify an unmatched URL returns a 404 status with a detail body."""
 
         mock_resolve.side_effect = Resolver404()
 
-        status_code, body = execute_step('GET', '/nonexistent/', {}, {})
+        status_code, body = execute_step("GET", "/nonexistent/", {}, {})
 
         self.assertEqual(404, status_code)
-        self.assertIn('detail', body, '404 fallback should include a detail message')
+        self.assertIn("detail", body, "404 fallback should include a detail message")
 
 
-@patch('apps.batch.shortcuts.resolve')
+@patch("apps.batch.shortcuts.resolve")
 class ViewDispatch(TestCase):
     """Test that the resolved view is invoked correctly with the constructed request."""
 
@@ -46,14 +46,14 @@ class ViewDispatch(TestCase):
         view = Mock()
         response = Mock()
         response.status_code = 200
-        response.data = {'id': 1}
+        response.data = {"id": 1}
         view.return_value = response
         mock_resolve.return_value = Mock(func=view, args=(), kwargs={})
 
-        status_code, body = execute_step('GET', '/items/1/', {}, {})
+        status_code, body = execute_step("GET", "/items/1/", {}, {})
 
         self.assertEqual(200, status_code)
-        self.assertEqual({'id': 1}, body)
+        self.assertEqual({"id": 1}, body)
         view.assert_called_once()
 
     def test_passes_url_kwargs_to_view(self, mock_resolve: Mock) -> None:
@@ -62,15 +62,15 @@ class ViewDispatch(TestCase):
         view = Mock()
         response = Mock(status_code=200, data={})
         view.return_value = response
-        mock_resolve.return_value = Mock(func=view, args=(), kwargs={'pk': '7'})
+        mock_resolve.return_value = Mock(func=view, args=(), kwargs={"pk": "7"})
 
-        execute_step('GET', '/items/7/', {}, {})
+        execute_step("GET", "/items/7/", {}, {})
 
         _, kwargs = view.call_args
-        self.assertEqual('7', kwargs.get('pk'), 'URL-captured kwargs must reach the view')
+        self.assertEqual("7", kwargs.get("pk"), "URL-captured kwargs must reach the view")
 
 
-@patch('apps.batch.shortcuts.resolve')
+@patch("apps.batch.shortcuts.resolve")
 class ResponseHandling(TestCase):
     """Test how `execute_step` handles the response returned by the resolved view."""
 
@@ -78,11 +78,11 @@ class ResponseHandling(TestCase):
         """Verify response.render() is invoked on renderable responses."""
 
         view = Mock()
-        response = Mock(status_code=200, data={'ok': True})
+        response = Mock(status_code=200, data={"ok": True})
         view.return_value = response
         mock_resolve.return_value = Mock(func=view, args=(), kwargs={})
 
-        execute_step('GET', '/items/', {}, {})
+        execute_step("GET", "/items/", {}, {})
 
         response.render.assert_called_once()
 
@@ -90,12 +90,12 @@ class ResponseHandling(TestCase):
         """Verify a response without a `data` attribute produces a `None` body."""
 
         view = Mock()
-        response = Mock(spec=['status_code'])
+        response = Mock(spec=["status_code"])
         response.status_code = 204
         view.return_value = response
         mock_resolve.return_value = Mock(func=view, args=(), kwargs={})
 
-        status_code, body = execute_step('DELETE', '/items/1/', {}, {})
+        status_code, body = execute_step("DELETE", "/items/1/", {}, {})
 
         self.assertEqual(204, status_code)
         self.assertIsNone(body)

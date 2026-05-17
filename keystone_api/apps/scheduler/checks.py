@@ -56,7 +56,7 @@ def check_celery_beat_configuration(*args, **kwargs) -> list[Error]:
                 errors.append(
                     Error(
                         msg=f"Module '{module_spec}' is not absolute.",
-                        hint=f"Use the module definition {obj.__module__}.",
+                        hint=f"Use the module definition '{obj.__module__}'.",
                         obj=celery_app,
                         id="apps.scheduler.E003",
                     )

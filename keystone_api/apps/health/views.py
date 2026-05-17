@@ -23,7 +23,7 @@ from redis.asyncio import Redis as RedisClient
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
-from apps.health.checks import LDAPHealthCheck
+from apps.health.backends import LDAPHealthCheck
 
 __all__ = ["HealthCheckView", "HealthCheckJsonView", "HealthCheckPrometheusView"]
 
@@ -242,7 +242,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
 
         for row in results:
             metric_value = 200 if row["healthy"] else 500
-            lines.append(f'keystone_health_check_status{{check="{row["check"]}"}} {metric_value:.1f}')
+            lines.append(f"keystone_health_check_status{{check=\"{row["check"]}\"}} {metric_value:.1f}")
 
         lines += [
             "",
@@ -252,7 +252,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
 
         for row in results:
             lines.append(
-                f'keystone_health_check_eval_time_seconds{{check="{row["check"]}"}} {row["time_taken"]:.6f}'
+                f"keystone_health_check_eval_time_seconds{{check=\"{row["check"]}\"}} {row["time_taken"]:.6f}"
             )
 
         return HttpResponse(

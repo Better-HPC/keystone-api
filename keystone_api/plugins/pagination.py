@@ -13,5 +13,5 @@ class PaginationHandler(LimitOffsetPagination):
 
     max_limit = 1_000
     default_limit = 100
-    limit_query_param = '_limit'
-    offset_query_param = '_offset'
+    limit_query_param = "_limit"
+    offset_query_param = "_offset"

@@ -11,10 +11,10 @@ def _sanitize_css(css: str) -> str:
     """Remove external resources and JavaScript from CSS."""
 
     # Remove @import rules
-    css = re.sub(r'@import\s+[^;]+;', "", css, flags=re.IGNORECASE)
+    css = re.sub(r"@import\s+[^;]+;", "", css, flags=re.IGNORECASE)
 
     # Remove @font-face blocks (external font loading)
-    css = re.sub(r'@font-face\s*\{[^}]*\}', "", css, flags=re.IGNORECASE | re.DOTALL)
+    css = re.sub(r"@font-face\s*\{[^}]*\}", "", css, flags=re.IGNORECASE | re.DOTALL)
 
     # Remove url() with external URLs (http, https, //)
     # Keeps data: URIs and relative paths
@@ -26,13 +26,13 @@ def _sanitize_css(css: str) -> str:
     )
 
     # Remove expression() - IE JS execution
-    css = re.sub(r'expression\s*\([^)]*\)', "", css, flags=re.IGNORECASE)
+    css = re.sub(r"expression\s*\([^)]*\)", "", css, flags=re.IGNORECASE)
 
     # Remove behavior: property - IE JS execution
-    css = re.sub(r'behavior\s*:\s*[^;]+;?', "", css, flags=re.IGNORECASE)
+    css = re.sub(r"behavior\s*:\s*[^;]+;?", "", css, flags=re.IGNORECASE)
 
     # Remove -moz-binding: property - Firefox XBL
-    css = re.sub(r'-moz-binding\s*:\s*[^;]+;?', "", css, flags=re.IGNORECASE)
+    css = re.sub(r"-moz-binding\s*:\s*[^;]+;?", "", css, flags=re.IGNORECASE)
 
     return css
 
@@ -50,7 +50,7 @@ def _sanitize_css_in_html(html: str) -> str:
 
     # Sanitize <style> tag content
     html = re.sub(
-        r'(<style[^>]*>)(.*?)(</style>)',
+        r"(<style[^>]*>)(.*?)(</style>)",
         lambda m: m.group(1) + _sanitize_css(m.group(2)) + m.group(3),
         html,
         flags=re.IGNORECASE | re.DOTALL

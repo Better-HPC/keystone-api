@@ -50,31 +50,31 @@ class Command(StdOutUtils, BaseCommand):
             parser: The parser instance to add arguments to.
         """
 
-        range_options = dict(type=int, nargs=2, metavar=('MIN', 'MAX'), )
+        range_options = dict(type=int, nargs=2, metavar=("MIN", "MAX"), )
 
-        parser.add_argument('--seed', type=int, help='Optional seed for the random generator.')
-        parser.add_argument('--n-staff', type=int, help='Number of staff users to create.', default=100)
-        parser.add_argument('--n-clusters', type=int, help='Number of clusters to create.', default=4)
-        parser.add_argument('--n-teams', type=int, help='Number of user teams to create.', default=200)
-        parser.add_argument('--n-team-members', **range_options, help='Min/max users to create per team.', default=[3, 5])
-        parser.add_argument('--n-team-grants', **range_options, help='Min/max grants to create per team.', default=[4, 8])
-        parser.add_argument('--n-team-pubs', **range_options, help='Min/max publications to create per team.', default=[4, 8])
-        parser.add_argument('--n-team-reqs', **range_options, help='Min/max allocation requests to create per team.', default=[4, 8])
-        parser.add_argument('--n-req-clusters', **range_options, help='Min/max clusters to include per request.', default=[1, 5])
-        parser.add_argument('--n-req-jobs', **range_options, help='Min/max Slurm jobs to create per request.', default=[0, 30])
-        parser.add_argument('--n-req-grants', **range_options, help='Min/max grants to attach to each request.', default=[1, 2])
-        parser.add_argument('--n-req-pubs', **range_options, help='Min/max publications to attach to each request.', default=[1, 2])
-        parser.add_argument('--n-req-attachments', **range_options, help='Min/max file attachments to create per request.', default=[0, 2])
-        parser.add_argument('--n-req-comments', **range_options, help='Min/max comments to create per request.', default=[0, 4])
-        parser.add_argument('--n-req-reviewers', **range_options, help='Min/max staff reviewers to assign per request.', default=[1, 2])
-        parser.add_argument('--n-user-notifications', **range_options, help='Min/max notifications to create per user.', default=[10, 15])
+        parser.add_argument("--seed", type=int, help="Optional seed for the random generator.")
+        parser.add_argument("--n-staff", type=int, help="Number of staff users to create.", default=100)
+        parser.add_argument("--n-clusters", type=int, help="Number of clusters to create.", default=4)
+        parser.add_argument("--n-teams", type=int, help="Number of user teams to create.", default=200)
+        parser.add_argument("--n-team-members", **range_options, help="Min/max users to create per team.", default=[3, 5])
+        parser.add_argument("--n-team-grants", **range_options, help="Min/max grants to create per team.", default=[4, 8])
+        parser.add_argument("--n-team-pubs", **range_options, help="Min/max publications to create per team.", default=[4, 8])
+        parser.add_argument("--n-team-reqs", **range_options, help="Min/max allocation requests to create per team.", default=[4, 8])
+        parser.add_argument("--n-req-clusters", **range_options, help="Min/max clusters to include per request.", default=[1, 5])
+        parser.add_argument("--n-req-jobs", **range_options, help="Min/max Slurm jobs to create per request.", default=[0, 30])
+        parser.add_argument("--n-req-grants", **range_options, help="Min/max grants to attach to each request.", default=[1, 2])
+        parser.add_argument("--n-req-pubs", **range_options, help="Min/max publications to attach to each request.", default=[1, 2])
+        parser.add_argument("--n-req-attachments", **range_options, help="Min/max file attachments to create per request.", default=[0, 2])
+        parser.add_argument("--n-req-comments", **range_options, help="Min/max comments to create per request.", default=[0, 4])
+        parser.add_argument("--n-req-reviewers", **range_options, help="Min/max staff reviewers to assign per request.", default=[1, 2])
+        parser.add_argument("--n-user-notifications", **range_options, help="Min/max notifications to create per user.", default=[10, 15])
 
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
 
         self._write("Generating mock data:", self.style.MIGRATE_HEADING)
 
-        if seed := options['seed']:
+        if seed := options["seed"]:
             self._write(f"  Using seed: {seed}", self.style.WARNING)
             reseed_random(seed)
 
@@ -120,27 +120,27 @@ class Command(StdOutUtils, BaseCommand):
             n_user_notifications: Min/max notifications to create per user.
         """
 
-        self._write("  Generating staff users...", ending=' ')
+        self._write("  Generating staff users...", ending=" ")
         staff = UserFactory.create_batch(n_staff, is_staff=True)
         self._write("OK", self.style.SUCCESS)
 
-        self._write("  Generating clusters...", ending=' ')
+        self._write("  Generating clusters...", ending=" ")
         clusters = ClusterFactory.create_batch(n_clusters)
         self._write("OK", self.style.SUCCESS)
 
-        self._write("  Generating teams...", ending=' ')
+        self._write("  Generating teams...", ending=" ")
         teams, users = self._gen_teams(n_teams, *n_team_members)
         self._write("OK", self.style.SUCCESS)
 
-        self._write("  Generating grants...", ending=' ')
+        self._write("  Generating grants...", ending=" ")
         grants = self._gen_grants(teams, *n_team_grants)
         self._write("OK", self.style.SUCCESS)
 
-        self._write("  Generating publications...", ending=' ')
+        self._write("  Generating publications...", ending=" ")
         publications = self._gen_publications(teams, *n_team_pubs)
         self._write("OK", self.style.SUCCESS)
 
-        self._write("  Generating allocation requests...", ending=' ')
+        self._write("  Generating allocation requests...", ending=" ")
         self._gen_alloc_reqs(
             teams,
             staff,
@@ -158,7 +158,7 @@ class Command(StdOutUtils, BaseCommand):
         )
         self._write("OK", self.style.SUCCESS)
 
-        self._write("  Generating notifications...", ending=' ')
+        self._write("  Generating notifications...", ending=" ")
         self._gen_notifications(users, *n_user_notifications)
         self._write("OK", self.style.SUCCESS)
 
@@ -327,7 +327,7 @@ class Command(StdOutUtils, BaseCommand):
     @staticmethod
     def _gen_notifications(users: list[User], n_min: int, n_max: int) -> None:
         """Populate the database with mock user notification records.
-        
+
         Args:
             users: List of users to create records for.
             n_min: Minimum records to create per user.

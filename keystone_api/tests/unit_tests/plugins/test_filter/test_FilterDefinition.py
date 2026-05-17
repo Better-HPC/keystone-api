@@ -11,11 +11,11 @@ class SampleModel(models.Model):
     """Sample database model for testing"""
 
     class Meta:
-        app_label = 'test_FilterDefinition'
+        app_label = "test_FilterDefinition"
 
     char_field = models.CharField(max_length=100)
     integer_field = models.IntegerField()
-    foreign_key_field = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    foreign_key_field = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
 
 class ParamNameMethod(TestCase):
@@ -52,7 +52,7 @@ class ParamNameMethod(TestCase):
         self.assertNotEqual(
             lt_def.param_name(field_name),
             gte_def.param_name(field_name),
-            'Different expressions produced the same parameter name',
+            "Different expressions produced the same parameter name",
         )
 
 
@@ -83,14 +83,14 @@ class ToFilterMethod(TestCase):
 
         definition = FilterDefinition("exact", suffix=None)
         result = definition.to_filter(self._get_model_field("char_field"))
-        self.assertFalse(result.exclude, 'Filter is negated when negate was not set')
+        self.assertFalse(result.exclude, "Filter is negated when negate was not set")
 
     def test_negate_sets_exclude(self) -> None:
         """Verify a negated definition produces an excluding filter."""
 
         definition = FilterDefinition("contains", negate=True, suffix="not_contains")
         result = definition.to_filter(self._get_model_field("char_field"))
-        self.assertTrue(result.exclude, 'Filter is not negated when negate was set')
+        self.assertTrue(result.exclude, "Filter is not negated when negate was set")
 
     def test_in_lookup_wraps_with_base_in_filter(self) -> None:
         """Verify `in` lookups produce a filter that inherits from `BaseInFilter`."""
@@ -105,7 +105,7 @@ class ToFilterMethod(TestCase):
         definition = FilterDefinition("in", negate=True, suffix="not_in")
         result = definition.to_filter(self._get_model_field("integer_field"))
         self.assertIsInstance(result, filters.BaseInFilter)
-        self.assertTrue(result.exclude, 'Negation was lost during BaseInFilter wrapping')
+        self.assertTrue(result.exclude, "Negation was lost during BaseInFilter wrapping")
 
     def test_in_lookup_preserves_field_name(self) -> None:
         """Verify the field name is preserved when wrapping with `BaseInFilter`."""
@@ -131,5 +131,5 @@ class ToFilterMethod(TestCase):
         self.assertNotEqual(
             type(char_filter),
             type(int_filter),
-            'Different field types resolved to the same filter class',
+            "Different field types resolved to the same filter class",
         )

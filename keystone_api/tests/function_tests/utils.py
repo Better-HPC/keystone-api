@@ -14,18 +14,18 @@ from apps.users.models import Membership
 class CustomAsserts:
     """Custom assert methods for testing responses from REST endpoints."""
 
-    def assert_http_responses(self, endpoint: str, format: str = 'json', **kwargs) -> None:
+    def assert_http_responses(self, endpoint: str, format: str = "json", **kwargs) -> None:
         """Execute a series of API calls and assert the returned status matches the given values.
 
         Args:
             endpoint: The partial URL endpoint to perform requests against.
-            format: The serialization format to use for all requests in this call (e.g. 'json', 'multipart').
+            format: The serialization format to use for all requests in this call (e.g. "json", "multipart").
             **<request>: The integer status code expected by the given request type (get, post, etc.).
             **<request>_body: The data to include in the request (get_body, post_body, etc.).
             **<request>_headers: Header values to include in the request (get_headers, post_headers, etc.).
         """
 
-        http_methods = ['get', 'head', 'options', 'post', 'put', 'patch', 'delete', 'trace']
+        http_methods = ["get", "head", "options", "post", "put", "patch", "delete", "trace"]
         for method in http_methods:
             if (expected_status := kwargs.get(method)) is None:
                 continue
@@ -36,8 +36,8 @@ class CustomAsserts:
             with transaction.atomic():
                 response = http_callable(endpoint, **request_args)
                 failure_msg = (
-                    f'{method.upper()} request received {response.status_code} '
-                    f'instead of {expected_status} with content "{response.content}"'
+                    f"{method.upper()} request received {response.status_code} "
+                    f"instead of {expected_status} with content '{response.content}'"
                 )
 
                 self.assertEqual(response.status_code, expected_status, failure_msg)
@@ -57,12 +57,12 @@ class CustomAsserts:
         """
 
         args = {}
-        if body := kwargs.get(f'{method}_body'):
-            args['data'] = body
-            args['format'] = format
+        if body := kwargs.get(f"{method}_body"):
+            args["data"] = body
+            args["format"] = format
 
-        if headers := kwargs.get(f'{method}_headers'):
-            args['headers'] = headers
+        if headers := kwargs.get(f"{method}_headers"):
+            args["headers"] = headers
 
         return args
 
@@ -94,7 +94,7 @@ class TeamListFilteringTestMixin(ABC):
     """Test the filtering of returned records based on user team membership."""
 
     # Test configuration based on the target endpoint/model
-    team_field = 'team'
+    team_field = "team"
 
     @property
     @abstractmethod
@@ -153,8 +153,8 @@ class TeamListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-        response_data = response.json()['results']
-        response_ids = {record['id'] for record in response_data}
+        response_data = response.json()["results"]
+        response_ids = {record["id"] for record in response_data}
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -165,7 +165,7 @@ class TeamListFilteringTestMixin(ABC):
 
         response = self.client.get(self.endpoint)
 
-        response_data = response.json()['results']
+        response_data = response.json()["results"]
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(0, len(response_data))
 
@@ -174,7 +174,7 @@ class UserListFilteringTestMixin(ABC):
     """Test the filtering of returned records based on user ownership."""
 
     # Test configuration based on the target endpoint/model
-    user_field = 'user'
+    user_field = "user"
 
     @property
     @abstractmethod
@@ -217,8 +217,8 @@ class UserListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-        response_data = response.json()['results']
-        response_ids = {record['id'] for record in response_data}
+        response_data = response.json()["results"]
+        response_ids = {record["id"] for record in response_data}
         expected_ids = {record.id for record in self.user_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -230,8 +230,8 @@ class UserListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-        response_data = response.json()['results']
-        response_ids = {record['id'] for record in response_data}
+        response_data = response.json()["results"]
+        response_ids = {record["id"] for record in response_data}
         expected_ids = {record.id for record in self.all_records}
         self.assertSetEqual(expected_ids, response_ids)
 
@@ -241,6 +241,6 @@ class UserListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.other_user)
         response = self.client.get(self.endpoint)
 
-        response_data = response.json()['results']
+        response_data = response.json()["results"]
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(0, len(response_data))

@@ -13,9 +13,9 @@ from apps.notifications.shortcuts import send_notification_template
 from apps.users.factories import UserFactory
 from main import settings
 
-SUBJECT = 'Test Subject'
+SUBJECT = "Test Subject"
 NOTIFICATION_TYPE = Notification.NotificationType.general_message
-NOTIFICATION_METADATA = {'request_id': 42}
+NOTIFICATION_METADATA = {"request_id": 42}
 GENERAL_CONTEXT = {
     "user_first": "Foo",
     "user_last": "Bar",
@@ -24,7 +24,7 @@ GENERAL_CONTEXT = {
 }
 
 
-@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class SendNotificationTemplateMethod(TestCase):
     """Test sending email templates via the `send_notification_template` function."""
 
@@ -32,11 +32,11 @@ class SendNotificationTemplateMethod(TestCase):
         """Create test fixtures using mock data."""
 
         self.user = UserFactory(
-            email='test@example.com',
-            username='foobar',
-            first_name='Foo',
-            last_name='Bar',
-            password='foobar123',
+            email="test@example.com",
+            username="foobar",
+            first_name="Foo",
+            last_name="Bar",
+            password="foobar123",
         )
 
     def test_email_content(self) -> None:
@@ -45,7 +45,7 @@ class SendNotificationTemplateMethod(TestCase):
         send_notification_template(
             self.user,
             SUBJECT,
-            template='general.html',
+            template="general.html",
             context=GENERAL_CONTEXT,
             notification_type=NOTIFICATION_TYPE,
         )
@@ -62,7 +62,7 @@ class SendNotificationTemplateMethod(TestCase):
         send_notification_template(
             self.user,
             SUBJECT,
-            template='general.html',
+            template="general.html",
             context=GENERAL_CONTEXT,
             notification_type=NOTIFICATION_TYPE,
             notification_metadata=NOTIFICATION_METADATA,
@@ -79,7 +79,7 @@ class SendNotificationTemplateMethod(TestCase):
             send_notification_template(
                 self.user,
                 SUBJECT,
-                template='this_template_does_not_exist',
+                template="this_template_does_not_exist",
                 context=dict(),
                 notification_type=NOTIFICATION_TYPE,
             )
@@ -91,7 +91,7 @@ class SendNotificationTemplateMethod(TestCase):
             send_notification_template(
                 self.user,
                 SUBJECT,
-                template='general.html',
+                template="general.html",
                 context=dict(),
                 notification_type=NOTIFICATION_TYPE,
             )
@@ -100,18 +100,18 @@ class SendNotificationTemplateMethod(TestCase):
         """Verify an error is raised when the template file has insecure permissions."""
 
         with tempfile.TemporaryDirectory() as template_dir:
-            template_path = Path(template_dir) / 'general.html'
-            template_path.write_text('<p>{{ message }}</p>')
+            template_path = Path(template_dir) / "general.html"
+            template_path.write_text("<p>{{ message }}</p>")
             template_path.chmod(0o446)
 
             with (
                 override_settings(EMAIL_TEMPLATE_DIR=Path(template_dir)),
-                self.assertRaisesRegex(PermissionError, 'insecure file permissions'),
+                self.assertRaisesRegex(PermissionError, "insecure file permissions"),
             ):
                 send_notification_template(
                     self.user,
                     SUBJECT,
-                    template='general.html',
+                    template="general.html",
                     context=GENERAL_CONTEXT,
                     notification_type=NOTIFICATION_TYPE,
                 )
@@ -120,7 +120,7 @@ class SendNotificationTemplateMethod(TestCase):
         """Verify a duplicate notification raises an error before dispatching a second email."""
 
         kwargs = dict(
-            template='general.html',
+            template="general.html",
             context=GENERAL_CONTEXT,
             notification_type=NOTIFICATION_TYPE,
             notification_metadata=NOTIFICATION_METADATA,
@@ -133,4 +133,4 @@ class SendNotificationTemplateMethod(TestCase):
         with self.assertRaises(IntegrityError):
             send_notification_template(self.user, SUBJECT, **kwargs)
 
-        self.assertEqual(len(mail.outbox), 1, 'No second email should have been dispatched')
+        self.assertEqual(len(mail.outbox), 1, "No second email should have been dispatched")

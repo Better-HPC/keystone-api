@@ -38,7 +38,7 @@ class ReferenceResolutionError(Exception):
 
         self.token = token
         self.reason = reason
-        super().__init__(f'Cannot resolve reference "{token}": {reason}')
+        super().__init__(f"Cannot resolve reference '{token}': {reason}")
 
 
 class DryRunRollbackError(Exception):

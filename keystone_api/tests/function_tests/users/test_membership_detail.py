@@ -8,7 +8,7 @@ from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'users:membership-detail'
+VIEW_NAME = "users:membership-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -122,9 +122,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             put_body={
-                'user': self.non_team_member.pk,
-                'team': self.team.pk,
-                'role': Membership.Role.MEMBER
+                "user": self.non_team_member.pk,
+                "team": self.team.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -143,9 +143,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             put_body={
-                'user': self.non_team_member.pk,
-                'team': self.team.pk,
-                'role': Membership.Role.MEMBER
+                "user": self.non_team_member.pk,
+                "team": self.team.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -164,9 +164,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             put_body={
-                'user': self.non_team_member.pk,
-                'team': self.team.pk,
-                'role': Membership.Role.MEMBER
+                "user": self.non_team_member.pk,
+                "team": self.team.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -182,7 +182,7 @@ class InactiveTeamAccess(APITestCase):
 
         self.team_member = membership.user
         self.staff_user = UserFactory(is_staff=True)
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': membership.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": membership.id})
 
     def test_staff_can_retrieve_membership_for_inactive_team(self) -> None:
         """Verify staff users can retrieve membership records for inactive teams."""
@@ -195,7 +195,7 @@ class InactiveTeamAccess(APITestCase):
         """Verify staff users can modify membership records for inactive teams."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.patch(self.endpoint, {'role': Membership.Role.ADMIN})
+        response = self.client.patch(self.endpoint, {"role": Membership.Role.ADMIN})
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_staff_can_delete_membership_for_inactive_team(self) -> None:
@@ -216,7 +216,7 @@ class InactiveTeamAccess(APITestCase):
         """Verify non-staff users cannot modify membership records for inactive teams."""
 
         self.client.force_authenticate(user=self.team_member)
-        response = self.client.patch(self.endpoint, {'role': Membership.Role.ADMIN})
+        response = self.client.patch(self.endpoint, {"role": Membership.Role.ADMIN})
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
     def test_non_staff_cannot_delete_membership_for_inactive_team(self) -> None:

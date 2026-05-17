@@ -9,10 +9,10 @@ from rest_framework.test import APITransactionTestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'health:prometheus'
+VIEW_NAME = "health:prometheus"
 
 
-@patch('apps.health.views.BaseHealthCheckView.get_cached_results', return_value=[])
+@patch("apps.health.views.BaseHealthCheckView.get_cached_results", return_value=[])
 class EndpointPermissions(APITransactionTestCase, CustomAsserts):
     """Test endpoint user permissions.
 

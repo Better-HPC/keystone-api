@@ -144,7 +144,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
         allowed_types = settings.ALLOWED_FILE_TYPES
         mime_type, _ = guess_type(value.name)
         if mime_type not in allowed_types:
-            raise serializers.ValidationError(f'File type "{mime_type}" is not allowed.')
+            raise serializers.ValidationError(f"File type '{mime_type}' is not allowed.")
 
         return value
 
