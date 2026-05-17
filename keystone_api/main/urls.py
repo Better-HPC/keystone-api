@@ -21,8 +21,3 @@ urlpatterns = [
     path("users/", include("apps.users.urls", namespace="users")),
     path("version/", include("apps.version.urls", namespace="version")),
 ]
-
-if settings.DEBUG:
-    urlpatterns += [
-        path('silk/', include('silk.urls', namespace='silk')),
-    ]
