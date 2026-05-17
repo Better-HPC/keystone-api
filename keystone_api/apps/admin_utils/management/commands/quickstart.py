@@ -154,7 +154,7 @@ class Command(StdOutUtils, BaseCommand):
             def handle_message(self, message: EmailMessage) -> None:
                 print(
                     f"  Received message from: {message['from']}\n"
-                    f"  To: {message["to"]}\n"
+                    f"  To: {message['to']}\n"
                     f"  Subject: {message['subject']}\n"
                     f"  Body:", message.get_payload()
                 )
