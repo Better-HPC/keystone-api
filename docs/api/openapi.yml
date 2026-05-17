@@ -13008,7 +13008,7 @@ components:
       - title
     JobExecutionError:
       type: object
-      description: Job result serializer for job's that fail with a `JobExecutionError`.
+      description: Job result serializer for jobs that fail with a `JobExecutionError`.
       properties:
         detail:
           type: string
