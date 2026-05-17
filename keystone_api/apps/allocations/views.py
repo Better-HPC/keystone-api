@@ -119,8 +119,9 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     queryset = AllocationRequest.objects.prefetch_related(
         "history",
         "assignees",
-        Prefetch("publications", queryset=Publication.objects.select_related("team").order_by("title")),
-        Prefetch("grants", queryset=Grant.objects.select_related("team").order_by("title")),
+        "attachment_set",
+        Prefetch("publications", queryset=Publication.objects.order_by("title")),
+        Prefetch("grants", queryset=Grant.objects.order_by("title")),
         Prefetch("allocation_set", queryset=ResourceAllocation.objects.select_related("cluster").order_by("cluster__name")),
         Prefetch("comments", queryset=Comment.objects.select_related("user").order_by("created")),
     ).select_related(
@@ -427,7 +428,10 @@ class ClusterViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ClusterPermissions]
     search_fields = ["name", "description"]
     serializer_class = ClusterSerializer
-    queryset = Cluster.objects.all()
+    queryset = Cluster.objects.prefetch_related(
+        "history",
+        "access_teams"
+    )
 
     def get_queryset(self) -> QuerySet[Cluster]:
         """Return a queryset of clusters visible to the requesting user.
