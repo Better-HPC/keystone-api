@@ -38,7 +38,7 @@ class TeamFactory(DjangoModelFactory):
     def users(self: Team, create: bool, extracted: list[User] | None, **kwargs) -> None:
         """Populate the many-to-many `users` relationship."""
 
-        if extracted and not create:
+        if create and extracted:
             for user in extracted:
                 self.users.add(user)
 
