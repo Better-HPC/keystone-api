@@ -15,9 +15,9 @@ from apps.users.factories import UserFactory
 from .models import *
 
 __all__ = [
-    'AuditLogFactory',
-    'RequestLogFactory',
-    'TaskResultFactory',
+    "AuditLogFactory",
+    "RequestLogFactory",
+    "TaskResultFactory",
 ]
 
 
@@ -31,7 +31,7 @@ class AuditLogFactory(DjangoModelFactory):
 
     content_type = factory.LazyFunction(lambda: ContentType.objects.get_for_model(AuditLog))
     object_pk = factory.Sequence(lambda n: str(n + 1))
-    object_repr = factory.Faker('sentence', nb_words=4)
+    object_repr = factory.Faker("sentence", nb_words=4)
     action = AuditLog.Action.UPDATE
     changes = factory.LazyFunction(dict)
     actor = factory.SubFactory(UserFactory)
@@ -45,11 +45,11 @@ class RequestLogFactory(DjangoModelFactory):
 
         model = RequestLog
 
-    method = factory.Iterator(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
-    endpoint = factory.Faker('uri_path')
+    method = factory.Iterator(["GET", "POST", "PUT", "PATCH", "DELETE"])
+    endpoint = factory.Faker("uri_path")
     response_code = 200
-    remote_address = factory.Faker('ipv4')
-    cid = factory.Faker('uuid4')
+    remote_address = factory.Faker("ipv4")
+    cid = factory.Faker("uuid4")
     user = factory.SubFactory(UserFactory)
 
 
@@ -61,7 +61,7 @@ class TaskResultFactory(DjangoModelFactory):
 
         model = TaskResult
 
-    task_id = factory.Faker('uuid4')
-    task_name = factory.Faker('slug')
-    status = 'SUCCESS'
+    task_id = factory.Faker("uuid4")
+    task_name = factory.Faker("slug")
+    status = "SUCCESS"
     result = factory.LazyFunction(dict)

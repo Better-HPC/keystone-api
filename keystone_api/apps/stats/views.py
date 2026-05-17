@@ -115,7 +115,6 @@ class AllocationRequestStatsView(AbstractTeamStatsView, GenericAPIView):
         single aggregate query to avoid issuing one query per metric.
         """
 
-        # Cache `now()` so all lifecycle buckets share a single reference point
         now_ts = now()
         qs = self.filter_queryset(self.get_queryset())
 
@@ -216,16 +215,15 @@ class GrantStatsView(AbstractTeamStatsView, GenericAPIView):
         counts and funding aggregates are collapsed into a single query.
         """
 
-        # Cache `now()` so lifecycle buckets share a single reference point
-        current = now()
+        now_ts = now()
         zero = Decimal("0.00")
 
         qs = self.filter_queryset(self.get_queryset())
 
         # Query filters for grant records by lifecycle stage
-        is_upcoming = Q(start_date__gt=current)
-        is_active = Q(start_date__lte=current, end_date__gt=current)
-        is_expired = Q(end_date__lte=current)
+        is_upcoming = Q(start_date__gt=now_ts)
+        is_active = Q(start_date__lte=now_ts, end_date__gt=now_ts)
+        is_expired = Q(end_date__lte=now_ts)
 
         stats = qs.aggregate(
             grant_count=Count("id"),

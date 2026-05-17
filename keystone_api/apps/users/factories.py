@@ -69,8 +69,8 @@ class UserFactory(DjangoModelFactory):
     date_joined = factory.Faker("date_time_between", start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
 
     @factory.post_generation
-    def password(self: User, create, extracted, **kwargs) -> None:
-        """Hashes the user's password before persisting the value."""
+    def password(self: User, create: bool, extracted: list[User], **kwargs) -> None:
+        """Hash the user's password before persisting the value."""
 
         if extracted is not None:
             self.password = make_password(extracted)

@@ -15,36 +15,11 @@ from .models import *
 __all__ = ["MembershipPermissions", "TeamPermissions", "UserPermissions"]
 
 
-class TeamPermissions(permissions.BasePermission):
-    """RBAC permissions model for `Team` objects.
-
-    Permissions:
-        - Grants read access to all users.
-        - Grants write access to staff and team administrators.
-    """
-
-    def has_object_permission(self, request: Request, view: View, obj: Team) -> bool:
-        """Return whether the incoming HTTP request has permission to access a database record."""
-
-        # Staff have all permissions
-        if request.user.is_staff:
-            return True
-
-        # non-staff cannot access inactive teams
-        if not obj.is_active:
-            return False
-
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return obj.get_privileged_members().filter(pk=request.user.pk).exists()
-
-
-class MembershipPermissions(TeamPermissions):
+class MembershipPermissions(permissions.BasePermission):
     """RBAC permissions model for `Membership` objects.
 
     Permissions:
-        - Grants read access to all users.
+        - Grants read access to all users accessing memberships for active teams.
         - Grants write access to staff and team administrators.
         - Grants write access to users deleting their own membership records.
     """
@@ -81,7 +56,7 @@ class MembershipPermissions(TeamPermissions):
         if request.user.is_staff:
             return True
 
-        # non-staff cannot access inactive teams
+        # Non-staff cannot access inactive teams
         if not obj.team.is_active:
             return False
 
@@ -91,13 +66,38 @@ class MembershipPermissions(TeamPermissions):
         return obj.team.get_privileged_members().filter(pk=request.user.pk).exists()
 
 
+class TeamPermissions(permissions.BasePermission):
+    """RBAC permissions model for `Team` objects.
+
+    Permissions:
+        - Grants read access to all users accessing active teams.
+        - Grants write access to staff and team administrators.
+    """
+
+    def has_object_permission(self, request: Request, view: View, obj: Team) -> bool:
+        """Return whether the incoming HTTP request has permission to access a database record."""
+
+        # Staff have all permissions
+        if request.user.is_staff:
+            return True
+
+        # Non-staff cannot access inactive teams
+        if not obj.is_active:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.get_privileged_members().filter(pk=request.user.pk).exists()
+
+
 class UserPermissions(permissions.BasePermission):
     """RBAC permissions model for `User` objects.
 
     Permissions:
         - Grants read access to all users.
-        - Grants write to all staff.
-        - Grants write access to users modifying their own user record.
+        - Grants write access to all staff.
+        - Grants update/delete access to users modifying their own user record.
     """
 
     def has_permission(self, request: Request, view: View) -> bool:

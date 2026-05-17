@@ -1,6 +1,6 @@
 """Custom schema generation for DRF Spectacular.
 
-Schema classes define how API endpoints are documented in the project's
+Schema classes define how API endpoints are documented in the project"s
 OpenAPI specification. This includes determining how query parameters,
 request bodies, and responses are rendered in the generated documentation.
 """
@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.openapi import AutoSchema
 from rest_framework.filters import BaseFilterBackend
 
-__all__ = ['FilterGetAutoSchema', 'mark_all_get_fields_required']
+__all__ = ["FilterGetAutoSchema", "mark_all_get_fields_required"]
 
 
 class FilterGetAutoSchema(AutoSchema):
@@ -27,7 +27,7 @@ class FilterGetAutoSchema(AutoSchema):
         # The parent class returns an empty list for non-list actions
         # We override to return the view's filter backends for all `GET` operations
         if self.method == "GET":
-            return getattr(self.view, 'filter_backends', [])
+            return getattr(self.view, "filter_backends", [])
 
         return []
 
@@ -43,18 +43,18 @@ def _get_response_schema_names(result: dict) -> set[str]:
     """
 
     names = set()
-    for path in result['paths'].values():
-        operation = path.get('get', {})
-        for response in operation.get('responses', {}).values():
+    for path in result["paths"].values():
+        operation = path.get("get", {})
+        for response in operation.get("responses", {}).values():
             ref = (
                 response
-                .get('content', {})
-                .get('application/json', {})
-                .get('schema', {})
-                .get('$ref', '')
+                .get("content", {})
+                .get("application/json", {})
+                .get("schema", {})
+                .get("$ref", "")
             )
             if ref:
-                names.add(ref.split('/')[-1])
+                names.add(ref.split("/")[-1])
 
     return names
 
@@ -80,15 +80,15 @@ def mark_all_get_fields_required(result: dict, generator, request, public) -> di
 
     response_schema_names = _get_response_schema_names(result)
 
-    for name, schema in result['components']['schemas'].items():
+    for name, schema in result["components"]["schemas"].items():
         if name not in response_schema_names:
             continue
 
-        properties = schema.get('properties', {})
-        schema['required'] = sorted(
+        properties = schema.get("properties", {})
+        schema["required"] = sorted(
             field_name
             for field_name, field_schema in properties.items()
-            if not field_schema.get('writeOnly', False)
+            if not field_schema.get("writeOnly", False)
         )
 
     return result

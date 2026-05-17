@@ -4129,9 +4129,9 @@ paths:
   /authentication/whoami/:
     get:
       operationId: authentication_whoami_retrieve
-      description: 'Returns metadata for the currently authenticated user, including
+      description: Returns metadata for the currently authenticated user, including
         personal data and team memberships. This endpoint can also be used to verify
-        general authentication status. '
+        general authentication status.
       summary: Retrieve metadata for the authenticated user.
       tags:
       - Authentication
@@ -4148,11 +4148,11 @@ paths:
   /batch/:
     post:
       operationId: batch_create
-      description: Executes multiple HTTP operations atomically within a single atomic
-        transaction. If any step returns a 4xx or 5xx status, the job halts and all
-        changes are rolled back. Steps may reference the response body of previous
-        steps using @ref{alias.dotpath} tokens. File parts uploaded alongside the
-        job definition may be referenced in step payloads using @file{name} tokens,
+      description: Executes multiple HTTP operations sequentially within a single
+        atomic transaction. If any step returns a 4xx or 5xx status, the job halts
+        and all changes are rolled back. Steps may reference the response body of
+        previous steps using @ref{alias.dotpath} tokens. File parts uploaded alongside
+        the job definition may be referenced in step payloads using @file{name} tokens,
         where `name` is the multipart field name. When `dry_run` is true, all steps
         execute but no database changes are persisted.
       summary: Execute a batch job.
@@ -4187,8 +4187,7 @@ paths:
     get:
       operationId: config_retrieve
       description: Returns application settings relevant to the frontend client. Includes
-        application metadata, file upload constraints, feature flags, and session
-        settings.
+        application metadata, file upload constraints, and session settings.
       summary: Retrieve application configuration.
       tags:
       - Utils - Configuration
@@ -7101,8 +7100,8 @@ paths:
     get:
       operationId: research_grants_list
       description: Returns a list of funding grants. Non-staff users are only returned
-        grants belonging to teams where they hold membership. Staff users are returned
-        all grants.
+        grants for teams where they hold membership. Staff users are returned all
+        grants.
       summary: List funding grants.
       parameters:
       - name: _limit
@@ -7596,7 +7595,7 @@ paths:
     post:
       operationId: research_grants_create
       description: Creates a new funding grant. Write access is granted to staff users
-        and team members.
+        and members of the target team.
       summary: Create a funding grant.
       tags:
       - Research - Grants
@@ -7625,8 +7624,8 @@ paths:
   /research/grants/{id}/:
     get:
       operationId: research_grants_retrieve
-      description: Returns a single funding grant by its ID. Read and write access
-        is granted to staff users and team members.
+      description: Returns a single funding grant by ID. Non-staff users can only
+        retrieve grants for teams where they hold membership.
       summary: Retrieve a funding grant.
       parameters:
       - in: path
@@ -7650,7 +7649,7 @@ paths:
     put:
       operationId: research_grants_update
       description: Replaces an existing funding grant with new values. Write access
-        is granted to staff users and team members.
+        is granted to staff users and members of the target team.
       summary: Update a funding grant.
       parameters:
       - in: path
@@ -7686,7 +7685,7 @@ paths:
     patch:
       operationId: research_grants_partial_update
       description: Partially updates an existing funding grant with new values. Write
-        access is granted to staff users and team members.
+        access is granted to staff users and members of the target team.
       summary: Partially update a funding grant.
       parameters:
       - in: path
@@ -7720,8 +7719,8 @@ paths:
           description: ''
     delete:
       operationId: research_grants_destroy
-      description: Deletes a single funding grant by its ID. Write access is granted
-        to staff users and team members.
+      description: Deletes a funding grant by ID. Write access is granted to staff
+        users and members of the target team.
       summary: Delete a funding grant.
       parameters:
       - in: path
@@ -7742,8 +7741,8 @@ paths:
     get:
       operationId: research_publications_list
       description: Returns a list of publications. Non-staff users are only returned
-        publications belonging to teams where they hold membership. Staff users are
-        returned all publications.
+        publications for teams where they hold membership. Staff users are returned
+        all publications.
       summary: List publications.
       parameters:
       - name: _limit
@@ -8283,7 +8282,7 @@ paths:
     post:
       operationId: research_publications_create
       description: Creates a new publication. Write access is granted to staff users
-        and team members.
+        and members of the target team.
       summary: Create a publication.
       tags:
       - Research - Publications
@@ -8312,8 +8311,8 @@ paths:
   /research/publications/{id}/:
     get:
       operationId: research_publications_retrieve
-      description: Returns a single publication by its ID. Read and write access is
-        granted to staff users and team members.
+      description: Returns a single publication by ID. Non-staff users can only retrieve
+        publications for teams where they hold membership.
       summary: Retrieve a publication.
       parameters:
       - in: path
@@ -8337,7 +8336,7 @@ paths:
     put:
       operationId: research_publications_update
       description: Replaces an existing publication with new values. Write access
-        is granted to staff users and team members.
+        is granted to staff users and members of the target team.
       summary: Update a publication.
       parameters:
       - in: path
@@ -8373,7 +8372,7 @@ paths:
     patch:
       operationId: research_publications_partial_update
       description: Partially updates an existing publication with new values. Write
-        access is granted to staff users and team members.
+        access is granted to staff users and members of the target team.
       summary: Partially update a publication.
       parameters:
       - in: path
@@ -8407,8 +8406,8 @@ paths:
           description: ''
     delete:
       operationId: research_publications_destroy
-      description: Deletes a single publication by its ID. Write access is granted
-        to staff users and team members.
+      description: Deletes a publication by ID. Write access is granted to staff users
+        and members of the target team.
       summary: Delete a publication.
       parameters:
       - in: path
@@ -10598,7 +10597,7 @@ paths:
     post:
       operationId: users_memberships_create
       description: Creates a new team membership. Write access is granted to staff
-        users and team owners/admins.
+        users and owners/admins of the target team.
       summary: Create a team membership.
       tags:
       - Users - Team Membership
@@ -10652,7 +10651,7 @@ paths:
     put:
       operationId: users_memberships_update
       description: Replaces an existing team membership with new values. Write access
-        is granted to staff users and team owners/admins.
+        is granted to staff users and owners/admins of the target team.
       summary: Update a team membership.
       parameters:
       - in: path
@@ -10688,7 +10687,7 @@ paths:
     patch:
       operationId: users_memberships_partial_update
       description: Partially updates an existing team membership with new values.
-        Write access is granted to staff users and team owners/admins.
+        Write access is granted to staff users and owners/admins of the target team.
       summary: Partially update a team membership.
       parameters:
       - in: path
@@ -10744,7 +10743,7 @@ paths:
     get:
       operationId: users_teams_list
       description: Returns a list of teams. Non-staff users are only returned active
-        teams they are a member of. Staff users are returned all teams.
+        teams. Staff users are returned all teams.
       summary: List teams.
       parameters:
       - name: _limit
@@ -10953,8 +10952,8 @@ paths:
           description: ''
     post:
       operationId: users_teams_create
-      description: Creates a new team. Write access is granted to staff users and
-        team owners/admins.
+      description: Creates a new team. All authenticated users can only create active
+        teams. Inactive teams can only be created by staff users.
       summary: Create a team.
       tags:
       - Users - Teams
@@ -10984,7 +10983,7 @@ paths:
     get:
       operationId: users_teams_retrieve
       description: Returns a single team by ID. Non-staff users can only retrieve
-        active teams they are a member of.
+        active teams.
       summary: Retrieve a team.
       parameters:
       - in: path
@@ -11099,7 +11098,9 @@ paths:
   /users/users/:
     get:
       operationId: users_users_list
-      description: Returns a list of all user accounts.
+      description: Returns a list of all user accounts. Staff users are returned records
+        with all fields, including privileged values. Non-staff users are only returned
+        restricted fields.
       summary: List user accounts.
       parameters:
       - name: _limit
@@ -11828,8 +11829,8 @@ paths:
     get:
       operationId: users_users_retrieve
       description: Returns a single user account by ID. Staff users are returned all
-        fields, including privileged values. Non-staff users are only returned restricted
-        fields.
+        record fields, including privileged values. Non-staff users are only returned
+        restricted fields.
       summary: Retrieve a user account.
       parameters:
       - in: path
@@ -11927,7 +11928,7 @@ paths:
       operationId: users_users_destroy
       description: Deletes a user account by ID. Write access is granted to staff
         users and the account owner.
-      summary: Delete a user.
+      summary: Delete a user account.
       parameters:
       - in: path
         name: id
@@ -12959,6 +12960,7 @@ components:
           nullable: true
         team:
           type: integer
+          readOnly: true
       required:
       - agency
       - amount
@@ -12997,14 +12999,11 @@ components:
         description:
           type: string
           nullable: true
-        team:
-          type: integer
       required:
       - agency
       - amount
       - grant_number
       - start_date
-      - team
       - title
     JobExecutionError:
       type: object
@@ -14359,6 +14358,7 @@ components:
           maxLength: 20
         team:
           type: integer
+          readOnly: true
       required:
       - id
       - team
@@ -14398,10 +14398,7 @@ components:
           type: string
           nullable: true
           maxLength: 20
-        team:
-          type: integer
       required:
-      - team
       - title
     RequestLog:
       type: object

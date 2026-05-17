@@ -8,7 +8,7 @@ from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'users:team-detail'
+VIEW_NAME = "users:team-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -38,7 +38,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.non_team_member = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.team.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.team.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -101,8 +101,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'New Name', 'members': []},
-            patch_body={'name': 'New Name'},
+            put_body={"name": "New Name", "members": []},
+            patch_body={"name": "New Name"},
         )
 
     def test_team_owner_permissions(self) -> None:
@@ -119,8 +119,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'New Name', 'members': []},
-            patch_body={'name': 'New Name'},
+            put_body={"name": "New Name", "members": []},
+            patch_body={"name": "New Name"},
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -137,8 +137,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={'name': 'New Name', 'members': []},
-            patch_body={'name': 'New Name'},
+            put_body={"name": "New Name", "members": []},
+            patch_body={"name": "New Name"},
         )
 
 
@@ -152,7 +152,7 @@ class SlugHandling(APITestCase):
         self.owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
 
         self.client.force_authenticate(user=self.owner)
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.team.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.team.id})
 
     def test_slug_updates_when_name_changes(self) -> None:
         """Verify the slug value is automatically updated when the team name changes."""
@@ -192,7 +192,7 @@ class SlugHandling(APITestCase):
         # Create two initial team records
         team1 = TeamFactory(name="Team 1")
         team2 = TeamFactory(name="Team 2")
-        team2_endpoint = reverse(VIEW_NAME, kwargs={'pk': team2.id})
+        team2_endpoint = reverse(VIEW_NAME, kwargs={"pk": team2.id})
 
         # Rename second team so the name renames unique but the slug conflicts with the first team
         response1 = self.client.patch(team2_endpoint, {"name": team1.slug})
@@ -208,7 +208,7 @@ class InactiveTeamAccess(APITestCase):
         self.inactive_team = TeamFactory(is_active=False)
         self.team_member = MembershipFactory(team=self.inactive_team, role=Membership.Role.MEMBER).user
         self.staff_user = UserFactory(is_staff=True)
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': self.inactive_team.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.inactive_team.id})
 
     def test_staff_can_retrieve_inactive_team(self) -> None:
         """Verify staff users can retrieve inactive team records."""
@@ -221,7 +221,7 @@ class InactiveTeamAccess(APITestCase):
         """Verify staff users can modify inactive team records."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.patch(self.endpoint, {'name': 'Updated Name'})
+        response = self.client.patch(self.endpoint, {"name": "Updated Name"})
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_staff_can_delete_inactive_team(self) -> None:
@@ -242,7 +242,7 @@ class InactiveTeamAccess(APITestCase):
         """Verify non-staff users cannot modify inactive team records."""
 
         self.client.force_authenticate(user=self.team_member)
-        response = self.client.patch(self.endpoint, {'name': 'Updated Name'})
+        response = self.client.patch(self.endpoint, {"name": "Updated Name"})
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
     def test_non_staff_cannot_delete_inactive_team(self) -> None:

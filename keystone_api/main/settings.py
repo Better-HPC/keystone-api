@@ -15,9 +15,9 @@ sys.path.insert(0, str(BASE_DIR))
 
 # Application metadata
 
-dist = importlib.metadata.distribution('keystone-api')
-VERSION = dist.metadata['version']
-SUMMARY = dist.metadata['summary']
+dist = importlib.metadata.distribution("keystone-api")
+VERSION = dist.metadata["version"]
+SUMMARY = dist.metadata["summary"]
 
 env = environ.Env()
 
@@ -34,7 +34,7 @@ _trusted_local = [
     "http://127.0.0.1:8000",
 ]
 
-SECRET_KEY = os.environ.get('SECURE_SECRET_KEY', get_random_secret_key())
+SECRET_KEY = os.environ.get("SECURE_SECRET_KEY", get_random_secret_key())
 ALLOWED_HOSTS = env.list("SECURE_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 _SECURE_SSL_TOKENS = env.bool("SECURE_SSL_TOKENS", False)
@@ -114,71 +114,71 @@ SILENCED_SYSTEM_CHECKS = [
 
 # App Configuration
 
-ROOT_URLCONF = 'main.urls'
-LOGIN_REDIRECT_URL = '/'
+ROOT_URLCONF = "main.urls"
+LOGIN_REDIRECT_URL = "/"
 SITE_ID = 1
 
 INSTALLED_APPS = [
-    'jazzmin',
-    'auditlog',
-    'corsheaders',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'health_check',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'django_celery_beat',
-    'django_celery_results',
-    'django_filters',
-    'django_prometheus',
-    'drf_spectacular',
-    'plugins',
-    'apps.admin_utils',
-    'apps.allocations',
-    'apps.authentication',
-    'apps.batch',
-    'apps.config',
-    'apps.health',
-    'apps.logging',
-    'apps.notifications',
-    'apps.openapi',
-    'apps.research_products',
-    'apps.scheduler',
-    'apps.stats',
-    'apps.users',
+    "jazzmin",
+    "auditlog",
+    "corsheaders",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "health_check",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "django_celery_beat",
+    "django_celery_results",
+    "django_filters",
+    "django_prometheus",
+    "drf_spectacular",
+    "plugins",
+    "apps.admin_utils",
+    "apps.allocations",
+    "apps.authentication",
+    "apps.batch",
+    "apps.config",
+    "apps.health",
+    "apps.logging",
+    "apps.notifications",
+    "apps.openapi",
+    "apps.research_products",
+    "apps.scheduler",
+    "apps.stats",
+    "apps.users",
 ]
 
 MIDDLEWARE = [
-    'django_prometheus.middleware.PrometheusBeforeMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'apps.logging.middleware.LogRequestMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "apps.logging.middleware.LogRequestMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "servestatic.middleware.ServeStaticMiddleware",
-    'auditlog.middleware.AuditlogMiddleware',
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
+    "auditlog.middleware.AuditlogMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 TEMPLATES = [
     {  # The default backend required by Django builtins (e.g., the admin)
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -205,33 +205,33 @@ JAZZMIN_SETTINGS = {
 # REST API settings
 
 REST_FRAMEWORK = {
-    'SEARCH_PARAM': '_search',
-    'ORDERING_PARAM': '_order',
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+    "SEARCH_PARAM": "_search",
+    "ORDERING_PARAM": "_order",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated"
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle"
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': env.str('API_THROTTLE_ANON', '120/min'),
-        'user': env.str('API_THROTTLE_USER', '300/min')
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": env.str("API_THROTTLE_ANON", "120/min"),
+        "user": env.str("API_THROTTLE_USER", "300/min")
     },
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
     ],
-    'DEFAULT_FILTER_BACKENDS': (
-        'plugins.filters.AutoFilterBackend',
-        'rest_framework.filters.OrderingFilter',
-        'rest_framework.filters.SearchFilter'
+    "DEFAULT_FILTER_BACKENDS": (
+        "plugins.filters.AutoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+        "rest_framework.filters.SearchFilter"
     ),
-    'DEFAULT_PAGINATION_CLASS': 'plugins.pagination.PaginationHandler',
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_PAGINATION_CLASS": "plugins.pagination.PaginationHandler",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # Audit logging
@@ -241,77 +241,77 @@ AUDITLOG_CID_HEADER = "X-KEYSTONE-CID"  # Use uppercase and dashes
 # Customize the generation of OpenAPI specifications
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Keystone API',
-    'DESCRIPTION': SUMMARY,
-    'VERSION': VERSION,
-    'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
-    'COMPONENT_SPLIT_PATCH': True,
-    'ENUM_NAME_OVERRIDES': {
-        'RequestStatusChoices': 'apps.allocations.models.AllocationRequest.StatusChoices',
-        'ReviewStatusChoices': 'apps.allocations.models.AllocationReview.StatusChoices',
+    "TITLE": "Keystone API",
+    "DESCRIPTION": SUMMARY,
+    "VERSION": VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "COMPONENT_SPLIT_PATCH": True,
+    "ENUM_NAME_OVERRIDES": {
+        "RequestStatusChoices": "apps.allocations.models.AllocationRequest.StatusChoices",
+        "ReviewStatusChoices": "apps.allocations.models.AllocationReview.StatusChoices",
     },
-    'POSTPROCESSING_HOOKS': [
-        'plugins.schemas.mark_all_get_fields_required',
+    "POSTPROCESSING_HOOKS": [
+        "plugins.schemas.mark_all_get_fields_required",
     ],
 }
 
 # Redis backend and Celery scheduler
 
-_redis_host = env.url('REDIS_HOST', '127.0.0.1').geturl()
-_redis_port = env.int('REDIS_PORT', 6379)
-_redis_db = env.int('REDIS_DB', 0)
-_redis_pass = env.str('REDIS_PASSWORD', '')
+_redis_host = env.url("REDIS_HOST", "127.0.0.1").geturl()
+_redis_port = env.int("REDIS_PORT", 6379)
+_redis_db = env.int("REDIS_DB", 0)
+_redis_pass = env.str("REDIS_PASSWORD", "")
 
-REDIS_URL = f'redis://:{_redis_pass}@{_redis_host}:{_redis_port}'
+REDIS_URL = f"redis://:{_redis_pass}@{_redis_host}:{_redis_port}"
 
-CELERY_BROKER_URL = REDIS_URL + f'/{_redis_db}'
-CELERY_CACHE_BACKEND = 'django-cache'
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = REDIS_URL + f"/{_redis_db}"
+CELERY_CACHE_BACKEND = "django-cache"
+CELERY_RESULT_BACKEND = "django-db"
 CELERY_RESULT_EXTENDED = True
 
 # Email server
 
-EMAIL_FROM_ADDRESS = env.str('EMAIL_FROM_ADDRESS', 'noreply@keystone.bot')
-EMAIL_TEMPLATE_DIR = Path(env.path('EMAIL_TEMPLATE_DIR', '/etc/keystone/templates'))
-EMAIL_DEFAULT_DIR = BASE_DIR / 'templates'
+EMAIL_FROM_ADDRESS = env.str("EMAIL_FROM_ADDRESS", "noreply@keystone.bot")
+EMAIL_TEMPLATE_DIR = env.path("EMAIL_TEMPLATE_DIR", Path("/etc/keystone/templates"))
+EMAIL_DEFAULT_DIR = BASE_DIR / "templates"
 
-if _email_path := env.get_value('EMAIL_DEBUG_DIR', default=None):
-    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+if _email_path := env.get_value("EMAIL_DEBUG_DIR", default=None):
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = _email_path
 
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = env.str('EMAIL_HOST', 'localhost')
-    EMAIL_PORT = env.int('EMAIL_PORT', 25)
-    EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', '')
-    EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = env.str("EMAIL_HOST", "localhost")
+    EMAIL_PORT = env.int("EMAIL_PORT", 25)
+    EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", "")
+    EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", False)
 
 # Database
 
 DATABASES = dict()
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-_db_name = env.str('DB_NAME', 'keystone')
-_db_path = (BASE_DIR / _db_name).with_suffix('.db')
-if env.bool('DB_POSTGRES_ENABLE', False):
-    DATABASES['default'] = {
-        'ENGINE': 'django_prometheus.db.backends.postgresql',
-        'NAME': _db_name,
-        'USER': env.str('DB_USER', ''),
-        'PASSWORD': env.str('DB_PASSWORD', ''),
-        'HOST': env.str('DB_HOST', 'localhost'),
-        'PORT': env.str('DB_PORT', '5432'),
+_db_name = env.str("DB_NAME", "keystone")
+_db_path = (BASE_DIR / _db_name).with_suffix(".db")
+if env.bool("DB_POSTGRES_ENABLE", False):
+    DATABASES["default"] = {
+        "ENGINE": "django_prometheus.db.backends.postgresql",
+        "NAME": _db_name,
+        "USER": env.str("DB_USER", ""),
+        "PASSWORD": env.str("DB_PASSWORD", ""),
+        "HOST": env.str("DB_HOST", "localhost"),
+        "PORT": env.str("DB_PORT", "5432"),
     }
 
 else:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': _db_path,
-        'timeout': 30,
-        'PRAGMA': {
-            'journal_mode': 'wal',
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": _db_path,
+        "timeout": 30,
+        "PRAGMA": {
+            "journal_mode": "wal",
         }
     }
 
@@ -327,7 +327,7 @@ AUTH_LDAP_ALWAYS_UPDATE_USER = True
 AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", True)
 AUTH_LDAP_BIND_DN = env.str("AUTH_LDAP_BIND_DN", "")
 AUTH_LDAP_BIND_PASSWORD = env.str("AUTH_LDAP_BIND_PASSWORD", "")
-AUTH_LDAP_USER_ATTR_MAP = env.dict('AUTH_LDAP_ATTR_MAP', default=dict())
+AUTH_LDAP_USER_ATTR_MAP = env.dict("AUTH_LDAP_ATTR_MAP", default=dict())
 AUTH_LDAP_USER_FILTER = env.str("AUTH_LDAP_USER_FILTER", "(objectClass=account)")
 
 # LDAP settings that require the LDAP dependency to initialize
@@ -342,30 +342,30 @@ if AUTH_LDAP_SERVER_URI := env.url("AUTH_LDAP_SERVER_URI", "").geturl():
         env.str("AUTH_LDAP_LOGIN_FILTER", "(uid=%(user)s)")
     )
 
-    if env.bool('AUTH_LDAP_REQUIRE_CERT', False):
+    if env.bool("AUTH_LDAP_REQUIRE_CERT", False):
         AUTH_LDAP_GLOBAL_OPTIONS = {ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER}
 
     else:
         AUTH_LDAP_GLOBAL_OPTIONS = {ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_TRY}
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 # Static file handling (CSS, JavaScript, Images)
 
-MAX_FILE_SIZE = env.int('CONFIG_UPLOAD_SIZE', 2.5 * 1024 * 1024)  # 2.5 MB
-MAX_FILE_COUNT = env.int('CONFIG_UPLOAD_COUNT', 15)
+MAX_FILE_SIZE = env.int("CONFIG_UPLOAD_SIZE", 2.5 * 1024 * 1024)  # 2.5 MB
+MAX_FILE_COUNT = env.int("CONFIG_UPLOAD_COUNT", 15)
 
-STATIC_URL = '/static/'
-STATIC_ROOT = Path(env.path('CONFIG_STATIC_DIR', BASE_DIR / 'static_files'))
+STATIC_URL = "/static/"
+STATIC_ROOT = Path(env.path("CONFIG_STATIC_DIR", BASE_DIR / "static_files"))
 STATIC_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = Path(env.path('CONFIG_UPLOAD_DIR', BASE_DIR / 'media'))
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(env.path("CONFIG_UPLOAD_DIR", BASE_DIR / "media"))
 MEDIA_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 # Timezones
@@ -373,23 +373,23 @@ MEDIA_ROOT.mkdir(mode=0o770, parents=True, exist_ok=True)
 USE_TZ = True
 CELERY_ENABLE_UTC = True
 DJANGO_CELERY_BEAT_TZ_AWARE = True
-TIME_ZONE = env.str('CONFIG_TIMEZONE', 'UTC')
+TIME_ZONE = env.str("CONFIG_TIMEZONE", "UTC")
 
 # Prometheus Metrics
 
-PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list('CONFIG_METRICS_PORTS', default=range(9101, 9150), cast=int)
+PROMETHEUS_METRICS_EXPORT_PORT_RANGE = env.list("CONFIG_METRICS_PORTS", default=range(9101, 9150), cast=int)
 
 # Logging
 
 # Disable Celery's internal log clean up in favor of custom log rotation
 CELERY_RESULT_EXPIRES = None
 
-LOG_REQ_RETENTION_SEC = env.int('LOG_REQ_RETENTION_SEC', timedelta(days=30).total_seconds())
-LOG_AUD_RETENTION_SEC = env.int('LOG_AUD_RETENTION_SEC', timedelta(days=30).total_seconds())
-LOG_TSK_RETENTION_SEC = env.int('LOG_TSK_RETENTION_SEC', timedelta(days=30).total_seconds())
+LOG_REQ_RETENTION_SEC = env.int("LOG_REQ_RETENTION_SEC", timedelta(days=30).total_seconds())
+LOG_AUD_RETENTION_SEC = env.int("LOG_AUD_RETENTION_SEC", timedelta(days=30).total_seconds())
+LOG_TSK_RETENTION_SEC = env.int("LOG_TSK_RETENTION_SEC", timedelta(days=30).total_seconds())
 
-_default_log_dir = BASE_DIR / 'keystone.log'
-LOG_FILE_PATH = Path(os.getenv('LOG_APP_FILE', _default_log_dir))
+_default_log_dir = BASE_DIR / "keystone.log"
+LOG_FILE_PATH = Path(os.getenv("LOG_APP_FILE", _default_log_dir))
 LOG_FILE_PATH.parent.mkdir(mode=0o770, parents=True, exist_ok=True)
 
 LOGGING = {
@@ -402,22 +402,22 @@ LOGGING = {
     },
     "handlers": {
         "file": {
-            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
+            "level": env.str("LOG_APP_LEVEL", "WARNING"),
             "class": "logging.handlers.RotatingFileHandler",
             "filename": str(LOG_FILE_PATH),
-            "maxBytes": env.int('LOG_APP_RETENTION_BYTES', 10 * 1024 * 1024),  # Default 10 MB
-            "backupCount": env.int('LOG_APP_RETENTION_FILES', 5),  # Default 5 backups
+            "maxBytes": env.int("LOG_APP_RETENTION_BYTES", 10 * 1024 * 1024),  # Default 10 MB
+            "backupCount": env.int("LOG_APP_RETENTION_FILES", 5),  # Default 5 backups
             "formatter": "verbose",
         },
     },
     "loggers": {
         "": {
             "handlers": ["file"],
-            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
+            "level": env.str("LOG_APP_LEVEL", "WARNING"),
         },
         "apps": {
             "handlers": ["file"],
-            "level": env.str('LOG_APP_LEVEL', 'WARNING'),
+            "level": env.str("LOG_APP_LEVEL", "WARNING"),
             "propagate": False,
         },
     }

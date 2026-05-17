@@ -8,7 +8,7 @@ from apps.users.factories import UserFactory
 from apps.users.models import User
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'users:user-list'
+VIEW_NAME = "users:user-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -77,11 +77,11 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={
-                'username': 'foobar',
-                'password': 'foobar123',
-                'first_name': 'Foo',
-                'last_name': 'Bar',
-                'email': 'foo@bar.com'}
+                "username": "foobar",
+                "password": "foobar123",
+                "first_name": "Foo",
+                "last_name": "Bar",
+                "email": "foo@bar.com"}
         )
 
 
@@ -106,25 +106,25 @@ class CredentialHandling(APITestCase):
         response = self.client.post(
             path=self.endpoint,
             data={
-                'username': 'foobar',
-                'password': 'foobar123',
-                'first_name': 'Foo',
-                'last_name': 'Bar',
-                'email': 'foo@bar.com'
+                "username": "foobar",
+                "password": "foobar123",
+                "first_name": "Foo",
+                "last_name": "Bar",
+                "email": "foo@bar.com"
             }
         )
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
         # Check the password is stored in the database, but not in plain text
-        new_user = User.objects.get(username='foobar')
-        self.assertTrue(new_user.check_password('foobar123'))
-        self.assertNotEqual(new_user.password, 'foobar123')
+        new_user = User.objects.get(username="foobar")
+        self.assertTrue(new_user.check_password("foobar123"))
+        self.assertNotEqual(new_user.password, "foobar123")
 
         # Verify additional fields
-        self.assertEqual(new_user.email, 'foo@bar.com')
-        self.assertEqual(new_user.first_name, 'Foo')
-        self.assertEqual(new_user.last_name, 'Bar')
+        self.assertEqual(new_user.email, "foo@bar.com")
+        self.assertEqual(new_user.first_name, "Foo")
+        self.assertEqual(new_user.last_name, "Bar")
 
     def test_credentials_not_gettable(self) -> None:
         """Verify credentials are not included in get requests."""
@@ -133,11 +133,11 @@ class CredentialHandling(APITestCase):
         response = self.client.get(self.endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        records = response.json()['results']
+        records = response.json()["results"]
         self.assertTrue(records)
 
         for record in records:
-            self.assertNotIn('password', record.keys(), f'Password field found in record: {record}')
+            self.assertNotIn("password", record.keys(), f"Password field found in record: {record}")
 
     def test_passwords_are_validated(self) -> None:
         """Verify passwords are validated against security requirements."""
@@ -146,13 +146,13 @@ class CredentialHandling(APITestCase):
         response = self.client.post(
             path=self.endpoint,
             data={
-                'username': 'foobar',
-                'password': 'short',
-                'first_name': 'Foo',
-                'last_name': 'Bar',
-                'email': 'foo@bar.com'
+                "username": "foobar",
+                "password": "short",
+                "first_name": "Foo",
+                "last_name": "Bar",
+                "email": "foo@bar.com"
             }
         )
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
-        self.assertIn('This password is too short.', response.content.decode())
+        self.assertIn("This password is too short.", response.content.decode())

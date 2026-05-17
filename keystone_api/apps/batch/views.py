@@ -31,7 +31,7 @@ class JobApiView(APIView):
         tags=["Utils - Batch Processing"],
         summary="Execute a batch job.",
         description=(
-            "Executes multiple HTTP operations atomically within a single atomic transaction. "
+            "Executes multiple HTTP operations sequentially within a single atomic transaction. "
             "If any step returns a 4xx or 5xx status, the job halts and all changes are rolled back. "
             "Steps may reference the response body of previous steps using @ref{alias.dotpath} tokens. "
             "File parts uploaded alongside the job definition may be referenced in step payloads "
@@ -70,18 +70,18 @@ class JobApiView(APIView):
                 files=files,
             )
 
-        except ReferenceResolutionError as exc:
+        except ReferenceResolutionError as excep:
             return JsonResponse({
-                "detail": f"Cannot resolve reference \"{exc.token}\": {exc.reason}",
-                "token": exc.token
+                "detail": f"Cannot resolve reference \"{excep.token}\": {excep.reason}",
+                "token": excep.token
             }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-        except JobExecutionError as exc:
+        except JobExecutionError as excep:
             return JsonResponse({
-                "detail": f"Step #{exc.index} ({exc.method} {exc.path}) failed with status {exc.status_code}",
-                "step": exc.index,
-                "status": exc.status_code,
-                "body": exc.body,
+                "detail": f"Step #{excep.index} ({excep.method} {excep.path}) failed with status {excep.status_code}",
+                "step": excep.index,
+                "status": excep.status_code,
+                "body": excep.body,
             }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         return JsonResponse({"results": results}, status=status.HTTP_200_OK)

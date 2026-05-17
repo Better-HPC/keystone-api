@@ -24,7 +24,7 @@ __all__ = ["ConfigView"]
         summary="Retrieve application configuration.",
         description=(
             "Returns application settings relevant to the frontend client. "
-            "Includes application metadata, file upload constraints, feature flags, and session settings."
+            "Includes application metadata, file upload constraints, and session settings."
         ),
     )
 )

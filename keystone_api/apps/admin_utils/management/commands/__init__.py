@@ -6,7 +6,7 @@ class StdOutUtils:
 
     stdout: OutputWrapper
 
-    def _write(self, message: str, style=None, ending: str = '\n') -> None:
+    def _write(self, message: str, style=None, ending: str = "\n") -> None:
         """Write a message to stdout and immediately flush.
 
         Args:

@@ -28,28 +28,28 @@ class ValidateUserMethod(TestCase):
             data: The data to be serialized.
         """
 
-        django_request = RequestFactory().post('/reviews/', data)
+        django_request = RequestFactory().post("/reviews/", data)
         api_request = Request(django_request)
         api_request.user = requesting_user
-        return PreferenceSerializer(data=data, context={'request': api_request})
+        return PreferenceSerializer(data=data, context={"request": api_request})
 
     def test_field_matches_submitter(self) -> None:
         """Verify validation passes when the user field equals the user submitting the HTTP request."""
 
-        serializer = self._create_serializer(self.user1, {'user': self.user1.id})
+        serializer = self._create_serializer(self.user1, {"user": self.user1.id})
         self.assertTrue(serializer.is_valid(raise_exception=True))
 
     def test_different_field_from_submitter(self) -> None:
         """Verify validation fails when the user field is different from the user submitting the HTTP request."""
 
-        serializer = self._create_serializer(self.user2, {'user': self.user1.id})
+        serializer = self._create_serializer(self.user2, {"user": self.user1.id})
         with self.assertRaisesRegex(ValidationError, "User field cannot be set to a different user than the request submitter."):
             serializer.is_valid(raise_exception=True)
 
     def test_staff_override_validation(self) -> None:
         """Verify staff users bypass validation."""
 
-        serializer = self._create_serializer(self.staff_user, {'user': self.user1.id})
+        serializer = self._create_serializer(self.staff_user, {"user": self.user1.id})
         self.assertTrue(serializer.is_valid(raise_exception=True))
 
     def test_field_is_optional(self) -> None:

@@ -37,7 +37,11 @@ class ResourceAllocationManager(Manager):
             A queryset of approved ResourceAllocation objects.
         """
 
-        return self.filter(request__team=account, cluster=cluster, request__status="AP")
+        return self.filter(
+            request__team=account,
+            cluster=cluster,
+            request__status="AP"
+        )
 
     def active_allocations(self, account: Team, cluster: "Cluster") -> QuerySet:
         """Retrieve all active allocations for a specific account and cluster.
@@ -69,7 +73,7 @@ class ResourceAllocationManager(Manager):
             cluster: The cluster to retrieve allocations for.
 
         Returns:
-            A queryset of expired ResourceAllocation objects ordered by expiration date.
+            A queryset of expiring `ResourceAllocation` objects ordered by expiration date.
         """
 
         return self.approved_allocations(account, cluster).filter(
@@ -104,7 +108,7 @@ class ResourceAllocationManager(Manager):
             cluster: The cluster to calculate service units for.
 
         Returns:
-            Total service units from expired allocations.
+            Total service units from expiring allocations.
         """
 
         return self.expiring_allocations(account, cluster).aggregate(

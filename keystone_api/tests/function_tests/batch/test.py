@@ -13,7 +13,7 @@ from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'batch:batch'
+VIEW_NAME = "batch:batch"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -399,7 +399,7 @@ class JobExecution(APITestCase):
         self.assertEqual(status.HTTP_422_UNPROCESSABLE_ENTITY, response.status_code)
         self.assertEqual(2, response.json()["step"])
 
-        # Step 1's write must have been rolled back
+        # Step 1"s write must have been rolled back
         self.assertEqual(
             record_count_before,
             AllocationRequest.objects.count(),

@@ -17,7 +17,6 @@ __all__ = [
     "AttachmentSummarySerializer",
     "ClusterSummarySerializer",
     "CommentSummarySerializer",
-    "ResourceAllocationInlineSerializer",
     "ResourceAllocationSummarySerializer",
 ]
 
@@ -30,15 +29,6 @@ class ClusterSummarySerializer(serializers.ModelSerializer):
 
         model = Cluster
         fields = ["id", "name", "enabled"]
-
-
-class ResourceAllocationInlineSerializer(serializers.Serializer):
-    """Accepts cluster and requested service units for inline allocation creation."""
-
-    cluster = serializers.PrimaryKeyRelatedField(
-        queryset=__import__("apps.allocations.models", fromlist=["Cluster"]).Cluster.objects.all()
-    )
-    requested = serializers.IntegerField(min_value=0)
 
 
 class AllocationRequestSummarySerializer(serializers.ModelSerializer):

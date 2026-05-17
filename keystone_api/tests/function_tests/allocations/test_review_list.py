@@ -134,7 +134,7 @@ class ReviewerAssignment(APITestCase):
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertIn("reviewer", response.data)
-        self.assertEqual("reviewer cannot be set to a different user than the submitter", response.data["reviewer"][0].lower())
+        self.assertEqual("reviewer cannot be set to a different user than the submitter.", response.data["reviewer"][0].lower())
 
 
 class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):

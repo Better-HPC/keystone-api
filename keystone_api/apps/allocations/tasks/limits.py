@@ -59,8 +59,8 @@ def update_limits_for_cluster(cluster_name: str) -> None:
         try:
             update_limit_for_account(team, cluster)
 
-        except Exception as e:
-            log.exception(f"Failed to update limit for account '{account_name}' on cluster '{cluster.name}': {e}")
+        except Exception as excep:
+            log.exception(f"Failed to update limit for account '{account_name}' on cluster '{cluster.name}': {excep}")
             continue
 
 

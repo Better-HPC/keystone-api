@@ -38,7 +38,7 @@ class TeamScopedListMixin:
 class UserScopedListMixin:
     """Adds user-based filtering to list operations in model viewsets.
 
-    Extends Model Viewset classes by filtering list response data
+    Extends `ModelViewSet` classes by filtering list response data
     to only include data where the `user` field matches the user submitting
     the request. Staff users are exempt from record filtering.
     """

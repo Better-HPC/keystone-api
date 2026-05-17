@@ -23,7 +23,7 @@ from redis.asyncio import Redis as RedisClient
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 
-from apps.health.checks import LDAPHealthCheck
+from apps.health.backends import LDAPHealthCheck
 
 __all__ = ["HealthCheckView", "HealthCheckJsonView", "HealthCheckPrometheusView"]
 
@@ -130,7 +130,7 @@ class BaseHealthCheckView(GenericAPIView):
     )
 )
 class HealthCheckView(BaseHealthCheckView):
-    """Returns a bare `200` or 500` status code reflecting overall health."""
+    """View for rendering a bare `200` or 500` status code reflecting overall health."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Return an empty HTTP response with a status code reflecting overall health.
@@ -175,7 +175,7 @@ class HealthCheckView(BaseHealthCheckView):
     )
 )
 class HealthCheckJsonView(BaseHealthCheckView):
-    """Returns health check results as a JSON response."""
+    """View for rendering health check results as a JSON response."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Render health check results into a JSON response.
@@ -223,7 +223,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):
-    """Returns health check results in Prometheus text format."""
+    """View for rendering health check results in Prometheus text format."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Render health check results into an HTTP text response.
@@ -242,7 +242,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
 
         for row in results:
             metric_value = 200 if row["healthy"] else 500
-            lines.append(f'keystone_health_check_status{{check="{row["check"]}"}} {metric_value:.1f}')
+            lines.append(f"keystone_health_check_status{{check=\"{row['check']}\"}} {metric_value:.1f}")
 
         lines += [
             "",
@@ -252,7 +252,7 @@ class HealthCheckPrometheusView(BaseHealthCheckView):
 
         for row in results:
             lines.append(
-                f'keystone_health_check_eval_time_seconds{{check="{row["check"]}"}} {row["time_taken"]:.6f}'
+                f"keystone_health_check_eval_time_seconds{{check=\"{row['check']}\"}} {row['time_taken']:.6f}"
             )
 
         return HttpResponse(

@@ -21,7 +21,7 @@ class GrantSummarySerializer(serializers.ModelSerializer):
 
         model = Grant
         fields = "__all__"
-        read_only = ["team"]
+        read_only_fields = ["team"]
 
 
 class PublicationSummarySerializer(serializers.ModelSerializer):
@@ -32,4 +32,4 @@ class PublicationSummarySerializer(serializers.ModelSerializer):
 
         model = Publication
         fields = "__all__"
-        read_only = ["team"]
+        read_only_fields = ["team"]

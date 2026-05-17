@@ -1,4 +1,4 @@
-"""URL routing for the config application."""
+"""URL routing for the parent application."""
 
 from django.urls import path
 

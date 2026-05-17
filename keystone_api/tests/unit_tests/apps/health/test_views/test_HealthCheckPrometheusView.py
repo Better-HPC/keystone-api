@@ -49,7 +49,7 @@ class RenderResponseMethod(TestCase):
         response = HealthCheckPrometheusView().render_response(results)
         body = response.content.decode()
 
-        self.assertIn('keystone_health_check_status{check="Storage"} 200.0', body)
+        self.assertIn("keystone_health_check_status{check=\"Storage\"} 200.0", body)
 
     def test_unhealthy_check_emits_correct_status_value(self) -> None:
         """Verify a failing check emits a `500.0` status value."""
@@ -58,7 +58,7 @@ class RenderResponseMethod(TestCase):
         response = HealthCheckPrometheusView().render_response(results)
         body = response.content.decode()
 
-        self.assertIn('keystone_health_check_status{check="Celery"} 500.0', body)
+        self.assertIn("keystone_health_check_status{check=\"Celery\"} 500.0", body)
 
     def test_timing_metric_uses_six_decimal_places(self) -> None:
         """Verify timing values are formatted to six decimal places."""
@@ -67,7 +67,7 @@ class RenderResponseMethod(TestCase):
         response = HealthCheckPrometheusView().render_response(results)
         body = response.content.decode()
 
-        self.assertIn('keystone_health_check_eval_time_seconds{check="Storage"} 0.008000', body)
+        self.assertIn("keystone_health_check_eval_time_seconds{check=\"Storage\"} 0.008000", body)
 
     def test_multiple_checks_all_appear(self) -> None:
         """Verify all checks are represented in the output."""
@@ -80,8 +80,8 @@ class RenderResponseMethod(TestCase):
         response = HealthCheckPrometheusView().render_response(results)
         body = response.content.decode()
 
-        self.assertIn('check="Storage"', body)
-        self.assertIn('check="Celery"', body)
+        self.assertIn("check=\"Storage\"", body)
+        self.assertIn("check=\"Celery\"", body)
 
     def test_full_output_format(self) -> None:
         """Verify the complete Prometheus output matches the expected format exactly."""
@@ -94,13 +94,13 @@ class RenderResponseMethod(TestCase):
         expected = (
             "# HELP keystone_health_check_status Health check status (200 = healthy, 500 = unhealthy)\n"
             "# TYPE keystone_health_check_status gauge\n"
-            'keystone_health_check_status{check="Storage"} 200.0\n'
-            'keystone_health_check_status{check="Celery"} 500.0\n'
+            "keystone_health_check_status{check=\"Storage\"} 200.0\n"
+            "keystone_health_check_status{check=\"Celery\"} 500.0\n"
             "\n"
             "# HELP keystone_health_check_eval_time_seconds Health check evaluation time in seconds\n"
             "# TYPE keystone_health_check_eval_time_seconds gauge\n"
-            'keystone_health_check_eval_time_seconds{check="Storage"} 0.012000\n'
-            'keystone_health_check_eval_time_seconds{check="Celery"} 1.001000\n'
+            "keystone_health_check_eval_time_seconds{check=\"Storage\"} 0.012000\n"
+            "keystone_health_check_eval_time_seconds{check=\"Celery\"} 1.001000\n"
         )
 
         response = HealthCheckPrometheusView().render_response(results)

@@ -34,7 +34,7 @@ class ShouldNotifyPastExpirationMethod(TestCase):
             should_notify_past_expiration(request.submitter, request)
         )
 
-    @patch('apps.notifications.models.Notification.objects.filter')
+    @patch("apps.notifications.models.Notification.objects.filter")
     def test_false_if_duplicate_notification(self, mock_notification_filter: Mock) -> None:
         """Verify returns `False` if a notification has already been issued."""
 
@@ -78,7 +78,7 @@ class ShouldNotifyPastExpirationMethod(TestCase):
         )
 
 
-@patch('apps.notifications.tasks.past_expirations.send_notification_template')
+@patch("apps.notifications.tasks.past_expirations.send_notification_template")
 class SendPastExpirationNoticeContext(TestCase):
     """Test the template context passed by the past expiration notification task."""
 
@@ -96,8 +96,8 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        context = mock_send.call_args.kwargs['context']
-        template = get_template('past_expiration.html')
+        context = mock_send.call_args.kwargs["context"]
+        template = get_template("past_expiration.html")
         html, text = format_template(template, context)
         self.assertTrue(html)
         self.assertTrue(text)
@@ -108,10 +108,10 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        context = mock_send.call_args.kwargs['context']
-        self.assertEqual(context['user_name'], self.request.submitter.username)
-        self.assertEqual(context['user_first'], self.request.submitter.first_name)
-        self.assertEqual(context['user_last'], self.request.submitter.last_name)
+        context = mock_send.call_args.kwargs["context"]
+        self.assertEqual(context["user_name"], self.request.submitter.username)
+        self.assertEqual(context["user_first"], self.request.submitter.first_name)
+        self.assertEqual(context["user_last"], self.request.submitter.last_name)
 
     def test_context_request_fields_match_request(self, mock_send: Mock) -> None:
         """Verify request-related context values match the expired allocation request."""
@@ -119,13 +119,13 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        context = mock_send.call_args.kwargs['context']
-        self.assertEqual(context['req_id'], self.request.id)
-        self.assertEqual(context['req_title'], self.request.title)
-        self.assertEqual(context['req_team'], self.request.team.name)
-        self.assertEqual(context['req_submitted'], self.request.submitted)
-        self.assertEqual(context['req_active'], self.request.active)
-        self.assertEqual(context['req_expire'], self.request.expire)
+        context = mock_send.call_args.kwargs["context"]
+        self.assertEqual(context["req_id"], self.request.id)
+        self.assertEqual(context["req_title"], self.request.title)
+        self.assertEqual(context["req_team"], self.request.team.name)
+        self.assertEqual(context["req_submitted"], self.request.submitted)
+        self.assertEqual(context["req_active"], self.request.active)
+        self.assertEqual(context["req_expire"], self.request.expire)
 
     def test_context_allocations_are_populated(self, mock_send: Mock) -> None:
         """Verify the allocations list is a non-empty tuple with expected keys."""
@@ -133,13 +133,13 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        context = mock_send.call_args.kwargs['context']
-        self.assertIsInstance(context['allocations'], tuple)
-        for alloc in context['allocations']:
-            self.assertIn('alloc_cluster', alloc)
-            self.assertIn('alloc_requested', alloc)
-            self.assertIn('alloc_awarded', alloc)
-            self.assertIn('alloc_final', alloc)
+        context = mock_send.call_args.kwargs["context"]
+        self.assertIsInstance(context["allocations"], tuple)
+        for alloc in context["allocations"]:
+            self.assertIn("alloc_cluster", alloc)
+            self.assertIn("alloc_requested", alloc)
+            self.assertIn("alloc_awarded", alloc)
+            self.assertIn("alloc_final", alloc)
 
     def test_context_upcoming_requests_have_expected_keys(self, mock_send: Mock) -> None:
         """Verify upcoming request entries contain the expected keys."""
@@ -147,15 +147,15 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        context = mock_send.call_args.kwargs['context']
-        self.assertIsInstance(context['upcoming_requests'], tuple)
-        for req in context['upcoming_requests']:
-            self.assertIn('id', req)
-            self.assertIn('title', req)
-            self.assertIn('submitted', req)
-            self.assertIn('active', req)
-            self.assertIn('expire', req)
-            self.assertIn('status', req)
+        context = mock_send.call_args.kwargs["context"]
+        self.assertIsInstance(context["upcoming_requests"], tuple)
+        for req in context["upcoming_requests"]:
+            self.assertIn("id", req)
+            self.assertIn("title", req)
+            self.assertIn("submitted", req)
+            self.assertIn("active", req)
+            self.assertIn("expire", req)
+            self.assertIn("status", req)
 
     def test_notification_metadata_includes_request_id(self, mock_send: Mock) -> None:
         """Verify the notification metadata includes the allocation request ID."""
@@ -163,8 +163,8 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        metadata = mock_send.call_args.kwargs['notification_metadata']
-        self.assertEqual(metadata['request_id'], self.request.id)
+        metadata = mock_send.call_args.kwargs["notification_metadata"]
+        self.assertEqual(metadata["request_id"], self.request.id)
 
     def test_subject_includes_request_id(self, mock_send: Mock) -> None:
         """Verify the email subject line includes the allocation request ID."""
@@ -172,10 +172,10 @@ class SendPastExpirationNoticeContext(TestCase):
         PreferenceFactory(user=self.request.submitter, notify_on_expiration=True)
         send_past_expiration_notice(self.request.submitter.id, self.request.id)
 
-        subject = mock_send.call_args.kwargs['subject']
+        subject = mock_send.call_args.kwargs["subject"]
         self.assertIn(str(self.request.id), subject)
 
-    @patch('apps.notifications.tasks.past_expirations.should_notify_past_expiration')
+    @patch("apps.notifications.tasks.past_expirations.should_notify_past_expiration")
     def test_not_sent_when_should_notify_is_false(self, mock_should_notify: Mock, mock_send: Mock) -> None:
         """Verify the notification is not sent when the user should not be notified."""
 

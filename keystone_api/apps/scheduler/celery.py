@@ -9,6 +9,8 @@ with the Celery application instance for all applications defined in the
 from celery import Celery
 from celery.schedules import crontab
 
+__all__ = ["celery_app"]
+
 celery_app = Celery("scheduler")
 celery_app.config_from_object("django.conf:settings", namespace="CELERY")
 celery_app.autodiscover_tasks()
@@ -35,7 +37,7 @@ celery_app.conf.beat_schedule = {
     "apps.allocations.tasks.jobstats.slurm_update_job_stats": {
         "task": "apps.allocations.tasks.jobstats.slurm_update_job_stats",
         "schedule": crontab(minute="*/5"),
-        "description": "This task synchronizes slurm job information with the application database."
+        "description": "This task synchronizes Slurm job information with the application database."
     },
     "apps.notifications.tasks.upcoming_expirations.notify_upcoming_expirations": {
         "task": "apps.notifications.tasks.upcoming_expirations.notify_upcoming_expirations",

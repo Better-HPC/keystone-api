@@ -22,7 +22,7 @@ __all__ = [
     "get_template",
     "format_template",
     "send_notification",
-    "send_notification_template"
+    "send_notification_template",
 ]
 
 

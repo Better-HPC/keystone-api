@@ -9,14 +9,14 @@ from subprocess import PIPE, Popen
 log = logging.getLogger(__name__)
 
 __all__ = [
-    'get_cluster_jobs',
-    'get_cluster_limit',
-    'set_cluster_limit',
-    'get_cluster_usage',
-    'get_slurm_account_names',
-    'get_slurm_account_users',
-    'parse_slurm_date',
-    'parse_slurm_elapsed'
+    "get_cluster_jobs",
+    "get_cluster_limit",
+    "set_cluster_limit",
+    "get_cluster_usage",
+    "get_slurm_account_names",
+    "get_slurm_account_users",
+    "parse_slurm_date",
+    "parse_slurm_elapsed"
 ]
 
 
@@ -34,7 +34,7 @@ def parse_slurm_date(date_str: str) -> datetime | None:
         return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S").astimezone()
 
     except (ValueError, Exception):
-        log.error(f'Invalid slurm datetime: {date_str}')
+        log.error(f"Invalid slurm datetime: {date_str}")
         return None
 
 
@@ -49,15 +49,15 @@ def parse_slurm_elapsed(elapsed_str: str) -> timedelta | None:
     """
 
     try:
-        if '-' in elapsed_str:
-            days_part, time_part = elapsed_str.split('-')
+        if "-" in elapsed_str:
+            days_part, time_part = elapsed_str.split("-")
             days = int(days_part)
 
         else:
             days = 0
             time_part = elapsed_str
 
-        parts = list(map(int, time_part.split(':')))
+        parts = list(map(int, time_part.split(":")))
 
         if len(parts) == 3:
             hours, minutes, seconds = parts
@@ -72,7 +72,7 @@ def parse_slurm_elapsed(elapsed_str: str) -> timedelta | None:
         return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
     except (ValueError, Exception):
-        log.error(f'Invalid slurm duration: {elapsed_str}')
+        log.error(f"Invalid slurm duration: {elapsed_str}")
         return None
 
 
@@ -165,7 +165,7 @@ def get_cluster_limit(account_name: str, cluster_name: str) -> int:
     cmd = split(f"sacctmgr show -nP association where account={account_name} cluster={cluster_name} format=GrpTRESMins")
 
     try:
-        limit = re.findall(r'billing=(.*)', subprocess_call(cmd))[0]
+        limit = re.findall(r"billing=(.*)", subprocess_call(cmd))[0]
 
     except IndexError:
         log.debug(f"'billing' limit not found in command output from {cmd}, assuming zero for current limit")
@@ -189,7 +189,7 @@ def get_cluster_usage(account_name: str, cluster_name: str) -> int:
     cmd = split(f"sshare -nP -A {account_name} -M {cluster_name} --format=GrpTRESRaw")
 
     try:
-        usage = re.findall(r'billing=(.*),fs', subprocess_call(cmd))[0]
+        usage = re.findall(r"billing=(.*),fs", subprocess_call(cmd))[0]
 
     except IndexError:
         log.debug(f"'billing' usage not found in command output from {cmd}, assuming zero for current usage")

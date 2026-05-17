@@ -8,7 +8,7 @@ from apps.users.factories import MembershipFactory, TeamFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'users:membership-list'
+VIEW_NAME = "users:membership-list"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -70,9 +70,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={
-                'team': self.team.pk,
-                'user': self.non_team_member.pk,
-                'role': Membership.Role.MEMBER
+                "team": self.team.pk,
+                "user": self.non_team_member.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -91,9 +91,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={
-                'team': self.team.pk,
-                'user': self.non_team_member.pk,
-                'role': Membership.Role.MEMBER
+                "team": self.team.pk,
+                "user": self.non_team_member.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -112,9 +112,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={
-                'team': self.team.pk,
-                'user': self.non_team_member.pk,
-                'role': Membership.Role.MEMBER
+                "team": self.team.pk,
+                "user": self.non_team_member.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -133,9 +133,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={
-                'team': self.team.pk,
-                'user': self.non_team_member.pk,
-                'role': Membership.Role.MEMBER
+                "team": self.team.pk,
+                "user": self.non_team_member.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -154,9 +154,9 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body={
-                'team': self.team.pk,
-                'user': self.non_team_member.pk,
-                'role': Membership.Role.MEMBER
+                "team": self.team.pk,
+                "user": self.non_team_member.pk,
+                "role": Membership.Role.MEMBER
             }
         )
 
@@ -181,7 +181,7 @@ class InactiveTeamFiltering(APITestCase):
 
         self.client.force_authenticate(user=self.generic_user)
         response = self.client.get(self.endpoint)
-        returned_ids = [m['id'] for m in response.data['results']]
+        returned_ids = [m["id"] for m in response.data["results"]]
         self.assertNotIn(self.inactive_membership.id, returned_ids)
 
     def test_non_staff_cannot_create_membership_for_inactive_teams(self) -> None:
@@ -193,9 +193,9 @@ class InactiveTeamFiltering(APITestCase):
 
         self.client.force_authenticate(user=admin_user)
         response = self.client.post(self.endpoint, {
-            'team': inactive_team.pk,
-            'user': new_user.pk,
-            'role': Membership.Role.MEMBER,
+            "team": inactive_team.pk,
+            "user": new_user.pk,
+            "role": Membership.Role.MEMBER,
         })
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
@@ -205,7 +205,7 @@ class InactiveTeamFiltering(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.get(self.endpoint)
-        returned_ids = [m['id'] for m in response.data['results']]
+        returned_ids = [m["id"] for m in response.data["results"]]
         self.assertIn(self.inactive_membership.id, returned_ids)
 
     def test_staff_can_create_membership_for_inactive_teams(self) -> None:
@@ -216,9 +216,9 @@ class InactiveTeamFiltering(APITestCase):
 
         self.client.force_authenticate(user=self.staff_user)
         response = self.client.post(self.endpoint, {
-            'team': inactive_team.pk,
-            'user': new_user.pk,
-            'role': Membership.Role.MEMBER,
+            "team": inactive_team.pk,
+            "user": new_user.pk,
+            "role": Membership.Role.MEMBER,
         })
 
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)

@@ -99,7 +99,7 @@ class GetUserPreferenceMethod(TestCase):
     def setUp(self) -> None:
         """Create a test user."""
 
-        self.user = UserFactory(username='testuser', password='foobar123!')
+        self.user = UserFactory(username="testuser", password="foobar123!")
 
     def test_get_user_preference_creates_new_preference(self) -> None:
         """Verify a new Preference object is created if one does not exist."""
@@ -127,7 +127,7 @@ class SetUserPreferenceMethod(TestCase):
     def setUp(self) -> None:
         """Create a test user."""
 
-        self.user = UserFactory(username='testuser', password='foobar123!')
+        self.user = UserFactory(username="testuser", password="foobar123!")
 
     def test_set_user_preference_creates_preference(self) -> None:
         """Verify a new Preference object is created with specified values."""

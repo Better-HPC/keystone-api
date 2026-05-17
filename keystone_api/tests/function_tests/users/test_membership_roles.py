@@ -7,7 +7,7 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'users:membership-roles'
+VIEW_NAME = "users:membership-roles"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):

@@ -27,7 +27,7 @@ class VersionView(GenericAPIView):
         description="Returns the application version number as a plain text response.",
         tags=["Version"],
         responses={
-            (200, "text/plain"): OpenApiTypes.STR
+            (200, "text/plain"): OpenApiTypes.STR,
         }
     )
     def get(self, request: Request, *args, **kwargs) -> HttpResponse:

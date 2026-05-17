@@ -7,7 +7,7 @@ from rest_framework.test import APITestCase
 from apps.users.factories import UserFactory
 from tests.function_tests.utils import CustomAsserts
 
-VIEW_NAME = 'users:user-detail'
+VIEW_NAME = "users:user-detail"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -30,7 +30,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.user1_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.user1.id})
+        self.user1_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.user1.id})
 
     def test_unauthenticated_user_permissions(self) -> None:
         """Verify unauthenticated users cannot access resources."""
@@ -78,12 +78,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             put_body={
-                'username': 'foobar',
-                'password': 'foobar123',
-                'first_name': 'Foo',
-                'last_name': 'Bar',
-                'email': 'foo@bar.com'},
-            patch_body={'email': 'member_3@newdomain.com'},
+                "username": "foobar",
+                "password": "foobar123",
+                "first_name": "Foo",
+                "last_name": "Bar",
+                "email": "foo@bar.com"},
+            patch_body={"email": "member_3@newdomain.com"},
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -101,12 +101,12 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             put_body={
-                'username': 'foobar',
-                'password': 'foobar123',
-                'first_name': 'Foo',
-                'last_name': 'Bar',
-                'email': 'foo@bar.com'},
-            patch_body={'email': 'foo@bar.com'},
+                "username": "foobar",
+                "password": "foobar123",
+                "first_name": "Foo",
+                "last_name": "Bar",
+                "email": "foo@bar.com"},
+            patch_body={"email": "foo@bar.com"},
         )
 
 
@@ -120,7 +120,7 @@ class CredentialHandling(APITestCase):
         self.user2 = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
-        self.user1_endpoint = reverse(VIEW_NAME, kwargs={'pk': self.user1.id})
+        self.user1_endpoint = reverse(VIEW_NAME, kwargs={"pk": self.user1.id})
 
     def test_user_get_own_password(self) -> None:
         """Verify users cannot retrieve their own password."""
@@ -129,17 +129,17 @@ class CredentialHandling(APITestCase):
         response = self.client.get(self.user1_endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertNotIn('password', response.json())
+        self.assertNotIn("password", response.json())
 
     def test_user_set_own_password(self) -> None:
         """Verify users can change their own password."""
 
         self.client.force_authenticate(user=self.user1)
-        response = self.client.patch(self.user1_endpoint, data={'password': 'new_password123'})
+        response = self.client.patch(self.user1_endpoint, data={"password": "new_password123"})
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
-        self.assertTrue(self.user1.check_password('new_password123'))
+        self.assertTrue(self.user1.check_password("new_password123"))
 
     def test_user_get_others_password(self) -> None:
         """Verify users cannot retrieve another user's password."""
@@ -148,13 +148,13 @@ class CredentialHandling(APITestCase):
         response = self.client.get(self.user1_endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertNotIn('password', response.data)
+        self.assertNotIn("password", response.data)
 
     def test_user_set_others_password(self) -> None:
         """Verify users cannot change another user's password."""
 
         self.client.force_authenticate(user=self.user2)
-        response = self.client.patch(self.user1_endpoint, data={'password': 'new_password123'})
+        response = self.client.patch(self.user1_endpoint, data={"password": "new_password123"})
 
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
@@ -165,17 +165,17 @@ class CredentialHandling(APITestCase):
         response = self.client.get(self.user1_endpoint)
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertNotIn('password', response.json())
+        self.assertNotIn("password", response.json())
 
     def test_staff_set_password(self) -> None:
         """Verify staff users can change user passwords."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.patch(self.user1_endpoint, data={'password': 'new_password123'})
+        response = self.client.patch(self.user1_endpoint, data={"password": "new_password123"})
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.user1.refresh_from_db()
-        self.assertTrue(self.user1.check_password('new_password123'))
+        self.assertTrue(self.user1.check_password("new_password123"))
 
 
 class RecordHistory(APITestCase):
@@ -186,23 +186,23 @@ class RecordHistory(APITestCase):
 
         user = UserFactory()
         self.client.force_authenticate(user=user)
-        self.endpoint = reverse(VIEW_NAME, kwargs={'pk': user.id})
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": user.id})
 
     def test_password_masked(self) -> None:
         """Verify password values are masked in returned responses."""
 
         # Update the user's password
-        self.client.patch(self.endpoint, data={'email': 'new@email.com', 'password': 'NewSecureValue'})
+        self.client.patch(self.endpoint, data={"email": "new@email.com", "password": "NewSecureValue"})
 
-        # Fetch the User's audit history
+        # Fetch the user's audit history
         api_response = self.client.get(self.endpoint)
-        history = api_response.json().get('_history')
+        history = api_response.json().get("_history")
 
         # Select the most recent change
-        date_from_record = lambda record: record['timestamp']
+        date_from_record = lambda record: record["timestamp"]
         last_change = max(history, key=date_from_record)
 
         # Masked values should have their first half replaced with asterisks
-        password_old, password_new = last_change['changes']['password']
-        self.assertTrue(password_new.startswith('*****'))
-        self.assertTrue(password_old.startswith('*****'))
+        password_old, password_new = last_change["changes"]["password"]
+        self.assertTrue(password_new.startswith("*****"))
+        self.assertTrue(password_old.startswith("*****"))

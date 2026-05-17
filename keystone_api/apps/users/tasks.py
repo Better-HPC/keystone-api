@@ -74,8 +74,8 @@ def fetch_ldap_data(attempts: int = 3, delay: float = 2.0) -> list:
             logger.info(f"Successfully fetched LDAP data on attempt {attempt + 1}")
             return search
 
-        except Exception as e:
-            logger.warning(f"LDAP fetch attempt {attempt + 1}/{attempts} failed: {e}")
+        except Exception as excep:
+            logger.warning(f"LDAP fetch attempt {attempt + 1}/{attempts} failed: {excep}")
 
             if attempt < attempts - 1:
                 wait_time = delay * (2 ** attempt)  # Exponential backoff
