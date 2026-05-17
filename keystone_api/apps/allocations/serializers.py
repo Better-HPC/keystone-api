@@ -23,11 +23,11 @@ from .nested import *
 __all__ = [
     "AllocationRequestSerializer",
     "AllocationReviewSerializer",
-    "ResourceAllocationSerializer",
     "AttachmentSerializer",
     "ClusterSerializer",
     "CommentSerializer",
     "JobStatsSerializer",
+    "ResourceAllocationSerializer",
 ]
 
 
@@ -92,7 +92,7 @@ class AllocationReviewSerializer(serializers.ModelSerializer):
         """Validate the reviewer matches the user submitting the request."""
 
         if value != self.context["request"].user:
-            raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter")
+            raise serializers.ValidationError("Reviewer cannot be set to a different user than the submitter.")
 
         return value
 

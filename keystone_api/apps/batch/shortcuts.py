@@ -34,7 +34,7 @@ factory = APIRequestFactory()
 _TOKEN_PATTERN = re.compile(r"@(file|ref)\{([^}]*)\}")
 _LABEL_PATTERNS = {
     "file": re.compile(r"^[a-zA-Z0-9_]+$"),
-    "ref": re.compile(r"^[a-zA-Z0-9_]+\.[a-zA-Z0-9_.]+$")
+    "ref": re.compile(r"^[a-zA-Z0-9_]+\.[a-zA-Z0-9_.]+$"),
 }
 
 

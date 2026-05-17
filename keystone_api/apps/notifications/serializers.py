@@ -44,7 +44,11 @@ class PreferenceSerializer(serializers.ModelSerializer):
         extra_kwargs = {"user": {"required": False}}  # Default value set by the view class
 
     def validate_user(self, value: User) -> User:
-        """Validate the reviewer matches the user submitting the request."""
+        """Validate the user field matches the user submitting the request.
+
+        Staff are allowed to make changes to other user's preferences.
+        General users may only edit their own preferences.
+        """
 
         request_submitter = self.context["request"].user
         if not (request_submitter.is_staff or value == request_submitter):

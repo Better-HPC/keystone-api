@@ -130,7 +130,7 @@ class BaseHealthCheckView(GenericAPIView):
     )
 )
 class HealthCheckView(BaseHealthCheckView):
-    """Returns a bare `200` or 500` status code reflecting overall health."""
+    """View for rendering a bare `200` or 500` status code reflecting overall health."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Return an empty HTTP response with a status code reflecting overall health.
@@ -175,7 +175,7 @@ class HealthCheckView(BaseHealthCheckView):
     )
 )
 class HealthCheckJsonView(BaseHealthCheckView):
-    """Returns health check results as a JSON response."""
+    """View for rendering health check results as a JSON response."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Render health check results into a JSON response.
@@ -223,7 +223,7 @@ class HealthCheckJsonView(BaseHealthCheckView):
     )
 )
 class HealthCheckPrometheusView(BaseHealthCheckView):
-    """Returns health check results in Prometheus text format."""
+    """View for rendering health check results in Prometheus text format."""
 
     def render_response(self, results: list[dict]) -> HttpResponse:
         """Render health check results into an HTTP text response.

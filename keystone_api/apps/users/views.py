@@ -101,7 +101,7 @@ class MembershipRoleChoicesView(APIView):
             "Write access is granted to staff users, team owners/admins, "
             "and users deleting their own membership."
         ),
-    )
+    ),
 )
 class MembershipViewSet(viewsets.ModelViewSet):
     """API endpoints for managing team membership."""

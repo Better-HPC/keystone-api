@@ -17,7 +17,7 @@ __all__ = ["IsTeamMember"]
 
 
 class IsTeamMember(permissions.BasePermission):
-    """Team based record permissions.
+    """Utility methods for team based record permissions.
 
     Permissions:
         - Grants read and write access to team members.
@@ -28,10 +28,10 @@ class IsTeamMember(permissions.BasePermission):
         """Return the team indicated in the `team` field of an incoming request.
 
         Args:
-            request: The HTTP request
+            request: The HTTP request.
 
         Returns:
-            The team or None
+            The team or None.
         """
 
         try:

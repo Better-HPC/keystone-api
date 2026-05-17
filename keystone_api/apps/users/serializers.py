@@ -108,7 +108,7 @@ class RestrictedUserSerializer(PrivilegedUserSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data: dict) -> None:
-        """Prevents creation of new user records by raising an exception.
+        """Prevent creation of new user records by raising an exception.
 
         Args:
             validated_data: The data used to create a new user record.
@@ -141,7 +141,7 @@ class TeamSerializer(serializers.ModelSerializer):
         Blocks non-staff from creating inactive teams.
 
         Args:
-            attrs: The user attributes to validate.
+            attrs: The team attributes to validate.
 
         Returns:
             A dictionary containing the validated values.

@@ -229,7 +229,7 @@ class Cluster(models.Model):
         ]
 
     class AccessChoices(models.TextChoices):
-        """Enumerated choices for the `access` field."""
+        """Enumerated choices for the `access_mode` field."""
 
         WHITELIST = "WL", "Whitelist"
         BLACKLIST = "BL", "Blacklist"
@@ -284,7 +284,7 @@ class Comment(TeamModelInterface, models.Model):
 
 
 class JobStats(TeamModelInterface, models.Model):
-    """Slurm Job status and statistics."""
+    """Slurm job status and statistics."""
 
     class Meta:
         """Database model settings."""

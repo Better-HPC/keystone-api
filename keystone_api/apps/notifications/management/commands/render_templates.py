@@ -21,9 +21,9 @@ from apps.notifications.models import Notification
 
 
 class Command(BaseCommand):
-    """Render user notification templates and save examples to disk."""
+    """CLI command for rendering user notification templates to disk."""
 
-    help = __doc__
+    help = "Render user notification templates and save examples to disk."
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command-line arguments to the parser.

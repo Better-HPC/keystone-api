@@ -52,7 +52,7 @@ class LoginView(GenericAPIView):
 
 
 class LogoutView(GenericAPIView):
-    """Logout an authenticated user and terminate their session."""
+    """Log out an authenticated user and terminate their session."""
 
     permission_classes = [IsAuthenticated]
     serializer_class = LogoutSerializer
@@ -63,7 +63,7 @@ class LogoutView(GenericAPIView):
         description="Terminates the authenticated user session and invalidates the associated tokens.",
     )
     def post(self, request: Request, *args, **kwargs) -> Response:  # pragma: no cover
-        """Logout an authenticated user.
+        """Log out an authenticated user.
 
         Returns:
             An empty 200 response.
@@ -84,7 +84,7 @@ class WhoAmIView(GenericAPIView):
         summary="Retrieve metadata for the authenticated user.",
         description=(
             "Returns metadata for the currently authenticated user, including personal data and team memberships. "
-            "This endpoint can also be used to verify general authentication status. "
+            "This endpoint can also be used to verify general authentication status."
         ),
     )
     def get(self, request: Request, *args, **kwargs) -> Response:
@@ -94,5 +94,5 @@ class WhoAmIView(GenericAPIView):
             A 200 response with metadata for the authenticated user.
         """
 
-        serializer = self.serializer_class(request.user)
+        serializer = self.get_serializer(request.user)
         return Response(serializer.data)

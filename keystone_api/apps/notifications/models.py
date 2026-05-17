@@ -22,7 +22,7 @@ def default_expiry_thresholds() -> list[int]:  # pragma: nocover
 
 
 class Notification(models.Model):
-    """User notification."""
+    """A user notification message."""
 
     class Meta:
         """Database model settings."""

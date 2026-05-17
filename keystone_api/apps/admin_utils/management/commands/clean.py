@@ -76,7 +76,7 @@ class Command(StdOutUtils, BaseCommand):
         self._write("OK", self.style.SUCCESS)
 
     def _clean_sqlite(self) -> None:
-        """Delete the application"s development SQLite database."""
+        """Delete the application's development SQLite database."""
 
         self._write("  Removing SQLite files...", ending=" ")
         for db_settings in settings.DATABASES.values():

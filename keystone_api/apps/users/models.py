@@ -105,7 +105,7 @@ class Team(models.Model):
 
 @auditlog.register(exclude_fields=["last_login"], mask_fields=["password"])
 class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
-    """Custom user model that extends the built-in django `User`."""
+    """Custom user model that extends the built-in Django `User`."""
 
     class Meta:
         """Database model settings."""

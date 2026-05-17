@@ -41,11 +41,11 @@ class LDAPHealthCheck(HealthCheck):
 
             conn.whoami_s()
 
-        except ldap.INVALID_CREDENTIALS as e:
-            raise ServiceUnavailable("Invalid LDAP credentials.") from e
+        except ldap.INVALID_CREDENTIALS as excep:
+            raise ServiceUnavailable("Invalid LDAP credentials.") from excep
 
-        except ldap.SERVER_DOWN as e:
-            raise ServiceUnavailable("LDAP server not reachable.") from e
+        except ldap.SERVER_DOWN as excep:
+            raise ServiceUnavailable("LDAP server not reachable.") from excep
 
-        except Exception as e:
-            raise ServiceUnavailable("Unexpected error") from e
+        except Exception as excep:
+            raise ServiceUnavailable("Unexpected error.") from excep

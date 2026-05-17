@@ -50,7 +50,7 @@ class Command(StdOutUtils, BaseCommand):
             parser: The parser instance to add arguments to.
         """
 
-        range_options = dict(type=int, nargs=2, metavar=("MIN", "MAX"), )
+        range_options = dict(type=int, nargs=2, metavar=("MIN", "MAX"))
 
         parser.add_argument("--seed", type=int, help="Optional seed for the random generator.")
         parser.add_argument("--n-staff", type=int, help="Number of staff users to create.", default=100)
@@ -166,6 +166,7 @@ class Command(StdOutUtils, BaseCommand):
     def _gen_teams(size: int, min_members: int, max_members: int) -> tuple[list[Team], list[User]]:
         """Populate the database with mock team records.
 
+        Teams are automatically populated with randomly generated members.
         At least one team member is guaranteed to be assigned the team owner role.
 
         Args:
@@ -174,7 +175,7 @@ class Command(StdOutUtils, BaseCommand):
             max_members: Maximum members to create per team.
 
         Returns:
-            A list of the created team objects.
+            A tuple of the created team and user objects.
         """
 
         teams = []

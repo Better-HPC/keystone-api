@@ -30,7 +30,7 @@ class TeamPermissions(permissions.BasePermission):
         if request.user.is_staff:
             return True
 
-        # non-staff cannot access inactive teams
+        # Non-staff cannot access inactive teams
         if not obj.is_active:
             return False
 
@@ -96,7 +96,7 @@ class UserPermissions(permissions.BasePermission):
 
     Permissions:
         - Grants read access to all users.
-        - Grants write to all staff.
+        - Grants write access to all staff.
         - Grants write access to users modifying their own user record.
     """
 

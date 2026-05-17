@@ -7,5 +7,5 @@ app_name = "openapi"
 
 urlpatterns = [
     path("json/", SpectacularJSONAPIView.as_view(), name="json"),
-    path("yaml/", SpectacularYAMLAPIView.as_view(), name="yaml")
+    path("yaml/", SpectacularYAMLAPIView.as_view(), name="yaml"),
 ]

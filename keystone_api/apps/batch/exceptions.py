@@ -1,6 +1,14 @@
 """Custom exceptions raised by the parent application."""
 
-__all__ = ["DryRunRollbackError", "JobExecutionError", "ReferenceResolutionError"]
+__all__ = [
+    "DryRunRollbackError",
+    "JobExecutionError",
+    "ReferenceResolutionError",
+]
+
+
+class DryRunRollbackError(Exception):
+    """Raised to deliberately abort a dry-run transaction."""
 
 
 class JobExecutionError(Exception):
@@ -39,7 +47,3 @@ class ReferenceResolutionError(Exception):
         self.token = token
         self.reason = reason
         super().__init__(f"Cannot resolve reference '{token}': {reason}")
-
-
-class DryRunRollbackError(Exception):
-    """Raised to deliberately abort a dry-run transaction."""

@@ -10,7 +10,7 @@ from apps.users.tasks import ldap_update_users
 
 
 class Command(BaseCommand):
-    """Synchronize user accounts against LDAP."""
+    """CLI command for synchronizing user accounts against LDAP."""
 
     help = "Synchronize user accounts against LDAP."
 

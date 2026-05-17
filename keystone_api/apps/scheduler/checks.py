@@ -52,7 +52,7 @@ def check_celery_beat_configuration(*args, **kwargs) -> list[Error]:
 
         # Make sure the task is importable by Celery
         else:
-            if not obj.__module__ == module.__name__:
+            if obj.__module__ != module.__name__:
                 errors.append(
                     Error(
                         msg=f"Module '{module_spec}' is not absolute.",

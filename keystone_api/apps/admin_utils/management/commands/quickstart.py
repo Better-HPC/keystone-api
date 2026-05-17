@@ -8,11 +8,11 @@ to handle database migrations, static file collection, and web server deployment
 | Argument    | Description                                                      |
 |-------------|------------------------------------------------------------------|
 | --all       | Launch all available services.                                   |
-| --celery    | Launch a Celery worker with a Redis backend.                     |
+| --celery    | Launch a background Celery worker.                               |
 | --demo-user | Create an admin user account if no other accounts exist.         |
 | --server    | Run the application using a Uvicorn web server.                  |
 | --migrate   | Run database migrations.                                         |
-| --smtp      | Run an SMTP server using AIOSMTPD.                               |
+| --smtp      | Run an SMTP server.                                              |
 | --static    | Collect static files.                                            |
 """
 
@@ -116,11 +116,11 @@ class Command(StdOutUtils, BaseCommand):
         subprocess.Popen(["redis-server"], stdout=subprocess.DEVNULL)
         self._write("done")
 
-        self._write("  Launching scheduler...", ending=" ")
+        self._write("  Launching worker...", ending=" ")
         subprocess.Popen(["celery", "-A", "keystone_api.apps.scheduler", "worker"], stdout=subprocess.DEVNULL)
         self._write("done")
 
-        self._write("  Launching workers...", ending=" ")
+        self._write("  Launching scheduler...", ending=" ")
         subprocess.Popen(
             ["celery", "-A", "keystone_api.apps.scheduler", "beat", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"],
             stdout=subprocess.DEVNULL,

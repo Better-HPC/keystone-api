@@ -58,7 +58,7 @@ class PublicationFactory(DjangoModelFactory):
     Publications have a 20% chance of being "in preparation", resulting in
     no `submitted` or `published` date being set on the record. If a publication
     is not in preparation, it is assigned a random submitted date within the
-    past five years. Submitted applications have an 85% chance of being published,
+    past five years. Submitted publications have an 85% chance of being published,
     with a published date falling 20 to 60 days after submission.
     """
 
