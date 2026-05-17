@@ -14,7 +14,7 @@ from django.db.models import Manager, Q, QuerySet, Sum
 from apps.users.models import Team
 
 if TYPE_CHECKING:  # pragma: nocover
-    from apps.allocations.models import AllocationRequest, Cluster
+    from apps.allocations.models import Cluster
 
 __all__ = ["ResourceAllocationManager"]
 
@@ -40,7 +40,7 @@ class ResourceAllocationManager(Manager):
         return self.filter(
             request__team=account,
             cluster=cluster,
-            request__status=AllocationRequest.StatusChoices.APPROVED
+            request__status="AP"
         )
 
     def active_allocations(self, account: Team, cluster: "Cluster") -> QuerySet:
