@@ -9,18 +9,18 @@ creation.
 from rest_framework import serializers
 
 __all__ = [
-    'JobExecutionErrorSerializer',
-    'JobRequestSerializer',
-    'JobResultSerializer',
-    'JobSerializer',
-    'JobStepResultSerializer',
-    'JobStepSerializer',
-    'ReferenceResolutionErrorSerializer',
+    "JobExecutionErrorSerializer",
+    "JobRequestSerializer",
+    "JobResultSerializer",
+    "JobSerializer",
+    "JobStepResultSerializer",
+    "JobStepSerializer",
+    "ReferenceResolutionErrorSerializer",
 ]
 
 
 class JobExecutionErrorSerializer(serializers.Serializer):
-    """Job result serializer for job's that fail with a `JobExecutionError`."""
+    """Job result serializer for jobs that fail with a `JobExecutionError`."""
 
     detail = serializers.CharField()
     step = serializers.IntegerField()
@@ -48,8 +48,8 @@ class JobResultSerializer(serializers.Serializer):
 class JobStepSerializer(serializers.Serializer):
     """Object serializer for a single step within a user submitted job."""
 
-    ref = serializers.CharField(required=False, default='', allow_blank=True)
-    method = serializers.ChoiceField(choices=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+    ref = serializers.CharField(required=False, default="", allow_blank=True)
+    method = serializers.ChoiceField(choices=["GET", "POST", "PUT", "PATCH", "DELETE"])
     path = serializers.CharField(max_length=2048)
     payload = serializers.DictField(required=False, default=dict)
     query_params = serializers.DictField(required=False, default=dict)
@@ -58,11 +58,17 @@ class JobStepSerializer(serializers.Serializer):
         """Ensure the ref alias contains only alphanumeric characters and underscores.
 
         The alias is used as the identifier inside `@ref{alias.dotpath}` tokens.
+
+        Args:
+            value: The ref alias string to validate.
+
+        Returns:
+            The original value if valid, otherwise raises a ValidationError.
         """
 
-        if value and not value.replace('_', '').isalnum():
+        if value and not value.replace("_", "").isalnum():
             raise serializers.ValidationError(
-                'Reference aliases may only contain alphanumeric characters and underscores.'
+                "Reference aliases may only contain alphanumeric characters and underscores."
             )
 
         return value
@@ -77,9 +83,9 @@ class JobSerializer(serializers.Serializer):
     def validate_actions(self, value: list[dict]) -> list[dict]:
         """Ensure all ref aliases within the batch are unique."""
 
-        refs = [a['ref'] for a in value if a.get('ref')]
+        refs = [a["ref"] for a in value if a.get("ref")]
         if len(refs) != len(set(refs)):
-            raise serializers.ValidationError('Reference aliases must be unique within a job.')
+            raise serializers.ValidationError("Reference aliases must be unique within a job.")
 
         return value
 
@@ -91,7 +97,7 @@ class JobRequestSerializer(serializers.Serializer):
 
 
 class ReferenceResolutionErrorSerializer(serializers.Serializer):
-    """Job result serializer for job's that fail with a `ReferenceResolutionError`."""
+    """Job result serializer for jobs that fail with a `ReferenceResolutionError`."""
 
     detail = serializers.CharField()
     token = serializers.CharField()

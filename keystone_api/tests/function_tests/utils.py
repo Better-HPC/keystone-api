@@ -14,11 +14,12 @@ from apps.users.models import Membership
 class CustomAsserts:
     """Custom assert methods for testing responses from REST endpoints."""
 
-    def assert_http_responses(self, endpoint: str, **kwargs) -> None:
+    def assert_http_responses(self, endpoint: str, format: str = 'json', **kwargs) -> None:
         """Execute a series of API calls and assert the returned status matches the given values.
 
         Args:
             endpoint: The partial URL endpoint to perform requests against.
+            format: The serialization format to use for all requests in this call (e.g. 'json', 'multipart').
             **<request>: The integer status code expected by the given request type (get, post, etc.).
             **<request>_body: The data to include in the request (get_body, post_body, etc.).
             **<request>_headers: Header values to include in the request (get_headers, post_headers, etc.).
@@ -26,38 +27,29 @@ class CustomAsserts:
 
         http_methods = ['get', 'head', 'options', 'post', 'put', 'patch', 'delete', 'trace']
         for method in http_methods:
-            expected_status = kwargs.get(method, None)
-            if expected_status is not None:
-                self._assert_http_response(method, endpoint, expected_status, kwargs)
+            if (expected_status := kwargs.get(method)) is None:
+                continue
 
-    def _assert_http_response(self, method: str, endpoint: str, expected_status: int, kwargs: dict):
-        """Assert the HTTP response for a specific method matches the expected status.
+            request_args = self._build_request_args(method, format, kwargs)
+            http_callable = getattr(self.client, method)
 
-        Args:
-            method: The HTTP method to use (get, post, etc.).
-            endpoint: The partial URL endpoint to perform requests against.
-            expected_status: The integer status code expected by the given request type.
-            kwargs: Additional keyword arguments for building the request.
-        """
+            with transaction.atomic():
+                response = http_callable(endpoint, **request_args)
+                failure_msg = (
+                    f'{method.upper()} request received {response.status_code} '
+                    f'instead of {expected_status} with content "{response.content}"'
+                )
 
-        http_callable = getattr(self.client, method)
-        http_args = self._build_request_args(method, kwargs)
-
-        # Preserve database state
-        with transaction.atomic():
-            request = http_callable(endpoint, **http_args)
-            self.assertEqual(
-                request.status_code, expected_status,
-                f'{method.upper()} request received {request.status_code} instead of {expected_status} with content "{request.content}"')
-
-            transaction.set_rollback(True)
+                self.assertEqual(response.status_code, expected_status, failure_msg)
+                transaction.set_rollback(True)
 
     @staticmethod
-    def _build_request_args(method: str, kwargs: dict) -> dict:
+    def _build_request_args(method: str, format: str, kwargs: dict) -> dict:
         """Isolate head and body arguments for a given HTTP method from a dict of arguments.
 
         Args:
             method: The HTTP method to identify arguments for.
+            format: The serialization format to use for the request.
             kwargs: A dictionary of arguments.
 
         Returns:
@@ -67,12 +59,10 @@ class CustomAsserts:
         args = {}
         if body := kwargs.get(f'{method}_body'):
             args['data'] = body
+            args['format'] = format
 
         if headers := kwargs.get(f'{method}_headers'):
             args['headers'] = headers
-
-        if content_type := kwargs.get('content_type'):
-            args['content_type'] = content_type
 
         return args
 
@@ -147,7 +137,7 @@ class TeamListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.team_member)
 
         response = self.client.get(self.endpoint)
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
         response_data = response.json()["results"]
         response_ids = {record["id"] for record in response_data}
@@ -161,7 +151,7 @@ class TeamListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.staff_user)
 
         response = self.client.get(self.endpoint)
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
         response_data = response.json()['results']
         response_ids = {record['id'] for record in response_data}
@@ -176,7 +166,7 @@ class TeamListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
 
         response_data = response.json()['results']
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(0, len(response_data))
 
 
@@ -225,7 +215,7 @@ class UserListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.owner_user)
 
         response = self.client.get(self.endpoint)
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
         response_data = response.json()['results']
         response_ids = {record['id'] for record in response_data}
@@ -238,7 +228,7 @@ class UserListFilteringTestMixin(ABC):
         self.client.force_authenticate(self.staff_user)
 
         response = self.client.get(self.endpoint)
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
         response_data = response.json()['results']
         response_ids = {record['id'] for record in response_data}
@@ -252,5 +242,5 @@ class UserListFilteringTestMixin(ABC):
         response = self.client.get(self.endpoint)
 
         response_data = response.json()['results']
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(0, len(response_data))

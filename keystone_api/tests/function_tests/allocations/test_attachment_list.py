@@ -49,6 +49,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
 
         self.assert_http_responses(
             self.endpoint,
+            format='multipart',
             get=status.HTTP_401_UNAUTHORIZED,
             head=status.HTTP_401_UNAUTHORIZED,
             options=status.HTTP_401_UNAUTHORIZED,
@@ -66,6 +67,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         test_file = SimpleUploadedFile("file.txt", b"dummy content")
         self.assert_http_responses(
             self.endpoint,
+            format='multipart',
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -84,6 +86,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         test_file = SimpleUploadedFile("file.txt", b"dummy content")
         self.assert_http_responses(
             self.endpoint,
+            format='multipart',
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -102,6 +105,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         test_file = SimpleUploadedFile("file.txt", b"dummy content")
         self.assert_http_responses(
             self.endpoint,
+            format='multipart',
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -120,6 +124,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         test_file = SimpleUploadedFile("file.txt", b"dummy content")
         self.assert_http_responses(
             self.endpoint,
+            format='multipart',
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
@@ -138,6 +143,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         test_file = SimpleUploadedFile("file.txt", b"dummy content")
         self.assert_http_responses(
             self.endpoint,
+            format='multipart',
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,

@@ -4,8 +4,8 @@ from django.urls import path
 
 from .views import *
 
-app_name = 'batch'
+app_name = "batch"
 
 urlpatterns = [
-    path('', JobApiView.as_view(), name='batch'),
+    path("", JobApiView.as_view(), name="batch"),
 ]
