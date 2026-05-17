@@ -90,7 +90,7 @@ def subprocess_call(args: list[str]) -> str:
     out, err = process.communicate()
 
     if process.returncode != 0:
-        message = f"Error executing shell command: {" ".join(args)} \n {err.decode("utf-8").strip()}"
+        message = f"Error executing shell command: {' '.join(args)} \n {err.decode('utf-8').strip()}"
         log.error(message)
         raise RuntimeError(message)
 
@@ -222,7 +222,7 @@ def get_cluster_jobs(cluster_name: str) -> list[dict]:
     # Fetch job values from the Slurm account manager
     slurm_cmd = split(
         f"sacct --allusers --allocations --parsable2 "
-        f"--clusters={cluster_name} --format={",".join(slurm_fields)}"
+        f"--clusters={cluster_name} --format={','.join(slurm_fields)}"
     )
 
     # Parse header values from the output command
