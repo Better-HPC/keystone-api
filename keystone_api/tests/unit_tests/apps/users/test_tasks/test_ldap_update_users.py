@@ -1,4 +1,4 @@
-"""Unit tests for the `ldap_update_users` task."""
+"""Unit tests for the `ldap_update_users` function."""
 
 from unittest.mock import MagicMock, Mock, patch
 
