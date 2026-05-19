@@ -121,7 +121,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
-            queryset = queryset.filter(team__is_active=True)
+            queryset = queryset.filter(team__is_active=True, user__is_active=True)
 
         return queryset
 
@@ -278,3 +278,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return PrivilegedUserSerializer
 
         return RestrictedUserSerializer
+
+    def get_queryset(self) -> QuerySet:
+        """Return the base queryset, restricting inactive teams for non-staff users."""
+
+        queryset = super().get_queryset()
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(is_active=True)
+
+        return queryset
