@@ -321,7 +321,6 @@ AUTH_USER_MODEL = "users.User"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
 # General LDAP settings
-AUTH_LDAP_PURGE_REMOVED = env.bool("AUTH_LDAP_PURGE_REMOVED", False)
 AUTH_LDAP_TIMEOUT = env.int("AUTH_LDAP_TIMEOUT", 10)
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
 AUTH_LDAP_START_TLS = env.bool("AUTH_LDAP_START_TLS", True)

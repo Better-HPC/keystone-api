@@ -180,5 +180,4 @@ A full list of available Keystone fields can be found in the project's [OpenApi 
 | `AUTH_LDAP_LOGIN_FILTER`  | `(uid=%(user)s)`        | Search filter for username lookups during authentication.         |
 | `AUTH_LDAP_REQUIRE_CERT`  | `False`                 | Whether to require certificate verification.                      |
 | `AUTH_LDAP_ATTR_MAP`      |                         | A mapping of user fields to LDAP attribute names.                 |
-| `AUTH_LDAP_PURGE_REMOVED` | `False`                 | Delete users when removed from LDAP instead of deactivating them. |
 | `AUTH_LDAP_TIMEOUT`       | `10`                    | The number of seconds before timing out an LDAP connection/query. |
