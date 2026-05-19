@@ -22,3 +22,6 @@ class Command(BaseCommand):
 
         except KeyboardInterrupt:
             pass
+
+        except Exception as excep:
+            self.stderr.write(self.style.ERROR(f"LDAP sync failed: {excep}"))
