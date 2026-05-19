@@ -1,4 +1,4 @@
-"""Unit tests for the `clear_log_records` task."""
+"""Unit tests for the `clear_log_records` function."""
 
 from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch
