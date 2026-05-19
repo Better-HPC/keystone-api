@@ -19,16 +19,6 @@ except ImportError:  # pragma: no cover
 
 __all__ = ["ldap_update_users"]
 
-LDAP_UPDATE_FIELDS = [
-    "first_name",
-    "last_name",
-    "email",
-    "department",
-    "role",
-    "is_active",
-    "is_ldap_user",
-]
-
 
 def get_ldap_connection() -> "ldap.ldapobject.LDAPObject":
     """Establish a new LDAP connection."""
@@ -111,15 +101,17 @@ def ldap_update_users() -> None:
 
     # Parse all LDAP entries into application user records
     ldap_users = []
+    populated_fields = set()
     for dn, attrs in search:
         if user_data := parse_ldap_entry(dn, attrs, settings.AUTH_LDAP_USER_ATTR_MAP):
+            populated_fields.update(user_data.keys() - {"username"})
             ldap_users.append(User(**user_data))
 
     User.objects.bulk_create(
         ldap_users,
         update_conflicts=True,
         unique_fields=["username"],
-        update_fields=LDAP_UPDATE_FIELDS,
+        update_fields=list(populated_fields),
     )
 
     # Handle usernames that have been removed from LDAP
