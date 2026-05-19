@@ -225,3 +225,63 @@ class InactiveTeamAccess(APITestCase):
         self.client.force_authenticate(user=self.team_member)
         response = self.client.delete(self.endpoint)
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+
+class InactiveUserAccess(APITestCase):
+    """Test access to membership records belonging to inactive users."""
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.active_team = TeamFactory(is_active=True)
+        membership = MembershipFactory(
+            team=self.active_team,
+            role=Membership.Role.MEMBER,
+            user=UserFactory(is_active=False),
+        )
+
+        self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory()
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": membership.id})
+
+    def test_staff_can_retrieve_membership_for_inactive_user(self) -> None:
+        """Verify staff users can retrieve membership records for inactive users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_modify_membership_for_inactive_user(self) -> None:
+        """Verify staff users can modify membership records for inactive users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(self.endpoint, {"role": Membership.Role.ADMIN})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_delete_membership_for_inactive_user(self) -> None:
+        """Verify staff users can delete membership records for inactive users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+
+    def test_non_staff_cannot_retrieve_membership_for_inactive_user(self) -> None:
+        """Verify non-staff users cannot retrieve membership records for inactive users."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_modify_membership_for_inactive_user(self) -> None:
+        """Verify non-staff users cannot modify membership records for inactive users."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.patch(self.endpoint, {"role": Membership.Role.ADMIN})
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_delete_membership_for_inactive_user(self) -> None:
+        """Verify non-staff users cannot delete membership records for inactive users."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)

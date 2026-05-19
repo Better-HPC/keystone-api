@@ -206,3 +206,57 @@ class RecordHistory(APITestCase):
         password_old, password_new = last_change["changes"]["password"]
         self.assertTrue(password_new.startswith("*****"))
         self.assertTrue(password_old.startswith("*****"))
+
+
+class InactiveUserAccess(APITestCase):
+    """Test access to inactive user records."""
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.inactive_user = UserFactory(is_active=False)
+        self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory()
+        self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.inactive_user.id})
+
+    def test_staff_can_retrieve_inactive_user(self) -> None:
+        """Verify staff users can retrieve inactive user records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_modify_inactive_user(self) -> None:
+        """Verify staff users can modify inactive user records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.patch(self.endpoint, {"first_name": "Updated"})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_staff_can_delete_inactive_user(self) -> None:
+        """Verify staff users can delete inactive user records."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+
+    def test_non_staff_cannot_retrieve_inactive_user(self) -> None:
+        """Verify non-staff users cannot retrieve inactive user records."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.get(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_modify_inactive_user(self) -> None:
+        """Verify non-staff users cannot modify inactive user records."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.patch(self.endpoint, {"first_name": "Updated"})
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_non_staff_cannot_delete_inactive_user(self) -> None:
+        """Verify non-staff users cannot delete inactive user records."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.delete(self.endpoint)
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)

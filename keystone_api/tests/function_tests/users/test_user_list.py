@@ -156,3 +156,33 @@ class CredentialHandling(APITestCase):
 
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
         self.assertIn("This password is too short.", response.content.decode())
+
+
+class InactiveUserFiltering(APITestCase):
+    """Test filtering of inactive users from list results."""
+
+    endpoint = reverse(VIEW_NAME)
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.active_user = UserFactory(is_active=True)
+        self.inactive_user = UserFactory(is_active=False)
+        self.staff_user = UserFactory(is_staff=True)
+        self.generic_user = UserFactory()
+
+    def test_inactive_users_hidden_from_non_staff(self) -> None:
+        """Verify inactive users are not returned to non-staff users."""
+
+        self.client.force_authenticate(user=self.generic_user)
+        response = self.client.get(self.endpoint)
+        returned_ids = [u["id"] for u in response.data["results"]]
+        self.assertNotIn(self.inactive_user.id, returned_ids)
+
+    def test_inactive_users_visible_to_staff(self) -> None:
+        """Verify inactive users are returned to staff users."""
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.get(self.endpoint)
+        returned_ids = [u["id"] for u in response.data["results"]]
+        self.assertIn(self.inactive_user.id, returned_ids)
