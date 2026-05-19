@@ -85,17 +85,6 @@ class ParseLdapEntryMethod(TestCase):
 
         self.assertTrue(result["is_ldap_user"])
 
-    def test_sets_is_active_true(self) -> None:
-        """Verify `is_active` is always `True` in the returned dict."""
-
-        result = parse_ldap_entry(
-            "uid=user1,ou=users,dc=example,dc=com",
-            {"uid": [b"user1"]},
-            {},
-        )
-
-        self.assertTrue(result["is_active"])
-
     def test_maps_bytes_attributes(self) -> None:
         """Verify LDAP byte attributes are decoded and mapped to the correct Django fields."""
 

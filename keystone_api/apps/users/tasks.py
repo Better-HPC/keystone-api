@@ -64,7 +64,7 @@ def parse_ldap_entry(dn: str, attrs: dict, attr_map: dict) -> dict | None:
         username = username.decode()
 
     # Map LDAP fields to application database fields
-    user_data = {"username": username, "is_ldap_user": True, "is_active": True}
+    user_data = {"username": username, "is_ldap_user": True}
     for django_field, ldap_attr in attr_map.items():
         if django_field == "username":
             continue
