@@ -5,8 +5,6 @@ asynchronously from the rest of the application and log their results in the
 application database.
 """
 
-import logging
-
 from celery import shared_task
 from django.conf import settings
 
@@ -30,8 +28,6 @@ LDAP_UPDATE_FIELDS = [
     "is_active",
     "is_ldap_user",
 ]
-
-logger = logging.getLogger(__name__)
 
 
 def get_ldap_connection() -> "ldap.ldapobject.LDAPObject":
