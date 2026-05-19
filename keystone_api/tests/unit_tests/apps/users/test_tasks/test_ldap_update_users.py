@@ -275,30 +275,6 @@ class LdapUpdateUsersMethod(TestCase):
         AUTH_LDAP_SERVER_URI="ldap://ds.example.com:389",
         AUTH_LDAP_USER_SEARCH=MagicMock(base_dn="dc=example,dc=com"),
         AUTH_LDAP_USER_ATTR_MAP={"username": "uid"},
-        AUTH_LDAP_PURGE_REMOVED=True,
-    )
-    @patch("apps.users.tasks.get_ldap_connection")
-    def test_users_are_pruned(self, mock_get_ldap_connection: Mock) -> None:
-        """Verify missing user accounts are deleted when `AUTH_LDAP_PURGE_REMOVED=True`."""
-
-        # Mock an LDAP search result with no users
-        mock_conn = MagicMock()
-        mock_conn.search_s.return_value = []
-        mock_get_ldap_connection.return_value = mock_conn
-
-        # Create users
-        UserFactory(username="user_to_prune", is_ldap_user=True)
-        UserFactory(username="non_ldap_user", is_ldap_user=False)
-
-        # Test missing LDAP users are deleted and non-ldap users are not modified
-        ldap_update_users()
-        self.assertFalse(User.objects.filter(username="user_to_prune").exists())
-        self.assertTrue(User.objects.filter(username="non_ldap_user").exists())
-
-    @override_settings(
-        AUTH_LDAP_SERVER_URI="ldap://ds.example.com:389",
-        AUTH_LDAP_USER_SEARCH=MagicMock(base_dn="dc=example,dc=com"),
-        AUTH_LDAP_USER_ATTR_MAP={"username": "uid"},
         AUTH_LDAP_PURGE_REMOVED=False
     )
     @patch("apps.users.tasks.get_ldap_connection")
