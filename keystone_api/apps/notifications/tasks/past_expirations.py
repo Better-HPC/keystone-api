@@ -47,10 +47,12 @@ def notify_past_expirations() -> None:
     """Send a notification to all users with expired allocations."""
 
     # Retrieve all allocation requests that expired within the last three days
+    # Exlude any inactive teams and inactive users
     expired_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,
         expire__lte=date.today(),
-        expire__gt=date.today() - timedelta(days=3)
+        expire__gt=date.today() - timedelta(days=3),
+        team__is_active=True,
     ).select_related(
         "team"
     ).prefetch_related(

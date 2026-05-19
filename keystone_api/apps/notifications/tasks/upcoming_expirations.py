@@ -69,9 +69,11 @@ def notify_upcoming_expirations() -> None:
     """Send a notification to all users with soon-to-expire allocations."""
 
     # Retrieve all approved allocation requests that expire in the future
+    # Exlude any inactive teams and inactive users
     active_requests = AllocationRequest.objects.filter(
         status=AllocationRequest.StatusChoices.APPROVED,
-        expire__gt=date.today()
+        expire__gt=date.today(),
+        team__is_active=True,
     ).select_related(
         "team"
     ).prefetch_related(
