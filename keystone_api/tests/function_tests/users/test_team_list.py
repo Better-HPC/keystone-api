@@ -81,8 +81,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
         )
 
 
-class SlugHandling(APITestCase, CustomAsserts):
-    """Test slug value handling on team creation."""
+class NameHandling(APITestCase, CustomAsserts):
+    """Test the `name` field is writable on create."""
 
     endpoint = reverse(VIEW_NAME)
 
@@ -92,7 +92,13 @@ class SlugHandling(APITestCase, CustomAsserts):
         self.user = UserFactory()
         self.client.force_authenticate(user=self.user)
 
-    def test_slug_set_automatically(self) -> None:
+    def test_name_required_on_create(self) -> None:
+        """Verify team creation fails when no name is provided."""
+
+        response = self.client.post(self.endpoint, {})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_slug_derived_from_name(self) -> None:
         """Verify a slug is automatically generated from the team name."""
 
         response = self.client.post(self.endpoint, {"name": "My New Team"})
