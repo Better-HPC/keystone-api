@@ -194,6 +194,14 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         "users",
     )
 
+    def get_serializer_class(self) -> type[Serializer]:
+        """Return the appropriate serializer based on whether the request is an update."""
+
+        if self.action in ("update", "partial_update"):
+            return TeamUpdateSerializer
+
+        return TeamSerializer
+
     def get_queryset(self) -> QuerySet:
         """Return the base queryset, restricting inactive teams for non-staff users."""
 
