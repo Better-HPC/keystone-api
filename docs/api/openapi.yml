@@ -14150,8 +14150,7 @@ components:
           description: Specific permissions for this user.
     PatchedTeamUpdateRequest:
       type: object
-      description: Object serializer for updating `Team` records, with `name` locked
-        after creation.
+      description: Object serializer for modifying existing `Team` records.
       properties:
         is_active:
           type: boolean
@@ -15004,8 +15003,7 @@ components:
       - slug
     TeamUpdate:
       type: object
-      description: Object serializer for updating `Team` records, with `name` locked
-        after creation.
+      description: Object serializer for modifying existing `Team` records.
       properties:
         id:
           type: integer
@@ -15046,8 +15044,7 @@ components:
       - users
     TeamUpdateRequest:
       type: object
-      description: Object serializer for updating `Team` records, with `name` locked
-        after creation.
+      description: Object serializer for modifying existing `Team` records.
       properties:
         is_active:
           type: boolean
