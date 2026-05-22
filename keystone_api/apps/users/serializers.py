@@ -178,6 +178,6 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class TeamUpdateSerializer(TeamSerializer):
-    """Object serializer for updating `Team` records, with `name` locked after creation."""
+    """Object serializer for modifying existing `Team` records."""
 
     name = serializers.CharField(read_only=True)

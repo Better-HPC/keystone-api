@@ -434,7 +434,7 @@ class ClusterViewSet(viewsets.ModelViewSet):
     )
 
     def get_queryset(self) -> QuerySet[Cluster]:
-        """Return a queryset of clusters visible to the requesting user.
+        """Return the appropriate queryset for an incoming request.
 
         For the list action, clusters are filtered by the cluster's access
         mode and the requesting user's team memberships.
@@ -549,7 +549,11 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     )
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered to only list private comments for staff users."""
+        """Return the appropriate queryset for an incoming request.
+
+        Staff users are returned a query including all records.
+        Non-staff users are limited to public comments.
+        """
 
         queryset = super().get_queryset()
 

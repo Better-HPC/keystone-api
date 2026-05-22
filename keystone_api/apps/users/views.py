@@ -117,7 +117,11 @@ class MembershipViewSet(viewsets.ModelViewSet):
     )
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset, restricting memberships for inactive teams for non-staff users."""
+        """Return the appropriate queryset for an incoming request.
+
+        Staff users are returned a query including all records.
+        Non-staff are limited to memberships where the team and user are both active.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
@@ -195,7 +199,11 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     )
 
     def get_serializer_class(self) -> type[Serializer]:
-        """Return the appropriate serializer based on whether the request is an update."""
+        """Return the appropriate data serializer class for an incoming request.
+
+        Update operations are returned the `TeamUpdateSerializer` class.
+        All other operations are returned the `TeamSerializer` class.
+        """
 
         if self.action in ("update", "partial_update"):
             return TeamUpdateSerializer
@@ -203,7 +211,11 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         return TeamSerializer
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset, restricting inactive teams for non-staff users."""
+        """Return the appropriate queryset for an incoming request.
+
+        Staff users are returned a query including all records.
+        Non-staff are limited to active team records only.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
@@ -279,7 +291,11 @@ class UserViewSet(viewsets.ModelViewSet):
     )
 
     def get_serializer_class(self) -> type[Serializer]:
-        """Return the appropriate data serializer based on user roles/permissions."""
+        """Return the appropriate data serializer class for an incoming request.
+
+         Staff users are returned a `PrivilegedUserSerializer` class.
+         Non-staff users are returned a `RestrictedUserSerializer` class.
+         """
 
         # Allow staff users to read/write administrative fields
         if self.request.user.is_staff:
@@ -288,7 +304,11 @@ class UserViewSet(viewsets.ModelViewSet):
         return RestrictedUserSerializer
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset, restricting inactive teams for non-staff users."""
+        """Return the appropriate queryset for an incoming request.
+
+        Staff users are returned a query including all records.
+        Non-staff are limited to active user records only.
+        """
 
         queryset = super().get_queryset()
         if not self.request.user.is_staff:
