@@ -51,7 +51,7 @@ class AbstractTeamStatsView(ABC):
         """Compute and return summary statistics as a dictionary."""
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership.
+        """Return the appropriate queryset for an incoming request.
 
         Non-staff users are only returned records from their own teams.
         Staff users are returned all records.
@@ -272,7 +272,7 @@ class NotificationStatsView(GenericAPIView):
     schema = FilterGetAutoSchema()
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by notification owner.
+        """Return the appropriate queryset for an incoming request.
 
         Non-staff users are only returned their own notifications.
         Staff users are returned all records.

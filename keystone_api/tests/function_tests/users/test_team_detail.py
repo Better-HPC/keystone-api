@@ -30,7 +30,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        self.team = TeamFactory()
+        self.team = TeamFactory(is_active=True)
         self.team_member = MembershipFactory(team=self.team, role=Membership.Role.MEMBER).user
         self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
         self.team_owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
@@ -101,8 +101,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={"name": "New Name", "members": []},
-            patch_body={"name": "New Name"},
+            put_body={"is_active": False},
+            patch_body={"is_active": False},
         )
 
     def test_team_owner_permissions(self) -> None:
@@ -119,8 +119,8 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={"name": "New Name", "members": []},
-            patch_body={"name": "New Name"},
+            put_body={"is_active": False},
+            patch_body={"is_active": False},
         )
 
     def test_staff_user_permissions(self) -> None:
@@ -137,66 +137,45 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             patch=status.HTTP_200_OK,
             delete=status.HTTP_204_NO_CONTENT,
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            put_body={"name": "New Name", "members": []},
-            patch_body={"name": "New Name"},
+            put_body={"is_active": False},
+            patch_body={"is_active": False},
         )
 
 
-class SlugHandling(APITestCase):
-    """Test slug value handling on team updates."""
+class NameHandling(APITestCase):
+    """Test the `name` field is readonly for update operations."""
 
     def setUp(self) -> None:
         """Authenticate as a team owner."""
 
         self.team = TeamFactory(name="Original Name")
-        self.owner = MembershipFactory(team=self.team, role=Membership.Role.OWNER).user
+        self.staff_user = UserFactory(is_staff=True)
 
-        self.client.force_authenticate(user=self.owner)
+        self.client.force_authenticate(user=self.staff_user)
         self.endpoint = reverse(VIEW_NAME, kwargs={"pk": self.team.id})
 
-    def test_slug_updates_when_name_changes(self) -> None:
-        """Verify the slug value is automatically updated when the team name changes."""
+    def test_name_is_read_only_on_put(self) -> None:
+        """Verify the team name cannot be modified via a full update."""
 
-        response = self.client.patch(self.endpoint, {"name": "Renamed Team"})
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-
-        self.team.refresh_from_db()
-        self.assertEqual("renamed-team", self.team.slug)
-
-    def test_slug_not_overridden_manually(self) -> None:
-        """Verify manually specified slug values are ignored during update."""
-
-        response = self.client.patch(self.endpoint, {"name": "Another Name", "slug": "wrong-slug"})
-
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.team.refresh_from_db()
-        self.assertEqual("another-name", self.team.slug)
-
-    def test_slug_unchanged_if_name_unchanged(self) -> None:
-        """Verify slug values remain unchanged if the name is not modified."""
-
+        original_name = self.team.name
         original_slug = self.team.slug
-        response = self.client.patch(self.endpoint, {"membership": []})
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.client.put(self.endpoint, {"name": "New Name", "is_active": True})
 
         self.team.refresh_from_db()
+        self.assertEqual(original_name, self.team.name)
         self.assertEqual(original_slug, self.team.slug)
 
-    def test_slug_uniqueness_enforced(self) -> None:
-        """Verify slug uniqueness is enforced when updating records."""
+    def test_name_is_read_only_on_patch(self) -> None:
+        """Verify the team name cannot be patched after creation."""
 
-        # Create a staf user with full permissions
-        staff_user = UserFactory(is_staff=True)
-        self.client.force_authenticate(user=staff_user)
+        original_name = self.team.name
+        original_slug = self.team.slug
+        self.client.force_authenticate(user=self.staff_user)
+        self.client.patch(self.endpoint, {"name": "New Name"})
 
-        # Create two initial team records
-        team1 = TeamFactory(name="Team 1")
-        team2 = TeamFactory(name="Team 2")
-        team2_endpoint = reverse(VIEW_NAME, kwargs={"pk": team2.id})
-
-        # Rename second team so the name renames unique but the slug conflicts with the first team
-        response1 = self.client.patch(team2_endpoint, {"name": team1.slug})
-        self.assertEqual(status.HTTP_400_BAD_REQUEST, response1.status_code)
+        self.team.refresh_from_db()
+        self.assertEqual(original_name, self.team.name)
+        self.assertEqual(original_slug, self.team.slug)
 
 
 class InactiveTeamAccess(APITestCase):
@@ -221,7 +200,7 @@ class InactiveTeamAccess(APITestCase):
         """Verify staff users can modify inactive team records."""
 
         self.client.force_authenticate(user=self.staff_user)
-        response = self.client.patch(self.endpoint, {"name": "Updated Name"})
+        response = self.client.patch(self.endpoint, {"is_active": True})
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_staff_can_delete_inactive_team(self) -> None:
@@ -242,7 +221,7 @@ class InactiveTeamAccess(APITestCase):
         """Verify non-staff users cannot modify inactive team records."""
 
         self.client.force_authenticate(user=self.team_member)
-        response = self.client.patch(self.endpoint, {"name": "Updated Name"})
+        response = self.client.patch(self.endpoint, {"is_active": True})
         self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
 
     def test_non_staff_cannot_delete_inactive_team(self) -> None:

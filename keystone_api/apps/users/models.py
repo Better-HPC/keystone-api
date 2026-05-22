@@ -68,8 +68,9 @@ class Team(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
-    users = models.ManyToManyField("User", through=Membership)
     is_active = models.BooleanField(default=True)
+
+    users = models.ManyToManyField("User", through=Membership)
     history = AuditlogHistoryField()
 
     objects = TeamManager()

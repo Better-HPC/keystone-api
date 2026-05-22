@@ -25,7 +25,7 @@ class TeamScopedListMixin:
     team_field = "team"
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by user team membership for list actions."""
+        """Return the appropriate queryset for an incoming request."""
 
         queryset = super().get_queryset()
         if self.action == "list" and not self.request.user.is_staff:
@@ -48,7 +48,7 @@ class UserScopedListMixin:
     user_field = "user"
 
     def get_queryset(self) -> QuerySet:
-        """Return the base queryset filtered by the requesting user for list actions."""
+        """Return the appropriate queryset for an incoming request."""
 
         queryset = super().get_queryset()
         if self.action == "list" and not self.request.user.is_staff:

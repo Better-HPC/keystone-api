@@ -20,6 +20,7 @@ __all__ = [
     "PrivilegedUserSerializer",
     "RestrictedUserSerializer",
     "TeamSerializer",
+    "TeamUpdateSerializer",
 ]
 
 
@@ -174,3 +175,9 @@ class TeamSerializer(serializers.ModelSerializer):
             attrs["slug"] = slug
 
         return super().validate(attrs)
+
+
+class TeamUpdateSerializer(TeamSerializer):
+    """Object serializer for modifying existing `Team` records."""
+
+    name = serializers.CharField(read_only=True)

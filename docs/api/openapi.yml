@@ -11022,14 +11022,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TeamRequest'
+              $ref: '#/components/schemas/TeamUpdateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TeamRequest'
+              $ref: '#/components/schemas/TeamUpdateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TeamRequest'
-        required: true
+              $ref: '#/components/schemas/TeamUpdateRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -11038,7 +11037,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                $ref: '#/components/schemas/TeamUpdate'
           description: ''
     patch:
       operationId: users_teams_partial_update
@@ -11058,13 +11057,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedTeamRequest'
+              $ref: '#/components/schemas/PatchedTeamUpdateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedTeamRequest'
+              $ref: '#/components/schemas/PatchedTeamUpdateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedTeamRequest'
+              $ref: '#/components/schemas/PatchedTeamUpdateRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -11073,7 +11072,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                $ref: '#/components/schemas/TeamUpdate'
           description: ''
     delete:
       operationId: users_teams_destroy
@@ -14149,17 +14148,13 @@ components:
           items:
             type: integer
           description: Specific permissions for this user.
-    PatchedTeamRequest:
+    PatchedTeamUpdateRequest:
       type: object
-      description: Object serializer for the `Team` model.
+      description: Object serializer for modifying existing `Team` records.
       properties:
         is_active:
           type: boolean
           default: true
-        name:
-          type: string
-          minLength: 1
-          maxLength: 255
     Preference:
       type: object
       description: Object serializer for the `Preference` class.
@@ -15006,6 +15001,54 @@ components:
       required:
       - name
       - slug
+    TeamUpdate:
+      type: object
+      description: Object serializer for modifying existing `Team` records.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+          default: true
+        _membership:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRole'
+          readOnly: true
+          title: ' membership'
+        _history:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogSummary'
+          readOnly: true
+          title: ' history'
+        name:
+          type: string
+          readOnly: true
+        users:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+      required:
+      - _history
+      - _membership
+      - id
+      - name
+      - slug
+      - users
+    TeamUpdateRequest:
+      type: object
+      description: Object serializer for modifying existing `Team` records.
+      properties:
+        is_active:
+          type: boolean
+          default: true
     UserRole:
       type: object
       description: Serializer for summarizing team member usernames and roles in nested
