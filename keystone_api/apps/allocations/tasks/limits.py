@@ -73,12 +73,12 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
     """
 
     # Retrieve service units (SUs) associated with:
-    # - active_sus: Total SUs across all currently active allocations
-    # - expiring_sus: Total SUs about to expire
+    # - active_sus: Total SUs across all currently active, unexpired allocations
+    # - expiring_sus: Total SUs about from expired allocations with no final usage set
     active_sus = ResourceAllocation.objects.active_service_units(account, cluster)
     expiring_sus = ResourceAllocation.objects.expiring_service_units(account, cluster)
 
-    # Get the current TRES limit from Slurm and use it to estimate
+    # Get the current TRES billing limit from Slurm and use it to estimate
     # previously consumed SUs not tied to active/expiring allocations
     current_limit = slurm.get_cluster_limit(account.name, cluster.name)
     historical_usage = current_limit - active_sus - expiring_sus
@@ -105,6 +105,11 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
             f"  > historical usage: {historical_usage}\n"
             f"  > current usage: {current_usage}\n"
             f"Defaulting to historical usage: {historical_usage}...")
+
+    # Lock inactive accounts
+    if not account.is_active:
+        slurm.set_cluster_limit(account.name, cluster.name, current_usage)
+        return
 
     # Distribute current usage across expiring allocations proportionally,
     # capping each at its awarded value and reducing remaining usage
