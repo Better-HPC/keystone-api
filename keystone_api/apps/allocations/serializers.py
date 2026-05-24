@@ -26,7 +26,6 @@ __all__ = [
     "AttachmentSerializer",
     "ClusterSerializer",
     "CommentSerializer",
-    "JobStatsSerializer",
     "ResourceAllocationSerializer",
 ]
 
@@ -203,17 +202,3 @@ class CommentSerializer(serializers.ModelSerializer):
             })
 
         return super().validate(attrs)
-
-
-class JobStatsSerializer(serializers.ModelSerializer):
-    """Object serializer for the `JobStats` class."""
-
-    _team = TeamSummarySerializer(source="team", read_only=True)
-    _cluster = ClusterSummarySerializer(source="cluster", read_only=True)
-
-    class Meta:
-        """Serializer settings."""
-
-        model = JobStats
-        fields = "__all__"
-        read_only_fields = ["team"]
