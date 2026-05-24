@@ -12,7 +12,6 @@ router.register("allocations", ResourceAllocationViewSet, basename="allocation")
 router.register("attachments", AttachmentViewSet, basename="attachment")
 router.register("clusters", ClusterViewSet, basename="cluster")
 router.register("comments", CommentViewSet, basename="comment")
-router.register("jobs", JobStatsViewSet, basename="job")
 router.register("requests", AllocationRequestViewSet, basename="request")
 router.register("reviews", AllocationReviewViewSet, basename="review")
 

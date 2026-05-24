@@ -26,7 +26,6 @@ __all__ = [
     "AttachmentFactory",
     "ClusterFactory",
     "CommentFactory",
-    "JobStatsFactory",
     "ResourceAllocationFactory",
 ]
 
@@ -246,40 +245,3 @@ class CommentFactory(DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     request = factory.SubFactory(AllocationRequestFactory)
-
-
-class JobStatsFactory(DjangoModelFactory):
-    """Factory for creating mock `JobStats` instances."""
-
-    class Meta:
-        """Factory settings."""
-
-        model = JobStats
-
-    jobid = factory.Sequence(lambda n: f"{n + 1}")
-    jobname = factory.Faker("word")
-    state = LazyFunction(lambda: randgen.choice(["PENDING", "RUNNING", "COMPLETED", "FAILED"]))
-    submit = factory.Faker("date_time_between", start_date="-5y", end_date="now", tzinfo=timezone.get_default_timezone())
-
-    team = factory.SubFactory(TeamFactory)
-    cluster = factory.SubFactory(ClusterFactory)
-
-    @factory.lazy_attribute
-    def start(self: JobStats) -> object:
-        """Generate a job start time between one and sixty hours after submission.
-
-        Returns:
-            A datetime between one and sixty hours after `submit`.
-        """
-
-        return self.submit + timedelta(hours=randgen.randint(1, 60))
-
-    @factory.lazy_attribute
-    def end(self: JobStats) -> object:
-        """Generate a job end time between twenty-five and three hundred minutes after start.
-
-        Returns:
-            A datetime between twenty-five and three hundred minutes after `start`.
-        """
-
-        return self.start + timedelta(minutes=randgen.randint(25, 300))

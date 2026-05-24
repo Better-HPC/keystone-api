@@ -34,11 +34,6 @@ celery_app.conf.beat_schedule = {
         "schedule": crontab(minute="0"),
         "description": "This task updates all Slurm clusters with the latest user allocation limits."
     },
-    "apps.allocations.tasks.jobstats.slurm_update_job_stats": {
-        "task": "apps.allocations.tasks.jobstats.slurm_update_job_stats",
-        "schedule": crontab(minute="*/5"),
-        "description": "This task synchronizes Slurm job information with the application database."
-    },
     "apps.notifications.tasks.upcoming_expirations.notify_upcoming_expirations": {
         "task": "apps.notifications.tasks.upcoming_expirations.notify_upcoming_expirations",
         "schedule": crontab(hour="0", minute="0"),
