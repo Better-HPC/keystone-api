@@ -49,7 +49,7 @@ class UpdateLimitForAccountTests(TestCase):
 
     @patch(SLURM_MODULE)
     def test_active_account_with_no_expiring_allocs(self, mock_slurm: MagicMock) -> None:
-        """Verify the limit is set to active_sus plus historical_usage.
+        """Verify the cluster limit is set to active SUs plus historical usage.
 
         alloc_1:  awarded=300, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=200, final=50,   active=now-400, expires=now-35
@@ -68,7 +68,8 @@ class UpdateLimitForAccountTests(TestCase):
 
     @patch(SLURM_MODULE)
     def test_active_account_with_usage_below_awarded(self, mock_slurm: MagicMock) -> None:
-        """Verify the expiring allocation final is set to actual usage when it is less than awarded.
+        """Verify the expiring allocation's final usage is set to the actual
+        resource usage when it is less than the awarded SUs.
 
         alloc_1:  awarded=300, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=200, final=None, active=now-400, expires=now-35
@@ -84,11 +85,12 @@ class UpdateLimitForAccountTests(TestCase):
         update_limit_for_account(self.team, self.cluster)
 
         allocation.refresh_from_db()
-        self.assertEqual(allocation.final, 150, "Expiring allocation final should equal actual usage when below awarded")
+        self.assertEqual(150, allocation.final)
 
     @patch(SLURM_MODULE)
     def test_active_account_with_usage_exceeds_awarded(self, mock_slurm: MagicMock) -> None:
-        """Verify the expiring allocation final is capped at awarded when usage exceeds it.
+        """Verify the expiring allocation's final usage is capped at the
+        awarded SUs when usage exceeds it.
 
         alloc_1:  awarded=300, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=100, final=None, active=now-400, expires=now-35
@@ -104,7 +106,7 @@ class UpdateLimitForAccountTests(TestCase):
         update_limit_for_account(self.team, self.cluster)
 
         allocation.refresh_from_db()
-        self.assertEqual(allocation.final, 100, "Expiring allocation final should be capped at awarded value")
+        self.assertEqual(100, allocation.final)
 
     @patch(SLURM_MODULE)
     def test_active_account_with_remaining_usage(self, mock_slurm: MagicMock) -> None:
@@ -127,8 +129,8 @@ class UpdateLimitForAccountTests(TestCase):
 
         alloc_a.refresh_from_db()
         alloc_b.refresh_from_db()
-        self.assertEqual(alloc_a.final, 150, "Earlier expiring allocation should consume usage up to its awarded value")
-        self.assertEqual(alloc_b.final, 50, "Later expiring allocation should receive the remaining usage")
+        self.assertEqual(150, alloc_a.final)
+        self.assertEqual(50, alloc_b.final)
 
     @patch(SLURM_MODULE)
     def test_active_account_with_exhausted_usage(self, mock_slurm: MagicMock) -> None:
@@ -153,12 +155,12 @@ class UpdateLimitForAccountTests(TestCase):
 
         alloc_x.refresh_from_db()
         alloc_y.refresh_from_db()
-        self.assertEqual(alloc_x.final, 100, "Earlier expiring allocation should consume all available usage")
-        self.assertEqual(alloc_y.final, 0, "Later expiring allocation should receive zero when usage is exhausted")
+        self.assertEqual(100, alloc_x.final)
+        self.assertEqual(0, alloc_y.final)
 
     @patch(SLURM_MODULE)
     def test_active_account_with_no_allocations(self, mock_slurm: MagicMock) -> None:
-        """Verify the limit is set to zero when the account has no allocations.
+        """Verify the cluster limit is set to zero when the account has no allocations.
 
         cluster:  limit=0, usage=0
         result:   historical=0, current=0, limit=0
@@ -173,7 +175,7 @@ class UpdateLimitForAccountTests(TestCase):
 
     @patch(SLURM_MODULE)
     def test_active_account_with_usage_exceeds_active_sus(self, mock_slurm: MagicMock) -> None:
-        """Verify the limit is set correctly when current usage exceeds active_sus.
+        """Verify the cluster limit is set correctly when current usage exceeds active SUs.
 
         alloc_1:  awarded=300, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=300, final=200,  active=now-400, expires=now-35
@@ -192,7 +194,7 @@ class UpdateLimitForAccountTests(TestCase):
 
     @patch(SLURM_MODULE)
     def test_active_account_with_negative_historical_usage(self, mock_slurm: MagicMock) -> None:
-        """Verify historical_usage is clamped to zero when it would otherwise be negative.
+        """Verify historical usage is clamped to zero when it would otherwise be negative.
 
         alloc_1:  awarded=200, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=50,  final=None, active=now-400, expires=now-35
@@ -211,7 +213,7 @@ class UpdateLimitForAccountTests(TestCase):
 
     @patch(SLURM_MODULE)
     def test_active_account_with_negative_current_usage(self, mock_slurm: MagicMock) -> None:
-        """Verify current_usage falls back to historical_usage when it would otherwise be negative.
+        """Verify current usage falls back to historical usage when it would otherwise be negative.
 
         alloc_1:  awarded=300, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=300, final=200,  active=now-400, expires=now-35
@@ -230,7 +232,7 @@ class UpdateLimitForAccountTests(TestCase):
 
     @patch(SLURM_MODULE)
     def test_inactive_account_with_allocations(self, mock_slurm: MagicMock) -> None:
-        """Verify the limit is locked to current_usage without processing expiring allocations.
+        """Verify the cluster limit is locked to current usage without processing expiring allocations.
 
         alloc_1:  awarded=300, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=100, final=None, active=now-400, expires=now-35
@@ -267,11 +269,11 @@ class UpdateLimitForAccountTests(TestCase):
         update_limit_for_account(self.team, self.cluster)
 
         allocation.refresh_from_db()
-        self.assertIsNone(allocation.final, "Expiring allocation final should not be set for an inactive account")
+        self.assertIsNone(allocation.final)
 
     @patch(SLURM_MODULE)
     def test_inactive_account_with_zero_usage(self, mock_slurm: MagicMock) -> None:
-        """Verify the limit is locked to zero when the account has no recorded usage.
+        """Verify the cluster limit is locked to zero when the account has no recorded usage.
 
         alloc_1:  awarded=200, final=None, active=now-30,  expires=now+335
         alloc_2:  awarded=100, final=None, active=now-400, expires=now-35
