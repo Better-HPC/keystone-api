@@ -29,7 +29,6 @@ __all__ = [
     "AttachmentViewSet",
     "ClusterViewSet",
     "CommentViewSet",
-    "JobStatsViewSet",
 ]
 
 
@@ -562,36 +561,3 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
             return queryset.filter(private=False)
 
         return queryset
-
-
-@extend_schema_view(
-    list=extend_schema(
-        tags=["Allocations - User Jobs"],
-        summary="List user Slurm jobs.",
-        description=(
-            "Returns a list of Slurm jobs. "
-            "Non-staff users are only returned jobs belonging to teams where they hold membership. "
-            "Staff users are returned all jobs."
-        ),
-    ),
-    retrieve=extend_schema(
-        tags=["Allocations - User Jobs"],
-        summary="Retrieve a user Slurm job.",
-        description=(
-            "Returns a single Slurm job by Keystone ID. "
-            "Read access is granted to staff users and team members."
-        ),
-    )
-)
-class JobStatsViewSet(TeamScopedListMixin, viewsets.ReadOnlyModelViewSet):
-    """API endpoints for fetching Slurm job statistics."""
-
-    model = JobStats
-
-    permission_classes = [IsAuthenticated, JobStatsPermissions]
-    search_fields = ["account", "username", "group", "team__name"]
-    serializer_class = JobStatsSerializer
-    queryset = JobStats.objects.select_related(
-        "cluster",
-        "team",
-    )
