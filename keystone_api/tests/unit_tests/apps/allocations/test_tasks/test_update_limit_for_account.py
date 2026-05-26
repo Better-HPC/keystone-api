@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 from django.test import TestCase
 
 from apps.allocations.factories import ClusterFactory, ResourceAllocationFactory
+from apps.allocations.models import ResourceAllocation
 from apps.allocations.tasks.limits import update_limit_for_account
 from apps.users.factories import TeamFactory
 
@@ -22,43 +23,29 @@ class UpdateLimitForAccountTests(TestCase):
         self.team = TeamFactory(is_active=True)
         self.cluster = ClusterFactory()
 
-    def _make_active_allocation(self, awarded: int) -> None:
-        """Create an approved, currently active ResourceAllocation.
-
-        Args:
-            awarded: Number of service units to award the allocation.
-        """
-
-        today = date.today()
-        ResourceAllocationFactory(
-            cluster=self.cluster,
-            requested=awarded,
-            awarded=awarded,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=today - timedelta(days=30),
-            request__expire=today + timedelta(days=335),
-        )
-
-    def _make_expired_allocation(self, awarded: int, final: int | None = None) -> None:
-        """Create an approved, expired ResourceAllocation with no final usage set.
+    def _make_allocation(self, awarded: int, final: int | None, active: int, expires: int) -> ResourceAllocation:
+        """Create an approved ResourceAllocation with fully specified date and usage values.
 
         Args:
             awarded: Number of service units originally awarded.
-            final: Final usage value; defaults to `None` to simulate a pending expiring allocation.
+            final: Final recorded usage; pass `None` for allocations pending final settlement.
+            active: Allocation start date as a day offset from today (negative = past).
+            expires: Allocation expiry date as a day offset from today (negative = past, positive = future).
+
+        Returns:
+            The created ResourceAllocation instance.
         """
 
         today = date.today()
-        ResourceAllocationFactory(
+        return ResourceAllocationFactory(
             cluster=self.cluster,
             requested=awarded,
             awarded=awarded,
             final=final,
             request__team=self.team,
             request__status="AP",
-            request__active=today - timedelta(days=400),
-            request__expire=today - timedelta(days=35),
+            request__active=today + timedelta(days=active),
+            request__expire=today + timedelta(days=expires),
         )
 
     @patch(SLURM_MODULE)
@@ -71,8 +58,8 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=50, limit=350
         """
 
-        self._make_active_allocation(awarded=300)
-        self._make_expired_allocation(awarded=200, final=50)
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        self._make_allocation(awarded=200, final=50, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 350
         mock_slurm.get_cluster_usage.return_value = 200
 
@@ -89,7 +76,7 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=0, current=100, limit=300
         """
 
-        self._make_active_allocation(awarded=300)
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
         mock_slurm.get_cluster_limit.return_value = 300
         mock_slurm.get_cluster_usage.return_value = 100
 
@@ -111,16 +98,8 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=100, current=250 → alloc_2.final=min(250, 100)=100
         """
 
-        self._make_active_allocation(awarded=300)
-        allocation = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=100,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=date.today() - timedelta(days=400),
-            request__expire=date.today() - timedelta(days=35),
-        )
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        allocation = self._make_allocation(awarded=100, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 350
 
@@ -139,16 +118,8 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=0, current=250 → alloc_2.final=min(250, 200)=150
         """
 
-        self._make_active_allocation(awarded=300)
-        allocation = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=200,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=date.today() - timedelta(days=400),
-            request__expire=date.today() - timedelta(days=35),
-        )
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        allocation = self._make_allocation(awarded=200, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 250
 
@@ -168,26 +139,9 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=0, current=400 → alloc_2.final=150, remaining=250 → alloc_3.final=50
         """
 
-        today = date.today()
-        self._make_active_allocation(awarded=300)
-        alloc_a = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=150,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=today - timedelta(days=400),
-            request__expire=today - timedelta(days=60),
-        )
-        alloc_b = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=50,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=today - timedelta(days=400),
-            request__expire=today - timedelta(days=30),
-        )
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        alloc_a = self._make_allocation(awarded=150, final=None, active=-400, expires=-60)
+        alloc_b = self._make_allocation(awarded=50, final=None, active=-400, expires=-30)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 400
 
@@ -210,27 +164,10 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=100, current=100 → alloc_3.final=100, remaining=0 → alloc_4.final=0
         """
 
-        today = date.today()
-        self._make_active_allocation(awarded=300)
-        self._make_historical_allocation(awarded=200, final=100)
-        alloc_x = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=150,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=today - timedelta(days=400),
-            request__expire=today - timedelta(days=60),
-        )
-        alloc_y = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=100,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=today - timedelta(days=400),
-            request__expire=today - timedelta(days=30),
-        )
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        self._make_allocation(awarded=200, final=100, active=-400, expires=-35)
+        alloc_x = self._make_allocation(awarded=150, final=None, active=-400, expires=-60)
+        alloc_y = self._make_allocation(awarded=100, final=None, active=-400, expires=-30)
         mock_slurm.get_cluster_limit.return_value = 400
         mock_slurm.get_cluster_usage.return_value = 200
 
@@ -251,16 +188,8 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=100, current=150 → alloc_2.final=100, persisted to database
         """
 
-        self._make_active_allocation(awarded=300)
-        allocation = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=100,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=date.today() - timedelta(days=400),
-            request__expire=date.today() - timedelta(days=35),
-        )
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        allocation = self._make_allocation(awarded=100, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 250
 
@@ -285,8 +214,8 @@ class UpdateLimitForAccountTests(TestCase):
 
         self.team.is_active = False
         self.team.save()
-        self._make_active_allocation(awarded=300)
-        self._make_expired_allocation(awarded=100)
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
+        self._make_allocation(awarded=100, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 250
 
@@ -305,15 +234,7 @@ class UpdateLimitForAccountTests(TestCase):
 
         self.team.is_active = False
         self.team.save()
-        allocation = ResourceAllocationFactory(
-            cluster=self.cluster,
-            awarded=100,
-            final=None,
-            request__team=self.team,
-            request__status="AP",
-            request__active=date.today() - timedelta(days=400),
-            request__expire=date.today() - timedelta(days=35),
-        )
+        allocation = self._make_allocation(awarded=100, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 250
 
@@ -334,8 +255,8 @@ class UpdateLimitForAccountTests(TestCase):
 
         self.team.is_active = False
         self.team.save()
-        self._make_active_allocation(awarded=200)
-        self._make_expired_allocation(awarded=100)
+        self._make_allocation(awarded=200, final=None, active=-30, expires=335)
+        self._make_allocation(awarded=100, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 300
         mock_slurm.get_cluster_usage.return_value = 0
 
@@ -354,7 +275,7 @@ class UpdateLimitForAccountTests(TestCase):
 
         self.team.is_active = False
         self.team.save()
-        self._make_active_allocation(awarded=300)
+        self._make_allocation(awarded=300, final=None, active=-30, expires=335)
         mock_slurm.get_cluster_limit.return_value = 500
         mock_slurm.get_cluster_usage.return_value = 250
 
@@ -379,8 +300,8 @@ class UpdateLimitForAccountTests(TestCase):
         result:   historical=100-200-50=-150 → clamped to 0, current=180
         """
 
-        self._make_active_allocation(awarded=200)
-        self._make_expired_allocation(awarded=50)
+        self._make_allocation(awarded=200, final=None, active=-30, expires=335)
+        self._make_allocation(awarded=50, final=None, active=-400, expires=-35)
         mock_slurm.get_cluster_limit.return_value = 100
         mock_slurm.get_cluster_usage.return_value = 180
 
