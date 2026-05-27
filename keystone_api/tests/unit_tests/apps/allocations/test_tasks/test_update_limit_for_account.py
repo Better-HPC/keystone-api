@@ -15,7 +15,7 @@ SLURM_MODULE = "apps.allocations.tasks.limits.slurm"
 
 # noinspection PyTypeChecker
 @patch(SLURM_MODULE)
-class UpdateLimitForAccountTests(TestCase):
+class UpdateLimitForAccountMethod(TestCase):
     """Test the enforcement of slurm resource limits."""
 
     def setUp(self) -> None:
