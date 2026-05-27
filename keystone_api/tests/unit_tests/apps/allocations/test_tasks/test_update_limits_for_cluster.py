@@ -12,7 +12,7 @@ from apps.users.factories import TeamFactory
 @patch("apps.allocations.tasks.limits.slurm")
 @patch("apps.allocations.tasks.limits.update_limit_for_account")
 class UpdateLimitsForClusterTask(TestCase):
-    """Unit tests for the `update_limits_for_cluster` Celery task."""
+    """Unit tests for the `update_limits_for_cluster` method."""
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""

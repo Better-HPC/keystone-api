@@ -11,7 +11,7 @@ from apps.allocations.tasks.limits import update_limits
 
 @patch("apps.allocations.tasks.limits.update_limits_for_cluster")
 class UpdateLimitsMethod(TestCase):
-    """Unit tests for the `update_limits` Celery task."""
+    """Unit tests for the `update_limits` method."""
 
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
