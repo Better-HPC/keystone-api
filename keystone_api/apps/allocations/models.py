@@ -230,9 +230,9 @@ class Cluster(models.Model):
     class AccessModeChoices(models.TextChoices):
         """Enumerated choices for the `access_mode` field."""
 
-        WHITELIST = "WL", "Whitelist"
-        BLACKLIST = "BL", "Blacklist"
-        OPEN = "OP", "Open"
+        WHITELIST = "WL", "Whitelisted Users"
+        BLACKLIST = "BL", "Blacklisted Users"
+        OPEN = "OP", "Open Access"
 
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)

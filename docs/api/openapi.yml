@@ -888,15 +888,15 @@ paths:
         name: access_mode
         schema:
           type: string
-          x-spec-enum-id: 2dede22a891e0d4a
+          x-spec-enum-id: 7205964863f113a6
           enum:
           - BL
           - OP
           - WL
         description: |-
-          * `WL` - Whitelist
-          * `BL` - Blacklist
-          * `OP` - Open
+          * `WL` - Whitelisted Users
+          * `BL` - Blacklisted Users
+          * `OP` - Open Access
       - in: query
         name: access_mode__contains
         schema:
@@ -11388,10 +11388,10 @@ components:
           - OP
           type: string
           description: |-
-            * `WL` - Whitelist
-            * `BL` - Blacklist
-            * `OP` - Open
-          x-spec-enum-id: 2dede22a891e0d4a
+            * `WL` - Whitelisted Users
+            * `BL` - Blacklisted Users
+            * `OP` - Open Access
+          x-spec-enum-id: 7205964863f113a6
         access_teams:
           type: array
           items:
@@ -11409,13 +11409,13 @@ components:
       properties:
         WL:
           type: string
-          default: Whitelist
+          default: Whitelisted Users
         BL:
           type: string
-          default: Blacklist
+          default: Blacklisted Users
         OP:
           type: string
-          default: Open
+          default: Open Access
       required:
       - BL
       - OP
@@ -11441,10 +11441,10 @@ components:
           - OP
           type: string
           description: |-
-            * `WL` - Whitelist
-            * `BL` - Blacklist
-            * `OP` - Open
-          x-spec-enum-id: 2dede22a891e0d4a
+            * `WL` - Whitelisted Users
+            * `BL` - Blacklisted Users
+            * `OP` - Open Access
+          x-spec-enum-id: 7205964863f113a6
         access_teams:
           type: array
           items:
@@ -12598,10 +12598,10 @@ components:
           - OP
           type: string
           description: |-
-            * `WL` - Whitelist
-            * `BL` - Blacklist
-            * `OP` - Open
-          x-spec-enum-id: 2dede22a891e0d4a
+            * `WL` - Whitelisted Users
+            * `BL` - Blacklisted Users
+            * `OP` - Open Access
+          x-spec-enum-id: 7205964863f113a6
         access_teams:
           type: array
           items:
