@@ -833,6 +833,24 @@ paths:
       responses:
         '204':
           description: No response body
+  /allocations/cluster-choices/access-mode/:
+    get:
+      operationId: allocations_cluster_choices_access_mode_retrieve
+      description: Returns valid choices for the request `access_mode` field mapped
+        to human-readable labels.
+      summary: Retrieve valid access mode options.
+      tags:
+      - Allocations - Clusters
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAccessModeChoices'
+          description: ''
   /allocations/clusters/:
     get:
       operationId: allocations_clusters_list
@@ -11386,6 +11404,22 @@ components:
       - enabled
       - id
       - name
+    ClusterAccessModeChoices:
+      type: object
+      properties:
+        WL:
+          type: string
+          default: Whitelist
+        BL:
+          type: string
+          default: Blacklist
+        OP:
+          type: string
+          default: Open
+      required:
+      - BL
+      - OP
+      - WL
     ClusterRequest:
       type: object
       description: Object serializer for the `Cluster` class.

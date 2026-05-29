@@ -95,9 +95,9 @@ class ClusterAccessLists(APITestCase):
         self.team = membership.team
 
         # Create cluster records with various access modes
-        self.open_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.OPEN)
-        self.whitelist_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.WHITELIST)
-        self.blacklist_cluster = ClusterFactory(access_mode=Cluster.AccessChoices.BLACKLIST)
+        self.open_cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.OPEN)
+        self.whitelist_cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.WHITELIST)
+        self.blacklist_cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.BLACKLIST)
 
         # Add teams to cluster access lists
         self.whitelist_cluster.access_teams.add(self.team)

@@ -27,6 +27,7 @@ __all__ = [
     "AllocationReviewViewSet",
     "ResourceAllocationViewSet",
     "AttachmentViewSet",
+    "ClusterAccessModeChoicesView",
     "ClusterViewSet",
     "CommentViewSet",
 ]
@@ -370,6 +371,29 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
 
 @extend_schema_view(
+    get=extend_schema(
+        tags=["Allocations - Clusters"],
+        summary="Retrieve valid access mode options.",
+        description="Returns valid choices for the request `access_mode` field mapped to human-readable labels.",
+        responses=inline_serializer(
+            name="ClusterAccessModeChoices",
+            fields={k: serializers.CharField(default=v) for k, v in Cluster.AccessModeChoices.choices}
+        )
+    )
+)
+class ClusterAccessModeChoicesView(GenericAPIView):
+    """API endpoints for exposing valid allocation request `status` values."""
+
+    permission_classes = [IsAuthenticated]
+    response_content = dict(Cluster.AccessModeChoices.choices)
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        """Return a dictionary mapping values to human-readable names."""
+
+        return Response(self.response_content)
+
+
+@extend_schema_view(
     list=extend_schema(
         tags=["Allocations - Clusters"],
         summary="List HPC clusters.",
@@ -456,17 +480,17 @@ class ClusterViewSet(viewsets.ModelViewSet):
             user_teams = self.request.user.get_all_teams().values_list("id", flat=True)
 
             # Clusters open to all
-            open_clusters = qs.filter(access_mode=Cluster.AccessChoices.OPEN)
+            open_clusters = qs.filter(access_mode=Cluster.AccessModeChoices.OPEN)
 
             # Clusters whitelisting specific teams
             whitelisted_clusters = qs.filter(
-                access_mode=Cluster.AccessChoices.WHITELIST,
+                access_mode=Cluster.AccessModeChoices.WHITELIST,
                 access_teams__in=user_teams
             )
 
             # Clusters blacklisting specific teams
             blacklisted_clusters = qs.filter(
-                access_mode=Cluster.AccessChoices.BLACKLIST
+                access_mode=Cluster.AccessModeChoices.BLACKLIST
             ).exclude(access_teams__in=user_teams)
 
             # Combine querysets

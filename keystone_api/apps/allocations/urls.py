@@ -18,4 +18,5 @@ router.register("reviews", AllocationReviewViewSet, basename="review")
 urlpatterns = router.urls + [
     path("request-choices/status/", AllocationRequestStatusChoicesView.as_view(), name="request-status-choices"),
     path("review-choices/status/", AllocationReviewStatusChoicesView.as_view(), name="review-status-choices"),
+    path("cluster-choices/access-mode/", ClusterAccessModeChoicesView.as_view(), name="cluster-access-mode-choices"),
 ]

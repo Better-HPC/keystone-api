@@ -94,8 +94,8 @@ class ClusterAccessListPermissionIsolationTests(APITestCase):
         self.team = membership.team
 
         # Clusters using access lists
-        self.whitelisted = ClusterFactory(access_mode=Cluster.AccessChoices.WHITELIST)
-        self.blacklisted = ClusterFactory(access_mode=Cluster.AccessChoices.BLACKLIST)
+        self.whitelisted = ClusterFactory(access_mode=Cluster.AccessModeChoices.WHITELIST)
+        self.blacklisted = ClusterFactory(access_mode=Cluster.AccessModeChoices.BLACKLIST)
 
         # Attach team to both lists
         self.whitelisted.access_teams.add(self.team)

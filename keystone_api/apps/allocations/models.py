@@ -227,7 +227,7 @@ class Cluster(models.Model):
             models.Index(fields=["name"]),
         ]
 
-    class AccessChoices(models.TextChoices):
+    class AccessModeChoices(models.TextChoices):
         """Enumerated choices for the `access_mode` field."""
 
         WHITELIST = "WL", "Whitelist"
@@ -239,7 +239,7 @@ class Cluster(models.Model):
     enabled = models.BooleanField(default=True)
 
     # Regulate user access
-    access_mode = models.CharField(max_length=2, choices=AccessChoices.choices, default=AccessChoices.OPEN)
+    access_mode = models.CharField(max_length=2, choices=AccessModeChoices.choices, default=AccessModeChoices.OPEN)
     access_teams = models.ManyToManyField(Team, blank=True)
 
     history = AuditlogHistoryField()
