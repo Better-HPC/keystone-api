@@ -131,9 +131,9 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     # User metadata
     username = models.CharField(max_length=150, unique=True, validators=[UnicodeUsernameValidator()])
     password = models.CharField(max_length=128)
-    first_name = models.CharField(max_length=150, null=True)
-    last_name = models.CharField(max_length=150, null=True)
-    email = models.EmailField(null=True)
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     department = models.CharField(max_length=1000, null=True, blank=True)
     role = models.CharField(max_length=1000, null=True, blank=True)
     history = AuditlogHistoryField()
