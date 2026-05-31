@@ -1,15 +1,14 @@
-"""Function tests for the `allocations:cluster-list` endpoint."""
+"""Function tests for the `allocations:cluster-access-choices` endpoint."""
 
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import ClusterFactory
 from apps.allocations.models import Cluster
-from apps.users.factories import MembershipFactory, UserFactory
-from tests.function_tests.utils import CustomAsserts
+from apps.users.factories import UserFactory
+from tests.function_tests.utils import CustomAsserts, GetResponseContentTests
 
-VIEW_NAME = "allocations:cluster-list"
+VIEW_NAME = "allocations:cluster-access-choices"
 
 
 class EndpointPermissions(APITestCase, CustomAsserts):
@@ -20,8 +19,7 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     | User Status                | GET | HEAD | OPTIONS | POST | PUT | PATCH | DELETE | TRACE |
     |----------------------------|-----|------|---------|------|-----|-------|--------|-------|
     | Unauthenticated User       | 401 | 401  | 401     | 401  | 401 | 401   | 401    | 401   |
-    | Authenticated User         | 200 | 200  | 200     | 403  | 405 | 405   | 405    | 405   |
-    | Staff User                 | 200 | 200  | 200     | 201  | 405 | 405   | 405    | 405   |
+    | Authenticated User         | 200 | 200  | 200     | 405  | 405 | 405   | 405    | 405   |
     """
 
     endpoint = reverse(VIEW_NAME)
@@ -29,7 +27,6 @@ class EndpointPermissions(APITestCase, CustomAsserts):
     def setUp(self) -> None:
         """Create test fixtures using mock data."""
 
-        ClusterFactory()
         self.generic_user = UserFactory()
         self.staff_user = UserFactory(is_staff=True)
 
@@ -57,15 +54,15 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_403_FORBIDDEN,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
     def test_staff_user_permissions(self) -> None:
-        """Verify staff users have full read and write permissions."""
+        """Verify staff users have read-only permissions."""
 
         self.client.force_authenticate(user=self.staff_user)
         self.assert_http_responses(
@@ -73,47 +70,16 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             get=status.HTTP_200_OK,
             head=status.HTTP_200_OK,
             options=status.HTTP_200_OK,
-            post=status.HTTP_201_CREATED,
+            post=status.HTTP_405_METHOD_NOT_ALLOWED,
             put=status.HTTP_405_METHOD_NOT_ALLOWED,
             patch=status.HTTP_405_METHOD_NOT_ALLOWED,
             delete=status.HTTP_405_METHOD_NOT_ALLOWED,
-            trace=status.HTTP_405_METHOD_NOT_ALLOWED,
-            post_body={"name": "foo", "api_url": "localhost:6820", "api_user": "slurm", "api_token": "foobar"}
+            trace=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
 
-class ClusterAccessLists(APITestCase):
-    """Test returned cluster records are filtered by white/black lists."""
+class ResponseContent(GetResponseContentTests, APITestCase):
+    """Test the endpoint returns valid allocation request status codes."""
 
     endpoint = reverse(VIEW_NAME)
-
-    def setUp(self) -> None:
-        """Create test fixtures using mock data."""
-
-        membership = MembershipFactory()
-        self.generic_user = membership.user
-        self.team = membership.team
-
-        # Create cluster records with various access modes
-        self.open_cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.OPEN)
-        self.whitelist_cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.WHITELIST)
-        self.blacklist_cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.BLACKLIST)
-
-        # Add teams to cluster access lists
-        self.whitelist_cluster.access_teams.add(self.team)
-        self.blacklist_cluster.access_teams.add(self.team)
-
-    def test_access_lists_enforced(self) -> None:
-        """Verify returned cluster records are regulated by white/black lists."""
-
-        self.client.force_authenticate(user=self.generic_user)
-
-        response = self.client.get(self.endpoint)
-        returned_ids = set(record["id"] for record in response.data["results"])
-
-        expected_ids = {self.open_cluster.id, self.whitelist_cluster.id}
-
-        # Should return the open cluster and team whitelisted cluster but not the blacklisted cluster
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertSetEqual(expected_ids, returned_ids)
-        self.assertNotIn(self.blacklist_cluster.id, returned_ids)
+    expected_content = dict(Cluster.AccessModeChoices.choices)
