@@ -12778,18 +12778,15 @@ components:
         first_name:
           type: string
           nullable: true
-          minLength: 1
           maxLength: 150
         last_name:
           type: string
           nullable: true
-          minLength: 1
           maxLength: 150
         email:
           type: string
           format: email
           nullable: true
-          minLength: 1
           maxLength: 254
         department:
           type: string
@@ -13380,18 +13377,15 @@ components:
         first_name:
           type: string
           nullable: true
-          minLength: 1
           maxLength: 150
         last_name:
           type: string
           nullable: true
-          minLength: 1
           maxLength: 150
         email:
           type: string
           format: email
           nullable: true
-          minLength: 1
           maxLength: 254
         department:
           type: string
@@ -13818,18 +13812,15 @@ components:
         first_name:
           type: string
           nullable: true
-          minLength: 1
           maxLength: 150
         last_name:
           type: string
           nullable: true
-          minLength: 1
           maxLength: 150
         email:
           type: string
           format: email
           nullable: true
-          minLength: 1
           maxLength: 254
         department:
           type: string
