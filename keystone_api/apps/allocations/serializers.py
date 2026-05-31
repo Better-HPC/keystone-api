@@ -151,6 +151,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 class ClusterSerializer(serializers.ModelSerializer):
     """Object serializer for the `Cluster` class."""
 
+    _access_teams = TeamSummarySerializer(source="access_teams", many=True, read_only=True)
     _history = AuditLogSummarySerializer(source="history", many=True, read_only=True)
 
     class Meta:

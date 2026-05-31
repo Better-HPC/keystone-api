@@ -11366,6 +11366,12 @@ components:
         id:
           type: integer
           readOnly: true
+        _access_teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamSummary'
+          readOnly: true
+          title: ' access teams'
         _history:
           type: array
           items:
@@ -11397,6 +11403,7 @@ components:
           items:
             type: integer
       required:
+      - _access_teams
       - _history
       - access_mode
       - access_teams
