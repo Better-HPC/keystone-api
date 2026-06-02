@@ -60,7 +60,7 @@ class ResourceAllocation(TeamModelInterface, models.Model):
     final = models.PositiveIntegerField(null=True, blank=True)
     history = AuditlogHistoryField()
 
-    cluster = models.ForeignKey("Cluster", on_delete=models.CASCADE, related_name="allocation_set")
+    cluster = models.ForeignKey("Cluster", on_delete=models.PROTECT, related_name="allocation_set")
     request = models.ForeignKey("AllocationRequest", on_delete=models.CASCADE, related_name="allocation_set")
 
     objects = ResourceAllocationManager()
@@ -112,8 +112,8 @@ class AllocationRequest(TeamModelInterface, models.Model):
     status = models.CharField(max_length=2, choices=StatusChoices.choices, default=StatusChoices.PENDING)
     history = AuditlogHistoryField()
 
-    submitter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False, related_name="submitted_allocationrequest_set")
-    team: Team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    submitter = models.ForeignKey(User, on_delete=models.PROTECT, related_name="submitted_allocationrequest_set")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     assignees = models.ManyToManyField(User, blank=True, related_name="assigned_allocationrequest_set")
     publications = models.ManyToManyField(Publication, blank=True)
@@ -166,7 +166,7 @@ class AllocationReview(TeamModelInterface, models.Model):
     history = AuditlogHistoryField()
 
     request = models.ForeignKey(AllocationRequest, on_delete=models.CASCADE)
-    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
+    reviewer = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def get_team(self) -> Team:
         """Return the user team tied to the current record."""
@@ -237,9 +237,8 @@ class Cluster(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(max_length=150, null=True, blank=True)
     enabled = models.BooleanField(default=True)
-
-    # Regulate user access
     access_mode = models.CharField(max_length=2, choices=AccessModeChoices.choices, default=AccessModeChoices.OPEN)
+
     access_teams = models.ManyToManyField(Team, blank=True)
 
     history = AuditlogHistoryField()
@@ -268,7 +267,7 @@ class Comment(TeamModelInterface, models.Model):
     private = models.BooleanField(default=False)
     history = AuditlogHistoryField()
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     request = models.ForeignKey("AllocationRequest", on_delete=models.CASCADE, related_name="comments")
 
     def get_team(self) -> Team:
