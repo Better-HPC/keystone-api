@@ -10841,7 +10841,6 @@ components:
           x-spec-enum-id: 0f4bc72b4a7635f9
         submitter:
           type: integer
-          nullable: true
         team:
           type: integer
         assignees:
@@ -10916,7 +10915,6 @@ components:
           x-spec-enum-id: 0f4bc72b4a7635f9
         submitter:
           type: integer
-          nullable: true
         team:
           type: integer
         assignees:
@@ -11135,7 +11133,6 @@ components:
           type: integer
         reviewer:
           type: integer
-          nullable: true
       required:
       - _history
       - _request
@@ -11164,7 +11161,6 @@ components:
           type: integer
         reviewer:
           type: integer
-          nullable: true
       required:
       - request
       - status
@@ -12537,7 +12533,6 @@ components:
           x-spec-enum-id: 0f4bc72b4a7635f9
         submitter:
           type: integer
-          nullable: true
         team:
           type: integer
         assignees:
@@ -12571,7 +12566,6 @@ components:
           type: integer
         reviewer:
           type: integer
-          nullable: true
     PatchedAttachmentRequest:
       type: object
       description: Object serializer for the `Attachment` class.
