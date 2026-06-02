@@ -299,10 +299,6 @@ class Command(StdOutUtils, BaseCommand):
                     for cl in randgen.sample(clusters, k=num_clusters):
                         ResourceAllocationFactory(request=request, cluster=cl)
 
-                    num_jobs = randgen.randint(*n_req_jobs)
-                    for _ in range(num_jobs):
-                        JobStatsFactory(team=team, cluster=randgen.choice(clusters))
-
                 # Attach grants
                 if team_grants:
                     num_grants = min(randgen.randint(*n_req_grants), len(team_grants))
