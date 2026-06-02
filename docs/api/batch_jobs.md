@@ -104,7 +104,7 @@ job = {
   "actions": [
     {
       "method": "POST",
-      "path": "/research/grants/1/attachments/",
+      "path": "/allocations/attachments/",
       "payload": {
         "file": "@file{upload}"
       }
