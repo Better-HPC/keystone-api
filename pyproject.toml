@@ -33,7 +33,7 @@ dependencies = [
     "pillow==12.2.0",
     "psycopg2-binary==2.9.12",
     "pyyaml==6.0.3",
-    "redis==8.0.0",
+    "redis==7.4.0",
     "servestatic==4.3.0",
     "uritemplate==4.2.0",
     "uvicorn==0.48.0",
