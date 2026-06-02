@@ -41,16 +41,13 @@ def update_limits_for_cluster(cluster_name: str) -> None:
         return
 
     slurm_accounts = slurm.get_slurm_account_names(cluster.name)
-    teams_by_name = {
-        team.name: team for team in Team.objects.filter(name__in=slurm_accounts)
+    teams_by_slug = {
+        team.slug: team for team in Team.objects.filter(slug__in=slurm_accounts)
     }
 
     for account_name in slurm_accounts:
-        if account_name == "root":
-            continue
-
         try:
-            team = teams_by_name[account_name]
+            team = teams_by_slug[account_name]
 
         except KeyError:
             log.warning(f"No existing team for account '{account_name}' on cluster '{cluster.name}'.")
@@ -80,7 +77,7 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
 
     # Get the current TRES billing limit from Slurm and use it to estimate
     # previously consumed SUs not tied to active/expiring allocations
-    current_limit = slurm.get_cluster_limit(account.name, cluster.name)
+    current_limit = slurm.get_cluster_limit(account.slug, cluster.name)
     historical_usage = current_limit - active_sus - expiring_sus
 
     if historical_usage < 0:
@@ -94,7 +91,7 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
             f"Assuming zero...")
 
     # Calculate consumed SUs attributable to current (non-expired) allocations
-    total_usage = slurm.get_cluster_usage(account.name, cluster.name)
+    total_usage = slurm.get_cluster_usage(account.slug, cluster.name)
     current_usage = total_usage - historical_usage
 
     if current_usage < 0:
@@ -108,7 +105,7 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
 
     # Lock inactive accounts
     if not account.is_active:
-        slurm.set_cluster_limit(account.name, cluster.name, current_usage)
+        slurm.set_cluster_limit(account.slug, cluster.name, current_usage)
         return
 
     # Distribute current usage across expiring allocations proportionally,
@@ -127,7 +124,7 @@ def update_limit_for_account(account: Team, cluster: Cluster) -> None:
     # Recalculate historical usage based on updated allocations, and set a new TRES limit in Slurm
     updated_historical_usage = ResourceAllocation.objects.historical_usage(account, cluster)
     updated_limit = updated_historical_usage + active_sus
-    slurm.set_cluster_limit(account.name, cluster.name, updated_limit)
+    slurm.set_cluster_limit(account.slug, cluster.name, updated_limit)
 
     log.debug(
         f"Setting new TRES limit for account '{account.name}' on cluster '{cluster.name}':\n"
