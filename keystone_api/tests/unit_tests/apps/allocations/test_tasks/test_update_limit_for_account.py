@@ -49,6 +49,27 @@ class UpdateLimitForAccountMethod(TestCase):
             request__expire=today + timedelta(days=expires),
         )
 
+    def test_uses_team_slug_for_slurm_calls(self, mock_slurm: MagicMock) -> None:
+        """Verify the team slug (not the team name) is passed to Slurm API calls."""
+
+        self.team.name = "My Team"
+        self.team.slug = "my-team"
+        self.team.save()
+        mock_slurm.get_cluster_limit.return_value = 0
+        mock_slurm.get_cluster_usage.return_value = 0
+
+        update_limit_for_account(self.team, self.cluster)
+
+        get_limit_slug = mock_slurm.get_cluster_limit.call_args.args[0]
+        get_usage_slug = mock_slurm.get_cluster_usage.call_args.args[0]
+        set_limit_slug = mock_slurm.set_cluster_limit.call_args.args[0]
+        self.assertEqual(self.team.slug, get_limit_slug, "get_cluster_limit received team name instead of slug")
+        self.assertEqual(self.team.slug, get_usage_slug, "get_cluster_usage received team name instead of slug")
+        self.assertEqual(self.team.slug, set_limit_slug, "set_cluster_limit received team name instead of slug")
+        self.assertNotEqual(self.team.name, get_limit_slug, "get_cluster_limit received team name instead of slug")
+        self.assertNotEqual(self.team.name, get_usage_slug, "get_cluster_usage received team name instead of slug")
+        self.assertNotEqual(self.team.name, set_limit_slug, "set_cluster_limit received team name instead of slug")
+
     def test_account_with_no_allocations(self, mock_slurm: MagicMock) -> None:
         """Verify the cluster limit is set to zero when the account has no allocations.
 
@@ -61,7 +82,7 @@ class UpdateLimitForAccountMethod(TestCase):
 
         update_limit_for_account(self.team, self.cluster)
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 0)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 0)
 
     def test_account_with_new_allocations(self, mock_slurm: MagicMock) -> None:
         """Verify the cluster limit is increased when the account has new allocations.
@@ -81,7 +102,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 350)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 350)
         self.assertEqual(50, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -103,7 +124,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 1350)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 1350)
         self.assertEqual(350, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -125,7 +146,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 1500)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 1500)
         self.assertEqual(500, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -148,7 +169,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 400)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 400)
         self.assertEqual(100, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -177,7 +198,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2, alloc_3, alloc_4, alloc_5):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 350)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 350)
         self.assertEqual(100, alloc_1.final)
         self.assertEqual(100, alloc_2.final)
         self.assertEqual(50, alloc_3.final)
@@ -205,7 +226,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2, alloc_3):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 1500)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 1500)
         self.assertEqual(200, alloc_1.final)
         self.assertEqual(300, alloc_2.final)
         self.assertIsNone(alloc_3.final)
@@ -228,7 +249,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 1000)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 1000)
         self.assertEqual(0, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -247,7 +268,7 @@ class UpdateLimitForAccountMethod(TestCase):
         update_limit_for_account(self.team, self.cluster)
         alloc_1.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 300)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 300)
         self.assertEqual(300, alloc_1.final)
 
     def test_active_account_with_negative_historical_usage(self, mock_slurm: MagicMock) -> None:
@@ -268,7 +289,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 250)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 250)
         self.assertEqual(50, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -290,7 +311,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 500)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 500)
         self.assertEqual(200, alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -314,7 +335,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 150)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 150)
         self.assertIsNone(alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -338,7 +359,7 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 0)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 0)
         self.assertIsNone(alloc_1.final)
         self.assertIsNone(alloc_2.final)
 
@@ -362,6 +383,6 @@ class UpdateLimitForAccountMethod(TestCase):
         for alloc in (alloc_1, alloc_2):
             alloc.refresh_from_db()
 
-        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.name, self.cluster.name, 200)
+        mock_slurm.set_cluster_limit.assert_called_once_with(self.team.slug, self.cluster.name, 200)
         self.assertEqual(200, alloc_1.final)
         self.assertIsNone(alloc_2.final)
