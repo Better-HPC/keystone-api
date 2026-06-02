@@ -49,6 +49,27 @@ class UpdateLimitForAccountMethod(TestCase):
             request__expire=today + timedelta(days=expires),
         )
 
+    def test_uses_team_slug_for_slurm_calls(self, mock_slurm: MagicMock) -> None:
+        """Verify the team slug (not the team name) is passed to Slurm API calls."""
+
+        self.team.name = "My Team"
+        self.team.slug = "my-team"
+        self.team.save()
+        mock_slurm.get_cluster_limit.return_value = 0
+        mock_slurm.get_cluster_usage.return_value = 0
+
+        update_limit_for_account(self.team, self.cluster)
+
+        get_limit_slug = mock_slurm.get_cluster_limit.call_args.args[0]
+        get_usage_slug = mock_slurm.get_cluster_usage.call_args.args[0]
+        set_limit_slug = mock_slurm.set_cluster_limit.call_args.args[0]
+        self.assertEqual(self.team.slug, get_limit_slug, "get_cluster_limit received team name instead of slug")
+        self.assertEqual(self.team.slug, get_usage_slug, "get_cluster_usage received team name instead of slug")
+        self.assertEqual(self.team.slug, set_limit_slug, "set_cluster_limit received team name instead of slug")
+        self.assertNotEqual(self.team.name, get_limit_slug, "get_cluster_limit received team name instead of slug")
+        self.assertNotEqual(self.team.name, get_usage_slug, "get_cluster_usage received team name instead of slug")
+        self.assertNotEqual(self.team.name, set_limit_slug, "set_cluster_limit received team name instead of slug")
+
     def test_account_with_no_allocations(self, mock_slurm: MagicMock) -> None:
         """Verify the cluster limit is set to zero when the account has no allocations.
 

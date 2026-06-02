@@ -21,6 +21,17 @@ class UpdateLimitsForClusterTask(TestCase):
         self.team_1 = TeamFactory(name="Team 1")
         self.team_2 = TeamFactory(name="Team 2")
 
+    def test_matches_accounts_by_team_slug_not_name(self, mock_update_limit_for_account, mock_slurm) -> None:
+        """Verify Slurm account names are matched against team slugs, not team names."""
+
+        # Team whose name differs from its slug
+        team = TeamFactory(name="Dummy Team Name", slug="slug-different-from-name")
+        mock_slurm.get_slurm_account_names.return_value = [team.slug]
+
+        update_limits_for_cluster(self.cluster.name)
+
+        mock_update_limit_for_account.assert_called_once_with(team, self.cluster)
+
     def test_updates_limit_for_each_matched_team(self, mock_update_limit_for_account, mock_slurm) -> None:
         """Verify `update_limit_for_account` is called once per matched Slurm account."""
 
