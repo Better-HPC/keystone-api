@@ -45,6 +45,17 @@ class UpdateLimitsForClusterTask(TestCase):
         )
         self.assertEqual(mock_update_limit_for_account.call_count, 2)
 
+    def test_skips_root_account(self, mock_update_limit_for_account, mock_slurm) -> None:
+        """Verify the root account is never passed to `update_limit_for_account`."""
+
+        TeamFactory(name="root")
+        mock_slurm.get_slurm_account_names.return_value = ["root", self.team_1.name]
+
+        update_limits_for_cluster(self.cluster.name)
+
+        updated_names = [c.args[0].name for c in mock_update_limit_for_account.call_args_list]
+        self.assertNotIn("root", updated_names)
+
     def test_skips_accounts_without_matching_team(self, mock_update_limit_for_account, mock_slurm) -> None:
         """Verify Slurm accounts with no corresponding `Team` record produce no update call."""
 
