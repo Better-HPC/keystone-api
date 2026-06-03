@@ -46,6 +46,9 @@ def update_limits_for_cluster(cluster_name: str) -> None:
     }
 
     for account_name in slurm_accounts:
+        if account_name == "root":
+            continue
+
         try:
             team = teams_by_slug[account_name]
 
