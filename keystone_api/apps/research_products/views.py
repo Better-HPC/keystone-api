@@ -76,7 +76,7 @@ class GrantViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     team_field = "team"
 
     permission_classes = [IsAuthenticated, IsAdminUser | IsTeamMember]
-    search_fields = ["title", "agency", "team__name"]
+    search_fields = ["title", "agency", "team__name", "pi"]
     serializer_class = GrantSerializer
     queryset = Grant.objects.prefetch_related(
         "history",
