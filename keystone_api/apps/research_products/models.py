@@ -37,8 +37,9 @@ class Grant(models.Model):
 
     title = models.CharField(max_length=250)
     agency = models.CharField(max_length=100)
+    pi = models.CharField(max_length=100, null=True, blank=True)
     amount = models.DecimalField(decimal_places=2, max_digits=14)
-    grant_number = models.CharField(max_length=250)
+    grant_number = models.CharField(max_length=250, null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)

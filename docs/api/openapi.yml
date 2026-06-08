@@ -6219,6 +6219,52 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: pi
+        schema:
+          type: string
+      - in: query
+        name: pi__contains
+        schema:
+          type: string
+      - in: query
+        name: pi__endswith
+        schema:
+          type: string
+      - in: query
+        name: pi__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: pi__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: pi__not_contains
+        schema:
+          type: string
+      - in: query
+        name: pi__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: pi__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: pi__startswith
+        schema:
+          type: string
+      - in: query
         name: start_date
         schema:
           type: string
@@ -7534,6 +7580,52 @@ paths:
         name: id__not_isnull
         schema:
           type: boolean
+      - in: query
+        name: pi
+        schema:
+          type: string
+      - in: query
+        name: pi__contains
+        schema:
+          type: string
+      - in: query
+        name: pi__endswith
+        schema:
+          type: string
+      - in: query
+        name: pi__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: pi__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: pi__not_contains
+        schema:
+          type: string
+      - in: query
+        name: pi__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: pi__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: pi__startswith
+        schema:
+          type: string
       - in: query
         name: start_date
         schema:
@@ -11618,12 +11710,17 @@ components:
         agency:
           type: string
           maxLength: 100
+        pi:
+          type: string
+          nullable: true
+          maxLength: 100
         amount:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
         grant_number:
           type: string
+          nullable: true
           maxLength: 250
         start_date:
           type: string
@@ -11646,6 +11743,7 @@ components:
       - end_date
       - grant_number
       - id
+      - pi
       - start_date
       - team
       - title
@@ -11661,13 +11759,17 @@ components:
           type: string
           minLength: 1
           maxLength: 100
+        pi:
+          type: string
+          nullable: true
+          maxLength: 100
         amount:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
         grant_number:
           type: string
-          minLength: 1
+          nullable: true
           maxLength: 250
         start_date:
           type: string
@@ -11684,7 +11786,6 @@ components:
       required:
       - agency
       - amount
-      - grant_number
       - start_date
       - team
       - title
@@ -11746,12 +11847,17 @@ components:
         agency:
           type: string
           maxLength: 100
+        pi:
+          type: string
+          nullable: true
+          maxLength: 100
         amount:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
         grant_number:
           type: string
+          nullable: true
           maxLength: 250
         start_date:
           type: string
@@ -11769,7 +11875,6 @@ components:
       required:
       - agency
       - amount
-      - grant_number
       - id
       - start_date
       - team
@@ -11786,13 +11891,17 @@ components:
           type: string
           minLength: 1
           maxLength: 100
+        pi:
+          type: string
+          nullable: true
+          maxLength: 100
         amount:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
         grant_number:
           type: string
-          minLength: 1
+          nullable: true
           maxLength: 250
         start_date:
           type: string
@@ -11807,7 +11916,6 @@ components:
       required:
       - agency
       - amount
-      - grant_number
       - start_date
       - title
     JobExecutionError:
@@ -12633,13 +12741,17 @@ components:
           type: string
           minLength: 1
           maxLength: 100
+        pi:
+          type: string
+          nullable: true
+          maxLength: 100
         amount:
           type: string
           format: decimal
           pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
         grant_number:
           type: string
-          minLength: 1
+          nullable: true
           maxLength: 250
         start_date:
           type: string
