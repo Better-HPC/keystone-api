@@ -52,5 +52,12 @@ class ValidateFileMethod(TestCase):
         """Verify a file with a disallowed MIME type fails validation."""
 
         file = SimpleUploadedFile("document.pdf", b"dummy content")
-        with self.assertRaisesRegex(ValidationError, "File type .* is not allowed"):
+        with self.assertRaisesRegex(ValidationError, "File type 'application/pdf' is not allowed"):
+            AttachmentSerializer.validate_file(file)
+
+    def test_unknown_mime_type(self) -> None:
+        """Verify a file with an unknown MIME type fails validation."""
+
+        file = SimpleUploadedFile("document.fake_extension", b"dummy content")
+        with self.assertRaisesRegex(ValidationError, "File type could not be resolved"):
             AttachmentSerializer.validate_file(file)
