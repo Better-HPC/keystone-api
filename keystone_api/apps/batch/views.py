@@ -47,7 +47,7 @@ class JobApiView(APIView):
     def post(self, request: Request) -> JsonResponse:
         """Execute all submitted steps atomically in a single transaction."""
 
-        # Resolve the request content type and parse content payload
+        # Resolve the request payload
         try:
             data, files = self._parse_request(request)
 
