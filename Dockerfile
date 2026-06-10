@@ -4,10 +4,10 @@ FROM python:3.11.13-alpine AS builder
 # Install build dependencies
 RUN apk add --no-cache \
     build-base \
+    cyrus-sasl-dev \
     gcc \
     musl-dev \
-    openldap-dev \
-    cyrus-sasl-dev
+    openldap-dev
 
 # Compile application wheels
 WORKDIR /src
@@ -24,21 +24,21 @@ EXPOSE 80
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Configure the application with container friendly defaults
+# Configure application settings with container friendly defaults
 ENV CONFIG_UPLOAD_DIR=/app/keystone/media
 ENV CONFIG_STATIC_DIR=/app/keystone/static
 ENV DB_NAME=/app/keystone/keystone.db
 ENV LOG_APP_FILE=/app/keystone/keystone.log
 
-# Install runtime dependencies only
+# Install runtime dependencies
 RUN apk add --no-cache \
-    redis \
     curl \
+    cyrus-sasl \
     nginx \
     openldap \
-    cyrus-sasl
+    redis
 
-# Install application wheels
+# Install application wheel
 COPY --from=builder /wheels /wheels
 RUN pip install --no-compile --no-cache-dir /wheels/* && rm -rf /wheels
 
@@ -55,12 +55,13 @@ USER keystone
 WORKDIR /app/keystone
 
 # Copy config files for internal services
+COPY --chown=root:root --chmod=644 conf/mime.types /etc/mime.types
 COPY --chown=keystone:keystone --chmod=770 conf/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=keystone:keystone --chmod=770 conf/entrypoint.sh /app/entrypoint.sh
 
-# Use the API health checks to report container health
+# Use API health checks to report container health
 HEALTHCHECK CMD curl --fail --location localhost/health/ || exit 1
 
-# Setup the container to launch the application
+# Launch the application on container startup
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["quickstart", "--all"]
