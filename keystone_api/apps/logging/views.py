@@ -52,7 +52,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
 @extend_schema_view(
     get=extend_schema(
         tags=['Logging - Feed'],
-        summary='List activity feed entries',
+        summary='List all log entries',
         description=(
             'Returns a reverse-chronological stream of normalised log entries '
             'merged across request logs, task results, and audit logs.'
