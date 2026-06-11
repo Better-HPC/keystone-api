@@ -15,6 +15,7 @@ from .nested import AuditLogSummarySerializer
 
 __all__ = [
     "AuditLogSerializer",
+    "FeedEntrySerializer",
     "RequestLogSerializer",
     "TaskResultSerializer",
 ]
@@ -50,6 +51,16 @@ class AuditLogSerializer(AuditLogSummarySerializer):
         """Return the changed record type as a human-readable string."""
 
         return f"{obj.content_type.app_label} | {obj.content_type.model_class().__name__}"
+
+
+class FeedEntrySerializer(serializers.ModelSerializer):
+    """A read-only serializer for a single normalised activity feed entry."""
+
+    class Meta:
+        """Serializer settings."""
+
+        model = FeedEntry
+        fields = '__all__'
 
 
 class RequestLogSerializer(serializers.ModelSerializer):

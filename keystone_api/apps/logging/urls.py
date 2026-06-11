@@ -1,8 +1,10 @@
 """URL routing for the parent application."""
 
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import *
+from .views import FeedView
 
 app_name = "logging"
 
@@ -11,4 +13,6 @@ router.register("audit", AuditLogViewSet, basename="audit")
 router.register("requests", RequestLogViewSet, basename="request")
 router.register("tasks", TaskResultViewSet, basename="task")
 
-urlpatterns = router.urls
+urlpatterns = router.urls + [
+    path('feed/', FeedView.as_view(), name='feed-list'),
+]
