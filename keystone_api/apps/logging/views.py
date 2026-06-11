@@ -15,6 +15,7 @@ from .serializers import *
 
 __all__ = [
     "AuditLogViewSet",
+    "FeedView",
     "RequestLogViewSet",
     "TaskResultViewSet",
 ]
@@ -60,7 +61,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     ),
 )
 class FeedView(generics.ListAPIView):
-    """A list-only view serving the merged cross-model activity feed."""
+    """A list-only view serving the application logging feed."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
     serializer_class = FeedEntrySerializer

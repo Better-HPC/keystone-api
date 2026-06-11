@@ -54,7 +54,7 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 
 
 class FeedEntrySerializer(serializers.ModelSerializer):
-    """A read-only serializer for a single normalised activity feed entry."""
+    """Object serializer for the `FeedEntry` class."""
 
     class Meta:
         """Serializer settings."""
