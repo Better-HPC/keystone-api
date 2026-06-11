@@ -12009,7 +12009,7 @@ components:
       - version
     FeedEntry:
       type: object
-      description: A read-only serializer for a single normalised activity feed entry.
+      description: Object serializer for the `FeedEntry` class.
       properties:
         id:
           type: integer
