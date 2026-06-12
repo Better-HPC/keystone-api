@@ -7,7 +7,7 @@ URLs to business logic.
 """
 
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import permissions, viewsets
+from rest_framework import generics, permissions, viewsets
 
 from .models import *
 from .permissions import *
@@ -15,6 +15,7 @@ from .serializers import *
 
 __all__ = [
     "AuditLogViewSet",
+    "FeedView",
     "RequestLogViewSet",
     "TaskResultViewSet",
 ]
@@ -47,6 +48,24 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ["record_name", "action", "actor_username"]
     serializer_class = AuditLogSerializer
     queryset = AuditLog.objects.select_related("actor", "content_type")
+
+
+@extend_schema_view(
+    get=extend_schema(
+        tags=['Logging - Feed'],
+        summary='List all log entries',
+        description=(
+            'Returns a reverse-chronological stream of normalised log entries '
+            'merged across request logs, task results, and audit logs.'
+        ),
+    ),
+)
+class FeedView(generics.ListAPIView):
+    """A list-only view serving the application logging feed."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+    serializer_class = FeedEntrySerializer
+    queryset = FeedEntry.objects.all()
 
 
 @extend_schema_view(

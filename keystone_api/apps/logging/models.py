@@ -12,7 +12,46 @@ from django.db import models
 
 from apps.users.models import User
 
-__all__ = ["AuditLog", "RequestLog", "TaskResult"]
+__all__ = ["AuditLog", "FeedEntry", "RequestLog", "TaskResult"]
+
+
+class AuditLog(auditlog.models.LogEntry):
+    """Proxy model for the auditlog backend."""
+
+    class Meta:
+        """Database model settings."""
+
+        proxy = True
+
+
+class FeedEntry(models.Model):
+    """An unmanaged database view containing common fields from all log records.
+
+    This model maps to a database view. Unlike concrete tables, Django's
+    migration framework cannot automatically manage schema migrations
+    for views. Any schema changes require manual edits to the database
+    migration plan.
+    """
+
+    class Meta:
+        """Database model settings."""
+
+        managed = False
+        db_table = 'logging_feedentry'
+        ordering = ['-timestamp']
+        indexes = []
+
+    class SourceType(models.TextChoices):
+        """Define choices for the `source_type` field."""
+
+        REQUEST = 'request', 'Request'
+        TASK = 'task', 'Task'
+        AUDIT = 'audit', 'Audit'
+
+    source_type = models.CharField(max_length=16, choices=SourceType.choices)
+    timestamp = models.DateTimeField()
+    summary = models.TextField(null=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
 
 
 class RequestLog(models.Model):
@@ -43,15 +82,6 @@ class RequestLog(models.Model):
 
 class TaskResult(django_celery_results.models.TaskResult):
     """Proxy model for the Celery task result backend."""
-
-    class Meta:
-        """Database model settings."""
-
-        proxy = True
-
-
-class AuditLog(auditlog.models.LogEntry):
-    """Proxy model for the auditlog backend."""
 
     class Meta:
         """Database model settings."""
