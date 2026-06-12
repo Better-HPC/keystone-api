@@ -51,7 +51,7 @@ class FeedEntry(models.Model):
     source_type = models.CharField(max_length=16, choices=SourceType.choices)
     timestamp = models.DateTimeField()
     summary = models.TextField(null=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
 
 
 class RequestLog(models.Model):
