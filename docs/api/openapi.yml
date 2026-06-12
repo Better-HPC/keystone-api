@@ -4000,14 +4000,6 @@ paths:
         schema:
           type: integer
       - in: query
-        name: user__gt
-        schema:
-          type: integer
-      - in: query
-        name: user__gte
-        schema:
-          type: integer
-      - in: query
         name: user__in
         schema:
           type: array
@@ -4020,14 +4012,6 @@ paths:
         name: user__isnull
         schema:
           type: boolean
-      - in: query
-        name: user__lt
-        schema:
-          type: integer
-      - in: query
-        name: user__lte
-        schema:
-          type: integer
       - in: query
         name: user__not_in
         schema:
@@ -12014,6 +11998,11 @@ components:
         id:
           type: integer
           readOnly: true
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          title: ' user'
         source_type:
           enum:
           - request
@@ -12033,11 +12022,9 @@ components:
           nullable: true
         user:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           nullable: true
       required:
+      - _user
       - id
       - source_type
       - timestamp

@@ -56,6 +56,8 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 class FeedEntrySerializer(serializers.ModelSerializer):
     """Object serializer for the `FeedEntry` class."""
 
+    _user = UserSummarySerializer(source="user", read_only=True)
+
     class Meta:
         """Serializer settings."""
 
