@@ -3764,52 +3764,6 @@ paths:
         schema:
           type: string
       - in: query
-        name: actor_id
-        schema:
-          type: integer
-      - in: query
-        name: actor_id__gt
-        schema:
-          type: integer
-      - in: query
-        name: actor_id__gte
-        schema:
-          type: integer
-      - in: query
-        name: actor_id__in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: actor_id__isnull
-        schema:
-          type: boolean
-      - in: query
-        name: actor_id__lt
-        schema:
-          type: integer
-      - in: query
-        name: actor_id__lte
-        schema:
-          type: integer
-      - in: query
-        name: actor_id__not_in
-        schema:
-          type: array
-          items:
-            type: integer
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: actor_id__not_isnull
-        schema:
-          type: boolean
-      - in: query
         name: id
         schema:
           type: integer
@@ -4041,6 +3995,52 @@ paths:
         name: timestamp__year
         schema:
           type: number
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__gt
+        schema:
+          type: integer
+      - in: query
+        name: user__gte
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: user__lt
+        schema:
+          type: integer
+      - in: query
+        name: user__lte
+        schema:
+          type: integer
+      - in: query
+        name: user__not_in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__not_isnull
+        schema:
+          type: boolean
       tags:
       - Logging - Feed
       security:
@@ -12031,7 +12031,7 @@ components:
         summary:
           type: string
           nullable: true
-        actor_id:
+        user:
           type: integer
           maximum: 9223372036854775807
           minimum: -9223372036854775808

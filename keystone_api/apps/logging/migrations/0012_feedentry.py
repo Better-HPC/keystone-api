@@ -11,7 +11,7 @@ CREATE VIEW logging_feedentry AS
         timestamp,
         'request'   AS source_type,
         endpoint    AS summary,
-        user_id     AS actor_id
+        user_id     AS user
     FROM logging_requestlog
 
     UNION ALL
@@ -21,7 +21,7 @@ CREATE VIEW logging_feedentry AS
         date_created        AS timestamp,
         'task'              AS source_type,
         task_name           AS summary,
-        NULL                AS actor_id
+        NULL                AS user
     FROM django_celery_results_taskresult
 
     UNION ALL
@@ -31,7 +31,7 @@ CREATE VIEW logging_feedentry AS
         timestamp,
         'audit'             AS source_type,
         object_repr         AS summary,
-        actor_id
+        actor_id            AS user
     FROM auditlog_logentry
 """
 
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ('source_type', models.CharField(choices=[('request', 'Request'), ('task', 'Task'), ('audit', 'Audit')], max_length=16)),
                 ('timestamp', models.DateTimeField()),
                 ('summary', models.TextField(null=True)),
-                ('actor_id', models.IntegerField(null=True)),
+                ('user', models.IntegerField(null=True)),
             ],
             options={
                 'db_table': 'logging_feedentry',
