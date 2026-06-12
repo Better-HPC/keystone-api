@@ -25,7 +25,13 @@ class AuditLog(auditlog.models.LogEntry):
 
 
 class FeedEntry(models.Model):
-    """An unmanaged database view containing common fields from all log records."""
+    """An unmanaged database view containing common fields from all log records.
+
+    This model maps to a database view. Unlike concrete tables, Django's
+    migration framework cannot automatically manage schema migrations
+    for views. Any schema changes require manual edits to the database
+    migration plan.
+    """
 
     class Meta:
         """Database model settings."""
