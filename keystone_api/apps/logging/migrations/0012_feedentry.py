@@ -36,7 +36,7 @@ CREATE VIEW logging_feedentry AS
         object_repr  AS summary,
         actor_id     AS user_id,
         cid          AS cid,
-        NULL         AS status
+        'COMPLETED'  AS status
     FROM auditlog_logentry
 """
 

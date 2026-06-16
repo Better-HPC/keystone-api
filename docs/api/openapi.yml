@@ -11789,6 +11789,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
+          nullable: true
           title: ' actor'
       required:
       - _actor
@@ -12094,6 +12095,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
+          nullable: true
           title: ' user'
         record_type:
           enum:
@@ -13638,6 +13640,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
+          nullable: true
           title: ' user'
         method:
           type: string

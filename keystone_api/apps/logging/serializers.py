@@ -26,7 +26,7 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 
     record_name = serializers.SerializerMethodField()
     record_id = serializers.IntegerField(source="object_pk")
-    _actor = UserSummarySerializer(source="actor", read_only=True)
+    _actor = UserSummarySerializer(source="actor", read_only=True, allow_null=True)
 
     class Meta:
         """Serializer settings."""
@@ -56,7 +56,7 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 class FeedEntrySerializer(serializers.ModelSerializer):
     """Object serializer for the `FeedEntry` class."""
 
-    _user = UserSummarySerializer(source="user", read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True, allow_null=True)
 
     class Meta:
         """Serializer settings."""
@@ -68,7 +68,7 @@ class FeedEntrySerializer(serializers.ModelSerializer):
 class RequestLogSerializer(serializers.ModelSerializer):
     """Object serializer for the `RequestLog` class."""
 
-    _user = UserSummarySerializer(source="user", read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True, allow_null=True)
 
     class Meta:
         """Serializer settings."""
