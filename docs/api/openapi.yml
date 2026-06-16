@@ -3764,6 +3764,52 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
+        name: cid__contains
+        schema:
+          type: string
+      - in: query
+        name: cid__endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__not_contains
+        schema:
+          type: string
+      - in: query
+        name: cid__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__startswith
+        schema:
+          type: string
+      - in: query
         name: id
         schema:
           type: integer
@@ -3810,7 +3856,7 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: source_type
+        name: record_type
         schema:
           type: string
           x-spec-enum-id: c249b54eb12a25fb
@@ -3823,15 +3869,15 @@ paths:
           * `task` - Task
           * `audit` - Audit
       - in: query
-        name: source_type__contains
+        name: record_type__contains
         schema:
           type: string
       - in: query
-        name: source_type__endswith
+        name: record_type__endswith
         schema:
           type: string
       - in: query
-        name: source_type__in
+        name: record_type__in
         schema:
           type: array
           items:
@@ -3840,15 +3886,15 @@ paths:
         explode: false
         style: form
       - in: query
-        name: source_type__isnull
+        name: record_type__isnull
         schema:
           type: boolean
       - in: query
-        name: source_type__not_contains
+        name: record_type__not_contains
         schema:
           type: string
       - in: query
-        name: source_type__not_in
+        name: record_type__not_in
         schema:
           type: array
           items:
@@ -3857,11 +3903,57 @@ paths:
         explode: false
         style: form
       - in: query
-        name: source_type__not_isnull
+        name: record_type__not_isnull
         schema:
           type: boolean
       - in: query
-        name: source_type__startswith
+        name: record_type__startswith
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
+      - in: query
+        name: status__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: status__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: status__not_contains
+        schema:
+          type: string
+      - in: query
+        name: status__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: status__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: status__startswith
         schema:
           type: string
       - in: query
@@ -12003,7 +12095,7 @@ components:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
           title: ' user'
-        source_type:
+        record_type:
           enum:
           - request
           - task
@@ -12020,13 +12112,21 @@ components:
         summary:
           type: string
           nullable: true
+        cid:
+          type: string
+          nullable: true
+          maxLength: 32
+        status:
+          type: string
+          nullable: true
+          maxLength: 16
         user:
           type: integer
           nullable: true
       required:
       - _user
       - id
-      - source_type
+      - record_type
       - timestamp
     Grant:
       type: object

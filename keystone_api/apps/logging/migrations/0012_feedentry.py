@@ -8,29 +8,35 @@ CREATE VIEW logging_feedentry AS
     SELECT
         id,
         timestamp,
-        'request'   AS source_type,
-        endpoint    AS summary,
-        user_id     AS user_id
+        'request'                    AS record_type,
+        endpoint                     AS summary,
+        user_id                      AS user_id,
+        cid                          AS cid,
+        CAST(response_code AS TEXT)  AS status
     FROM logging_requestlog
 
     UNION ALL
 
     SELECT
         id,
-        date_created        AS timestamp,
-        'task'              AS source_type,
-        task_name           AS summary,
-        NULL                AS user_id
+        date_created  AS timestamp,
+        'task'        AS record_type,
+        task_name     AS summary,
+        NULL          AS user_id,
+        NULL          AS cid,
+        status        AS status
     FROM django_celery_results_taskresult
 
     UNION ALL
 
     SELECT
         id,
-        timestamp,
-        'audit'             AS source_type,
-        object_repr         AS summary,
-        actor_id            AS user_id
+        timestamp    AS timestamp,
+        'audit'      AS record_type,
+        object_repr  AS summary,
+        actor_id     AS user_id,
+        cid          AS cid,
+        NULL         AS status
     FROM auditlog_logentry
 """
 
@@ -47,9 +53,12 @@ class Migration(migrations.Migration):
             name='FeedEntry',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source_type', models.CharField(choices=[('request', 'Request'), ('task', 'Task'), ('audit', 'Audit')], max_length=16)),
+                ('record_type', models.CharField(choices=[('request', 'Request'), ('task', 'Task'), ('audit', 'Audit')], max_length=16)),
                 ('timestamp', models.DateTimeField()),
                 ('summary', models.TextField(null=True)),
+                ('user_id', models.BigIntegerField(null=True)),
+                ('cid', models.CharField(max_length=32, null=True)),
+                ('status', models.CharField(max_length=16)),
             ],
             options={
                 'db_table': 'logging_feedentry',

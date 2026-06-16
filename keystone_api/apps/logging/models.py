@@ -41,17 +41,19 @@ class FeedEntry(models.Model):
         ordering = ['-timestamp']
         indexes = []
 
-    class SourceType(models.TextChoices):
-        """Define choices for the `source_type` field."""
+    class RecordType(models.TextChoices):
+        """Define choices for the `record_type` field."""
 
         REQUEST = 'request', 'Request'
         TASK = 'task', 'Task'
         AUDIT = 'audit', 'Audit'
 
-    source_type = models.CharField(max_length=16, choices=SourceType.choices)
+    record_type = models.CharField(max_length=16, choices=RecordType.choices)
     timestamp = models.DateTimeField()
     summary = models.TextField(null=True)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+    cid = models.CharField(max_length=32, null=True, blank=True)
+    status = models.CharField(max_length=16, null=True, blank=True)
 
 
 class RequestLog(models.Model):
