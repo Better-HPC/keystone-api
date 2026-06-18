@@ -12,7 +12,50 @@ from django.db import models
 
 from apps.users.models import User
 
-__all__ = ["AuditLog", "RequestLog", "TaskResult"]
+__all__ = ["AuditLog", "FeedEntry", "RequestLog", "TaskResult"]
+
+
+class AuditLog(auditlog.models.LogEntry):
+    """Proxy model for the auditlog backend."""
+
+    class Meta:
+        """Database model settings."""
+
+        proxy = True
+
+
+class FeedEntry(models.Model):
+    """An unmanaged database view containing common fields from all log records.
+
+    This model maps to a database view. Unlike concrete tables, Django's
+    migration framework cannot automatically manage schema migrations
+    for views. Any schema changes to this model require manual edits
+    to the database migration plan.
+    """
+
+    class Meta:
+        """Database model settings."""
+
+        managed = False
+        db_table = 'logging_feedentry'
+        ordering = ['-timestamp']
+        indexes = []
+
+    class RecordType(models.TextChoices):
+        """Define choices for the `record_type` field."""
+
+        REQUEST = 'request', 'Request'
+        TASK = 'task', 'Task'
+        AUDIT = 'audit', 'Audit'
+
+    id = models.CharField(primary_key=True, max_length=20)
+    record_id = models.BigIntegerField()
+    record_type = models.CharField(max_length=16, choices=RecordType.choices)
+    timestamp = models.DateTimeField()
+    summary = models.TextField(null=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+    cid = models.CharField(max_length=32, null=True, blank=True)
+    status = models.CharField(max_length=16, null=True, blank=True)
 
 
 class RequestLog(models.Model):
@@ -43,15 +86,6 @@ class RequestLog(models.Model):
 
 class TaskResult(django_celery_results.models.TaskResult):
     """Proxy model for the Celery task result backend."""
-
-    class Meta:
-        """Database model settings."""
-
-        proxy = True
-
-
-class AuditLog(auditlog.models.LogEntry):
-    """Proxy model for the auditlog backend."""
 
     class Meta:
         """Database model settings."""

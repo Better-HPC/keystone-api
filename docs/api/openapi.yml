@@ -3732,6 +3732,449 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuditLog'
           description: ''
+  /logs/feed/:
+    get:
+      operationId: logs_feed_list
+      description: Returns a reverse-chronological stream of normalised log entries
+        merged across request logs, task results, and audit logs.
+      summary: List all log entries
+      parameters:
+      - name: _limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: _offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: _order
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: _search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: cid
+        schema:
+          type: string
+      - in: query
+        name: cid__contains
+        schema:
+          type: string
+      - in: query
+        name: cid__endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__not_contains
+        schema:
+          type: string
+      - in: query
+        name: cid__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: cid__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: cid__startswith
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: string
+      - in: query
+        name: id__contains
+        schema:
+          type: string
+      - in: query
+        name: id__endswith
+        schema:
+          type: string
+      - in: query
+        name: id__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__not_contains
+        schema:
+          type: string
+      - in: query
+        name: id__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__startswith
+        schema:
+          type: string
+      - in: query
+        name: record_id
+        schema:
+          type: integer
+      - in: query
+        name: record_id__gt
+        schema:
+          type: integer
+      - in: query
+        name: record_id__gte
+        schema:
+          type: integer
+      - in: query
+        name: record_id__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: record_id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: record_id__lt
+        schema:
+          type: integer
+      - in: query
+        name: record_id__lte
+        schema:
+          type: integer
+      - in: query
+        name: record_id__not_in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: record_id__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: record_type
+        schema:
+          type: string
+          x-spec-enum-id: c249b54eb12a25fb
+          enum:
+          - audit
+          - request
+          - task
+        description: |-
+          * `request` - Request
+          * `task` - Task
+          * `audit` - Audit
+      - in: query
+        name: record_type__contains
+        schema:
+          type: string
+      - in: query
+        name: record_type__endswith
+        schema:
+          type: string
+      - in: query
+        name: record_type__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: record_type__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: record_type__not_contains
+        schema:
+          type: string
+      - in: query
+        name: record_type__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: record_type__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: record_type__startswith
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+      - in: query
+        name: status__contains
+        schema:
+          type: string
+      - in: query
+        name: status__endswith
+        schema:
+          type: string
+      - in: query
+        name: status__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: status__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: status__not_contains
+        schema:
+          type: string
+      - in: query
+        name: status__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: status__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: status__startswith
+        schema:
+          type: string
+      - in: query
+        name: summary
+        schema:
+          type: string
+      - in: query
+        name: summary__contains
+        schema:
+          type: string
+      - in: query
+        name: summary__endswith
+        schema:
+          type: string
+      - in: query
+        name: summary__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: summary__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: summary__not_contains
+        schema:
+          type: string
+      - in: query
+        name: summary__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: summary__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: summary__startswith
+        schema:
+          type: string
+      - in: query
+        name: timestamp
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__day
+        schema:
+          type: number
+      - in: query
+        name: timestamp__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__gte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__hour
+        schema:
+          type: number
+      - in: query
+        name: timestamp__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: timestamp__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: timestamp__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__lte
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: timestamp__minute
+        schema:
+          type: number
+      - in: query
+        name: timestamp__month
+        schema:
+          type: number
+      - in: query
+        name: timestamp__not_in
+        schema:
+          type: array
+          items:
+            type: string
+            format: date-time
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: timestamp__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: timestamp__second
+        schema:
+          type: number
+      - in: query
+        name: timestamp__week
+        schema:
+          type: number
+      - in: query
+        name: timestamp__week_day
+        schema:
+          type: number
+      - in: query
+        name: timestamp__year
+        schema:
+          type: number
+      - in: query
+        name: user
+        schema:
+          type: integer
+      - in: query
+        name: user__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: user__not_in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user__not_isnull
+        schema:
+          type: boolean
+      tags:
+      - Logging - Feed
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFeedEntryList'
+          description: ''
   /logs/requests/:
     get:
       operationId: logs_requests_list
@@ -11392,6 +11835,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
+          nullable: true
           title: ' actor'
       required:
       - _actor
@@ -11686,6 +12130,58 @@ components:
       - max_upload_size
       - session_age
       - version
+    FeedEntry:
+      type: object
+      description: Object serializer for the `FeedEntry` class.
+      properties:
+        id:
+          type: string
+          maxLength: 20
+        _user:
+          allOf:
+          - $ref: '#/components/schemas/UserSummary'
+          readOnly: true
+          nullable: true
+          title: ' user'
+        record_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        record_type:
+          enum:
+          - request
+          - task
+          - audit
+          type: string
+          description: |-
+            * `request` - Request
+            * `task` - Task
+            * `audit` - Audit
+          x-spec-enum-id: c249b54eb12a25fb
+        timestamp:
+          type: string
+          format: date-time
+        summary:
+          type: string
+          nullable: true
+        cid:
+          type: string
+          nullable: true
+          maxLength: 32
+        status:
+          type: string
+          nullable: true
+          maxLength: 16
+        user:
+          type: integer
+          nullable: true
+      required:
+      - _user
+      - id
+      - record_id
+      - record_type
+      - timestamp
     Grant:
       type: object
       description: Object serializer for the `Grant` class.
@@ -12353,6 +12849,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Comment'
+    PaginatedFeedEntryList:
+      type: object
+      required:
+      - count
+      - next
+      - previous
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=400&_limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?_offset=200&_limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedEntry'
     PaginatedGrantList:
       type: object
       required:
@@ -13171,6 +13692,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
+          nullable: true
           title: ' user'
         method:
           type: string

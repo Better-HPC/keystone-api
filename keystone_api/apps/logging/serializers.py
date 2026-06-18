@@ -15,6 +15,7 @@ from .nested import AuditLogSummarySerializer
 
 __all__ = [
     "AuditLogSerializer",
+    "FeedEntrySerializer",
     "RequestLogSerializer",
     "TaskResultSerializer",
 ]
@@ -25,7 +26,7 @@ class AuditLogSerializer(AuditLogSummarySerializer):
 
     record_name = serializers.SerializerMethodField()
     record_id = serializers.IntegerField(source="object_pk")
-    _actor = UserSummarySerializer(source="actor", read_only=True)
+    _actor = UserSummarySerializer(source="actor", read_only=True, allow_null=True)
 
     class Meta:
         """Serializer settings."""
@@ -52,10 +53,22 @@ class AuditLogSerializer(AuditLogSummarySerializer):
         return f"{obj.content_type.app_label} | {obj.content_type.model_class().__name__}"
 
 
+class FeedEntrySerializer(serializers.ModelSerializer):
+    """Object serializer for the `FeedEntry` class."""
+
+    _user = UserSummarySerializer(source="user", read_only=True, allow_null=True)
+
+    class Meta:
+        """Serializer settings."""
+
+        model = FeedEntry
+        fields = '__all__'
+
+
 class RequestLogSerializer(serializers.ModelSerializer):
     """Object serializer for the `RequestLog` class."""
 
-    _user = UserSummarySerializer(source="user", read_only=True)
+    _user = UserSummarySerializer(source="user", read_only=True, allow_null=True)
 
     class Meta:
         """Serializer settings."""

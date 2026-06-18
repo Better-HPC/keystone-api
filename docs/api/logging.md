@@ -24,11 +24,11 @@ Keystone-API exposes application logs through the API endpoints listed below.
 All log endpoints require [authentication](./authentication.md) with administrator privileges and support the
 API's standard [query parameters](./filtering.md).
 
-| Endpoint             | Description                                                        |
-|----------------------|--------------------------------------------------------------------|
-| `/logging/requests/` | Logs incoming HTTP requests and related metadata.                  |
-| `/logging/audit/`    | Audit trail for user actions against select application resources. |
-| `/logging/tasks/`    | Results and status of scheduled background tasks.                  |
+| Endpoint          | Description                                                        |
+|-------------------|--------------------------------------------------------------------|
+| `/logs/requests/` | Logs incoming HTTP requests and related metadata.                  |
+| `/logs/audit/`    | Audit trail for user actions against select application resources. |
+| `/logs/tasks/`    | Results and status of scheduled background tasks.                  |
 
 Clients may optionally specify a unique correlation ID (`cid`) using the `X-KEYSTONE-CID` header.
 This value is propagated through internal logs, enabling record correlation across logging endpoints.
