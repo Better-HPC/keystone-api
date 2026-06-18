@@ -48,6 +48,8 @@ class FeedEntry(models.Model):
         TASK = 'task', 'Task'
         AUDIT = 'audit', 'Audit'
 
+    id = models.CharField(primary_key=True, max_length=20)
+    record_id = models.BigIntegerField()
     record_type = models.CharField(max_length=16, choices=RecordType.choices)
     timestamp = models.DateTimeField()
     summary = models.TextField(null=True)

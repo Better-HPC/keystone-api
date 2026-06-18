@@ -3812,21 +3812,21 @@ paths:
       - in: query
         name: id
         schema:
-          type: integer
+          type: string
       - in: query
-        name: id__gt
+        name: id__contains
         schema:
-          type: integer
+          type: string
       - in: query
-        name: id__gte
+        name: id__endswith
         schema:
-          type: integer
+          type: string
       - in: query
         name: id__in
         schema:
           type: array
           items:
-            type: integer
+            type: string
         description: Multiple values may be separated by commas.
         explode: false
         style: form
@@ -3835,15 +3835,40 @@ paths:
         schema:
           type: boolean
       - in: query
-        name: id__lt
+        name: id__not_contains
         schema:
-          type: integer
-      - in: query
-        name: id__lte
-        schema:
-          type: integer
+          type: string
       - in: query
         name: id__not_in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: id__not_isnull
+        schema:
+          type: boolean
+      - in: query
+        name: id__startswith
+        schema:
+          type: string
+      - in: query
+        name: record_id
+        schema:
+          type: integer
+      - in: query
+        name: record_id__gt
+        schema:
+          type: integer
+      - in: query
+        name: record_id__gte
+        schema:
+          type: integer
+      - in: query
+        name: record_id__in
         schema:
           type: array
           items:
@@ -3852,7 +3877,28 @@ paths:
         explode: false
         style: form
       - in: query
-        name: id__not_isnull
+        name: record_id__isnull
+        schema:
+          type: boolean
+      - in: query
+        name: record_id__lt
+        schema:
+          type: integer
+      - in: query
+        name: record_id__lte
+        schema:
+          type: integer
+      - in: query
+        name: record_id__not_in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: record_id__not_isnull
         schema:
           type: boolean
       - in: query
@@ -12089,14 +12135,19 @@ components:
       description: Object serializer for the `FeedEntry` class.
       properties:
         id:
-          type: integer
-          readOnly: true
+          type: string
+          maxLength: 20
         _user:
           allOf:
           - $ref: '#/components/schemas/UserSummary'
           readOnly: true
           nullable: true
           title: ' user'
+        record_id:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
         record_type:
           enum:
           - request
@@ -12128,6 +12179,7 @@ components:
       required:
       - _user
       - id
+      - record_id
       - record_type
       - timestamp
     Grant:

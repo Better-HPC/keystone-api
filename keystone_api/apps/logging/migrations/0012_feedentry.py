@@ -2,12 +2,14 @@
 
 from django.db import migrations, models
 
-
+# View combining all types of log records into a single query
+# Unique IDs are created using the record IDs with a type prefix
 _CREATE_VIEW = """
 CREATE VIEW logging_feedentry AS
     SELECT
-        id,
-        timestamp,
+        'r' || id                    AS id,
+        id                           AS record_id,
+        timestamp                    AS timestamp,
         'request'                    AS record_type,
         endpoint                     AS summary,
         user_id                      AS user_id,
@@ -18,7 +20,8 @@ CREATE VIEW logging_feedentry AS
     UNION ALL
 
     SELECT
-        id,
+        't' || id     AS id,
+        id            AS record_id,
         date_created  AS timestamp,
         'task'        AS record_type,
         task_name     AS summary,
@@ -30,7 +33,8 @@ CREATE VIEW logging_feedentry AS
     UNION ALL
 
     SELECT
-        id,
+        'a' || id    AS id,
+        id           AS record_id,
         timestamp    AS timestamp,
         'audit'      AS record_type,
         object_repr  AS summary,
@@ -41,6 +45,8 @@ CREATE VIEW logging_feedentry AS
 """
 
 _DROP_VIEW = "DROP VIEW IF EXISTS logging_feedentry"
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -52,8 +58,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedEntry',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('record_type', models.CharField(choices=[('request', 'Request'), ('task', 'Task'), ('audit', 'Audit')], max_length=16)),
+                ('id', models.CharField(max_length=20)),  # 19 characters for bigint +1 for record prefix
+                ('record_id', models.BigIntegerField()),
+                ('record_type', models.CharField(max_length=16)),
                 ('timestamp', models.DateTimeField()),
                 ('summary', models.TextField(null=True)),
                 ('user_id', models.BigIntegerField(null=True)),
