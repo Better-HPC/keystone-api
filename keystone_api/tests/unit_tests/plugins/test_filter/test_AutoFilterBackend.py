@@ -95,7 +95,8 @@ class BuildFilterAttrsMethod(TestCase):
 
         self.assertIn("integer_field__not_in", self.filter_attrs, "Missing not_in filter")
         self.assertIn("char_field__not_contains", self.filter_attrs, "Missing not_contains filter")
-        self.assertIn("bool_field__not_isnull", self.filter_attrs, "Missing not_isnull filter")
+        self.assertIn("char_field__not_startswith", self.filter_attrs, "Missing not_startswith filter")
+        self.assertIn("char_field__not_endswith", self.filter_attrs, "Missing not_endswith filter")
 
 
 class GetFiltersetClassMethod(TestCase):

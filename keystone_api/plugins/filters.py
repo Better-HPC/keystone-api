@@ -122,10 +122,10 @@ class AutoFilterBackend(filters.DjangoFilterBackend):
 
     _default_filters = [
         FilterDefinition("exact", suffix=None),
+        FilterDefinition("exact", negate=True, suffix="not_eq"),
         FilterDefinition("in"),
         FilterDefinition("in", negate=True, suffix="not_in"),
         FilterDefinition("isnull"),
-        FilterDefinition("isnull", negate=True, suffix="not_isnull"),
     ]
 
     _numeric_filters = _default_filters + [
@@ -139,7 +139,9 @@ class AutoFilterBackend(filters.DjangoFilterBackend):
         FilterDefinition("contains"),
         FilterDefinition("contains", negate=True, suffix="not_contains"),
         FilterDefinition("startswith"),
+        FilterDefinition("startswith", negate=True, suffix="not_startswith"),
         FilterDefinition("endswith"),
+        FilterDefinition("endswith", negate=True, suffix="not_endswith"),
     ]
 
     _date_filters = _numeric_filters + [

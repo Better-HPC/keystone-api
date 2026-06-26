@@ -73,13 +73,13 @@ The available query filters depend on a field's data type and are summarized in 
 
 The following filters are available for all data types.
 
-| Query Expression | Description                                                    | Example                  |
-|------------------|----------------------------------------------------------------|--------------------------|
-| (none)           | Whether the value exactly matches                              | `field=value`            |
-| `in`             | Whether the value is in a comma-separated list of values       | `field__in=1,2,3`        |
-| `not_in`         | Whether the value is *not* in a comma-separated list of values | `field__not_in=1,2,3`    |
-| `isnull`         | Whether the value is None                                      | `field__isnull=true`     |
-| `not_isnull`     | Whether the value is *not* None                                | `field__not_isnull=true` |
+| Query Expression | Description                                                    | Example               |
+|------------------|----------------------------------------------------------------|-----------------------|
+| (none)           | Whether the value matches exactly                              | `field=value`         |
+| `not_eq`         | Whether the value does not matches exactly                     | `field__not_eq=value` |
+| `in`             | Whether the value is in a comma-separated list of values       | `field__in=1,2,3`     |
+| `not_in`         | Whether the value is *not* in a comma-separated list of values | `field__not_in=1,2,3` |
+| `isnull`         | Whether the value is None                                      | `field__isnull=true`  |
 
 ### Numeric Filters
 
@@ -96,12 +96,14 @@ The following filters are available for numerical data such as floats and intege
 
 The following filters are available for text and character values.
 
-| Query Expression | Description                                         | Example                       |
-|------------------|-----------------------------------------------------|-------------------------------|
-| `contains`       | Whether the value contains subtext                  | `field__contains=subtext`     |
-| `not_contains`   | Whether the value does *not* contain the given text | `field__not_contains=subtext` |
-| `startswith`     | Whether the value starts with the given text        | `field__startswith=subtext`   |
-| `endswith`       | Whether the value ends with the given text          | `field__endswith=subtext`     |
+| Query Expression | Description                                            | Example                         |
+|------------------|--------------------------------------------------------|---------------------------------|
+| `contains`       | Whether the value contains subtext                     | `field__contains=subtext`       |
+| `not_contains`   | Whether the value does *not* contain the given text    | `field__not_contains=subtext`   |
+| `startswith`     | Whether the value starts with the given text           | `field__startswith=subtext`     |
+| `not_startswith` | Whether the value does *not* start with the given text | `field__not_startswith=subtext` |
+| `endswith`       | Whether the value ends with the given text             | `field__endswith=subtext`       |
+| `not_endswith`   | Whether the value does *not* end with the given text   | `field__not_endswith=subtext`   |
 
 ### Date Filters
 
