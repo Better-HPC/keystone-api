@@ -70,6 +70,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: awarded__not_eq
+        schema:
+          type: integer
+      - in: query
         name: awarded__not_in
         schema:
           type: array
@@ -78,10 +82,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: awarded__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: cluster
         schema:
@@ -100,6 +100,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: cluster__not_eq
+        schema:
+          type: integer
+      - in: query
         name: cluster__not_in
         schema:
           type: array
@@ -108,10 +112,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: cluster__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: final
         schema:
@@ -146,6 +146,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: final__not_eq
+        schema:
+          type: integer
+      - in: query
         name: final__not_in
         schema:
           type: array
@@ -154,10 +158,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: final__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: id
         schema:
@@ -192,6 +192,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -200,10 +204,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: request
         schema:
@@ -222,6 +222,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: request__not_eq
+        schema:
+          type: integer
+      - in: query
         name: request__not_in
         schema:
           type: array
@@ -230,10 +234,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: request__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: requested
         schema:
@@ -268,6 +268,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: requested__not_eq
+        schema:
+          type: integer
+      - in: query
         name: requested__not_in
         schema:
           type: array
@@ -276,10 +280,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: requested__not_isnull
-        schema:
-          type: boolean
       tags:
       - Allocations - Allocated Resources
       security:
@@ -503,6 +503,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -511,10 +515,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: name
         schema:
@@ -545,6 +545,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: name__not_eq
+        schema:
+          type: string
+      - in: query
         name: name__not_in
         schema:
           type: array
@@ -554,9 +562,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: name__not_isnull
+        name: name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: name__startswith
         schema:
@@ -579,6 +587,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: request__not_eq
+        schema:
+          type: integer
+      - in: query
         name: request__not_in
         schema:
           type: array
@@ -587,10 +599,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: request__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: uploaded
         schema:
@@ -647,6 +655,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: uploaded__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: uploaded__not_in
         schema:
           type: array
@@ -656,10 +669,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: uploaded__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: uploaded__second
         schema:
@@ -923,6 +932,23 @@ paths:
         schema:
           type: string
       - in: query
+        name: access_mode__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: access_mode__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 2dede22a891e0d4a
+          enum:
+          - BL
+          - OP
+          - WL
+        description: |-
+          * `WL` - Whitelist
+          * `BL` - Blacklist
+          * `OP` - Open
+      - in: query
         name: access_mode__not_in
         schema:
           type: array
@@ -932,9 +958,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: access_mode__not_isnull
+        name: access_mode__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: access_mode__startswith
         schema:
@@ -969,6 +995,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: description__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: description__not_eq
+        schema:
+          type: string
+      - in: query
         name: description__not_in
         schema:
           type: array
@@ -978,9 +1012,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: description__not_isnull
+        name: description__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: description__startswith
         schema:
@@ -1003,6 +1037,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: enabled__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: enabled__not_in
         schema:
           type: array
@@ -1011,10 +1049,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: enabled__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: id
         schema:
@@ -1049,6 +1083,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -1057,10 +1095,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: name
         schema:
@@ -1091,6 +1125,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: name__not_eq
+        schema:
+          type: string
+      - in: query
         name: name__not_in
         schema:
           type: array
@@ -1100,9 +1142,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: name__not_isnull
+        name: name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: name__startswith
         schema:
@@ -1326,6 +1368,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: content__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: content__not_eq
+        schema:
+          type: string
+      - in: query
         name: content__not_in
         schema:
           type: array
@@ -1335,9 +1385,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: content__not_isnull
+        name: content__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: content__startswith
         schema:
@@ -1398,6 +1448,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: created__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: created__not_in
         schema:
           type: array
@@ -1407,10 +1462,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: created__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: created__second
         schema:
@@ -1461,6 +1512,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -1469,10 +1524,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: private
         schema:
@@ -1491,6 +1542,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: private__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: private__not_in
         schema:
           type: array
@@ -1499,10 +1554,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: private__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: request
         schema:
@@ -1521,6 +1572,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: request__not_eq
+        schema:
+          type: integer
+      - in: query
         name: request__not_in
         schema:
           type: array
@@ -1529,10 +1584,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: request__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: user
         schema:
@@ -1551,6 +1602,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: user__not_eq
+        schema:
+          type: integer
+      - in: query
         name: user__not_in
         schema:
           type: array
@@ -1559,10 +1614,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: user__not_isnull
-        schema:
-          type: boolean
       tags:
       - Allocations - Request Comments
       security:
@@ -1823,6 +1874,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: active__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: active__not_in
         schema:
           type: array
@@ -1832,10 +1888,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: active__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: active__week
         schema:
@@ -1878,6 +1930,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: description__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: description__not_eq
+        schema:
+          type: string
+      - in: query
         name: description__not_in
         schema:
           type: array
@@ -1887,9 +1947,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: description__not_isnull
+        name: description__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: description__startswith
         schema:
@@ -1942,6 +2002,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: expire__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: expire__not_in
         schema:
           type: array
@@ -1951,10 +2016,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: expire__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: expire__week
         schema:
@@ -2001,6 +2062,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -2009,10 +2074,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: status
         schema:
@@ -2054,6 +2115,25 @@ paths:
         schema:
           type: string
       - in: query
+        name: status__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: status__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 0f4bc72b4a7635f9
+          enum:
+          - AP
+          - CR
+          - DC
+          - PD
+        description: |-
+          * `PD` - Pending
+          * `AP` - Approved
+          * `DC` - Declined
+          * `CR` - Changes Requested
+      - in: query
         name: status__not_in
         schema:
           type: array
@@ -2063,9 +2143,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: status__not_isnull
+        name: status__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: status__startswith
         schema:
@@ -2126,6 +2206,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: submitted__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: submitted__not_in
         schema:
           type: array
@@ -2135,10 +2220,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitted__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: submitted__second
         schema:
@@ -2173,6 +2254,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: submitter__not_eq
+        schema:
+          type: integer
+      - in: query
         name: submitter__not_in
         schema:
           type: array
@@ -2181,10 +2266,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitter__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: team
         schema:
@@ -2203,6 +2284,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -2211,10 +2296,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: title
         schema:
@@ -2245,6 +2326,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: title__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: title__not_eq
+        schema:
+          type: string
+      - in: query
         name: title__not_in
         schema:
           type: array
@@ -2254,9 +2343,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: title__not_isnull
+        name: title__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: title__startswith
         schema:
@@ -2502,6 +2591,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -2510,10 +2603,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: request
         schema:
@@ -2532,6 +2621,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: request__not_eq
+        schema:
+          type: integer
+      - in: query
         name: request__not_in
         schema:
           type: array
@@ -2540,10 +2633,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: request__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: reviewer
         schema:
@@ -2562,6 +2651,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: reviewer__not_eq
+        schema:
+          type: integer
+      - in: query
         name: reviewer__not_in
         schema:
           type: array
@@ -2570,10 +2663,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: reviewer__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: status
         schema:
@@ -2613,6 +2702,23 @@ paths:
         schema:
           type: string
       - in: query
+        name: status__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: status__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 32101d5410655ab2
+          enum:
+          - AP
+          - CR
+          - DC
+        description: |-
+          * `AP` - Approved
+          * `DC` - Declined
+          * `CR` - Changes Requested
+      - in: query
         name: status__not_in
         schema:
           type: array
@@ -2622,9 +2728,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: status__not_isnull
+        name: status__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: status__startswith
         schema:
@@ -2685,6 +2791,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: submitted__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: submitted__not_in
         schema:
           type: array
@@ -2694,10 +2805,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitted__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: submitted__second
         schema:
@@ -3139,6 +3246,21 @@ paths:
         schema:
           type: integer
       - in: query
+        name: action__not_eq
+        schema:
+          type: integer
+          x-spec-enum-id: f07ca4f574297d89
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+        description: |-
+          * `0` - create
+          * `1` - update
+          * `2` - delete
+          * `3` - access
+      - in: query
         name: action__not_in
         schema:
           type: array
@@ -3147,10 +3269,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: action__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: actor
         schema:
@@ -3169,6 +3287,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: actor__not_eq
+        schema:
+          type: integer
+      - in: query
         name: actor__not_in
         schema:
           type: array
@@ -3177,10 +3299,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: actor__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: actor_email
         schema:
@@ -3211,6 +3329,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: actor_email__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: actor_email__not_eq
+        schema:
+          type: string
+      - in: query
         name: actor_email__not_in
         schema:
           type: array
@@ -3220,9 +3346,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: actor_email__not_isnull
+        name: actor_email__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: actor_email__startswith
         schema:
@@ -3257,6 +3383,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: changes_text__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: changes_text__not_eq
+        schema:
+          type: string
+      - in: query
         name: changes_text__not_in
         schema:
           type: array
@@ -3266,9 +3400,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: changes_text__not_isnull
+        name: changes_text__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: changes_text__startswith
         schema:
@@ -3303,6 +3437,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__not_eq
+        schema:
+          type: string
+      - in: query
         name: cid__not_in
         schema:
           type: array
@@ -3312,9 +3454,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: cid__not_isnull
+        name: cid__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: cid__startswith
         schema:
@@ -3337,6 +3479,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: content_type__not_eq
+        schema:
+          type: integer
+      - in: query
         name: content_type__not_in
         schema:
           type: array
@@ -3345,10 +3491,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: content_type__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: id
         schema:
@@ -3383,6 +3525,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -3391,10 +3537,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: object_id
         schema:
@@ -3429,6 +3571,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: object_id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: object_id__not_in
         schema:
           type: array
@@ -3437,10 +3583,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: object_id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: object_pk
         schema:
@@ -3471,6 +3613,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: object_pk__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: object_pk__not_eq
+        schema:
+          type: string
+      - in: query
         name: object_pk__not_in
         schema:
           type: array
@@ -3480,9 +3630,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: object_pk__not_isnull
+        name: object_pk__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: object_pk__startswith
         schema:
@@ -3517,6 +3667,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: object_repr__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: object_repr__not_eq
+        schema:
+          type: string
+      - in: query
         name: object_repr__not_in
         schema:
           type: array
@@ -3526,9 +3684,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: object_repr__not_isnull
+        name: object_repr__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: object_repr__startswith
         schema:
@@ -3551,6 +3709,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: remote_addr__not_eq
+        schema:
+          type: string
+      - in: query
         name: remote_addr__not_in
         schema:
           type: array
@@ -3559,10 +3721,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: remote_addr__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: remote_port
         schema:
@@ -3597,6 +3755,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: remote_port__not_eq
+        schema:
+          type: integer
+      - in: query
         name: remote_port__not_in
         schema:
           type: array
@@ -3605,10 +3767,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: remote_port__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: timestamp
         schema:
@@ -3665,6 +3823,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: timestamp__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: timestamp__not_in
         schema:
           type: array
@@ -3674,10 +3837,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: timestamp__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: timestamp__second
         schema:
@@ -3793,6 +3952,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__not_eq
+        schema:
+          type: string
+      - in: query
         name: cid__not_in
         schema:
           type: array
@@ -3802,9 +3969,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: cid__not_isnull
+        name: cid__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: cid__startswith
         schema:
@@ -3839,6 +4006,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: id__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: id__not_eq
+        schema:
+          type: string
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -3848,9 +4023,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: id__not_isnull
+        name: id__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: id__startswith
         schema:
@@ -3889,6 +4064,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: record_id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: record_id__not_in
         schema:
           type: array
@@ -3897,10 +4076,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: record_id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: record_type
         schema:
@@ -3940,6 +4115,23 @@ paths:
         schema:
           type: string
       - in: query
+        name: record_type__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: record_type__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: c249b54eb12a25fb
+          enum:
+          - audit
+          - request
+          - task
+        description: |-
+          * `request` - Request
+          * `task` - Task
+          * `audit` - Audit
+      - in: query
         name: record_type__not_in
         schema:
           type: array
@@ -3949,9 +4141,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: record_type__not_isnull
+        name: record_type__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: record_type__startswith
         schema:
@@ -3986,6 +4178,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: status__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: status__not_eq
+        schema:
+          type: string
+      - in: query
         name: status__not_in
         schema:
           type: array
@@ -3995,9 +4195,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: status__not_isnull
+        name: status__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: status__startswith
         schema:
@@ -4032,6 +4232,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: summary__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: summary__not_eq
+        schema:
+          type: string
+      - in: query
         name: summary__not_in
         schema:
           type: array
@@ -4041,9 +4249,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: summary__not_isnull
+        name: summary__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: summary__startswith
         schema:
@@ -4104,6 +4312,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: timestamp__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: timestamp__not_in
         schema:
           type: array
@@ -4113,10 +4326,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: timestamp__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: timestamp__second
         schema:
@@ -4151,6 +4360,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: user__not_eq
+        schema:
+          type: integer
+      - in: query
         name: user__not_in
         schema:
           type: array
@@ -4159,10 +4372,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: user__not_isnull
-        schema:
-          type: boolean
       tags:
       - Logging - Feed
       security:
@@ -4237,6 +4446,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: cid__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: cid__not_eq
+        schema:
+          type: string
+      - in: query
         name: cid__not_in
         schema:
           type: array
@@ -4246,9 +4463,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: cid__not_isnull
+        name: cid__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: cid__startswith
         schema:
@@ -4283,6 +4500,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: endpoint__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: endpoint__not_eq
+        schema:
+          type: string
+      - in: query
         name: endpoint__not_in
         schema:
           type: array
@@ -4292,9 +4517,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: endpoint__not_isnull
+        name: endpoint__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: endpoint__startswith
         schema:
@@ -4333,6 +4558,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -4341,10 +4570,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: method
         schema:
@@ -4375,6 +4600,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: method__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: method__not_eq
+        schema:
+          type: string
+      - in: query
         name: method__not_in
         schema:
           type: array
@@ -4384,9 +4617,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: method__not_isnull
+        name: method__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: method__startswith
         schema:
@@ -4421,6 +4654,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: remote_address__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: remote_address__not_eq
+        schema:
+          type: string
+      - in: query
         name: remote_address__not_in
         schema:
           type: array
@@ -4430,9 +4671,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: remote_address__not_isnull
+        name: remote_address__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: remote_address__startswith
         schema:
@@ -4471,6 +4712,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: response_code__not_eq
+        schema:
+          type: integer
+      - in: query
         name: response_code__not_in
         schema:
           type: array
@@ -4479,10 +4724,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: response_code__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: timestamp
         schema:
@@ -4539,6 +4780,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: timestamp__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: timestamp__not_in
         schema:
           type: array
@@ -4548,10 +4794,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: timestamp__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: timestamp__second
         schema:
@@ -4586,6 +4828,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: user__not_eq
+        schema:
+          type: integer
+      - in: query
         name: user__not_in
         schema:
           type: array
@@ -4594,10 +4840,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: user__not_isnull
-        schema:
-          type: boolean
       tags:
       - Admin - Logging
       security:
@@ -4697,6 +4939,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: content_encoding__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: content_encoding__not_eq
+        schema:
+          type: string
+      - in: query
         name: content_encoding__not_in
         schema:
           type: array
@@ -4706,9 +4956,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: content_encoding__not_isnull
+        name: content_encoding__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: content_encoding__startswith
         schema:
@@ -4743,6 +4993,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: content_type__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: content_type__not_eq
+        schema:
+          type: string
+      - in: query
         name: content_type__not_in
         schema:
           type: array
@@ -4752,9 +5010,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: content_type__not_isnull
+        name: content_type__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: content_type__startswith
         schema:
@@ -4815,6 +5073,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: date_created__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: date_created__not_in
         schema:
           type: array
@@ -4824,10 +5087,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: date_created__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: date_created__second
         schema:
@@ -4900,6 +5159,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: date_done__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: date_done__not_in
         schema:
           type: array
@@ -4909,10 +5173,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: date_done__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: date_done__second
         schema:
@@ -4985,6 +5245,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: date_started__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: date_started__not_in
         schema:
           type: array
@@ -4994,10 +5259,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: date_started__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: date_started__second
         schema:
@@ -5048,6 +5309,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -5056,10 +5321,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: meta
         schema:
@@ -5090,6 +5351,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: meta__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: meta__not_eq
+        schema:
+          type: string
+      - in: query
         name: meta__not_in
         schema:
           type: array
@@ -5099,9 +5368,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: meta__not_isnull
+        name: meta__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: meta__startswith
         schema:
@@ -5136,6 +5405,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: periodic_task_name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: periodic_task_name__not_eq
+        schema:
+          type: string
+      - in: query
         name: periodic_task_name__not_in
         schema:
           type: array
@@ -5145,9 +5422,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: periodic_task_name__not_isnull
+        name: periodic_task_name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: periodic_task_name__startswith
         schema:
@@ -5182,6 +5459,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: result__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: result__not_eq
+        schema:
+          type: string
+      - in: query
         name: result__not_in
         schema:
           type: array
@@ -5191,9 +5476,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: result__not_isnull
+        name: result__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: result__startswith
         schema:
@@ -5228,6 +5513,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: status__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: status__not_eq
+        schema:
+          type: string
+      - in: query
         name: status__not_in
         schema:
           type: array
@@ -5237,9 +5530,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: status__not_isnull
+        name: status__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: status__startswith
         schema:
@@ -5274,6 +5567,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_args__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: task_args__not_eq
+        schema:
+          type: string
+      - in: query
         name: task_args__not_in
         schema:
           type: array
@@ -5283,9 +5584,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: task_args__not_isnull
+        name: task_args__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: task_args__startswith
         schema:
@@ -5320,6 +5621,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_id__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: task_id__not_eq
+        schema:
+          type: string
+      - in: query
         name: task_id__not_in
         schema:
           type: array
@@ -5329,9 +5638,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: task_id__not_isnull
+        name: task_id__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: task_id__startswith
         schema:
@@ -5366,6 +5675,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_kwargs__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: task_kwargs__not_eq
+        schema:
+          type: string
+      - in: query
         name: task_kwargs__not_in
         schema:
           type: array
@@ -5375,9 +5692,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: task_kwargs__not_isnull
+        name: task_kwargs__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: task_kwargs__startswith
         schema:
@@ -5412,6 +5729,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: task_name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: task_name__not_eq
+        schema:
+          type: string
+      - in: query
         name: task_name__not_in
         schema:
           type: array
@@ -5421,9 +5746,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: task_name__not_isnull
+        name: task_name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: task_name__startswith
         schema:
@@ -5458,6 +5783,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: traceback__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: traceback__not_eq
+        schema:
+          type: string
+      - in: query
         name: traceback__not_in
         schema:
           type: array
@@ -5467,9 +5800,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: traceback__not_isnull
+        name: traceback__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: traceback__startswith
         schema:
@@ -5504,6 +5837,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: worker__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: worker__not_eq
+        schema:
+          type: string
+      - in: query
         name: worker__not_in
         schema:
           type: array
@@ -5513,9 +5854,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: worker__not_isnull
+        name: worker__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: worker__startswith
         schema:
@@ -5641,6 +5982,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -5649,10 +5994,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: message_html
         schema:
@@ -5683,6 +6024,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: message_html__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: message_html__not_eq
+        schema:
+          type: string
+      - in: query
         name: message_html__not_in
         schema:
           type: array
@@ -5692,9 +6041,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: message_html__not_isnull
+        name: message_html__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: message_html__startswith
         schema:
@@ -5729,6 +6078,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: message_text__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: message_text__not_eq
+        schema:
+          type: string
+      - in: query
         name: message_text__not_in
         schema:
           type: array
@@ -5738,9 +6095,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: message_text__not_isnull
+        name: message_text__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: message_text__startswith
         schema:
@@ -5784,6 +6141,23 @@ paths:
         schema:
           type: string
       - in: query
+        name: notification_type__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 9e49c149530127de
+          enum:
+          - GM
+          - RD
+          - RE
+        description: |-
+          * `GM` - General Message
+          * `RE` - Upcoming Request Expiration
+          * `RD` - Request Past Expiration
+      - in: query
         name: notification_type__not_in
         schema:
           type: array
@@ -5793,9 +6167,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: notification_type__not_isnull
+        name: notification_type__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: notification_type__startswith
         schema:
@@ -5818,6 +6192,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: read__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: read__not_in
         schema:
           type: array
@@ -5826,10 +6204,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: read__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: subject
         schema:
@@ -5860,6 +6234,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: subject__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: subject__not_eq
+        schema:
+          type: string
+      - in: query
         name: subject__not_in
         schema:
           type: array
@@ -5869,9 +6251,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: subject__not_isnull
+        name: subject__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: subject__startswith
         schema:
@@ -5932,6 +6314,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: time__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: time__not_in
         schema:
           type: array
@@ -5941,10 +6328,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: time__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: time__second
         schema:
@@ -5979,6 +6362,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: user__not_eq
+        schema:
+          type: integer
+      - in: query
         name: user__not_in
         schema:
           type: array
@@ -5987,10 +6374,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: user__not_isnull
-        schema:
-          type: boolean
       tags:
       - Notifications - Notifications
       security:
@@ -6128,6 +6511,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -6136,10 +6523,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: notify_on_expiration
         schema:
@@ -6158,6 +6541,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: notify_on_expiration__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: notify_on_expiration__not_in
         schema:
           type: array
@@ -6166,10 +6553,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: notify_on_expiration__not_isnull
-        schema:
-          type: boolean
       tags:
       - Notifications - Preferences
       security:
@@ -6388,6 +6771,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: agency__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: agency__not_eq
+        schema:
+          type: string
+      - in: query
         name: agency__not_in
         schema:
           type: array
@@ -6397,9 +6788,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: agency__not_isnull
+        name: agency__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: agency__startswith
         schema:
@@ -6438,6 +6829,10 @@ paths:
         schema:
           type: number
       - in: query
+        name: amount__not_eq
+        schema:
+          type: number
+      - in: query
         name: amount__not_in
         schema:
           type: array
@@ -6446,10 +6841,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: amount__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: description
         schema:
@@ -6480,6 +6871,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: description__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: description__not_eq
+        schema:
+          type: string
+      - in: query
         name: description__not_in
         schema:
           type: array
@@ -6489,9 +6888,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: description__not_isnull
+        name: description__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: description__startswith
         schema:
@@ -6544,6 +6943,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: end_date__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: end_date__not_in
         schema:
           type: array
@@ -6553,10 +6957,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: end_date__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: end_date__week
         schema:
@@ -6599,6 +6999,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: grant_number__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: grant_number__not_eq
+        schema:
+          type: string
+      - in: query
         name: grant_number__not_in
         schema:
           type: array
@@ -6608,9 +7016,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: grant_number__not_isnull
+        name: grant_number__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: grant_number__startswith
         schema:
@@ -6649,6 +7057,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -6657,10 +7069,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: pi
         schema:
@@ -6691,6 +7099,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: pi__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: pi__not_eq
+        schema:
+          type: string
+      - in: query
         name: pi__not_in
         schema:
           type: array
@@ -6700,9 +7116,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: pi__not_isnull
+        name: pi__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: pi__startswith
         schema:
@@ -6755,6 +7171,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: start_date__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: start_date__not_in
         schema:
           type: array
@@ -6764,10 +7185,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: start_date__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: start_date__week
         schema:
@@ -6798,6 +7215,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -6806,10 +7227,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: title
         schema:
@@ -6840,6 +7257,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: title__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: title__not_eq
+        schema:
+          type: string
+      - in: query
         name: title__not_in
         schema:
           type: array
@@ -6849,9 +7274,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: title__not_isnull
+        name: title__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: title__startswith
         schema:
@@ -7075,6 +7500,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: abstract__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: abstract__not_eq
+        schema:
+          type: string
+      - in: query
         name: abstract__not_in
         schema:
           type: array
@@ -7084,9 +7517,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: abstract__not_isnull
+        name: abstract__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: abstract__startswith
         schema:
@@ -7121,6 +7554,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: doi__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: doi__not_eq
+        schema:
+          type: string
+      - in: query
         name: doi__not_in
         schema:
           type: array
@@ -7130,9 +7571,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: doi__not_isnull
+        name: doi__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: doi__startswith
         schema:
@@ -7171,6 +7612,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -7179,10 +7624,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: issue
         schema:
@@ -7213,6 +7654,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: issue__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: issue__not_eq
+        schema:
+          type: string
+      - in: query
         name: issue__not_in
         schema:
           type: array
@@ -7222,9 +7671,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: issue__not_isnull
+        name: issue__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: issue__startswith
         schema:
@@ -7259,6 +7708,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: journal__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: journal__not_eq
+        schema:
+          type: string
+      - in: query
         name: journal__not_in
         schema:
           type: array
@@ -7268,9 +7725,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: journal__not_isnull
+        name: journal__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: journal__startswith
         schema:
@@ -7323,6 +7780,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: published__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: published__not_in
         schema:
           type: array
@@ -7332,10 +7794,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: published__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: published__week
         schema:
@@ -7396,6 +7854,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: submitted__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: submitted__not_in
         schema:
           type: array
@@ -7405,10 +7868,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitted__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: submitted__week
         schema:
@@ -7439,6 +7898,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -7447,10 +7910,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: title
         schema:
@@ -7481,6 +7940,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: title__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: title__not_eq
+        schema:
+          type: string
+      - in: query
         name: title__not_in
         schema:
           type: array
@@ -7490,9 +7957,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: title__not_isnull
+        name: title__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: title__startswith
         schema:
@@ -7527,6 +7994,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: volume__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: volume__not_eq
+        schema:
+          type: string
+      - in: query
         name: volume__not_in
         schema:
           type: array
@@ -7536,9 +8011,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: volume__not_isnull
+        name: volume__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: volume__startswith
         schema:
@@ -7750,6 +8225,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: agency__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: agency__not_eq
+        schema:
+          type: string
+      - in: query
         name: agency__not_in
         schema:
           type: array
@@ -7759,9 +8242,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: agency__not_isnull
+        name: agency__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: agency__startswith
         schema:
@@ -7800,6 +8283,10 @@ paths:
         schema:
           type: number
       - in: query
+        name: amount__not_eq
+        schema:
+          type: number
+      - in: query
         name: amount__not_in
         schema:
           type: array
@@ -7808,10 +8295,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: amount__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: description
         schema:
@@ -7842,6 +8325,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: description__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: description__not_eq
+        schema:
+          type: string
+      - in: query
         name: description__not_in
         schema:
           type: array
@@ -7851,9 +8342,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: description__not_isnull
+        name: description__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: description__startswith
         schema:
@@ -7906,6 +8397,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: end_date__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: end_date__not_in
         schema:
           type: array
@@ -7915,10 +8411,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: end_date__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: end_date__week
         schema:
@@ -7961,6 +8453,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: grant_number__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: grant_number__not_eq
+        schema:
+          type: string
+      - in: query
         name: grant_number__not_in
         schema:
           type: array
@@ -7970,9 +8470,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: grant_number__not_isnull
+        name: grant_number__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: grant_number__startswith
         schema:
@@ -8011,6 +8511,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -8019,10 +8523,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: pi
         schema:
@@ -8053,6 +8553,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: pi__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: pi__not_eq
+        schema:
+          type: string
+      - in: query
         name: pi__not_in
         schema:
           type: array
@@ -8062,9 +8570,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: pi__not_isnull
+        name: pi__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: pi__startswith
         schema:
@@ -8117,6 +8625,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: start_date__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: start_date__not_in
         schema:
           type: array
@@ -8126,10 +8639,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: start_date__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: start_date__week
         schema:
@@ -8160,6 +8669,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -8168,10 +8681,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: title
         schema:
@@ -8202,6 +8711,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: title__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: title__not_eq
+        schema:
+          type: string
+      - in: query
         name: title__not_in
         schema:
           type: array
@@ -8211,9 +8728,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: title__not_isnull
+        name: title__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: title__startswith
         schema:
@@ -8284,6 +8801,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -8292,10 +8813,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: message_html
         schema:
@@ -8326,6 +8843,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: message_html__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: message_html__not_eq
+        schema:
+          type: string
+      - in: query
         name: message_html__not_in
         schema:
           type: array
@@ -8335,9 +8860,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: message_html__not_isnull
+        name: message_html__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: message_html__startswith
         schema:
@@ -8372,6 +8897,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: message_text__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: message_text__not_eq
+        schema:
+          type: string
+      - in: query
         name: message_text__not_in
         schema:
           type: array
@@ -8381,9 +8914,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: message_text__not_isnull
+        name: message_text__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: message_text__startswith
         schema:
@@ -8427,6 +8960,23 @@ paths:
         schema:
           type: string
       - in: query
+        name: notification_type__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: notification_type__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 9e49c149530127de
+          enum:
+          - GM
+          - RD
+          - RE
+        description: |-
+          * `GM` - General Message
+          * `RE` - Upcoming Request Expiration
+          * `RD` - Request Past Expiration
+      - in: query
         name: notification_type__not_in
         schema:
           type: array
@@ -8436,9 +8986,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: notification_type__not_isnull
+        name: notification_type__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: notification_type__startswith
         schema:
@@ -8461,6 +9011,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: read__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: read__not_in
         schema:
           type: array
@@ -8469,10 +9023,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: read__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: subject
         schema:
@@ -8503,6 +9053,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: subject__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: subject__not_eq
+        schema:
+          type: string
+      - in: query
         name: subject__not_in
         schema:
           type: array
@@ -8512,9 +9070,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: subject__not_isnull
+        name: subject__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: subject__startswith
         schema:
@@ -8575,6 +9133,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: time__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: time__not_in
         schema:
           type: array
@@ -8584,10 +9147,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: time__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: time__second
         schema:
@@ -8622,6 +9181,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: user__not_eq
+        schema:
+          type: integer
+      - in: query
         name: user__not_in
         schema:
           type: array
@@ -8630,10 +9193,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: user__not_isnull
-        schema:
-          type: boolean
       tags:
       - Statistics
       security:
@@ -8696,6 +9255,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: abstract__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: abstract__not_eq
+        schema:
+          type: string
+      - in: query
         name: abstract__not_in
         schema:
           type: array
@@ -8705,9 +9272,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: abstract__not_isnull
+        name: abstract__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: abstract__startswith
         schema:
@@ -8742,6 +9309,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: doi__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: doi__not_eq
+        schema:
+          type: string
+      - in: query
         name: doi__not_in
         schema:
           type: array
@@ -8751,9 +9326,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: doi__not_isnull
+        name: doi__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: doi__startswith
         schema:
@@ -8792,6 +9367,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -8800,10 +9379,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: issue
         schema:
@@ -8834,6 +9409,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: issue__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: issue__not_eq
+        schema:
+          type: string
+      - in: query
         name: issue__not_in
         schema:
           type: array
@@ -8843,9 +9426,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: issue__not_isnull
+        name: issue__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: issue__startswith
         schema:
@@ -8880,6 +9463,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: journal__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: journal__not_eq
+        schema:
+          type: string
+      - in: query
         name: journal__not_in
         schema:
           type: array
@@ -8889,9 +9480,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: journal__not_isnull
+        name: journal__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: journal__startswith
         schema:
@@ -8944,6 +9535,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: published__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: published__not_in
         schema:
           type: array
@@ -8953,10 +9549,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: published__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: published__week
         schema:
@@ -9017,6 +9609,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: submitted__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: submitted__not_in
         schema:
           type: array
@@ -9026,10 +9623,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitted__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: submitted__week
         schema:
@@ -9060,6 +9653,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -9068,10 +9665,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: title
         schema:
@@ -9102,6 +9695,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: title__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: title__not_eq
+        schema:
+          type: string
+      - in: query
         name: title__not_in
         schema:
           type: array
@@ -9111,9 +9712,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: title__not_isnull
+        name: title__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: title__startswith
         schema:
@@ -9148,6 +9749,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: volume__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: volume__not_eq
+        schema:
+          type: string
+      - in: query
         name: volume__not_in
         schema:
           type: array
@@ -9157,9 +9766,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: volume__not_isnull
+        name: volume__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: volume__startswith
         schema:
@@ -9244,6 +9853,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: active__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: active__not_in
         schema:
           type: array
@@ -9253,10 +9867,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: active__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: active__week
         schema:
@@ -9299,6 +9909,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: description__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: description__not_eq
+        schema:
+          type: string
+      - in: query
         name: description__not_in
         schema:
           type: array
@@ -9308,9 +9926,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: description__not_isnull
+        name: description__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: description__startswith
         schema:
@@ -9363,6 +9981,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: expire__not_eq
+        schema:
+          type: string
+          format: date
+      - in: query
         name: expire__not_in
         schema:
           type: array
@@ -9372,10 +9995,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: expire__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: expire__week
         schema:
@@ -9422,6 +10041,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -9430,10 +10053,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: status
         schema:
@@ -9475,6 +10094,25 @@ paths:
         schema:
           type: string
       - in: query
+        name: status__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: status__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 0f4bc72b4a7635f9
+          enum:
+          - AP
+          - CR
+          - DC
+          - PD
+        description: |-
+          * `PD` - Pending
+          * `AP` - Approved
+          * `DC` - Declined
+          * `CR` - Changes Requested
+      - in: query
         name: status__not_in
         schema:
           type: array
@@ -9484,9 +10122,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: status__not_isnull
+        name: status__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: status__startswith
         schema:
@@ -9547,6 +10185,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: submitted__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: submitted__not_in
         schema:
           type: array
@@ -9556,10 +10199,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitted__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: submitted__second
         schema:
@@ -9594,6 +10233,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: submitter__not_eq
+        schema:
+          type: integer
+      - in: query
         name: submitter__not_in
         schema:
           type: array
@@ -9602,10 +10245,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: submitter__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: team
         schema:
@@ -9624,6 +10263,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -9632,10 +10275,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: title
         schema:
@@ -9666,6 +10305,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: title__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: title__not_eq
+        schema:
+          type: string
+      - in: query
         name: title__not_in
         schema:
           type: array
@@ -9675,9 +10322,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: title__not_isnull
+        name: title__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: title__startswith
         schema:
@@ -9777,6 +10424,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -9785,10 +10436,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: role
         schema:
@@ -9828,6 +10475,23 @@ paths:
         schema:
           type: string
       - in: query
+        name: role__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: role__not_eq
+        schema:
+          type: string
+          x-spec-enum-id: 56df4cdb9958fe19
+          enum:
+          - AD
+          - MB
+          - OW
+        description: |-
+          * `OW` - Owner
+          * `AD` - Admin
+          * `MB` - Member
+      - in: query
         name: role__not_in
         schema:
           type: array
@@ -9837,9 +10501,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: role__not_isnull
+        name: role__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: role__startswith
         schema:
@@ -9862,6 +10526,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: team__not_eq
+        schema:
+          type: integer
+      - in: query
         name: team__not_in
         schema:
           type: array
@@ -9870,10 +10538,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: team__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: user
         schema:
@@ -9892,6 +10556,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: user__not_eq
+        schema:
+          type: integer
+      - in: query
         name: user__not_in
         schema:
           type: array
@@ -9900,10 +10568,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: user__not_isnull
-        schema:
-          type: boolean
       tags:
       - Users - Team Membership
       security:
@@ -10126,6 +10790,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -10134,10 +10802,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: is_active
         schema:
@@ -10156,6 +10820,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: is_active__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: is_active__not_in
         schema:
           type: array
@@ -10164,10 +10832,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: is_active__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: name
         schema:
@@ -10198,6 +10862,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: name__not_eq
+        schema:
+          type: string
+      - in: query
         name: name__not_in
         schema:
           type: array
@@ -10207,9 +10879,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: name__not_isnull
+        name: name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: name__startswith
         schema:
@@ -10244,6 +10916,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: slug__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: slug__not_eq
+        schema:
+          type: string
+      - in: query
         name: slug__not_in
         schema:
           type: array
@@ -10253,9 +10933,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: slug__not_isnull
+        name: slug__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: slug__startswith
         schema:
@@ -10504,6 +11184,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: date_joined__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: date_joined__not_in
         schema:
           type: array
@@ -10513,10 +11198,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: date_joined__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: date_joined__second
         schema:
@@ -10563,6 +11244,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: department__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: department__not_eq
+        schema:
+          type: string
+      - in: query
         name: department__not_in
         schema:
           type: array
@@ -10572,9 +11261,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: department__not_isnull
+        name: department__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: department__startswith
         schema:
@@ -10609,6 +11298,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: email__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: email__not_eq
+        schema:
+          type: string
+      - in: query
         name: email__not_in
         schema:
           type: array
@@ -10618,9 +11315,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: email__not_isnull
+        name: email__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: email__startswith
         schema:
@@ -10655,6 +11352,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: first_name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: first_name__not_eq
+        schema:
+          type: string
+      - in: query
         name: first_name__not_in
         schema:
           type: array
@@ -10664,9 +11369,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: first_name__not_isnull
+        name: first_name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: first_name__startswith
         schema:
@@ -10705,6 +11410,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: id__not_eq
+        schema:
+          type: integer
+      - in: query
         name: id__not_in
         schema:
           type: array
@@ -10713,10 +11422,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: id__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: is_active
         schema:
@@ -10735,6 +11440,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: is_active__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: is_active__not_in
         schema:
           type: array
@@ -10743,10 +11452,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: is_active__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: is_ldap_user
         schema:
@@ -10765,6 +11470,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: is_ldap_user__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: is_ldap_user__not_in
         schema:
           type: array
@@ -10773,10 +11482,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: is_ldap_user__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: is_staff
         schema:
@@ -10795,6 +11500,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: is_staff__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: is_staff__not_in
         schema:
           type: array
@@ -10803,10 +11512,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: is_staff__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: is_superuser
         schema:
@@ -10825,6 +11530,10 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: is_superuser__not_eq
+        schema:
+          type: boolean
+      - in: query
         name: is_superuser__not_in
         schema:
           type: array
@@ -10833,10 +11542,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: is_superuser__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: last_login
         schema:
@@ -10893,6 +11598,11 @@ paths:
         schema:
           type: number
       - in: query
+        name: last_login__not_eq
+        schema:
+          type: string
+          format: date-time
+      - in: query
         name: last_login__not_in
         schema:
           type: array
@@ -10902,10 +11612,6 @@ paths:
         description: Multiple values may be separated by commas.
         explode: false
         style: form
-      - in: query
-        name: last_login__not_isnull
-        schema:
-          type: boolean
       - in: query
         name: last_login__second
         schema:
@@ -10952,6 +11658,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: last_name__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: last_name__not_eq
+        schema:
+          type: string
+      - in: query
         name: last_name__not_in
         schema:
           type: array
@@ -10961,9 +11675,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: last_name__not_isnull
+        name: last_name__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: last_name__startswith
         schema:
@@ -10998,6 +11712,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: password__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: password__not_eq
+        schema:
+          type: string
+      - in: query
         name: password__not_in
         schema:
           type: array
@@ -11007,9 +11729,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: password__not_isnull
+        name: password__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: password__startswith
         schema:
@@ -11044,6 +11766,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: role__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: role__not_eq
+        schema:
+          type: string
+      - in: query
         name: role__not_in
         schema:
           type: array
@@ -11053,9 +11783,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: role__not_isnull
+        name: role__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: role__startswith
         schema:
@@ -11090,6 +11820,14 @@ paths:
         schema:
           type: string
       - in: query
+        name: username__not_endswith
+        schema:
+          type: string
+      - in: query
+        name: username__not_eq
+        schema:
+          type: string
+      - in: query
         name: username__not_in
         schema:
           type: array
@@ -11099,9 +11837,9 @@ paths:
         explode: false
         style: form
       - in: query
-        name: username__not_isnull
+        name: username__not_startswith
         schema:
-          type: boolean
+          type: string
       - in: query
         name: username__startswith
         schema:
