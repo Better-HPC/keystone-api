@@ -11,8 +11,7 @@ VIEW_NAME = "logging:feed-list"
 class EndpointPermissions(LogListEndpointPermissionTestMixin, APITestCase):
     """Test endpoint user permissions.
 
-    See the `LogEndpointPermissionTests` class docstring for details on the
-    tested endpoint permissions.
+    See the parent mixin class for details on the tested endpoint permissions.
     """
 
     endpoint = reverse(VIEW_NAME)
