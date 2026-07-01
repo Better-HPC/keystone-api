@@ -45,7 +45,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching audit logs."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ["record_name", "action", "actor_username"]
+    search_fields = ["record_name", "action", "cid", "actor__username", "actor__first_name", "actor__last_name"]
     serializer_class = AuditLogSerializer
     queryset = AuditLog.objects.select_related("actor", "content_type")
 
@@ -64,8 +64,9 @@ class FeedView(generics.ListAPIView):
     """A list-only view serving the application logging feed."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
+    search_fields = ["status", "summary", "cid", "user__username", "user__first_name", "user__last_name"]
     serializer_class = FeedEntrySerializer
-    queryset = FeedEntry.objects.all()
+    queryset = FeedEntry.objects.select_related("user")
 
 
 @extend_schema_view(
@@ -92,7 +93,7 @@ class RequestLogViewSet(viewsets.ReadOnlyModelViewSet):
     """API endpoints for fetching HTTP request logs."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminRead]
-    search_fields = ["endpoint", "method", "response_code", "remote_address"]
+    search_fields = ["endpoint", "method", "response_code", "remote_address", "cid", "user__username", "user__first_name", "user__last_name"]
     serializer_class = RequestLogSerializer
     queryset = RequestLog.objects.select_related("user")
 
