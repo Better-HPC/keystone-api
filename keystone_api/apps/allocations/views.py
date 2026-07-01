@@ -114,7 +114,7 @@ class AllocationRequestViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     team_field = "team"
 
     permission_classes = [IsAuthenticated, AllocationRequestPermissions]
-    search_fields = ["title", "description", "team__name"]
+    search_fields = ["title", "description", "team__name", "submitter__username", "submitter__first_name", "submitter__last_name"]
     serializer_class = AllocationRequestSerializer
     queryset = AllocationRequest.objects.prefetch_related(
         "history",
@@ -361,7 +361,7 @@ class AttachmentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     team_field = "request__team"
 
     permission_classes = [IsAuthenticated, RequestChildPermissions]
-    search_fields = ["path", "request__title", "request__submitter"]
+    search_fields = ["path", "request__title", "request__submitter__username", "request__submitter__first_name", "request__submitter__last_name"]
     serializer_class = AttachmentSerializer
     queryset = Attachment.objects.prefetch_related(
         "history"
@@ -562,7 +562,7 @@ class CommentViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     team_field = "request__team"
 
     permission_classes = [IsAuthenticated, CommentPermissions]
-    search_fields = ["content", "request__title", "user__username"]
+    search_fields = ["content", "request__title", "user__username", "user__first_name", "user__last_name"]
     serializer_class = CommentSerializer
     queryset = Comment.objects.prefetch_related(
         "history"
