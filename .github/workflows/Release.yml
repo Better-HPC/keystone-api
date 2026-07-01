@@ -18,6 +18,8 @@ jobs:
           release_tag="${{ github.event.release.tag_name }}"
           version="${release_tag#v}"
 
+          echo "Release tag: $release_tag"
+          echo "Derived release version: version"
           if [[ -z "$version" ]]; then
             echo "::error::Derived version is empty."
             exit 1
