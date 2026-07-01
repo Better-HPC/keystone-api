@@ -80,7 +80,7 @@ class NotificationViewSet(UserScopedListMixin, viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated, NotificationPermissions]
     http_method_names = ["get", "head", "options", "patch"]
-    search_fields = ["message", "user__username"]
+    search_fields = ["message", "user__username", "user__first_name", "user__last_name"]
     serializer_class = NotificationSerializer
     queryset = Notification.objects.select_related("user")
 
@@ -141,7 +141,7 @@ class PreferenceViewSet(UserScopedListMixin, viewsets.ModelViewSet):
     """API endpoints for managing user notification preferences."""
 
     permission_classes = [IsAuthenticated, PreferencePermissions]
-    search_fields = ["user__username"]
+    search_fields = ["user__username", "user__first_name", "user__last_name"]
     serializer_class = PreferenceSerializer
     queryset = Preference.objects.select_related("user")
 
