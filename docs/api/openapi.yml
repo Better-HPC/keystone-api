@@ -11866,13 +11866,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RestrictedUserRequest'
+              $ref: '#/components/schemas/PrivilegedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/RestrictedUserRequest'
+              $ref: '#/components/schemas/PrivilegedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/RestrictedUserRequest'
+              $ref: '#/components/schemas/PrivilegedUserRequest'
         required: true
       security:
       - tokenAuth: []
@@ -11929,13 +11929,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RestrictedUserRequest'
+              $ref: '#/components/schemas/PrivilegedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/RestrictedUserRequest'
+              $ref: '#/components/schemas/PrivilegedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/RestrictedUserRequest'
+              $ref: '#/components/schemas/PrivilegedUserRequest'
         required: true
       security:
       - tokenAuth: []
@@ -11966,13 +11966,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedRestrictedUserRequest'
+              $ref: '#/components/schemas/PatchedPrivilegedUserRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedRestrictedUserRequest'
+              $ref: '#/components/schemas/PatchedPrivilegedUserRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedRestrictedUserRequest'
+              $ref: '#/components/schemas/PatchedPrivilegedUserRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -14058,6 +14058,65 @@ components:
           type: boolean
         user:
           type: integer
+    PatchedPrivilegedUserRequest:
+      type: object
+      description: Object serializer for the `User` model including sensitive fields.
+      properties:
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        username:
+          type: string
+          minLength: 1
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
+        is_active:
+          type: boolean
+        is_staff:
+          type: boolean
+          title: Staff status
+        is_ldap_user:
+          type: boolean
+          title: LDAP User
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
     PatchedPublicationRequest:
       type: object
       description: Object serializer for the `Publication` class.
@@ -14120,58 +14179,6 @@ components:
           type: integer
         request:
           type: integer
-    PatchedRestrictedUserRequest:
-      type: object
-      description: Object serializer for the `User` class with sensitive fields marked
-        as read only.
-      properties:
-        is_superuser:
-          type: boolean
-          title: Superuser status
-          description: Designates that this user has all permissions without explicitly
-            assigning them.
-        username:
-          type: string
-          minLength: 1
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        password:
-          type: string
-          writeOnly: true
-          minLength: 1
-          maxLength: 128
-        first_name:
-          type: string
-          nullable: true
-          maxLength: 150
-        last_name:
-          type: string
-          nullable: true
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          nullable: true
-          maxLength: 254
-        department:
-          type: string
-          nullable: true
-          maxLength: 1000
-        role:
-          type: string
-          nullable: true
-          maxLength: 1000
-        groups:
-          type: array
-          items:
-            type: integer
-          description: The groups this user belongs to. A user will get all permissions
-            granted to each of their groups.
-        user_permissions:
-          type: array
-          items:
-            type: integer
-          description: Specific permissions for this user.
     PatchedTeamUpdateRequest:
       type: object
       description: Object serializer for modifying existing `Team` records.
@@ -14211,6 +14218,68 @@ components:
           type: boolean
         user:
           type: integer
+    PrivilegedUserRequest:
+      type: object
+      description: Object serializer for the `User` model including sensitive fields.
+      properties:
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        username:
+          type: string
+          minLength: 1
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        department:
+          type: string
+          nullable: true
+          maxLength: 1000
+        role:
+          type: string
+          nullable: true
+          maxLength: 1000
+        is_active:
+          type: boolean
+        is_staff:
+          type: boolean
+          title: Staff status
+        is_ldap_user:
+          type: boolean
+          title: LDAP User
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+      required:
+      - password
+      - username
     Publication:
       type: object
       description: Object serializer for the `Publication` class.
@@ -14719,61 +14788,6 @@ components:
       - last_name
       - role
       - user_permissions
-      - username
-    RestrictedUserRequest:
-      type: object
-      description: Object serializer for the `User` class with sensitive fields marked
-        as read only.
-      properties:
-        is_superuser:
-          type: boolean
-          title: Superuser status
-          description: Designates that this user has all permissions without explicitly
-            assigning them.
-        username:
-          type: string
-          minLength: 1
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        password:
-          type: string
-          writeOnly: true
-          minLength: 1
-          maxLength: 128
-        first_name:
-          type: string
-          nullable: true
-          maxLength: 150
-        last_name:
-          type: string
-          nullable: true
-          maxLength: 150
-        email:
-          type: string
-          format: email
-          nullable: true
-          maxLength: 254
-        department:
-          type: string
-          nullable: true
-          maxLength: 1000
-        role:
-          type: string
-          nullable: true
-          maxLength: 1000
-        groups:
-          type: array
-          items:
-            type: integer
-          description: The groups this user belongs to. A user will get all permissions
-            granted to each of their groups.
-        user_permissions:
-          type: array
-          items:
-            type: integer
-          description: Specific permissions for this user.
-      required:
-      - password
       - username
     TaskResult:
       type: object
