@@ -151,6 +151,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     create=extend_schema(
         tags=["Users - Teams"],
         summary="Create a team.",
+        request=TeamSerializer,
         description=(
             "Creates a new team. "
             "All authenticated users can only create active teams. "
@@ -160,6 +161,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     update=extend_schema(
         tags=["Users - Teams"],
         summary="Update a team.",
+        request=TeamUpdateSerializer,
         description=(
             "Replaces an existing team with new values. "
             "Write access is granted to staff users and team owners/admins."
@@ -168,6 +170,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     partial_update=extend_schema(
         tags=["Users - Teams"],
         summary="Partially update a team.",
+        request=TeamUpdateSerializer,
         description=(
             "Partially updates an existing team with new values. "
             "Write access is granted to staff users and team owners/admins."
@@ -275,7 +278,6 @@ class TeamViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
     destroy=extend_schema(
         tags=["Users - Accounts"],
         summary="Delete a user account.",
-        request=PrivilegedUserSerializer,
         description=(
             "Deletes a user account by ID. "
             "Write access is granted to staff users and the account owner."
