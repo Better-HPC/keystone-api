@@ -227,7 +227,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_FILTER_BACKENDS": (
         "plugins.filters.AutoFilterBackend",
-        "plugins.ordering.PrecedenceOrderingBackend",
+        "plugins.ordering.RankedOrderBackend",
         "rest_framework.filters.SearchFilter"
     ),
     "DEFAULT_PAGINATION_CLASS": "plugins.pagination.PaginationHandler",
