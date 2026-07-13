@@ -258,7 +258,9 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         summary="Create a resource allocation.",
         description=(
             "Creates a new resource allocation. "
-            "Write access is granted to staff users and team administrators."
+            "Write access is granted to staff users and team administrators. "
+            "Non-staff users may only allocate on clusters their team is permitted to use "
+            "under the cluster's access mode."
         ),
     ),
     update=extend_schema(
@@ -294,7 +296,7 @@ class ResourceAllocationViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
 
     serializer_class = ResourceAllocationSerializer
     search_fields = ["request__team__name", "request__title", "cluster__name"]
-    permission_classes = [IsAuthenticated, RequestChildPermissions]
+    permission_classes = [IsAuthenticated, ResourceAllocationPermissions]
     queryset = ResourceAllocation.objects.prefetch_related(
         "history"
     ).select_related(
