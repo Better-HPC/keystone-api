@@ -1,8 +1,9 @@
 """Custom filter backends for the Django REST Framework.
 
-Filter backends define how query parameters are handled in API requests.
-This includes assigning parameters to endpoints, parsing values from incoming
-requests, and applying parsed values in ORM queries.
+Filter backends translate query parameters into ORM lookups that narrow
+which records are returned by list endpoints. This module provides a custom
+backend that automatically generates filters for each field according to its
+type, ensuring endpoints expose a consistent set of filter query parameters.
 """
 
 from dataclasses import dataclass
