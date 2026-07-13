@@ -71,9 +71,9 @@ class ResourceAllocation(TeamModelInterface, models.Model):
         return self.request.team
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return a human-readable summary of the allocation."""
+        """Return a human-readable identifier for the record."""
 
-        return f"{self.cluster} allocation for {self.request.team}"
+        return f"Resource Allocation #{self.pk} - {self.cluster} allocation for {self.request.team}"
 
 
 @auditlog.register()
@@ -135,9 +135,9 @@ class AllocationRequest(TeamModelInterface, models.Model):
         return self.team
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the request title as a string."""
+        """Return a human-readable identifier for the record."""
 
-        return truncatechars(self.title, 100)
+        return f"Allocation Request #{self.pk} - '{truncatechars(self.title, 100)}' for {self.team}"
 
 
 @auditlog.register()
@@ -174,9 +174,9 @@ class AllocationReview(TeamModelInterface, models.Model):
         return self.request.team
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return a human-readable identifier for the allocation review."""
+        """Return a human-readable identifier for the record."""
 
-        return f"{self.reviewer} review for '{self.request.title}'"
+        return f"Allocation Review #{self.pk} - {self.reviewer.username} review of request #{self.request_id}"
 
 
 @auditlog.register()
@@ -215,6 +215,11 @@ class Attachment(TeamModelInterface, models.Model):
 
         super().save(*args, **kwargs)
 
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Attachment #{self.pk} - '{self.name}' on request #{self.request_id}"
+
 
 @auditlog.register()
 class Cluster(models.Model):
@@ -244,9 +249,9 @@ class Cluster(models.Model):
     history = AuditlogHistoryField()
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the cluster name as a string."""
+        """Return a human-readable identifier for the record."""
 
-        return str(self.name)
+        return f"Cluster #{self.pk} - {self.name}"
 
 
 @auditlog.register()
@@ -276,6 +281,6 @@ class Comment(TeamModelInterface, models.Model):
         return self.request.team
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return a string representation of the comment."""
+        """Return a human-readable identifier for the record."""
 
-        return f"Comment by {self.user} made on request '{self.request.title[:50]}'"
+        return f"Comment #{self.pk} - by {self.user.username} on request #{self.request_id}"

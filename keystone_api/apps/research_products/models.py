@@ -48,9 +48,9 @@ class Grant(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the grant title truncated to 100 characters."""
+        """Return a human-readable identifier for the record."""
 
-        return truncatechars(self.title, 100)
+        return f"Grant #{self.pk} - {truncatechars(self.title, 100)}"
 
 
 @auditlog.register()
@@ -85,6 +85,6 @@ class Publication(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the publication title truncated to 100 characters."""
+        """Return a human-readable identifier for the record."""
 
-        return truncatechars(self.title, 100)
+        return f"Publication #{self.pk} - {truncatechars(self.title, 100)}"

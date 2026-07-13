@@ -9,6 +9,7 @@ for how the associated table/fields/records are presented by parent interfaces.
 import auditlog.models
 import django_celery_results.models
 from django.db import models
+from django.template.defaultfilters import truncatechars
 
 from apps.users.models import User
 
@@ -22,6 +23,11 @@ class AuditLog(auditlog.models.LogEntry):
         """Database model settings."""
 
         proxy = True
+
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Audit Log #{self.pk}"
 
 
 class FeedEntry(models.Model):
@@ -57,6 +63,11 @@ class FeedEntry(models.Model):
     cid = models.CharField(max_length=32, null=True, blank=True)
     status = models.CharField(max_length=16, null=True, blank=True)
 
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Feed Entry #{self.pk}"
+
 
 class RequestLog(models.Model):
     """Log entry for an incoming HTTP request."""
@@ -83,6 +94,11 @@ class RequestLog(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Request Log #{self.pk}"
+
 
 class TaskResult(django_celery_results.models.TaskResult):
     """Proxy model for the Celery task result backend."""
@@ -91,3 +107,8 @@ class TaskResult(django_celery_results.models.TaskResult):
         """Database model settings."""
 
         proxy = True
+
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Task Result #{self.pk}"
