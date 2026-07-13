@@ -11,7 +11,6 @@ falls back to its natural column order.
 from dataclasses import dataclass
 
 from django.db.models import Case, IntegerField, QuerySet, Value, When
-from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 from rest_framework.request import Request
 from rest_framework.views import APIView
@@ -102,6 +101,8 @@ class PrecedenceOrderingBackend(OrderingFilter):
     def get_precedence_map(self, request: Request) -> dict[str, PrecedenceTerm]:
         """Map each requested field to its value precedence.
 
+        Malformed terms are silently ignored.
+
         Args:
             request: The incoming API request.
 
@@ -112,26 +113,24 @@ class PrecedenceOrderingBackend(OrderingFilter):
         return {
             term.field: term
             for term in map(self.parse_term, request.query_params.getlist(self.precedence_param))
+            if term is not None
         }
 
     @staticmethod
-    def parse_term(raw: str) -> PrecedenceTerm:
+    def parse_term(raw: str) -> PrecedenceTerm | None:
         """Parse a single raw query term into a precedence term.
 
         Args:
             raw: A raw `field:value,value` term.
 
         Returns:
-            The parsed precedence term.
-
-        Raises:
-            ValidationError: The term is not of the form `field:value,value`.
+            The parsed precedence term, or `None` when the term is malformed.
         """
 
         field, separator, values = raw.strip().partition(':')
         parsed_values = tuple(value for value in values.split(',') if value)
         if not separator or not field or not parsed_values:
-            raise ValidationError(f"Malformed precedence term: '{raw}'. Expected 'field:value,value'.")
+            return None
 
         return PrecedenceTerm(field=field, values=parsed_values)
 
