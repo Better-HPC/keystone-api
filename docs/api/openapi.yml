@@ -27,7 +27,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -460,7 +469,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -884,7 +902,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -1329,7 +1356,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -1817,7 +1853,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -2548,7 +2593,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -3192,7 +3246,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -3913,7 +3976,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -4407,7 +4479,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -4900,7 +4981,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -5939,7 +6029,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -6468,7 +6567,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -6732,7 +6840,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -7461,7 +7578,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -8186,7 +8312,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -8758,7 +8893,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -9216,7 +9360,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -9796,7 +9949,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -10381,7 +10543,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -10747,7 +10918,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -11119,7 +11299,16 @@ paths:
       - name: _order
         required: false
         in: query
-        description: Which field to use when ordering the results.
+        description: Comma-separated fields to sort by. Prefix a field with `-` for
+          descending order.
+        schema:
+          type: string
+      - name: _precedence
+        required: false
+        in: query
+        description: Explicit ranking of a field's values as `field:value,value,value`.
+          Applied when the field also appears in the ordering parameter, with unlisted
+          values sorting last.
         schema:
           type: string
       - name: _search
@@ -15175,6 +15364,8 @@ components:
           type: string
           nullable: true
           maxLength: 1000
+        is_active:
+          type: boolean
       required:
       - abbreviation
       - display_name
@@ -15210,6 +15401,8 @@ components:
           type: string
           nullable: true
           maxLength: 1000
+        is_active:
+          type: boolean
       required:
       - username
   securitySchemes:
