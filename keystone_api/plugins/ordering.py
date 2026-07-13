@@ -84,8 +84,17 @@ class RankedOrderBackend(OrderingFilter):
             The OpenAPI parameter definitions for the ordering query parameters.
         """
 
-        return super().get_schema_operation_parameters(view) + [
+        return [
             {
+                "name": self.ordering_param,
+                "required": False,
+                "in": "query",
+                "description": (
+                    "Comma-separated fields to sort by. "
+                    "Prefix a field with `-` for descending order."
+                ),
+                "schema": {"type": "string"},
+            }, {
                 "name": self.rank_param,
                 "required": False,
                 "in": "query",

@@ -31,7 +31,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -473,7 +473,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -906,7 +906,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -1360,7 +1360,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -1857,7 +1857,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -2597,7 +2597,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -3250,7 +3250,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -3980,7 +3980,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -4483,7 +4483,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -4985,7 +4985,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -6033,7 +6033,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -6571,7 +6571,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -6844,7 +6844,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -7582,7 +7582,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -8316,7 +8316,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -8897,7 +8897,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -9364,7 +9364,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -9953,7 +9953,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -10547,7 +10547,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -10922,7 +10922,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
@@ -11303,7 +11303,7 @@ paths:
           descending order.
         schema:
           type: string
-      - name: _precedence
+      - name: _rank
         required: false
         in: query
         description: Explicit ranking of a field's values as `field:value,value,value`.
