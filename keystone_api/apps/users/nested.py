@@ -60,6 +60,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
             "email",
             "department",
             "role",
+            "is_active"
         ]
 
 
