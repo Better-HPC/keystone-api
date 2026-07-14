@@ -53,6 +53,11 @@ class Membership(models.Model):
     user = models.ForeignKey("User", related_name="membership", on_delete=models.CASCADE)
     team = models.ForeignKey("Team", related_name="membership", on_delete=models.CASCADE)
 
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Membership #{self.pk} - {self.user.username} in {self.team}"
+
 
 @auditlog.register()
 class Team(models.Model):
@@ -99,9 +104,9 @@ class Team(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:  # pragma: nocover
-        """Return the team name."""
+        """Return a human-readable identifier for the record."""
 
-        return str(self.name)
+        return f"Team #{self.pk} - {self.name}"
 
 
 @auditlog.register(exclude_fields=["last_login"], mask_fields=["password"])
@@ -175,3 +180,8 @@ class User(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
         """Return a queryset containing all teams the user belongs to."""
 
         return Team.objects.filter(users=self)
+
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"User #{self.pk} - {self.username}"
