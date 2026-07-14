@@ -59,6 +59,11 @@ class Notification(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Notification #{self.pk} - notification for {self.user.username}"
+
 
 class Preference(models.Model):
     """User notification preferences."""
@@ -123,3 +128,8 @@ class Preference(models.Model):
             filter(lambda x: x <= usage_percentage, self.request_expiry_thresholds),
             default=None
         )
+
+    def __str__(self) -> str:  # pragma: nocover
+        """Return a human-readable identifier for the record."""
+
+        return f"Notification Preference #{self.pk} - {self.user.username}"
