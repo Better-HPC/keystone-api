@@ -4,7 +4,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.allocations.factories import ResourceAllocationFactory
+from apps.allocations.factories import AllocationRequestFactory, ClusterFactory, ResourceAllocationFactory
+from apps.allocations.models import Cluster, ResourceAllocation
 from apps.users.factories import MembershipFactory, UserFactory
 from apps.users.models import Membership
 from tests.function_tests.utils import CustomAsserts, TeamListFilteringTestMixin
@@ -148,6 +149,104 @@ class EndpointPermissions(APITestCase, CustomAsserts):
             trace=status.HTTP_405_METHOD_NOT_ALLOWED,
             post_body=self.valid_record_data,
         )
+
+
+class ClusterAccessPermissions(APITestCase):
+    """Test allocation creation is restricted by each cluster's access mode.
+
+    Non-staff users may only create allocations on clusters their team is
+    permitted to use under the cluster's access mode. Staff users are exempt
+    from the cluster access policy. All scenarios use a team administrator so
+    that creation is gated solely by cluster access rather than team role.
+    """
+
+    endpoint = reverse(VIEW_NAME)
+
+    def setUp(self) -> None:
+        """Create test fixtures using mock data."""
+
+        self.request = AllocationRequestFactory()
+        self.team = self.request.team
+        self.team_admin = MembershipFactory(team=self.team, role=Membership.Role.ADMIN).user
+        self.staff_user = UserFactory(is_staff=True)
+
+    def build_post_body(self, cluster: Cluster) -> dict:
+        """Return valid allocation creation data targeting the given cluster."""
+
+        return {"requested": 1000, "cluster": cluster.pk, "request": self.request.pk}
+
+    def test_open_cluster_allows_creation(self) -> None:
+        """Verify team admins can create allocations on open clusters."""
+
+        cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.OPEN)
+
+        self.client.force_authenticate(user=self.team_admin)
+        response = self.client.post(self.endpoint, self.build_post_body(cluster))
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code, response.data)
+
+    def test_whitelisted_team_allows_creation(self) -> None:
+        """Verify team admins can create allocations on clusters whitelisting their team."""
+
+        # Whitelist the requesting team on the target cluster
+        cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.WHITELIST)
+        cluster.access_teams.add(self.team)
+
+        self.client.force_authenticate(user=self.team_admin)
+        response = self.client.post(self.endpoint, self.build_post_body(cluster))
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code, response.data)
+
+    def test_non_whitelisted_team_is_denied_creation(self) -> None:
+        """Verify a whitelist cluster produces no allocation for an unlisted team."""
+
+        cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.WHITELIST)
+
+        self.client.force_authenticate(user=self.team_admin)
+        response = self.client.post(self.endpoint, self.build_post_body(cluster))
+
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code, response.data)
+        self.assertFalse(
+            ResourceAllocation.objects.filter(cluster=cluster).exists(),
+            "Allocation was created on a cluster the team is not whitelisted for"
+        )
+
+    def test_blacklisted_team_is_denied_creation(self) -> None:
+        """Verify a blacklist cluster produces no allocation for a listed team."""
+
+        # Blacklist the requesting team on the target cluster
+        cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.BLACKLIST)
+        cluster.access_teams.add(self.team)
+
+        self.client.force_authenticate(user=self.team_admin)
+        response = self.client.post(self.endpoint, self.build_post_body(cluster))
+
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code, response.data)
+        self.assertFalse(
+            ResourceAllocation.objects.filter(cluster=cluster).exists(),
+            "Allocation was created on a cluster the team is blacklisted from"
+        )
+
+    def test_non_blacklisted_team_allows_creation(self) -> None:
+        """Verify team admins can create allocations on blacklist clusters that omit their team."""
+
+        cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.BLACKLIST)
+
+        self.client.force_authenticate(user=self.team_admin)
+        response = self.client.post(self.endpoint, self.build_post_body(cluster))
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code, response.data)
+
+    def test_staff_bypass_cluster_restrictions(self) -> None:
+        """Verify staff users can create allocations regardless of cluster access mode."""
+
+        # A whitelist cluster the staff user's context has no team access to
+        cluster = ClusterFactory(access_mode=Cluster.AccessModeChoices.WHITELIST)
+
+        self.client.force_authenticate(user=self.staff_user)
+        response = self.client.post(self.endpoint, self.build_post_body(cluster))
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code, response.data)
 
 
 class TeamRecordFiltering(TeamListFilteringTestMixin, APITestCase):

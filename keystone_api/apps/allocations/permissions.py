@@ -19,6 +19,7 @@ __all__ = [
     "ClusterPermissions",
     "CommentPermissions",
     "RequestChildPermissions",
+    "ResourceAllocationPermissions",
 ]
 
 
@@ -211,3 +212,54 @@ class RequestChildPermissions(PermissionUtils, permissions.BasePermission):
         is_team_member = self.user_in_team(request, obj)
 
         return is_staff or (is_read_only and is_team_member)
+
+
+class ResourceAllocationPermissions(RequestChildPermissions):
+    """RBAC permissions model for `ResourceAllocation` objects.
+
+    Extends the parent request-child permissions with an additional constraint
+    on creation: the team on the parent allocation request must be permitted to
+    use the target cluster under that cluster's access mode. Staff users remain
+    exempt from the cluster access constraint.
+
+    Permissions:
+        - Grants read access to all team members.
+        - Grants create access to team administrators for permitted clusters.
+        - Grants full access to staff users.
+    """
+
+    @staticmethod
+    def team_can_access_cluster(team: Team, cluster: Cluster) -> bool:
+        """Return whether a team may allocate resources on a cluster under its access mode."""
+
+        is_listed = cluster.access_teams.filter(pk=team.pk).exists()
+        is_open = cluster.access_mode == Cluster.AccessModeChoices.OPEN
+        is_whitelisted = cluster.access_mode == Cluster.AccessModeChoices.WHITELIST and is_listed
+        is_not_blacklisted = cluster.access_mode == Cluster.AccessModeChoices.BLACKLIST and not is_listed
+
+        return is_open or is_whitelisted or is_not_blacklisted
+
+    def has_permission(self, request: Request, view: View) -> bool:
+        """Return whether the request has permissions to access the requested resource."""
+
+        # Staff have all permissions. Read is always allowed.
+        if self.user_is_staff(request) or self.is_read_only(request):
+            return True
+
+        # Defer to the parent for team-admin checks before evaluating cluster access.
+        if not super().has_permission(request, view):
+            return False
+
+        # For create: the request's team must be allowed to use the target cluster.
+        if self.is_create(view):
+            try:
+                cluster = Cluster.objects.get(pk=request.data.get("cluster"))
+                alloc_request = AllocationRequest.objects.select_related("team").get(pk=request.data.get("request"))
+
+            except (Cluster.DoesNotExist, AllocationRequest.DoesNotExist, Exception):
+                return False
+
+            return self.team_can_access_cluster(alloc_request.team, cluster)
+
+        # Update requests pass through so the router can issue a 405
+        return True
