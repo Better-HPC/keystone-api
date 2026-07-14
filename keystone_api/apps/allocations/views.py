@@ -259,8 +259,8 @@ class AllocationReviewViewSet(TeamScopedListMixin, viewsets.ModelViewSet):
         description=(
             "Creates a new resource allocation. "
             "Write access is granted to staff users and team administrators. "
-            "Non-staff users may only allocate on clusters their team is permitted to use "
-            "under the cluster's access mode."
+            "Non-staff users may only create allocations on clusters their "
+            "team is permitted to use under the cluster's access mode."
         ),
     ),
     update=extend_schema(
