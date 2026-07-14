@@ -9,7 +9,6 @@ for how the associated table/fields/records are presented by parent interfaces.
 import auditlog.models
 import django_celery_results.models
 from django.db import models
-from django.template.defaultfilters import truncatechars
 
 from apps.users.models import User
 
