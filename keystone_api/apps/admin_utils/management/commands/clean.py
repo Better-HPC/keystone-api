@@ -34,11 +34,11 @@ class Command(StdOutUtils, BaseCommand):
         """
 
         group = parser.add_argument_group("clean options")
+        group.add_argument("--all", action="store_true", help="Shorthand for deleting all targets")
         group.add_argument("--static", action="store_true", help="Delete the static root directory")
         group.add_argument("--uploads", action="store_true", help="Delete all user uploaded file data")
         group.add_argument("--sqlite", action="store_true", help="Delete all SQLite database files")
         group.add_argument("--log", action="store_true", help="Delete the application log file")
-        group.add_argument("--all", action="store_true", help="Shorthand for deleting all targets")
 
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
