@@ -65,7 +65,7 @@ This is a safety feature to avoid insecure admin accounts being accidentally cre
 
 Application tests are organized into two categories: 
 unit tests, which verify isolated components, and function tests, which validate live API behavior.
-These tests can be run collectively, or individually.
+These tests can be run collectively, or individually:
 
 ```bash
 keystone-api test tests # Run all tests
