@@ -7,9 +7,9 @@ to handle database migrations, static file collection, and web server deployment
 
 | Argument    | Description                                                      |
 |-------------|------------------------------------------------------------------|
-| --all       | Launch all available services.                                   |
+| --all       | A shorthand for running all quickstart tasks.                    |
 | --celery    | Launch a background Celery worker.                               |
-| --demo-user | Create an admin user account if no other accounts exist.         |
+| --demo-user | Create an 'admin' user account with password 'quickstart'.       |
 | --server    | Run the application using a Uvicorn web server.                  |
 | --migrate   | Run database migrations.                                         |
 | --smtp      | Run an SMTP server.                                              |
@@ -42,9 +42,9 @@ class Command(StdOutUtils, BaseCommand):
         """
 
         group = parser.add_argument_group("quickstart options")
-        group.add_argument("--all", action="store_true", help="Launch all available services.")
+        group.add_argument("--all", action="store_true", help="A shorthand for running all quickstart tasks.")
         group.add_argument("--celery", action="store_true", help="Launch a background Celery worker.")
-        group.add_argument("--demo-user", action="store_true", help="Create an admin user account if no other accounts exist.")
+        group.add_argument("--demo-user", action="store_true", help="Create an 'admin' user account with password 'quickstart'.")
         group.add_argument("--server", action="store_true", help="Run the application using a Uvicorn web server.")
         group.add_argument("--migrate", action="store_true", help="Run database migrations.")
         group.add_argument("--smtp", action="store_true", help="Run an SMTP server.")
