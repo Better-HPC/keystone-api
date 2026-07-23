@@ -30,7 +30,6 @@ dependencies = [
     "iso4217==1.16.20260101",
     "jinja2==3.1.6",
     "nh3==0.3.6",
-    "pillow==12.2.0",
     "psycopg2-binary==2.9.12",
     "pyyaml==6.0.3",
     "redis==8.0.1",
