@@ -1,6 +1,6 @@
 # Keystone API
 
-This repository contains source code for the Keystone REST API.
+The backend REST API for the Keystone HPC utility.
 
 A quickstart guide for project developers is provided below.
 For the full Keystone project documentation, see [keystone.bhpc.dev](https://keystone.bhpc.dev).
