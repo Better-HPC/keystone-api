@@ -75,7 +75,7 @@ The `clean` command is used to purge application files and restore the package t
 Command-line options provide control over which file types to delete:
 
 ```bash
-keystone-api clean --static --uploads --sqlite --log
+keystone-api clean --static --uploads --sqlite --logs
 ```
 
 Similar to the `quickstart` command, the `--all` option is provided for convenience:

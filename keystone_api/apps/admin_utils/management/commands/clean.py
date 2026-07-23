@@ -7,7 +7,7 @@
 | --static   | Delete the static root directory                                 |
 | --uploads  | Delete all user uploaded file data                               |
 | --sqlite   | Delete all SQLite database files                                 |
-| --log      | Delete the application log file                                  |
+| --logs     | Delete the application log file                                  |
 | --all      | Shorthand for deleting everything                                |
 """
 
@@ -38,7 +38,7 @@ class Command(StdOutUtils, BaseCommand):
         group.add_argument("--static", action="store_true", help="Delete the static root directory")
         group.add_argument("--uploads", action="store_true", help="Delete all user uploaded file data")
         group.add_argument("--sqlite", action="store_true", help="Delete all SQLite database files")
-        group.add_argument("--log", action="store_true", help="Delete the application log file")
+        group.add_argument("--logs", action="store_true", help="Delete the application log file")
 
     def handle(self, *args, **options) -> None:
         """Handle the command execution."""
