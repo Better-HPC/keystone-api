@@ -1623,4 +1623,4 @@ tests = ["coverage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4"
-content-hash = "d55c41ecf3b946205142cff20265bfbd31eb7ad5657fc54bf700347e46af8e77"
+content-hash = "2babc87a3c639db50772f896bc65a729e1e161b809c0d79d6d66aeea4ce93269"
