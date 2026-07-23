@@ -7,27 +7,35 @@ For the full Keystone project documentation, see [keystone.bhpc.dev](https://key
 
 ## Developer Setup
 
-This project uses [Poetry](https://python-poetry.org/) to manage software dependencies.
-Optional dependencies are defined using the following groups:
+This project uses the [Poetry](https://python-poetry.org/) package manager.
+To initialize a new environment, start by defining your desired Python interpreter:
+
+```bash
+poetry use python3
+```
+
+Next, install the project and its dependencies.
+Optional project dependencies are organized into the following groups:
 
 | Group  | Description                                                                  |
 |--------|------------------------------------------------------------------------------|
 | `dev`  | Development dependencies, including those required to run application tests. |
 | `prod` | Runtime dependencies bundled into the published Docker image.                |
 
-To install the project with one or more dependency groups, use Poetry's `install` command:
+To install the project with one or more dependency groups, use the Poetry `install` command:
 
 ```bash
 poetry install --with dev
 ```
 
-The `keystone-api` command is used for most project management tasks.
+The `keystone-api` utility is required for most project management tasks.
 Poetry exposes this CLI using the `poetry run` syntax (e.g. `poetry run keystone-api`).
-however, it is generally more convenient to install the CLI directly in to their working environemnt:
+However, it is generally more convenient to install the CLI directly into your working environment:
+Tab autocomplete is optional, and available for Bash and Zsh shells.
 
 ```bash
 pip install -e .
-keystone-api enable_autocomplete # For Bash and Zsh shells 
+keystone-api enable_autocomplete 
 ```
 
 ## Common Tasks
@@ -36,13 +44,14 @@ keystone-api enable_autocomplete # For Bash and Zsh shells
 
 The `quickstart` command allows developers to execute several common tasks with a single CLI call.
 This includes initializing application dependencies, creating an admin user account, and deploying the API server.
+Developers are strongly encouraged to review the latest runtime options outlined in the CLI help text (`keystone-api quickstart -h`).
 For example:
 
 ```bash
 keystone-api quickstart --migrate --demo-user --celery --smtp --server
 ```
 
-The `--all` option can also be used to conveniently execute all quickstart tasks at once:
+The `--all` option can also be used to conveniently enable all quickstart options at once:
 
 ```bash
 keystone-api quickstart --all
@@ -57,12 +66,13 @@ The `genseeddata` command will populate the application database with semi-reali
 The generated data is suitable for evaluating API behavior and for demonstrating/testing the application frontend.
 
 ```bash
-keystone-api gensseeddata
+keystone-api genseeddata
 ```
 
 ### Application Cleanup
 
-The `clean` command will remove application files and restore the package to a clean working state.
+The `clean` command is used to purge application files and restore the package to a clean working state.
+Command-line options provide control over which file types to delete:
 
 ```bash
 keystone-api clean --static --uploads --sqlite --log
@@ -74,10 +84,9 @@ Similar to the `quickstart` command, the `--all` option is provided for convenie
 keystone-api clean --all
 ```
 
-### Updating Database Migrations
+### Updating Database Schemas
 
-The backend database schema - including logic for migrating between schema versions - is derived dynamically from the
-application ORM classes.
+The backend database schema is derived dynamically from the application's ORM classes.
 New schema migrations need to be generated any time changes are made to the ORM.
 
 ```bash
@@ -85,11 +94,11 @@ keystone-api makemigrations
 ```
 
 **Note:** While the `django` framework is known for its reliable database management, dynamically generated migrations
-should be manually reviewed by the developer
+should always be reviewed by the developer.
 
-### Generating OpenAPI Schemas
+### Updating the OpenAPI Schema
 
-This project maintains an official OpenAPI schema for use by downstream developers and customers.
+This project maintains an official OpenAPI schema for use by downstream developers.
 Similar to the project's database schema, the OpenAPI schema is derived dynamically from the project source code.
 To update the official OpenAPI file:
 
