@@ -25,7 +25,7 @@ Optional project dependencies are organized into the following groups:
 To install the project with one or more dependency groups, use the Poetry `install` command:
 
 ```bash
-poetry install --with dev
+poetry install --extras dev
 ```
 
 The `keystone-api` utility is required for most project management tasks.
@@ -44,7 +44,8 @@ keystone-api enable_autocomplete
 
 The `quickstart` command allows developers to execute several common tasks with a single CLI call.
 This includes initializing application dependencies, creating an admin user account, and deploying the API server.
-Developers are strongly encouraged to review the latest runtime options outlined in the CLI help text (`keystone-api quickstart -h`).
+Developers are strongly encouraged to review the latest runtime options outlined in the CLI help text (
+`keystone-api quickstart -h`).
 For example:
 
 ```bash
@@ -59,6 +60,26 @@ keystone-api quickstart --all
 
 **Note:** The `--demo-user` option will only create an admin user account if no user accounts already exist.
 This is a safety feature to avoid insecure admin accounts being accidentally created in production settings.
+
+### Running Tests
+
+Application tests are organized into two categories: 
+unit tests, which verify isolated components, and function tests, which validate live API behavior.
+These tests can be run collectively, or individually:
+
+```bash
+keystone-api test tests # Run all tests
+keystone-api test tests.unit_tests # Run unit tests only
+keystone-api test tests.function_tests # Run function tests only
+```
+
+The `coverage` utility can also be used to execute tests and report the resulting coverage.
+Test coverage should only be measured using the application unit tests.
+
+```bash
+coverage run $(which keystone-api) test tests.unit_tests
+coverage report
+```
 
 ### Populating Mock Data
 
