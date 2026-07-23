@@ -12,7 +12,7 @@ RUN apk add --no-cache \
 # Compile application wheels
 WORKDIR /src
 COPY . .
-RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[all]
+RUN pip wheel --no-cache-dir --wheel-dir /wheels ./[prod]
 
 
 # --- Runtime image ---
