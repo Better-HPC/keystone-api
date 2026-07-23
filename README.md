@@ -25,7 +25,7 @@ Optional project dependencies are organized into the following groups:
 To install the project with one or more dependency groups, use the Poetry `install` command:
 
 ```bash
-poetry install --with dev
+poetry install --extras dev
 ```
 
 The `keystone-api` utility is required for most project management tasks.
