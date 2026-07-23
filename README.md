@@ -15,22 +15,19 @@ Optional dependencies are defined using the following groups:
 | `dev`  | Development dependencies, including those required to run application tests. |
 | `prod` | Runtime dependencies bundled into the published Docker image.                |
 
-To install the project with the desired dependency group(s), use Poetry's `install` command:
+To install the project with one or more dependency groups, use Poetry's `install` command:
 
 ```bash
 poetry install --with dev
 ```
 
-In addition to project dependencies, developers will also need to install the official project command-line interface:
+The `keystone-api` command is used for most project management tasks.
+Poetry exposes this CLI using the `poetry run` syntax (e.g. `poetry run keystone-api`).
+however, it is generally more convenient to install the CLI directly in to their working environemnt:
 
 ```bash
 pip install -e .
-```
-
-Command-line autocomplete is available for developers using the Bash or Zsh shells:
-
-```bash
-keystone-api enable_autocomplete
+keystone-api enable_autocomplete # For Bash and Zsh shells 
 ```
 
 ## Common Tasks
